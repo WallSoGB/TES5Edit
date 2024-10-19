@@ -32,8 +32,9 @@ uses
 type
   TAssign = procedure(Source: TPersistent) of object;
 
+  {Still valid up to Delphi 12, check for newer versions}
   TStringsPrivateHacker = class(TPersistent)
-  private
+  protected
     FEncoding: TEncoding;
     FDefaultEncoding: TEncoding;
     FLineBreak: string;
@@ -45,8 +46,9 @@ type
     FOptions: TStringsOptions;
   end;
 
+  {Still valid up to Delphi 12, check for newer versions}
   TStringListPrivateHacker = class(TStringsPrivateHacker)
-  private
+  protected
     FList: TStringItemList;
     FCount: Integer;
     FCapacity: Integer;
@@ -200,8 +202,6 @@ var
   CanHandle       : Boolean;
   CompareSelf     : TCompareStrings;
   ListSortCompare : TwbMergeSort<TwbTwoPtr>.TListSortCompareTPtr;
-  //List: TStringItemList;
-  i: Integer;
 begin
   with TStringListPrivateHacker(Self), Self do begin
     if FSorted or (FCount < 2) then

@@ -14,7 +14,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, Buttons, CheckLst, Menus, IniFiles, ExtCtrls;
+  Dialogs, StdCtrls, Buttons, CheckLst, Menus, IniFiles, ExtCtrls, System.UITypes;
 
 const
   sFilterSection = 'Filter';

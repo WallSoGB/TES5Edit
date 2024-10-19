@@ -15,7 +15,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, wbInterface, ComCtrls, ExtCtrls, StdCtrls, Buttons, Menus, IniFiles,
-  SynEdit, SynMemo, xeMainForm, Clipbrd;
+  SynEdit, SynMemo, xeMainForm, Clipbrd, System.UITypes;
 
 type
   TwbEdit = record
@@ -80,7 +80,6 @@ procedure TfrmViewElements.AddElement(const aElement: IwbElement;
   aFocused, aEditable: Boolean);
 var
   TabSheet : TwbTabSheet;
-  Edit     : TwbEdit;
   Memo     : TMemo;
 begin
   if not Assigned(aElement) then

@@ -239,7 +239,6 @@ procedure TwbModGroupsFile.mgfCheckValid(aForce: Boolean);
 var
   i         : Integer;
   AnyValid  : Boolean;
-  AnyModule : Boolean;
 begin
   if (mgffValidChecked in mgfFlags) and not aForce then
     Exit;
@@ -610,7 +609,7 @@ begin
 
   mgiFileName := Fragments[0];
   if mgiFileName.IsEmpty then
-    Exit;
+    Exit(False);
 
   mgiModule := wbModuleByName(mgiFileName);
 
@@ -864,7 +863,7 @@ end;
 
 procedure TwbModGroupPtrsHelper.ShowValidationMessages;
 var
-  i, j     : Integer;
+  i        : Integer;
   Messages : TwbMessagePtrs;
   s        : string;
 begin

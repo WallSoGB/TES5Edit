@@ -14,7 +14,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, IOUtils, StrUtils, Vcl.ComCtrls,
+  Dialogs, StdCtrls, ExtCtrls, IOUtils, StrUtils, Vcl.ComCtrls, System.UITypes,
   SynEdit, SynMemo, SynEditKeyCmds, xeMainForm, SynHighlighterPas;
 
 const
@@ -73,7 +73,7 @@ type
   private
     Highlighter : TSynPasSyn;
     ScriptSelectionChanged : Boolean;
-    LastCloseUp : Int64;
+    LastCloseUp : UInt64;
     SelectionOnDropDown: string;
     ScriptSelectionChangedOnDropDown : Boolean;
     SelectionOnEnter: string;
