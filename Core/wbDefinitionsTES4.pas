@@ -1243,37 +1243,6 @@ begin
   end;
 end;
 
-procedure wbRPLDAfterLoad(const aElement: IwbElement);
-var
-  Container : IwbContainer;
-  a, b      : Single;
-  NeedsFlip : Boolean;
-begin
-  if wbBeginInternalEdit then try
-    if not Supports(aElement, IwbContainer, Container) then
-      Exit;
-
-    NeedsFlip := False;
-    if Container.ElementCount > 1 then begin
-      a := (Container.Elements[0] as IwbContainer).Elements[0].NativeValue;
-      b := (Container.Elements[Pred(Container.ElementCount)] as IwbContainer).Elements[0].NativeValue;
-      case CompareValue(a, b) of
-        EqualsValue: begin
-          a := (Container.Elements[0] as IwbContainer).Elements[1].NativeValue;
-          b := (Container.Elements[Pred(Container.ElementCount)] as IwbContainer).Elements[1].NativeValue;
-          NeedsFlip := CompareValue(a, b) = GreaterThanValue;
-        end;
-        GreaterThanValue:
-          NeedsFlip := True;
-      end;
-    end;
-    if NeedsFlip then
-      Container.ReverseElements;
-  finally
-    wbEndInternalEdit;
-  end;
-end;
-
 procedure wbPGRDAfterLoad(const aElement: IwbElement);
 var
   Container   : IwbContainerElementRef;

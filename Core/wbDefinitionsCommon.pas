@@ -124,8 +124,9 @@ procedure DefineCommon;
 function wbCellAddInfo(const aMainRecord: IwbMainRecord): string;
 function wbNAVMAddInfo(const aMainRecord: IwbMainRecord): string;
 
-{>>> After Load Callbacks <<<} //2
+{>>> After Load Callbacks <<<} //3
 procedure wbKeywordsAfterLoad(const aElement: IwbElement);
+procedure wbRPLDAfterLoad(const aElement: IwbElement);
 procedure wbWorldAfterLoad(const aElement: IwbElement);
 
 {>>> After Set Callbacks <<<} //30
@@ -423,6 +424,7 @@ uses
   Math,
   StrUtils,
   SysUtils,
+  System.Types,
   wbHelpers;
 
 {>>> Add Info Callbacks <<<} //2
@@ -500,7 +502,7 @@ begin
   end;
 end;
 
-{>>> After Load Callbacks <<<} //2
+{>>> After Load Callbacks <<<} //3
 
 procedure wbKeywordsAfterLoad(const aElement: IwbElement);
 var
@@ -516,6 +518,36 @@ begin
 
     if Assigned(Container.ElementBySignature['KWDA']) then
       Container.ElementBySignature['KWDA'].Remove;
+  finally
+    wbEndInternalEdit;
+  end;
+end;
+
+procedure wbRPLDAfterLoad(const aElement: IwbElement);
+var
+  Container: IwbContainer;
+  a, b: Single;
+  NeedsFlip: Boolean;
+begin
+  if wbBeginInternalEdit then try
+    if not Supports(aElement, IwbContainer, Container) then
+      Exit;
+    NeedsFlip := False;
+    if Container.ElementCount > 1 then begin
+      a := StrToFloat((Container.Elements[0] as IwbContainer).Elements[0].Value);
+      b := StrToFloat((Container.Elements[Pred(Container.ElementCount)] as IwbContainer).Elements[0].Value);
+      case CompareValue(a, b) of
+        EqualsValue: begin
+          a := StrToFloat((Container.Elements[0] as IwbContainer).Elements[1].Value);
+          b := StrToFloat((Container.Elements[Pred(Container.ElementCount)] as IwbContainer).Elements[1].Value);
+          NeedsFlip := CompareValue(a, b) = GreaterThanValue;
+        end;
+        GreaterThanValue:
+          NeedsFlip := True;
+      end;
+    end;
+    if NeedsFlip then
+      Container.ReverseElements;
   finally
     wbEndInternalEdit;
   end;

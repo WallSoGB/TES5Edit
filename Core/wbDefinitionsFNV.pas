@@ -3517,36 +3517,6 @@ begin
   end;
 end;
 
-procedure wbRPLDAfterLoad(const aElement: IwbElement);
-var
-  Container: IwbContainer;
-  a, b: Single;
-  NeedsFlip: Boolean;
-begin
-  if wbBeginInternalEdit then try
-    if Supports(aElement, IwbContainer, Container) then begin
-      NeedsFlip := False;
-      if Container.ElementCount > 1 then begin
-        a := StrToFloat((Container.Elements[0] as IwbContainer).Elements[0].Value);
-        b := StrToFloat((Container.Elements[Pred(Container.ElementCount)] as IwbContainer).Elements[0].Value);
-        case CompareValue(a, b) of
-          EqualsValue: begin
-            a := StrToFloat((Container.Elements[0] as IwbContainer).Elements[1].Value);
-            b := StrToFloat((Container.Elements[Pred(Container.ElementCount)] as IwbContainer).Elements[1].Value);
-            NeedsFlip := CompareValue(a, b) = GreaterThanValue;
-          end;
-          GreaterThanValue:
-            NeedsFlip := True;
-        end;
-      end;
-      if NeedsFlip then
-        Container.ReverseElements;
-    end;
-  finally
-    wbEndInternalEdit;
-  end;
-end;
-
 function wbPKDTFalloutBehaviorFlagsDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
 var
   Container : IwbContainer;
