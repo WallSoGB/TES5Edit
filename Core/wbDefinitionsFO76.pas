@@ -16562,27 +16562,17 @@ begin
     wbRArrayS('Region Data Entries', wbRStructSK([0], 'Region Data Entry', [
       {always starts with an RDAT}
       wbStructSK(RDAT, [0], 'Data Header', [
-        wbInteger('Type', itU32, wbEnum([
-          {0} 'Unknown 0',
-          {1} 'Unknown 1',
-          {2} 'Objects',
-          {3} 'Weather',
-          {4} 'Map',
-          {5} 'Workshop',
-          {6} 'Grass',
-          {7} 'Sound',
-          {8} 'Imposter',
-          {9} 'Unknown 10',
-          {10}'Unknown 11',
-          {11}'Unknown 12',
-          {12}'Unknown 13',
-          {13}'Unknown 14',
-          {14}'Unknown 15',
-          {15}'Unknown 16'
-        ])),
-        wbInteger('Flags', itU8, wbFlags([
-          'Override'
-        ])),
+        wbInteger('Type', itU32,
+          wbEnum([], [
+            2, 'Objects',
+            3, 'Weather',
+            4, 'Map',
+            5, 'Land',
+            6, 'Grass',
+            7, 'Sound'
+          ])
+        ),
+        wbInteger('Override', itU8, wbBoolEnum),
         wbInteger('Priority', itU8),
         wbByteArray('Unknown')
       ], cpNormal, True),

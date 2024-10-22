@@ -8271,21 +8271,17 @@ var  wbSoundTypeSoundsOld :=
     wbRArrayS('Region Data Entries', wbRStructSK([0], 'Region Data Entry', [
       {always starts with an RDAT}
       wbStructSK(RDAT, [0], 'Data Header', [
-        wbInteger('Type', itU32, wbEnum([
-          {0}'',
-          {1}'',
-          {2}'Objects',
-          {3}'Weather',
-          {4}'Map',
-          {5}'Land',
-          {6}'Grass',
-          {7}'Sound',
-          {8}'',
-          {9}''
-        ])),
-        wbInteger('Flags', itU8, wbFlags([
-          'Override'
-        ])),
+        wbInteger('Type', itU32,
+          wbEnum([], [
+            2, 'Objects',
+            3, 'Weather',
+            4, 'Map',
+            5, 'Land',
+            6, 'Grass',
+            7, 'Sound'
+          ])
+        ),
+        wbInteger('Override', itU8, wbBoolEnum),
         wbInteger('Priority', itU8),
         wbByteArray('Unused')
       ], cpNormal, True),
