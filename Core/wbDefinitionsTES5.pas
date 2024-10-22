@@ -6925,10 +6925,12 @@ begin
                   wbInteger('Vertex 1', itU16),
                   wbInteger('Vertex 2', itU16)
                 ]).IncludeFlag(dfCollapsed),
-              -1).IncludeFlag(dfCollapsed),
+              -1).IncludeFlag(dfCollapsed)
+                 .IncludeFlag(dfNotAlignable),
               wbArray('Vertices',
                 wbVec3('Vertex'),
               -1).IncludeFlag(dfCollapsed)
+                 .IncludeFlag(dfNotAlignable)
             ]).SetSummaryKey([2])
               .IncludeFlag(dfCollapsed)
               .IncludeFlag(dfSummaryMembersNoName)
@@ -6961,6 +6963,7 @@ begin
         .SetSummaryPrefixSuffixOnValue(7, 'in ', '')
         .SetSummaryPrefixSuffixOnValue(6, 'is island with ', '')
         .IncludeFlag(dfCollapsed)
+        .IncludeFlag(dfFastAssign)
         .IncludeFlag(dfSummaryMembersNoName)
     ).IncludeFlag(dfCollapsed),
     wbStruct(NVPP, 'Precomputed Pathing', [
