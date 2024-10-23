@@ -255,9 +255,10 @@ function wbVertexToInt1(const aString: string; const aElement: IwbElement): Int6
 function wbVertexToInt2(const aString: string; const aElement: IwbElement): Int64;
 function wbWeatherCloudSpeedToInt(const aString: string; const aElement: IwbElement): Int64;
 
-{>>> To String Callbacks <<<} //32
+{>>> To String Callbacks <<<} //33
 procedure wbABGRToStr(var aValue: string; aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement; aType: TwbCallbackType);
 procedure wbBGRAToStr(var aValue: string; aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement; aType: TwbCallbackType);
+function wbClmtMoonsPhaseLength(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
 function wbClmtTime(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
 procedure wbConditionToStr(var aValue: string; aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement; aType: TwbCallbackType);
 procedure wbCrowdPropertyToStr(var aValue: string; aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement; aType: TwbCallbackType);
@@ -1892,7 +1893,7 @@ begin
   Result := Min(Round(f), 254);
 end;
 
-{>>> To String Callbacks <<<} //32
+{>>> To String Callbacks <<<} //33
 
 procedure wbABGRToStr(var aValue: string; aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement; aType: TwbCallbackType);
 var
@@ -1947,6 +1948,36 @@ begin
     aValue := 'RGBA(' + R + ', ' + G + ', ' + B + ', ' + A.Summary + ')'
   else
     aValue := 'RGB(' + R + ', ' + G + ', ' + B + ')';
+end;
+
+function wbClmtMoonsPhaseLength(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
+var
+  PhaseLength : Byte;
+  Masser      : Boolean;
+  Secunda     : Boolean;
+begin
+  Result := '';
+  if aType = ctToSortKey then begin
+    Result := IntToHex64(aInt, 2);
+    Exit;
+  end;
+
+  if aType in [ctToStr, ctToSummary] then begin
+    PhaseLength := aInt mod 64;
+    Secunda := (aInt and 64) <> 0;
+    Masser := (aInt and 128) <> 0;
+    if Masser then
+      if Secunda then
+        Result := 'Masser, Secunda / '
+      else
+        Result := 'Masser / '
+    else
+      if Secunda then
+        Result := 'Secunda / '
+      else
+        Result := 'No Moon / ';
+    Result := Result + IntToStr(PhaseLength);
+  end;
 end;
 
 function wbClmtTime(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;

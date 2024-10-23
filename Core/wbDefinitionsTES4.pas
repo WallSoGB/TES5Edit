@@ -92,33 +92,6 @@ begin
     .IncludeFlag(dfCollapsed, wbCollapseModels);
 end;
 
-function wbClmtMoonsPhaseLength(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
-var
-  PhaseLength : Byte;
-  Masser      : Boolean;
-  Secunda     : Boolean;
-begin
-  Result := '';
-  if aType = ctToSortKey then begin
-    Result := IntToHex64(aInt, 2);
-  end else if aType in [ctToStr, ctToSummary] then begin
-    PhaseLength := aInt mod 64;
-    Masser := (aInt and 64) <> 0;
-    Secunda := (aInt and 128) <> 0;
-    if Masser then
-      if Secunda then
-        Result := 'Masser, Secunda / '
-      else
-        Result := 'Masser / '
-    else
-      if Secunda then
-        Result := 'Secunda / '
-      else
-        Result := 'No Moon / ';
-    Result := Result + IntToStr(PhaseLength);
-  end;
-end;
-
 var
   wbCtdaTypeFlags : IwbFlagsDef;
 
