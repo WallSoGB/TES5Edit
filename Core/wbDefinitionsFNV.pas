@@ -1046,56 +1046,6 @@ begin
   end;
 end;
 
-function wbPlacedAddInfo(const aMainRecord: IwbMainRecord): string;
-var
-  Rec: IwbRecord;
-  Container: IwbContainer;
-  s: string;
-  Cell: IwbMainRecord;
-  Position: TwbVector;
-  Grid: TwbGridCell;
-begin
-  Result := '';
-
-  Rec := aMainRecord.RecordBySignature['NAME'];
-  if Assigned(Rec) then begin
-    s := Trim(Rec.Value);
-    if s <> '' then
-      Result := 'places ' + s;
-  end;
-
-  Container := aMainRecord.Container;
-  while Assigned(Container) and (Container.ElementType <> etGroupRecord) do
-    Container := Container.Container;
-
-  if not Assigned(Container) then
-    Exit;
-
-  s := Trim(Container.Name);
-  if not (s <> '') then
-    Exit;
-
-  if Result <> '' then
-    Result := Result + ' ';
-
-  Result := Result + 'in ' + s;
-
-  // grid position of persistent reference in exterior persistent cell (interior cells are not persistent)
-  if not Supports(aMainRecord.Container, IwbGroupRecord, Container) then
-    Exit;
-
-  Cell := IwbGroupRecord(Container).ChildrenOf;
-
-  if not (Assigned(Cell) and Cell.IsPersistent and (Cell.Signature = 'CELL')) then
-    Exit;
-
-  if not aMainRecord.GetPosition(Position) then
-    Exit;
-
-  Grid := wbPositionToGridCell(Position);
-  Result := Result + ' at ' + IntToStr(Grid.x) + ',' + IntToStr(Grid.y);
-end;
-
 function wbINFOAddInfo(const aMainRecord: IwbMainRecord): string;
 var
   Container: IwbContainer;

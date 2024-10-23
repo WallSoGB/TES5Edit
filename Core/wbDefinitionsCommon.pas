@@ -120,9 +120,10 @@ var
 
 procedure DefineCommon;
 
-{>>> Add Info Callbacks <<<} //2
+{>>> Add Info Callbacks <<<} //3
 function wbCellAddInfo(const aMainRecord: IwbMainRecord): string;
 function wbNAVMAddInfo(const aMainRecord: IwbMainRecord): string;
+function wbPlacedAddInfo(const aMainRecord: IwbMainRecord): string;
 
 {>>> After Load Callbacks <<<} //3
 procedure wbKeywordsAfterLoad(const aElement: IwbElement);
@@ -427,7 +428,7 @@ uses
   System.Types,
   wbHelpers;
 
-{>>> Add Info Callbacks <<<} //2
+{>>> Add Info Callbacks <<<} //3
 
 function wbCellAddInfo(const aMainRecord: IwbMainRecord): string;
 var
@@ -498,6 +499,53 @@ begin
       if Result <> '' then
         Result := Result + ' ';
       Result := Result + 'in ' + s;
+    end;
+  end;
+end;
+
+function wbPlacedAddInfo(const aMainRecord: IwbMainRecord): string;
+var
+  Cell      : IwbMainRecord;
+  Container : IwbContainer;
+  Grid      : TwbGridCell;
+  Position  : TwbVector;
+  Rec       : IwbRecord;
+  S         : string;
+begin
+  Result := '';
+
+  Rec := aMainRecord.RecordBySignature['NAME'];
+  if Assigned(Rec) then begin
+    S := Trim(Rec.Value);
+    if S <> '' then
+      Result := 'places ' + s;
+  end;
+
+  Container := aMainRecord.Container;
+  while ( Assigned(Container) and (Container.ElementType <> etGroupRecord) ) do
+    Container := Container.Container;
+
+  if Assigned(Container) then begin  
+    S := Trim(Container.Name);
+    if S <> '' then begin
+      if Result <> '' then
+        Result := Result + ' ';
+
+      Result := Result + 'in ' + S;
+
+      // Cell Grid of Worldspace Persistent Cell References
+      if Supports(aMainRecord.Container, IwbGroupRecord, Container) then
+        Cell := IwbGroupRecord(Container).ChildrenOf;
+
+      if Assigned(Cell) and Cell.IsPersistent and (Cell.Signature = 'CELL') then
+        if aMainRecord.GetPosition(Position) then begin
+          Grid := wbPositionToGridCell(Position);
+          Result := Result + ' at ' + IntToStr(Grid.x) + ',' + IntToStr(Grid.y);
+        end;
+
+      // in precombined mesh
+      if aMainRecord.HasPrecombinedMesh then
+        Result := Result + ' in ' + aMainRecord.PrecombinedMesh;
     end;
   end;
 end;
