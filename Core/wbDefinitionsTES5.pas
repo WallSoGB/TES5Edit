@@ -726,21 +726,6 @@ begin
   end;
 end;
 
-function wbClmtTime(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
-begin
-  if aType = ctToSortKey then
-    Result := IntToHex64(aInt, 4)
-  else if aType in [ctToStr, ctToSummary] then
-    try
-      Result := TimeToStr( EncodeTime(aInt div 6, (aInt mod 6) * 10, 0, 0) )
-    except
-      Result := aInt.ToString
-    end
-  else
-    Result := '';
-end;
-
-
 var
   wbCtdaTypeFlags : IwbFlagsDef;
 
