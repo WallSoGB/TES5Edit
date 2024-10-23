@@ -464,40 +464,21 @@ end;
 
 function wbNAVMAddInfo(const aMainRecord: IwbMainRecord): string;
 var
-  Rec       : IwbRecord;
-  Element   : IwbElement;
   Container : IwbContainer;
-  s         : string;
+  S         : string;
 begin
-  if wbIsFallout3 then begin
-    Result := '';
+  Result := '';
 
-    Rec := aMainRecord.RecordBySignature['DATA'];
-    if not Assigned(Rec) then
-      Exit;
+  Container := aMainRecord.Container;
+  while Assigned(Container) and (Container.ElementType <> etGroupRecord) do
+    Container := Container.Container;
 
-    Element := Rec.ElementByName['Cell'];
-    if Assigned(Element) then
-      Element := Element.LinksTo;
-    if Assigned(Element) then
-      s := Trim(Element.Name);
-    if s <> '' then
-      Result := 'for ' + s;
-  end else begin
-    Result := '';
-
-    Container := aMainRecord.Container;
-    while Assigned(Container) and (Container.ElementType <> etGroupRecord) do
-      Container := Container.Container;
-
-    if not Assigned(Container) then
-      Exit;
-
-    s := Trim(Container.Name);
-    if s <> '' then begin
+  if Assigned(Container) then begin
+    S := Trim(Container.Name);
+    if S <> '' then begin
       if Result <> '' then
         Result := Result + ' ';
-      Result := Result + 'in ' + s;
+      Result := Result + 'in ' + S;
     end;
   end;
 end;
