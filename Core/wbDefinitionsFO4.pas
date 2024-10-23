@@ -1408,36 +1408,6 @@ begin
   Result := Value;
 end;
 
-function wbINFOAddInfo(const aMainRecord: IwbMainRecord): string;
-var
-  Container: IwbContainer;
-  s: string;
-begin
-  Result := Trim(aMainRecord.ElementValues['Responses\Response\NAM1']);
-  if Result <> '' then
-    Result := '''' + Result + '''';
-
-  Container := aMainRecord.Container;
-  while Assigned(Container) and (Container.ElementType <> etGroupRecord) do
-    Container := Container.Container;
-
-  if Assigned(Container) then begin
-    s := Trim(Container.Name);
-    if s <> '' then begin
-      if Result <> '' then
-        Result := Result + ' ';
-      Result := Result + 'in ' + s;
-    end;
-  end;
-
-  s := Trim(aMainRecord.ElementValues['QNAM']);
-  if s <> '' then begin
-    if Result <> '' then
-      Result := Result + ' ';
-    Result := Result + 'for ' + s;
-  end;
-end;
-
 function wbNPCLevelDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
 var
   Container: IwbContainer;
@@ -8203,7 +8173,7 @@ begin
     wbInteger(TIFC, 'Info Count', itU32, nil, cpIgnore),
     wbINOM,
     wbINOA
-  ]);
+  ], False, wbDIALAddInfo);
 
   wbRecord(DOOR, 'Door',
     wbFlags(wbFlagsList([
@@ -10427,7 +10397,7 @@ begin
       {0x04} 'Exclusive'
     ])),
     wbFormIDCk(SNAM, 'Starting Topic', [DIAL], False, cpNormal, True)
-  ]);
+  ], False, wbDLBRAddInfo);
 
   wbRecord(MUST, 'Music Track', [
     wbEDID,
@@ -10768,7 +10738,7 @@ begin
     wbString(NNAM, 'Notes'),
     wbFormIDCk(TNAM, 'Template Scene', [SCEN]),
     wbInteger(XNAM, 'Index', itU32)
-  ]);
+  ], False, wbSCENAddInfo);
 
   wbRecord(ASTP, 'Association Type', [
     wbEDID,
@@ -11484,7 +11454,7 @@ begin
     wbLandLayers,
     wbRArray('Hi-Res Heightfield',
       wbByteArray(MPCD, 'Heightfield Data'))
-  ]);
+  ], False, wbLANDAddInfo);
 
   wbRecord(LIGH, 'Light',
     wbFlags(wbFlagsList([

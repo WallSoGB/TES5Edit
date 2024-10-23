@@ -120,10 +120,17 @@ var
 
 procedure DefineCommon;
 
-{>>> Add Info Callbacks <<<} //3
+{>>> Add Info Callbacks <<<} //10
 function wbCellAddInfo(const aMainRecord: IwbMainRecord): string;
+function wbDIALAddInfo(const aMainRecord: IwbMainRecord): string;
+function wbDLBRAddInfo(const aMainRecord: IwbMainRecord): string;
+function wbINFOAddInfo(const aMainRecord: IwbMainRecord): string;
+function wbLANDAddInfo(const aMainRecord: IwbMainRecord): string;
 function wbNAVMAddInfo(const aMainRecord: IwbMainRecord): string;
+function wbPGRDAddInfo(const aMainRecord: IwbMainRecord): string;
 function wbPlacedAddInfo(const aMainRecord: IwbMainRecord): string;
+function wbROADAddInfo(const aMainRecord: IwbMainRecord): string;
+function wbSCENAddInfo(const aMainRecord: IwbMainRecord): string;
 
 {>>> After Load Callbacks <<<} //3
 procedure wbKeywordsAfterLoad(const aElement: IwbElement);
@@ -428,32 +435,15 @@ uses
   System.Types,
   wbHelpers;
 
-{>>> Add Info Callbacks <<<} //3
+{>>> Add Info Callbacks <<<} //10
 
 function wbCellAddInfo(const aMainRecord: IwbMainRecord): string;
 var
-  Container   : IwbContainer;
-  GroupRecord : IwbGroupRecord;
-  Rec         : IwbRecord;
-  S           : string;
+  Rec : IwbRecord;
 begin
-  Result := '';
-
-  Container := aMainRecord.Container;
-  while Assigned(Container) and not
-    ( Supports(Container, IwbGroupRecord, GroupRecord)
-  and (GroupRecord.GroupType = 1)
-    ) do
-    Container := Container.Container;
-
-  if Assigned(Container) then begin
-    S := wbFormID.ToString(GroupRecord.GroupLabel, aMainRecord, False);
-    if S <> '' then begin
-      if Result <> '' then
-        Result := Result + ' ';
-      Result := Result + 'in ' + S;
-    end;
-  end;
+  Result := aMainRecord.ElementEditValues['Worldspace'];
+  if Result <> '' then
+    Result := ' in ' + Result;
 
   if not aMainRecord.IsPersistent then begin
     Rec := aMainRecord.RecordBySignature['XCLC'];
@@ -462,71 +452,93 @@ begin
   end;
 end;
 
-function wbNAVMAddInfo(const aMainRecord: IwbMainRecord): string;
-var
-  Container : IwbContainer;
-  S         : string;
+function wbDIALAddInfo(const aMainRecord: IwbMainRecord): string;
 begin
-  Result := '';
-
-  Container := aMainRecord.Container;
-  while Assigned(Container) and (Container.ElementType <> etGroupRecord) do
-    Container := Container.Container;
-
-  if Assigned(Container) then begin
-    S := Trim(Container.Name);
-    if S <> '' then begin
-      if Result <> '' then
-        Result := Result + ' ';
-      Result := Result + 'in ' + S;
-    end;
+  Result := aMainRecord.ElementEditValues['Quest'];
+  if Result <> '' then begin
+    Result := ' in ' + Result;
   end;
+end;
+
+function wbDLBRAddInfo(const aMainRecord: IwbMainRecord): string;
+begin
+  Result := aMainRecord.ElementEditValues['Quest'];
+  if Result <> '' then begin
+    Result := ' in ' + Result;
+  end;
+end;
+
+function wbINFOAddInfo(const aMainRecord: IwbMainRecord): string;
+var
+  Response : string;
+begin
+  Result := aMainRecord.ElementEditValues['Topic'];
+  if Result <> '' then begin
+    Result := ' in ' + Result;
+    Response := Trim(aMainRecord.ElementValues['Responses\Response\NAM1']);
+    if Response <> '' then
+      Result := '''''' + Response + '''''' + Result;
+  end;
+end;
+
+function wbLANDAddInfo(const aMainRecord: IwbMainRecord): string;
+begin
+  Result := aMainRecord.ElementEditValues['Cell'];
+  if Result <> '' then begin
+    Result := ' in ' + Result;
+  end;
+end;
+
+function wbNAVMAddInfo(const aMainRecord: IwbMainRecord): string;
+begin
+  Result := aMainRecord.ElementEditValues['Cell'];
+  if Result <> '' then
+    Result := ' in ' + Result;
+end;
+
+function wbPGRDAddInfo(const aMainRecord: IwbMainRecord): string;
+begin
+  Result := aMainRecord.ElementEditValues['Cell'];
+  if Result <> '' then
+    Result := ' in ' + Result;
 end;
 
 function wbPlacedAddInfo(const aMainRecord: IwbMainRecord): string;
 var
-  Cell      : IwbMainRecord;
-  Container : IwbContainer;
-  Grid      : TwbGridCell;
-  Position  : TwbVector;
-  Rec       : IwbRecord;
-  S         : string;
+  Cell        : IwbMainRecord;
+  Container   : IwbContainer;
+  Grid        : TwbGridCell;
+  Position    : TwbVector;
 begin
-  Result := '';
+  Result := Trim(aMainRecord.RecordBySignature['NAME'].Value);
 
-  Rec := aMainRecord.RecordBySignature['NAME'];
-  if Assigned(Rec) then begin
-    S := Trim(Rec.Value);
-    if S <> '' then
-      Result := 'places ' + S;
-  end;
+  if Result <> '' then begin
+    Result := 'Places ' + Result + ' in ' + aMainRecord.ElementEditValues['Cell'];
+    if Supports(aMainRecord.Container, IwbGroupRecord, Container) then
+      Cell := IwbGroupRecord(Container).ChildrenOf;
 
-  Container := aMainRecord.Container;
-  while ( Assigned(Container) and (Container.ElementType <> etGroupRecord) ) do
-    Container := Container.Container;
-
-  if Assigned(Container) then begin  
-    S := Trim(Container.Name);
-    if S <> '' then begin
-      if Result <> '' then
-        Result := Result + ' ';
-
-      Result := Result + 'in ' + S;
-
-      // Cell Grid of Worldspace Persistent Cell References
-      if Supports(aMainRecord.Container, IwbGroupRecord, Container) then
-        Cell := IwbGroupRecord(Container).ChildrenOf;
-
-      if Assigned(Cell) and Cell.IsPersistent and (Cell.Signature = 'CELL') then
-        if aMainRecord.GetPosition(Position) then begin
-          Grid := wbPositionToGridCell(Position);
-          Result := Result + ' at ' + IntToStr(Grid.x) + ',' + IntToStr(Grid.y);
-        end;
-
-      // in precombined mesh
-      if aMainRecord.HasPrecombinedMesh then
-        Result := Result + ' in ' + aMainRecord.PrecombinedMesh;
+    if Cell.IsPersistent and aMainRecord.GetPosition(Position) then begin
+      Grid := wbPositionToGridCell(Position);
+      Result := Result + ' at ' + IntToStr(Grid.X) + ',' + IntToStr(Grid.Y);
     end;
+
+    if aMainRecord.HasPrecombinedMesh then
+      Result := Result + ' in ' + aMainRecord.PrecombinedMesh;
+  end;
+end;
+
+function wbROADAddInfo(const aMainRecord: IwbMainRecord): string;
+begin
+  Result := aMainRecord.ElementEditValues['Worldspace'];
+  if Result <> '' then
+    Result := ' in ' + Result;
+end;
+
+function wbSCENAddInfo(const aMainRecord: IwbMainRecord): string;
+begin
+  Result := aMainRecord.ElementEditValues['Quest'];
+  if Result <> '' then begin
+    Result := ' in ' + Result;
   end;
 end;
 

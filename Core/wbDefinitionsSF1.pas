@@ -1401,36 +1401,6 @@ end;
 //  end;
 //end;
 
-function wbINFOAddInfo(const aMainRecord: IwbMainRecord): string;
-var
-  Container: IwbContainer;
-  s: string;
-begin
-  Result := Trim(aMainRecord.ElementValues['Responses\Response\NAM1']);
-  if Result <> '' then
-    Result := '''' + Result + '''';
-
-  Container := aMainRecord.Container;
-  while Assigned(Container) and (Container.ElementType <> etGroupRecord) do
-    Container := Container.Container;
-
-  if Assigned(Container) then begin
-    s := Trim(Container.Name);
-    if s <> '' then begin
-      if Result <> '' then
-        Result := Result + ' ';
-      Result := Result + 'in ' + s;
-    end;
-  end;
-
-  s := Trim(aMainRecord.ElementValues['QNAM']);
-  if s <> '' then begin
-    if Result <> '' then
-      Result := Result + ' ';
-    Result := Result + 'for ' + s;
-  end;
-end;
-
 function wbNPCLevelDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
 var
   Container: IwbContainer;
@@ -9970,7 +9940,7 @@ end;
     wbInteger(TIFC, 'Info Count', itU32, nil, cpIgnore),
     wbINOM,
     wbINOA
-  ]);
+  ], False, wbDIALAddInfo);
 
   {subrecords checked against Starfield.esm}
   wbRecord(DOOR, 'Door',
@@ -12363,7 +12333,7 @@ end;
       {0x04} 'Exclusive'
     ])).IncludeFlag(dfCollapsed, wbCollapseFlags),
     wbFormIDCk(SNAM, 'Starting Topic', [DIAL], False, cpNormal, True)
-  ]);
+  ], False, wbDLBRAddInfo);
 
   {subrecords checked against Starfield.esm}
   wbRecord(MUST, 'Music Track', [
@@ -12876,7 +12846,7 @@ end;
       wbArray(SPPK, 'Perks', wbFormIDCk('Perk', [PERK]))
     ], []),
     wbEmpty(DEVT, 'Show One Dialogue Track Flag')
-  ]);
+  ], False, wbSCENAddInfo);
 
   (* still exists in game code, but not in Starfield.esm *)
   wbRecord(ASTP, 'Association Type', [

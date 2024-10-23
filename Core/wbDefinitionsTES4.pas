@@ -2922,7 +2922,7 @@ var  wbSoundTypeSoundsOld :=
     wbRArray('Choices', wbFormIDCk(TCLT, 'Choice', [DIAL])),
     wbRArray('Link From', wbFormIDCk(TCLF, 'Topic', [DIAL])),
     wbResultScript
-  ]);
+  ], False, wbINFOAddInfo);
 
   wbRecord(INGR, 'Ingredient',
     wbFlags(wbFlagsList([
@@ -2985,7 +2985,7 @@ var  wbSoundTypeSoundsOld :=
     wbLandLayers,
     wbArray(VTEX, 'Landscape Textures',
       wbFormIDCk('Texture', [LTEX, NULL]))
-  ]);
+  ], False, wbLANDAddInfo);
 
 
   wbRecord(LIGH, 'Light',
@@ -3572,7 +3572,7 @@ var  wbSoundTypeSoundsOld :=
         wbArrayS('Points', wbInteger('Point', itU32))
       ])
     )
-  ], False, nil, cpNormal, False, wbPGRDAfterLoad);
+  ], False, wbPGRDAddInfo, cpNormal, False, wbPGRDAfterLoad);
 
   wbRecord(QUST, 'Quest', [
     wbEDID,
@@ -3912,7 +3912,7 @@ var  wbSoundTypeSoundsOld :=
        declaratively }
       wbVec3('Point'),
     0, nil, nil, cpNormal, True)
-  ]);
+  ], False, wbROADAddInfo);
 
   wbRecord(SBSP, 'Subspace', [
     wbEDID,
