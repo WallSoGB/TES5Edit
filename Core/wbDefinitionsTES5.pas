@@ -1176,50 +1176,6 @@ begin
   end;
 end;
 
-function wbINFOAddInfo(const aMainRecord: IwbMainRecord): string;
-var
-  Container: IwbContainer;
-  s: string;
-  i: Integer;
-begin
-  Result := Trim(aMainRecord.ElementValues['Responses\Response\NAM1']);
-  if Result <> '' then
-    Result := '''' + Result + '''';
-
-  s := '';
-  i := aMainRecord.ElementNativeValues['ENAM\Flags'];
-  if (i and $0001) <> 0 then
-    s := s + '[G]';
-  if (i and $0002) <> 0 then
-    s := s + '[R]';
-  if (i and $0020) <> 0 then
-    s := s + '[RE]';
-  if (i and $0004) <> 0 then
-    s := s + '[SO]';
-
-  Result := s + Result;
-
-  Container := aMainRecord.Container;
-  while Assigned(Container) and (Container.ElementType <> etGroupRecord) do
-    Container := Container.Container;
-
-  if Assigned(Container) then begin
-    s := Trim(Container.Name);
-    if s <> '' then begin
-      if Result <> '' then
-        Result := Result + ' ';
-      Result := Result + 'in ' + s;
-    end;
-  end;
-
-  s := Trim(aMainRecord.ElementValues['QNAM']);
-  if s <> '' then begin
-    if Result <> '' then
-      Result := Result + ' ';
-    Result := Result + 'for ' + s;
-  end;
-end;
-
 function wbNPCLevelDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
 var
   Container: IwbContainer;
@@ -9051,7 +9007,7 @@ begin
     wbLandColors,
     wbLandLayers,
     wbRArray('Unknown', wbUnknown(MPCD))
-  ]);
+  ], False, wbLANDAddInfo);
 
   wbRecord(LIGH, 'Light',
     wbFlags(wbFlagsList([
