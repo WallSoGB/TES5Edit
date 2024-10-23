@@ -498,7 +498,7 @@ begin
   if Assigned(Rec) then begin
     S := Trim(Rec.Value);
     if S <> '' then
-      Result := 'places ' + s;
+      Result := 'places ' + S;
   end;
 
   Container := aMainRecord.Container;
