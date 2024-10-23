@@ -432,35 +432,34 @@ uses
 
 function wbCellAddInfo(const aMainRecord: IwbMainRecord): string;
 var
-  Rec: IwbRecord;
-  Container: IwbContainer;
+  Container   : IwbContainer;
   GroupRecord : IwbGroupRecord;
-  s: string;
+  Rec         : IwbRecord;
+  S           : string;
 begin
   Result := '';
+
+  Container := aMainRecord.Container;
+  while Assigned(Container) and not
+    ( Supports(Container, IwbGroupRecord, GroupRecord)
+  and (GroupRecord.GroupType = 1)
+    ) do
+    Container := Container.Container;
+
+  if Assigned(Container) then begin
+    S := wbFormID.ToString(GroupRecord.GroupLabel, aMainRecord, False);
+    if S <> '' then begin
+      if Result <> '' then
+        Result := Result + ' ';
+      Result := Result + 'in ' + S;
+    end;
+  end;
 
   if not aMainRecord.IsPersistent then begin
     Rec := aMainRecord.RecordBySignature['XCLC'];
     if Assigned(Rec) then
-      Result := 'at ' + Rec.Elements[0].Value + ',' + Rec.Elements[1].Value;
+      Result := Result + ' at ' + Rec.Elements[0].Value + ',' + Rec.Elements[1].Value;
   end;
-
-  Container := aMainRecord.Container;
-  while Assigned(Container) and not
-    (Supports(Container, IwbGroupRecord, GroupRecord) and (GroupRecord.GroupType = 1)) do
-    Container := Container.Container;
-
-  if not Assigned(Container) then
-    Exit;
-
-  s := wbFormID.ToString(GroupRecord.GroupLabel, aMainRecord, False);
-  if not (s <> '') then
-    Exit;
-
-  if Result <> '' then
-    s := s + ' ';
-
-  Result := 'in ' + s + Result;
 end;
 
 function wbNAVMAddInfo(const aMainRecord: IwbMainRecord): string;
