@@ -2432,12 +2432,12 @@ var  wbSoundTypeSoundsOld :=
   wbRecord(GMST, 'Game Setting', [
     wbEDID,
     wbUnion(DATA, 'Value', wbGMSTUnionDecider, [
-      wbString('', 0, cpTranslate),
-      wbInteger('', itS32),
-      wbFloat('')
-    ], cpNormal, True)
+      wbString('Name', 0, cpTranslate),
+      wbInteger('Int', itS32),
+      wbFloat('Float')
+    ]).SetRequired
   ]).SetSummaryKey([1])
-  .IncludeFlag(dfIndexEditorID);
+    .IncludeFlag(dfIndexEditorID);
 
   wbRecord(GRAS, 'Grass', [
     wbEDID,

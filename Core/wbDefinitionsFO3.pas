@@ -5024,16 +5024,15 @@ var  wbSoundTypeSoundsOld :=
     wbFloat(FLTV, 'Value', cpNormal, True)
   ]);
 
-
   wbRecord(GMST, 'Game Setting', [
     wbString(EDID, 'Editor ID', 0, cpCritical, True, nil, wbGMSTEDIDAfterSet),
     wbUnion(DATA, 'Value', wbGMSTUnionDecider, [
-      wbString('', 0, cpTranslate),
-      wbInteger('', itS32),
-      wbFloat('')
-    ], cpNormal, True)
-  ])
-  .IncludeFlag(dfIndexEditorID);
+      wbString('Name', 0, cpTranslate),
+      wbInteger('Int', itS32),
+      wbFloat('Float')
+    ]).SetRequired
+  ]).SetSummaryKey([1])
+    .IncludeFlag(dfIndexEditorID);
 
   wbDODT := wbStruct(DODT, 'Decal Data', [
               wbFloat('Min Width'),

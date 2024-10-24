@@ -10539,9 +10539,9 @@ begin
       wbFloat('Float'),
       wbInteger('Bool', itU32, wbBoolEnum),
       wbInteger('UInt', itU32)
-    ], cpNormal, True)
-  ])
-  .IncludeFlag(dfIndexEditorID);
+    ]).SetRequired
+  ]).SetSummaryKey([1])
+    .IncludeFlag(dfIndexEditorID);
 
   wbRecord(KYWD, 'Keyword',
     wbFlags(wbFlagsList([

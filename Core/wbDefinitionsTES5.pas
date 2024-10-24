@@ -6313,9 +6313,9 @@ begin
       wbInteger('Int', itS32),
       wbFloat('Float'),
       wbInteger('Bool', itU32, wbBoolEnum)
-    ], cpNormal, True)
-  ])
-  .IncludeFlag(dfIndexEditorID);
+    ]).SetRequired
+  ]).SetSummaryKey([1])
+    .IncludeFlag(dfIndexEditorID);
 
   wbRecord(KYWD, 'Keyword', [
     wbEDID,

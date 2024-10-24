@@ -10320,10 +10320,9 @@ end;
       wbInteger('Int', itS32),
       wbFloat('Float'),
       wbInteger('Bool', itU32, wbBoolEnum)
-    ], cpNormal, True)
-  ])
-  .SetSummaryKey([2])
-  .IncludeFlag(dfIndexEditorID);
+    ]).SetRequired
+  ]).SetSummaryKey([2])
+    .IncludeFlag(dfIndexEditorID);
 
   {subrecords checked against Starfield.esm}
   wbRecord(KYWD, 'Keyword',
