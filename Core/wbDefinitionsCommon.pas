@@ -512,10 +512,12 @@ var
   Grid        : TwbGridCell;
   Position    : TwbVector;
 begin
-  Result := Trim(aMainRecord.RecordBySignature['NAME'].Value);
+  Result := aMainRecord.ElementEditValues['Cell'];
+  if Result <> '' then
+    Result := ' in ' + Result;
 
-  if Result <> '' then begin
-    Result := 'Places ' + Result + ' in ' + aMainRecord.ElementEditValues['Cell'];
+  if not aMainRecord.IsDeleted then begin
+    Result := 'Places ' + Trim(aMainRecord.RecordBySignature['NAME'].Value) + Result;
     if Supports(aMainRecord.Container, IwbGroupRecord, Container) then
       Cell := IwbGroupRecord(Container).ChildrenOf;
 
