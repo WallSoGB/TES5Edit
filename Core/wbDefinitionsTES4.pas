@@ -3315,7 +3315,7 @@ var  wbSoundTypeSoundsOld :=
     wbFormIDCk(HNAM, 'Hair', [HAIR]),
     wbFloat(LNAM, 'Hair length'),
     wbArray(ENAM, 'Eyes', wbFormIDCk('Eyes', [EYES])),
-    wbByteColors(HCLR, 'Hair color').SetRequired(True),
+    wbByteColors(HCLR, 'Hair color').SetRequired,
     wbFormIDCk(ZNAM, 'Combat Style', [CSTY]),
     wbFaceGen,
     wbByteArray(FNAM, 'Unknown', 0, cpBenign)
@@ -3735,7 +3735,7 @@ var  wbSoundTypeSoundsOld :=
     ])), [
     wbEDID,
     wbICON,
-    wbByteColors(RCLR, 'Map Color').SetRequired(True),
+    wbByteColors(RCLR, 'Map Color').SetRequired,
     wbFormIDCkNoReach(WNAM, 'Worldspace', [WRLD]),
 
     wbRArray('Region Areas', wbRStruct('Region Area', [

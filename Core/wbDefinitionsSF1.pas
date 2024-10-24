@@ -8652,7 +8652,7 @@ end;
           wbString(MODL, 'Model FileName'),
     //      wbMODT, // can still be read, might not be properly supported anymore, doesn't occur in Starfield.esm
           wbMOLM(MOLM),
-          wbFLLD.SetRequired(True),
+          wbFLLD.SetRequired,
           wbMODC,
           wbInteger(XFLG, 'Flags', itU8, wbModelFlags).IncludeFlag(dfCollapsed, wbCollapseFlags)
     //      wbMODS, // can still be read, might not be properly supported anymore, doesn't occur in Starfield.esm
@@ -16929,8 +16929,8 @@ end;
     wbPRPS,
     wbByteColors(PNAM, 'Marker Color (Unused)'),
     wbATTX,
-    wbUnknown(FNAM).SetRequired(True),                               // FNAM/JNAM look like remnants from ACTI struct
-    wbUnknown(JNAM).SetDefaultEditValue('68 01').SetRequired(True),
+    wbUnknown(FNAM).SetRequired,                               // FNAM/JNAM look like remnants from ACTI struct
+    wbUnknown(JNAM).SetDefaultEditValue('68 01').SetRequired,
     wbFormIDCk(PFIG, 'Ingredient', sigBaseObjects),
     wbSoundReference(PFHS, 'Harvest Sound'),
     wbStruct(PFPC, 'Ingredient Production', [
@@ -17826,8 +17826,8 @@ end;
       wbString(BNAM, 'End Bone Name'),
       wbFloat(RADR, 'Radius'),
       wbFloat(WTMX, 'Weight')
-    ], []).SetRequired(True),
-    wbInteger(AAPS, 'Count', itU32, nil, cpBenign).SetRequired(True).IncludeFlag(dfSkipImplicitEdit),
+    ], []).SetRequired,
+    wbInteger(AAPS, 'Count', itU32, nil, cpBenign).SetRequired.IncludeFlag(dfSkipImplicitEdit),
     wbRStructS('Bullet Bending Pills', 'Pill', [
       wbString(ANAM, 'Start Bone Name'),
       wbString(BNAM, 'End Bone Name'),
@@ -19468,13 +19468,13 @@ end;
             {0x08} 'Creates New Window'
           ])).IncludeFlag(dfCollapsed, wbCollapseFlags),
           wbUnused(3)
-        ]).SetRequired(True),
-        wbInteger(ITID, 'ID', itU16).SetRequired(True),
+        ]).SetRequired,
+        wbInteger(ITID, 'ID', itU16).SetRequired,
         wbXLOC,
         wbRUnion('Text/Submenu', wbTMLMTypeUnionDeciderCallback, [
-            {0} wbLStringKC(UNAM, 'Display Text', 0, cpTranslate).SetRequired(True),
-            {1} wbFormIDCk(TNAM, 'Submenu - TerminalMenu', [TMLM]).SetRequired(True),
-            {2} wbFormIDCk(BNAM, 'DataSlate - BOOK', [BOOK]).SetRequired(True),
+            {0} wbLStringKC(UNAM, 'Display Text', 0, cpTranslate).SetRequired,
+            {1} wbFormIDCk(TNAM, 'Submenu - TerminalMenu', [TMLM]).SetRequired,
+            {2} wbFormIDCk(BNAM, 'DataSlate - BOOK', [BOOK]).SetRequired,
             {3} wbEmpty(NULL) // placeholder - can't actually be set
                 .IncludeFlag(dfDontAssign)
                 .IncludeFlag(dfDontSave)
