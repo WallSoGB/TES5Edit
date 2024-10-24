@@ -290,7 +290,7 @@ function wbVertexToStr2(aInt: Int64; const aElement: IwbElement; aType: TwbCallb
 function wbVTXTPosition(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
 function wbWeatherCloudSpeedToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
 
-{>>> Union Deciders <<<} //19
+{>>> Union Deciders <<<} //20
 function wbCOEDOwnerDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
 function wbCTDAParam3Decider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
 function wbCTDAReferenceDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
@@ -298,6 +298,7 @@ function wbFlagDecider(aFlag: Byte): TwbUnionDecider;
 function wbFormVersionDecider(aVersion: Integer): TwbUnionDecider; overload;
 function wbFormVersionDecider(aMinVersion, aMaxVersion: Integer): TwbUnionDecider; overload;
 function wbFormVersionDecider(const aVersions: array of Integer): TwbUnionDecider; overload;
+function wbGMSTUnionDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
 function wbModelInfoDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
 function wbNoFlagsDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
 function wbNoteTypeDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
@@ -2821,7 +2822,7 @@ begin
   end;
 end;
 
-{>>> Union Deciders <<<} //19
+{>>> Union Deciders <<<} //20
 
 function wbCOEDOwnerDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
 var
@@ -2978,6 +2979,34 @@ begin
 
       Exit(Length(Versions));
     end;
+end;
+
+function wbGMSTUnionDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+var
+  EDID: IwbRecord;
+  S: string;
+begin
+  if Assigned(aElement) then begin;
+    EDID := aElement.Container.RecordBySignature['EDID'];
+    if Assigned(EDID) then begin
+      S := EDID.Value;
+      if Length(S) > 0 then begin
+        case s[1] of
+          's': Result := 0; {String} {>>> Localization Strings <<<}
+          'i': Result := 1; {intS32}
+          'f': Result := 2; {Float}
+        end;
+        if wbGameMode >= gmTES5 then
+        case s[1] of
+          'b': Result := 3; {Boolean}
+        end;
+        if wbGameMode = gmFO76 then
+        case s[1] of
+          'u': Result := 4; {Uint32}
+        end;
+      end;
+    end;
+  end;
 end;
 
 function wbModelInfoDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;

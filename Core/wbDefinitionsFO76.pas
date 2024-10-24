@@ -2100,29 +2100,6 @@ begin
     Result := 1;
 end;
 
-function wbGMSTUnionDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
-var
-  rEDID: IwbRecord;
-  s: string;
-begin
-  Result := 1;
-  if not Assigned(aElement) then
-    Exit;
-  rEDID := aElement.Container.RecordBySignature[EDID];
-  if not Assigned(rEDID) then
-    Exit;
-
-  s := rEDID.Value;
-  if Length(s) > 0 then
-    case s[1] of
-      's': Result := 0; {String} {>>> Localization Strings <<<}
-      'i': Result := 1; {intS32}
-      'f': Result := 2; {Float}
-      'b': Result := 3; {Boolean}
-      'u': Result := 4; {Uint32}
-    end;
-end;
-
 function wbFLSTLNAMIsSorted(const aContainer: IwbContainer): Boolean;
 var
   rEDID      : IwbRecord;
