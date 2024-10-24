@@ -1106,31 +1106,6 @@ begin
   Result := Value;
 end;
 
-function wbGLOBFNAM(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
-begin
-  Result := '';
-  case aType of
-    ctToStr, ctToSummary: begin
-      case aInt of
-        Ord('s'): Result := 'Short';
-        Ord('l'): Result := 'Long';
-        Ord('f'): Result := 'Float';
-        Ord('b'): Result := 'Boolean';
-      else
-        Result := '<Unknown: '+aInt.ToString+'>';
-      end;
-    end;
-    ctToSortKey: Result := Chr(aInt);
-    ctCheck: begin
-      case aInt of
-        Ord('s'), Ord('l'), Ord('f'), Ord('b'): Result := '';
-      else
-        Result := '<Unknown: '+aInt.ToString+'>';
-      end;
-    end;
-  end;
-end;
-
 function wbNPCLevelDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
 var
   Container: IwbContainer;

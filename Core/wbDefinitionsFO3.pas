@@ -954,30 +954,6 @@ begin
   end;
 end;
 
-function wbGLOBFNAM(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
-begin
-  Result := '';
-  case aType of
-    ctToStr, ctToSummary: begin
-      case aInt of
-        Ord('s'): Result := 'Short';
-        Ord('l'): Result := 'Long';
-        Ord('f'): Result := 'Float';
-      else
-        Result := '<Unknown: '+aInt.ToString+'>';
-      end;
-    end;
-    ctToSortKey: Result := Chr(aInt);
-    ctCheck: begin
-      case aInt of
-        Ord('s'), Ord('l'), Ord('f'): Result := '';
-      else
-        Result := '<Unknown: '+aInt.ToString+'>';
-      end;
-    end;
-  end;
-end;
-
 function wbNOTETNAMDecide(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
 var
   rDATA: IwbRecord;

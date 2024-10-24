@@ -33,30 +33,6 @@ var
   wbServiceFlags: IwbFlagsDef;
   wbAttributeEnum: IwbEnumDef;
 
-function wbGLOBFNAM(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
-begin
-  Result := '';
-  case aType of
-    ctToStr, ctToSummary: begin
-      case aInt of
-        Ord('s'): Result := 'Short';
-        Ord('l'): Result := 'Long';
-        Ord('f'): Result := 'Float';
-      else
-        Result := '<Unknown: '+aInt.ToString+'>';
-      end;
-    end;
-    ctToSortKey: Result := Chr(aInt);
-    ctCheck: begin
-      case aInt of
-        Ord('s'), Ord('l'), Ord('f'): Result := '';
-      else
-        Result := '<Unknown: '+aInt.ToString+'>';
-      end;
-    end;
-  end;
-end;
-
 function wbNPCDataDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
 var
   SubRecord: IwbSubRecord;
@@ -968,7 +944,11 @@ begin
 
   wbRecord(GLOB, 'Global', [
     wbString(NAME, 'ID'),
-    wbString(FNAM, 'Type', 1),
+    wbInteger(FNAM, 'Type', itU8, wbEnum([], [
+      Ord('s'), 'Short',
+      Ord('l'), 'Long',
+      Ord('f'), 'Float'
+    ]), cpNormal, True).SetDefaultEditValue('Float'),
     wbUnion(FLTV, 'Value', wbGLOBUnionDecider, [
       wbFloat('Comparison Value - Short'),
       wbByteArray('Comparison Value - Long'),
