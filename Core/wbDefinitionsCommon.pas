@@ -3940,9 +3940,9 @@ begin
   Assert(Length(aSigs) = 3, 'wbRFloatColors called with incorrect number of signatures.');
 
   Result := wbRStruct(aName, [
-    wbFloat(aSigs[0], 'Red', cpNormal, False, 255, 0).SetRequired(True),
-    wbFloat(aSigs[1], 'Green', cpNormal, False, 255, 0).SetRequired(True),
-    wbFloat(aSigs[2], 'Blue', cpNormal, False, 255, 0).SetRequired(True)
+    wbFloat(aSigs[0], 'Red', cpNormal, False, 255, 0).SetRequired,
+    wbFloat(aSigs[1], 'Green', cpNormal, False, 255, 0).SetRequired,
+    wbFloat(aSigs[2], 'Blue', cpNormal, False, 255, 0).SetRequired
   ], []).SetToStr(wbRGBAToStr).IncludeFlag(dfCollapsed, wbCollapseRGBA);
 end;
 
