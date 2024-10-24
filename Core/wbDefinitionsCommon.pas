@@ -3000,7 +3000,6 @@ begin
         case s[1] of
           'b': Result := 3; {Boolean}
         end;
-        if wbGameMode = gmFO76 then
         if (wbGameMode in [gmFO76, gmSF1]) then
         case s[1] of
           'u': Result := 4; {Uint32}
