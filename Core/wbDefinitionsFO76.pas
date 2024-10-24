@@ -4373,33 +4373,6 @@ begin
   end;
 end;
 
-procedure wbLIGHAfterLoad(const aElement: IwbElement);
-var
-  Container: IwbContainerElementRef;
-  MainRecord   : IwbMainRecord;
-begin
-  if wbBeginInternalEdit then try
-    if not wbTryGetContainerWithValidMainRecord(aElement, Container, MainRecord) then
-      Exit;
-
-    if not Container.ElementExists['FNAM'] then begin
-      Container.Add('FNAM', True);
-      Container.ElementNativeValues['FNAM'] := 1.0;
-    end;
-
-    if not Container.ElementExists['DATA'] then
-      Exit;
-
-    if SameValue(Container.ElementNativeValues['DATA\Falloff Exponent'], 0.0) then
-      Container.ElementNativeValues['DATA\Falloff Exponent'] := 1.0;
-
-    if SameValue(Container.ElementNativeValues['DATA\FOV'], 0.0) then
-      Container.ElementNativeValues['DATA\FOV'] := 90.0;
-  finally
-    wbEndInternalEdit;
-  end;
-end;
-
 procedure wbEFITAfterLoad(const aElement: IwbElement);
 var
   Container : IwbContainerElementRef;
@@ -13700,8 +13673,10 @@ begin
         {0x01000000} 'Unknown 24',
         {0x02000000} 'Unknown 25'
       ])),
-      wbFloat('Falloff Exponent'),
-      wbFloat('FOV'),
+      wbFloat('Falloff Exponent')
+        .SetDefaultNativeValue(1),
+      wbFloat('FOV')
+        .SetDefaultNativeValue(90),
       wbFloat('Near Clip'),
       wbStruct('Flicker Effect', [
         wbFloat('Period'),
@@ -13721,7 +13696,7 @@ begin
     wbFormIDCk(LNAM, 'Lens', [LENS]),
     wbFormIDCk(WGDR, 'God Rays', [GDRY]),
     wbFormIDCk(SNAM, 'Sound', [SNDR])
-  ], False, nil, cpNormal, False, wbLIGHAfterLoad);
+  ]);
 
   wbRecord(LSCR, 'Load Screen',
     wbFlags(wbFlagsList([

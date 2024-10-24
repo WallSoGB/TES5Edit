@@ -13305,8 +13305,10 @@ end;
             'Externally Controlled'
            ])).IncludeFlag(dfCollapsed, wbCollapseFlags),
       {14} wbUnused(2),
-      {16} wbFloat('Falloff Exponent'),
-      {20} wbFloat('FOV'),
+      {16} wbFloat('Falloff Exponent')
+             .SetDefaultNativeValue(1),
+      {20} wbFloat('FOV')
+             .SetDefaultNativeValue(90),
       {24} wbFloat('Near Clip'),
            wbStruct('Flicker Effect', [
       {28}   wbFloat('Period'),
@@ -13357,10 +13359,11 @@ end;
       $04, 'Ship Interior',
       $08, 'Ship Exterior',
       $0F, 'All Layers'
-    ]), cpNormal, True).SetDefaultNativeValue(1).IncludeFlag(dfCollapsed, wbCollapseFlags),
+    ])).SetDefaultNativeValue(1)
+       .SetRequired,
     wbFLADReq,
     wbFloat(FVLD, 'Volumetric Light Intensity Scale')
-  ], False, nil, cpNormal, False);
+  ]);
 
   {subrecords checked against Starfield.esm}
   wbRecord(LSCR, 'Load Screen',

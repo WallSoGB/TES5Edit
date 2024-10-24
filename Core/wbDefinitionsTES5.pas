@@ -2782,33 +2782,6 @@ end;
 //  end;
 //end;
 
-procedure wbLIGHAfterLoad(const aElement: IwbElement);
-var
-  Container: IwbContainerElementRef;
-  MainRecord: IwbMainRecord;
-begin
-  if wbBeginInternalEdit then try
-    if not wbTryGetContainerWithValidMainRecord(aElement, Container, MainRecord) then
-      Exit;
-
-    if not Container.ElementExists['FNAM'] then begin
-      Container.Add('FNAM', True);
-      Container.ElementNativeValues['FNAM'] := 1.0;
-    end;
-
-    if not Container.ElementExists['DATA'] then
-      Exit;
-
-    if SameValue(Container.ElementNativeValues['DATA\Falloff Exponent'], 0.0) then
-      Container.ElementNativeValues['DATA\Falloff Exponent'] := 1.0;
-
-    if SameValue(Container.ElementNativeValues['DATA\FOV'], 0.0) then
-      Container.ElementNativeValues['DATA\FOV'] := 90.0;
-  finally
-    wbEndInternalEdit;
-  end;
-end;
-
 procedure wbEFITAfterLoad(const aElement: IwbElement);
 var
   Container : IwbContainerElementRef;
@@ -8950,8 +8923,10 @@ begin
         {0x00001000} 'Shadow Omnidirectional',
         {0x00002000} 'Portal-strict'
       ])),
-      wbFloat('Falloff Exponent'),
-      wbFloat('FOV'),
+      wbFloat('Falloff Exponent')
+        .SetDefaultNativeValue(1),
+      wbFloat('FOV')
+        .SetDefaultNativeValue(90),
       wbFloat('Near Clip'),
       wbStruct('Flicker Effect', [
         wbFloat('Period', cpNormal, False, 0.01),
@@ -8961,11 +8936,13 @@ begin
       wbInteger('Value', itU32),
       wbFloat('Weight')
     ], cpNormal, True),
-    wbFloat(FNAM, 'Fade value', cpNormal, True),
+    wbFloat(FNAM, 'Fade value')
+      .SetDefaultNativeValue(1.0)
+      .SetRequired,
     wbFormIDCk(SNAM, 'Sound', [SNDR]),
     // SSE
     wbFormIDCk(LNAM, 'Lens', [LENS])
-  ], False, nil, cpNormal, False, wbLIGHAfterLoad);
+  ]);
 
   wbRecord(LSCR, 'Load Screen',
     wbFlags(wbFlagsList([
