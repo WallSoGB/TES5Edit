@@ -10319,7 +10319,8 @@ end;
       wbLString('Name', 0, cpTranslate),
       wbInteger('Int', itS32),
       wbFloat('Float'),
-      wbInteger('Bool', itU32, wbBoolEnum)
+      wbInteger('Bool', itU32, wbBoolEnum),
+      wbInteger('UInt', itU32)
     ]).SetRequired
   ]).SetSummaryKey([2])
     .IncludeFlag(dfIndexEditorID);
