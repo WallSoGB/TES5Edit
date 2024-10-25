@@ -20436,7 +20436,6 @@ end;
   wbAddGroupOrder(CLFM);
   wbAddGroupOrder(REVB);
   wbAddGroupOrder(RFGP);
-
   wbAddGroupOrder(AMDL);
   wbAddGroupOrder(AAMD);
   wbAddGroupOrder(MAAM);
