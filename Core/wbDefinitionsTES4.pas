@@ -4247,8 +4247,16 @@ var  wbSoundTypeSoundsOld :=
   wbAddGroupOrder(CLMT);
   wbAddGroupOrder(REGN);
   wbAddGroupOrder(CELL);
+  //wbAddGroupOrder(REFR);
+  //wbAddGroupOrder(ACHR);
+  //wbAddGroupOrder(ACRE);
+  //wbAddGroupOrder(PGRD);
   wbAddGroupOrder(WRLD);
+  //wbAddGroupOrder(LAND);
+  //wbAddGroupOrder(TLOD);
+  //wbAddGroupOrder(ROAD);
   wbAddGroupOrder(DIAL);
+  //wbAddGroupOrder(INFO);
   wbAddGroupOrder(QUST);
   wbAddGroupOrder(IDLE);
   wbAddGroupOrder(PACK);
@@ -4258,6 +4266,7 @@ var  wbSoundTypeSoundsOld :=
   wbAddGroupOrder(ANIO);
   wbAddGroupOrder(WATR);
   wbAddGroupOrder(EFSH);
+  //wbAddGroupOrder(TOFT);
   wbNexusModsUrl := 'https://www.nexusmods.com/oblivion/mods/11536';
   if wbToolMode = tmLODgen then
     wbNexusModsUrl := 'https://www.nexusmods.com/oblivion/mods/15781';

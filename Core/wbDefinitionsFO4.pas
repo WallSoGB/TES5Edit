@@ -14713,7 +14713,7 @@ begin
    wbAddGroupOrder(ASPC);
    //wbAddGroupOrder(SKIL);
    wbAddGroupOrder(MGEF);
-   //wbAddGroupOrder(SCPT);{>>> Unused in Skyrim, but contained in Skyrim.esm <<<}
+   //wbAddGroupOrder(SCPT);
    wbAddGroupOrder(LTEX);
    wbAddGroupOrder(ENCH);
    wbAddGroupOrder(SPEL);
@@ -14801,7 +14801,7 @@ begin
    wbAddGroupOrder(ECZN);
    wbAddGroupOrder(LCTN);
    wbAddGroupOrder(MESG);
-   //wbAddGroupOrder(RGDL);{>>> Unused in Skyrim, but contained in Skyrim.esm <<<}
+   //wbAddGroupOrder(RGDL);
    wbAddGroupOrder(DOBJ);
    wbAddGroupOrder(DFOB);
    wbAddGroupOrder(LGTM);
@@ -14825,7 +14825,7 @@ begin
    wbAddGroupOrder(MATO);
    wbAddGroupOrder(MOVT);
    wbAddGroupOrder(SNDR);
-   wbAddGroupOrder(DUAL); // doesn't exist but can be created in CK
+   wbAddGroupOrder(DUAL);
    wbAddGroupOrder(SNCT);
    wbAddGroupOrder(SOPM);
    wbAddGroupOrder(COLL);

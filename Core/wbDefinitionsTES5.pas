@@ -11729,6 +11729,7 @@ begin
    wbAddGroupOrder(LCRT);
    wbAddGroupOrder(AACT);
    wbAddGroupOrder(TXST);
+   //wbAddGroupOrder(MICN);
    wbAddGroupOrder(GLOB);
    wbAddGroupOrder(CLAS);
    wbAddGroupOrder(FACT);
@@ -11771,6 +11772,7 @@ begin
    wbAddGroupOrder(KEYM);
    wbAddGroupOrder(ALCH);
    wbAddGroupOrder(IDLM);
+   //wbAddGroupOrder(NOTE);
    wbAddGroupOrder(COBJ);
    wbAddGroupOrder(PROJ);
    wbAddGroupOrder(HAZD);
@@ -11783,8 +11785,22 @@ begin
    wbAddGroupOrder(REGN);
    wbAddGroupOrder(NAVI);
    wbAddGroupOrder(CELL);
+   //wbAddGroupOrder(REFR);
+   //wbAddGroupOrder(ACHR);
+   //wbAddGroupOrder(PMIS);
+   //wbAddGroupOrder(PARW);
+   //wbAddGroupOrder(PGRE);
+   //wbAddGroupOrder(PBEA);
+   //wbAddGroupOrder(PFLA);
+   //wbAddGroupOrder(PCON);
+   //wbAddGroupOrder(PBAR);
+   //wbAddGroupOrder(PHZD);
    wbAddGroupOrder(WRLD);
+   //wbAddGroupOrder(LAND);
+   //wbAddGroupOrder(NAVM);
+   //wbAddGroupOrder(TLOD);
    wbAddGroupOrder(DIAL);
+   //wbAddGroupOrder(INFO);
    wbAddGroupOrder(QUST);
    wbAddGroupOrder(IDLE);
    wbAddGroupOrder(PACK);
@@ -11794,6 +11810,7 @@ begin
    wbAddGroupOrder(ANIO);
    wbAddGroupOrder(WATR);
    wbAddGroupOrder(EFSH);
+   //wbAddGroupOrder(TOFT);
    wbAddGroupOrder(EXPL);
    wbAddGroupOrder(DEBR);
    wbAddGroupOrder(IMGS);
@@ -11834,7 +11851,6 @@ begin
    wbAddGroupOrder(OTFT);
    wbAddGroupOrder(ARTO);
    wbAddGroupOrder(MATO);
-   if wbIsSkyrimSE then wbAddGroupOrder(VOLI); {New to SSE}
    wbAddGroupOrder(MOVT);
    wbAddGroupOrder(SNDR);
    wbAddGroupOrder(DUAL);
@@ -11844,6 +11860,8 @@ begin
    wbAddGroupOrder(CLFM);
    wbAddGroupOrder(REVB);
    if wbIsSkyrimSE then wbAddGroupOrder(LENS); {New to SSE}
+   //wbAddGroupOrder(LSPR);
+   if wbIsSkyrimSE then wbAddGroupOrder(VOLI); {New to SSE}
   if wbIsSkyrimSE then begin
     wbNexusModsUrl := 'https://www.nexusmods.com/skyrimspecialedition/mods/164';
     if wbToolMode = tmLODgen then
