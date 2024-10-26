@@ -45,7 +45,6 @@ var
   wbEDID: IwbSubRecordDef;
   wbXOWN: IwbSubRecordDef;
   wbXGLB: IwbSubRecordDef;
-  wbXRGD: IwbSubRecordDef;
   wbSLSD: IwbRecordMemberDef;
   wbSPLO: IwbSubRecordDef;
   wbSPLOs: IwbSubRecordArrayDef;
@@ -1365,9 +1364,6 @@ begin
 
   wbIgnoreRecords.Add(XXXX);
 
-
-  wbXRGD := wbByteArray(XRGD, 'Ragdoll Data');
-
   wbEDID := wbString(EDID, 'Editor ID', 0, cpNormal); // not cpBenign according to Arthmoor
   wbFULL := wbStringKC(FULL, 'Name', 0, cpTranslate);
   wbFULLReq := wbStringKC(FULL, 'Name', 0, cpTranslate, True);
@@ -1401,7 +1397,7 @@ begin
     wbXESP,
     wbFormIDCk(XMRC, 'Merchant container', [REFR], True),
     wbFormIDCk(XHRS, 'Horse', [ACRE], True),
-    wbXRGD,
+    wbRagdoll,
     wbXSCL,
     wbDATAPosRot
   ], True, wbPlacedAddInfo, cpNormal, False, wbREFRAfterLoad);
@@ -1420,7 +1416,7 @@ begin
     wbEDID,
     wbFormIDCk(NAME, 'Base', [CREA], False, cpNormal, True),
     wbOwnership(wbXOWN, [], wbXGLB),
-    wbXRGD,
+    wbRagdoll,
     wbXLOD,
     wbXESP,
     wbXSCL,
@@ -3707,7 +3703,7 @@ var  wbSoundTypeSoundsOld :=
       ], cpNormal, True)
     ], []),
     wbEmpty(ONAM, 'Open by Default'),
-    wbXRGD,
+    wbRagdoll,
     wbXSCL,
     wbInteger(XSOL, 'Contained Soul', itU8, wbSoulGemEnum),
     wbDATAPosRot

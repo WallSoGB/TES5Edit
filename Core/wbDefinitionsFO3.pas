@@ -70,8 +70,6 @@ var
   wbDESTActor: IwbSubRecordStructDef;
   wbDODT: IwbSubRecordDef;
   wbXOWN: IwbSubRecordDef;
-  wbXRGD: IwbSubRecordDef;
-  wbXRGB: IwbSubRecordDef;
   wbSLSD: IwbSubRecordDef;
   wbSPLO: IwbSubRecordDef;
   wbSPLOs: IwbSubRecordArrayDef;
@@ -3126,9 +3124,6 @@ begin
 
   wbIgnoreRecords.Add(XXXX);
 
-  wbXRGD := wbByteArray(XRGD, 'Ragdoll Data');
-  wbXRGB := wbByteArray(XRGB, 'Ragdoll Biped Data');
-
   wbSoundLevelEnum := wbEnum([
      'Loud',
      'Normal',
@@ -3379,8 +3374,7 @@ begin
     wbFormIDCk(XEZN, 'Encounter Zone', [ECZN]),
 
     {--- Ragdoll ---}
-    wbXRGD,
-    wbXRGB,
+    wbRagdoll,
 
     {--- Patrol Data ---}
     wbRStruct('Patrol Data', [
@@ -3460,8 +3454,7 @@ begin
     wbFormIDCk(NAME, 'Base', [CREA], False, cpNormal, True),
     wbFormIDCk(XEZN, 'Encounter Zone', [ECZN]),
 
-    wbXRGD,
-    wbXRGB,
+    wbRagdoll,
 
     {--- Patrol Data ---}
     wbRStruct('Patrol Data', [
@@ -5531,8 +5524,7 @@ var  wbSoundTypeSoundsOld :=
     wbFormIDCk(NAME, 'Base', [PROJ], False, cpNormal, True),
     wbFormIDCk(XEZN, 'Encounter Zone', [ECZN]),
 
-    wbXRGD,
-    wbXRGB,
+    wbRagdoll,
 
     {--- Patrol Data ---}
     wbRStruct('Patrol Data', [
@@ -5612,8 +5604,7 @@ var  wbSoundTypeSoundsOld :=
     wbFormIDCk(NAME, 'Base', [PROJ], False, cpNormal, True),
     wbFormIDCk(XEZN, 'Encounter Zone', [ECZN]),
 
-    wbXRGD,
-    wbXRGB,
+    wbRagdoll,
 
     {--- Patrol Data ---}
     wbRStruct('Patrol Data', [
@@ -5693,8 +5684,7 @@ var  wbSoundTypeSoundsOld :=
     wbFormIDCk(NAME, 'Base', [PROJ], False, cpNormal, True),
     wbFormIDCk(XEZN, 'Encounter Zone', [ECZN]),
 
-    wbXRGD,
-    wbXRGB,
+    wbRagdoll,
 
     {--- Patrol Data ---}
     wbRStruct('Patrol Data', [
@@ -7773,8 +7763,7 @@ var  wbSoundTypeSoundsOld :=
     wbFormIDCk(XEZN, 'Encounter Zone', [ECZN]),
 
     {--- ?? ---}
-    wbXRGD,
-    wbXRGB,
+    wbRagdoll,
 
     {--- Primitive ---}
     wbStruct(XPRM, 'Primitive', [

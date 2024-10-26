@@ -65,6 +65,7 @@ var
   wbMDOB: IwbRecordMemberDef;
   wbMHDTCELL: IwbRecordMemberDef;
   wbMODT: IwbRecordMemberDef;
+  wbRagdoll: IwbRecordMemberDef;
   wbRegionSounds: IwbRecordMemberDef;
   wbSeasons: IwbRecordMemberDef;
   wbSoundDescriptorSounds: IwbRecordMemberDef;
@@ -4950,6 +4951,22 @@ begin
         wbFormIDCk('Keyword', [KYWD,NULL])
       ).SetCountPathOnValue(KSIZ, False).SetRequired
     ], []).SetSummaryKey([1]);
+
+  wbRagdoll :=
+    wbRStruct('Ragdoll Data', [
+      wbArray(XRGD, 'Bones',
+        wbStruct('Bone', [
+          wbInteger('Bone Id', itU8),
+          wbUnused(3),
+          wbVec3PosRot
+        ]).SetSummaryKey([0])
+          .IncludeFlag(dfCollapsed)
+      ).IncludeFlag(dfNotAlignable),
+      IsTES4(
+        nil,
+        wbVec3(XRGB, 'Biped Rotation')
+      )
+    ], []);
 
   wbColorInterpolator :=
     wbStructSK([0], 'Data', [

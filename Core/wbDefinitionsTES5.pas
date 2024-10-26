@@ -78,8 +78,6 @@ var
   wbDEST: IwbSubRecordStructDef;
   wbDESTActor: IwbSubRecordStructDef;
   wbDODT: IwbSubRecordDef;
-  wbXRGD: IwbSubRecordDef;
-  wbXRGB: IwbSubRecordDef;
   wbSPLO: IwbSubRecordDef;
   wbSPLOs: IwbSubRecordArrayDef;
   wbCNTO: IwbRecordMemberDef;
@@ -3404,9 +3402,6 @@ begin
 
   wbIgnoreRecords.Add(XXXX);
 
-  wbXRGD := wbByteArray(XRGD, 'Ragdoll Data');
-  wbXRGB := wbByteArray(XRGB, 'Ragdoll Biped Data');
-
   wbSoundLevelEnum := wbEnum([
      'Loud',
      'Normal',
@@ -4159,8 +4154,7 @@ begin
     wbFormIDCk(XEZN, 'Encounter Zone', [ECZN]),
 
     {--- Ragdoll ---}
-    wbXRGD,
-    wbXRGB,
+    wbRagdoll,
 
     {--- Patrol Data ---}
     wbRStruct('Patrol Data', [
@@ -10722,8 +10716,7 @@ begin
     ], []),
     wbEmpty(XMBP, 'MultiBound Primitive Marker', cpIgnore),
 
-    wbXRGD,
-    wbXRGB,
+    wbRagdoll,
     wbFloat(XRDS, 'Radius'),
 
     {--- Reflected By / Refracted By ---}

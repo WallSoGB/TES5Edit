@@ -124,8 +124,6 @@ var
   wbDEST: IwbRecordMemberDef;
   wbDESTActor: IwbSubRecordStructDef;
   wbDODT: IwbSubRecordDef;
-  wbXRGD: IwbSubRecordDef;
-  wbXRGB: IwbRecordMemberDef;
   wbSPLO: IwbSubRecordDef;
   wbSPLOs: IwbSubRecordArrayDef;
   wbCNTO: IwbRecordMemberDef;
@@ -5541,7 +5539,7 @@ end;
       wbXATP,
       wbInteger(XAMC, 'Ammo Count', itU32),
       wbEmpty(XLKT, 'Linked Ref Transient'),
-      wbXRGD,
+      wbRagdoll,
       wbFormIDCk(XLYR, 'Layer', [LAYR]),
       wbFormIDCk(XMSP, 'Material Swap', [MSWP]),
       wbXLWT,
@@ -5776,15 +5774,6 @@ begin
   ]);
 
   wbIgnoreRecords.Add(XXXX);
-
-//  wbXRGD := wbByteArray(XRGD, 'Ragdoll Data');
-  wbXRGD := wbArray(XRGD, 'Ragdoll Data', wbStruct('Ragdoll Data', [
-    wbInteger('Bone Id', itU8),
-    wbByteArray('Unknown/Unused', 3),
-    wbPosRot
-  ]));
-
-  wbXRGB := wbVec3(XRGB, 'Ragdoll Biped Rotation');
 
   wbSoundLevelEnum := wbEnum([
      'Loud',
@@ -6977,8 +6966,7 @@ begin
     wbXEZN,
 
     {--- Ragdoll ---}
-    wbXRGD,
-    wbXRGB,
+    wbRagdoll,
 
     {--- Patrol Data ---}
     wbRStruct('Patrol Data', [
@@ -15938,8 +15926,7 @@ begin
     wbEmpty(XMBP, 'MultiBound Primitive Marker', cpIgnore),
 
     {--- Ragdoll ---}
-    wbXRGD,
-    wbXRGB,
+    wbRagdoll,
 
     wbFloat(XRDS, 'Radius'),
     wbXSCL,

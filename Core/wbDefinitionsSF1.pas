@@ -3934,12 +3934,6 @@ begin
 
   wbIgnoreRecords.Add(XXXX);
 
-  var wbXRGD := wbArray(XRGD, 'Ragdoll Data', wbStruct('Ragdoll Data', [
-    wbInteger('Bone Id', itU8),
-    wbUnused(3),
-    wbPosRot
-  ]));
-
   var wbXFLG :=
     wbInteger(XFLG, 'Extra Flags', itU32, wbFlags([
       {0x01} '',
@@ -3950,8 +3944,6 @@ begin
       {0x20} '',
       {0x40} 'Unknown 6'
     ]));
-
-  var wbXRGB := wbVec3(XRGB, 'Ragdoll Biped Rotation');
 
   var wbSoundLevelEnum := wbEnum([
      'None',
@@ -9122,7 +9114,7 @@ end;
 
         wbFormIDCk(XEMI, 'Emittance', [LIGH, REGN]),
 
-        wbXRGD,
+        wbRagdoll,
 
         wbFormIDCk(XRFG, 'Reference Group', [RFGP]),
 
@@ -16048,7 +16040,7 @@ end;
 
     wbFloat(XRDS, 'Radius'),
 
-    wbXRGD,
+    wbRagdoll,
 
     wbFormIDCk(XRFG, 'Reference Group', [RFGP]),
 
@@ -16082,8 +16074,6 @@ end;
     wbFloat(XFVC, 'Favor Cost'),
 
     wbArray(XLRT, 'Location Ref Type', wbFormIDCk('Ref', [LCRT, NULL])),
-
-    wbXRGB,
 
     wbInteger(XHLT, 'Health %', itU32),
 
@@ -16337,7 +16327,7 @@ end;
     ], [])),
 
     {--- Ragdoll ---}
-    wbXRGD,
+    wbRagdoll,
 
     {--- Teleport ---}
     wbStruct(XTEL, 'Teleport Destination', [
@@ -16652,8 +16642,6 @@ end;
 
 
     wbArray(XLRT, 'Location Ref Type', wbFormIDCk('Ref', [LCRT, NULL])),
-
-    wbXRGB,
 
     wbInteger(XHLT, 'Health %', itU32),
 
