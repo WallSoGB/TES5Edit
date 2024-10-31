@@ -38,6 +38,7 @@ var
   wbBoolEnum: IwbEnumDef;
   wbConfidenceEnum: IwbEnumDef;
   wbCRCValuesEnum: IwbEnumDef;
+  wbCreatureTypeEnum: IwbEnumDef;
   wbMusicEnum: IwbEnumDef;
   wbQuadrantEnum: IwbEnumDef;
   wbQuestEventEnum: IwbEnumDef;
@@ -4784,6 +4785,18 @@ begin
       Int64($C5B58C0B), 'PathingStreamSaveGame',
       Int64($6AF11190), 'QuestPathingRequest',
       Int64($FCD0CCC3), 'Water'
+    ]);
+
+  wbCreatureTypeEnum :=
+    wbEnum([], [
+      0, 'Animal',
+      1, 'Mutated Animal',
+      2, 'Mutated Insect',
+      3, 'Abomination',
+      4, 'Super Mutant',
+      5, 'Feral Ghoul',
+      6, 'Robot',
+      7, 'Giant'
     ]);
 
   wbMusicEnum :=

@@ -21,7 +21,6 @@ var
   wbTemplateFlags: IwbFlagsDef;
 
   wbBodyPartIndexEnum: IwbEnumDef;
-  wbCreatureTypeEnum: IwbEnumDef;
   wbCrimeTypeEnum: IwbEnumDef;
   wbCriticalStageEnum: IwbEnumDef;
   wbEquipTypeEnum: IwbEnumDef;
@@ -3886,18 +3885,6 @@ begin
       'Goo End',
       'Disintegrate Start',
       'Disintegrate End'
-    ]);
-
-  wbCreatureTypeEnum :=
-    wbEnum([
-      'Animal',
-      'Mutated Animal',
-      'Mutated Insect',
-      'Abomination',
-      'Super Mutant',
-      'Feral Ghoul',
-      'Robot',
-      'Giant'
     ]);
 
   wbPlayerActionEnum :=
