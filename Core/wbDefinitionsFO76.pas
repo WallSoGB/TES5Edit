@@ -5434,14 +5434,14 @@ end;
           wbInteger('Blend Operation', itU32, wbBlendOperationEnum)
         ])),
         wbFloat(TTED, 'Default')
-      ], []);
+      ]);
 
     wbTintTemplateGroup :=
       wbRStruct('Group', [
         wbLString(TTGP, 'Group Name', 0, cpTranslate),
         wbRArray('Options', wbTintTemplateOption),
         wbInteger(TTGE, 'Category Index', itU32)
-      ], []);
+      ]);
 
     Result := wbRArray(aName, wbTintTemplateGroup);
   end;
@@ -5460,12 +5460,12 @@ end;
               wbString(MPPM, 'Morph Type'),
               wbFormIDCk(MPPT, 'Texture', [TXST]),
               wbInteger(MPPF, 'Playable', itU8, wbBoolEnum)
-            ], []),
+            ]),
             cpNormal, False, nil, wbMorphPresetsAfterSet
           ),
           wbInteger(MPPK, 'Tint Layer Face Region Index', itU16),
           wbArray(MPGS, 'Morph Value Indexs', wbInteger('Index', itU32, wbIntToHexStr, wbHexStrToInt))
-        ], [])
+        ])
       );
   end;
 
@@ -5476,7 +5476,7 @@ end;
         wbRStruct('Face Morph', [
           wbInteger(FMRI, 'Index', itU32, wbIntToHexStr, wbHexStrToInt),
           wbLString(FMRN, 'Name')
-        ], [])
+        ])
       );
   end;
 
@@ -5530,7 +5530,7 @@ end;
             wbFloat('Delay')
           ])
         )
-      ], []),
+      ]),
 
       wbFormIDCk(XASP, 'Acoustic Parent', [REFR]),
       wbXATP,
@@ -5643,7 +5643,7 @@ begin
         wbInteger('Count', itS32)
       ]),
       wbCOED
-    ], []).SetToStr(wbItemToStr).IncludeFlag(dfCollapsed, wbCollapseItems);
+    ]).SetToStr(wbItemToStr).IncludeFlag(dfCollapsed, wbCollapseItems);
   wbCOCT := wbInteger(COCT, 'Count', itU32, nil, cpBenign);
   wbCNTOs := wbRArrayS('Items', wbCNTO, cpNormal, False, nil, wbCNTOsAfterSet);
 
@@ -6294,7 +6294,7 @@ begin
     wbFormID(HNAM, 'Reference'),
     wbInteger(INAM, 'Unknown Bool', itU16, wbBoolEnum),
     wbEmpty(XWPK, 'End Marker')
-  ], []);
+  ]);
 
   wbWaterData := wbRStruct('Water Data', [
       wbInteger(XWCN, 'Data Count', itU32),
@@ -6304,12 +6304,12 @@ begin
         wbFloat('Z Offset'),
         wbFloat('Unknown')
       ]), ['Linear','Angular','Unknown'])
-    ], []);
+    ]);
 
   wbNAM1LODP := wbRStruct('Unknown', [
     wbNAM1,
     wbLODP
-  ], []);
+  ]);
 
   wbPHSTFlags := wbFlags([
     {0x00000001} 'Unknown 1',
@@ -6962,7 +6962,7 @@ begin
       wbFormIDCk(INAM, 'Idle', [IDLE, NULL], False, cpNormal, True),
       wbPDTOs,
       wbFormIDCk(TNAM, 'Topic', [DIAL, NULL], False, cpNormal)
-    ], []),
+    ]),
 
     {--- Leveled Actor ----}
     wbXLCM,
@@ -6985,7 +6985,7 @@ begin
           wbFloat('Delay')
         ])
       )
-    ], []),
+    ]),
     wbEmpty(XATP, 'Activation Point'),
 
     wbEmpty(XLKT, 'Linked Ref Transient'),
@@ -7540,7 +7540,7 @@ begin
     'Unknown 163',
     'Daily Content Group',
     'Idle Form'
-  ], []);
+  ]);
 
   wbFormTypeEnum := wbEnum([
     'None',
@@ -7736,7 +7736,7 @@ begin
     'Unknown - AUVF',
     'Legendary Item',
     'Event Quest Widget'
-], []);
+]);
 
   wbMiscStatEnum := wbEnum([], [
     Int64($1EE71DBC), 'Animals Friended',
@@ -8389,12 +8389,12 @@ begin
           wbCNDC.IncludeFlag(dfNoReport),
           wbCITC,
           wbCTDAsCount
-        ], []),
+        ]),
         wbRStruct('Condition Info', [
           wbCITC,
           wbCTDAsCount
-        ], [])
-      ], [])
+        ])
+      ])
     );
 
   wbDEST := wbRStruct('Destructible', [
@@ -8464,7 +8464,7 @@ begin
             wbENLT,
             wbENLS,
             wbAUUV
-          ], []).IncludeFlag(dfAllowAnyMember)
+          ]).IncludeFlag(dfAllowAnyMember)
         ),
         wbEmpty(DSTF, 'End Marker', cpNormal, True)
       ], [], cpNormal, False, nil)
@@ -8526,7 +8526,7 @@ begin
         ], cpNormal, True), // End DSTD
         wbRStructSK([0], 'Model', [ // Begin DMDL
           wbString(DMDL, 'Model FileName')
-        ], []), // End DMDL
+        ]), // End DMDL
         wbDMDT,
         wbDMDC,
         wbDMDS,
@@ -8535,7 +8535,7 @@ begin
         wbENLS,
         wbAUUV,
         wbEmpty(DSTF, 'End Marker', cpNormal, True)
-      ], []) // Begin Stage RStruct
+      ]) // Begin Stage RStruct
     ) // End Stage Array
   ], [], cpNormal, False, nil{wbActorTemplateUseModelAnimation});
 
@@ -8593,7 +8593,7 @@ begin
     wbFormIDCk(ATKS, 'Required Slot', [EQUP]),
     wbString(ATKT, 'Description'),
     wbCTDAs
-  ], []);
+  ]);
 
   wbICON := wbString(ICON, 'Inventory Image');
   wbMICO := wbString(MICO, 'Message Icon');
@@ -8868,7 +8868,7 @@ begin
       wbString(ETDI, 'Storefront Preview Image'),
       wbFormID(ETLG, 'Entitlement Loadout Reference'),
       wbRArray('Storefront Confirm Image List', wbString(ECIL, 'Image'))
-    ], []).IncludeFlag(dfAllowAnyMember);
+    ]).IncludeFlag(dfAllowAnyMember);
 
   wbObjectModProperties :=
     wbArrayS('Properties', wbStructSK([4], 'Property', [
@@ -8945,7 +8945,7 @@ begin
       ], [], cpNormal, False, nil, True),
       cpNormal, False, nil, wbOBTSCombinationsAfterSet),
     wbEmpty(STOP, 'Marker', cpNormal, True)
-  ], []);
+  ]);
 
   // Forwarded from FO4 defs
   var wbBoneDataItem :=
@@ -8966,11 +8966,11 @@ begin
               .SetSummaryPrefixSuffixOnValue(2, 'Fat: ', '')
               .SetSummaryDelimiterOnValue(', ')
               .SetRequired
-            ], [])
+            ])
             .SetSummaryKey([1])
             .IncludeFlag(dfCollapsed, wbCollapseRACEBoneData)
           )
-        ],[]),
+        ]),
         wbRStruct('Bone Range Modifier Data', [
           wbInteger(BMMP, 'Range Modifier Target Gender', itU32, wbEnum(['Male', 'Female'])),
           wbRArrayS('Bone Range Modifiers',
@@ -8989,12 +8989,12 @@ begin
               .SetSummaryPrefixSuffixOnValue(3, 'to ', ']')
               .IncludeFlag(dfCollapsed, wbCollapseRange)
               .SetRequired
-            ], [])
+            ])
             .SetSummaryKey([1])
             .IncludeFlag(dfCollapsed, wbCollapseRACEBoneData)
           )
-        ],[])
-      ], []);
+        ])
+      ]);
 
   var wbArmorAddonBoneDataItem :=
       wbRStruct('Bone Scale Modifier Set', [
@@ -9004,11 +9004,11 @@ begin
             wbString(BSMB, 'Bone Name'),
             wbVec3(BSMS, 'Bone Scale Delta')
               .SetRequired
-          ], [])
+          ])
           .SetSummaryKey([1])
           .IncludeFlag(dfCollapsed, wbCollapseARMABoneData)
         )
-      ], []);
+      ]);
 
   wbBSMPSequence := wbRArray('Bone Scale Data', wbBoneDataItem);
 
@@ -9338,7 +9338,7 @@ begin
       wbRStruct('Model', [
         wbInteger(INDX, 'Addon Index', itU16),
         wbFormIDCk(MODL, 'Armor Addon', [ARMA])
-      ], [])
+      ])
     ),
     wbStruct(DATA, 'Armor Data', [
       wbInteger('Value', itS32),
@@ -10269,7 +10269,7 @@ begin
       wbLString(MNAM, 'Male Title', 0, cpTranslate),
       wbLString(FNAM, 'Female Title', 0, cpTranslate),
       wbString(INAM, 'Insignia (unused)')
-    ], []);
+    ]);
 
   wbRecord(FACT, 'Faction', [
     wbEDID,
@@ -10435,7 +10435,7 @@ begin
         wbInteger('Disabled Points', itU16, wbFurnitureEntryTypeFlags)
       ])
       //wbFormIDCk(FNMK, 'Marker Keyword', [KYWD, NULL])
-    ], [])),
+    ])),
     wbRArray('Marker Entry Points', wbStruct(FNPR, 'Marker', [
       wbInteger('Type', itU16, wbFurnitureAnimTypeEnum),
       wbInteger('Entry Points', itU16, wbFurnitureEntryTypeFlags)
@@ -10452,7 +10452,7 @@ begin
     wbRStruct('Keypad Data', [
       wbFloat(CNAM, 'Default Code'),
       wbInteger(LNAM, 'Default Code Length', itU8)
-    ], []),
+    ]),
     wbAPPR,
     wbObjectTemplate,
     wbUnknown(FFEF),
@@ -10553,7 +10553,7 @@ begin
       wbString(TX08, 'Specular'),
       wbString(TX09, 'Lighting'),
       wbString(TX10, 'Flow')
-    ], []),
+    ]),
     wbDODT,
     wbInteger(DNAM, 'Flags', itU16, wbFlags([
       {0x0001} 'No Specular Map',
@@ -10602,7 +10602,7 @@ begin
         'Chargen Morph'
       ])),
       wbString(NAM1, 'FileName', 0, cpTranslate, True)
-    ], [])),
+    ])),
     wbFormIDCk(TNAM, 'Texture Set', [TXST]),
     wbFormIDCk(CNAM, 'Color', [CLFM]),
     wbFormIDCk(RNAM, 'Valid Races', [FLST]),
@@ -11108,7 +11108,7 @@ begin
       'Auto',
       'Fixed Ev100',
       'Camera parameters'
-    ],[])),
+    ])),
     wbUnknown(ZNAM), {TODO}
     wbString(TX00, 'LUT')
   ]);
@@ -11215,14 +11215,14 @@ begin
       wbTimeInterpolators(UNAM, 'Start'),
       wbTimeInterpolators(NAM1, 'Ramp Down'),
       wbTimeInterpolators(NAM2, 'Down Start')
-    ], []),
+    ]),
     wbRStruct('Depth of Field', [
       wbTimeInterpolators(WNAM, 'Strength'),
       wbTimeInterpolators(XNAM, 'Distance'),
       wbTimeInterpolators(YNAM, 'Range'),
       wbTimeInterpolators(NAM5, 'Vignette Radius'),
       wbTimeInterpolators(NAM6, 'Vignette Strength')
-    ], []),
+    ]),
     wbTimeInterpolators(NAM4, 'Motion Blur Strength'),
     wbRStruct('HDR', [
       wbTimeInterpolatorsMultAdd(_00_IAD, _40_IAD, 'Eye Adapt Speed'),
@@ -11233,7 +11233,7 @@ begin
       wbTimeInterpolatorsMultAdd(_05_IAD, _45_IAD, 'Target Lum Max'),
       wbTimeInterpolatorsMultAdd(_06_IAD, _46_IAD, 'Sunlight Scale'),
       wbTimeInterpolatorsMultAdd(_07_IAD, _47_IAD, 'Sky Scale')
-    ], []),
+    ]),
     wbTimeInterpolatorsMultAdd(_08_IAD, _48_IAD, 'Unused'),
     wbTimeInterpolatorsMultAdd(_09_IAD, _49_IAD, 'Unused'),
     wbTimeInterpolatorsMultAdd(_0A_IAD, _4A_IAD, 'Unused'),
@@ -11390,7 +11390,7 @@ begin
         ])
       ], [], cpNormal, False{, wbPERKPRKCDontShow}),
       wbEmpty(PRKF, 'End Marker', cpIgnore, True)
-    ], []);
+    ]);
 
   wbRecord(PERK, 'Perk',
     wbFlags(wbFlagsList([
@@ -11528,7 +11528,7 @@ begin
     wbRUnion('Node Index', [
       wbInteger(DATA, 'Node Index', itS32, nil, cpNormal, True),
       wbInteger(IKEK, 'Node Index', itS32, nil, cpNormal, True)
-    ], []),
+    ]),
     wbFormIDCk(SNAM, 'Sound', [SNDR]),
     wbFormIDCk(LNAM, 'Light', [LIGH]),
     wbStruct(DNAM, 'Data', [
@@ -11905,7 +11905,7 @@ begin
       wbLStringKC(ITXT, 'Button Text', 0, cpTranslate),
       wbCTDAs,
       wbEmpty(MBNR, 'No Response')
-    ], []);
+    ]);
 
   wbRecord(MESG, 'Message', [
     wbEDID,
@@ -12463,7 +12463,7 @@ begin
         wbFormIDCk(NNAM, 'Quest', [QUST]),
         wbFloat(RNAM, 'Hours until reset', cpNormal, False, 1/24),
         wbInteger(UNAM, 'Priority', itU32)
-      ], [])
+      ])
     ).SetCountPath(QNAM)
   ], False, nil, cpNormal, False, nil, wbConditionsAfterSet);
 
@@ -12584,7 +12584,7 @@ begin
       wbString(SSPN, 'Start Phase for Scene'),
       wbCITC,
       wbCTDAs
-    ], []);
+    ]);
 
   var wbSceneDialogueAction :=
     wbRStruct('Dialogue', [
@@ -12598,43 +12598,43 @@ begin
       wbFormIDCk(VENC, 'Dialogue Subtype', [KYWD]),
       wbFormIDCk(PNAM, 'AnimArchType', [KYWD]),
       wbFormIDCk(ONAM, 'Audio Output Override', [SOPM])
-    ], []);
+    ]);
 
   var wbScenePackageAction :=
     wbRStruct('Package', [
       wbRArray('Packages', wbFormIDCk(PNAM, 'Package', [PACK]))
-    ], []);
+    ]);
 
   var wbSceneStartSceneActionAlt :=
     wbRStruct('Start Scene', [
       wbRArray('Scenes', wbStartScene),
       wbEmpty(HTID, 'End Scene Say Greeting')
-    ], []);
+    ]);
   var wbSceneStartSceneAction :=
     wbRStruct('Start Scene', [
       wbFormIDCk(STSC, 'Start Scene Marker', [SCEN,NULL]),
       wbRArray('Scenes', wbStartScene),
       wbEmpty(HTID, 'End Scene Say Greeting')
-    ], []);
+    ]);
 
   var wbSceneNPCResponseDialogue :=
     wbRStruct('NPC Response Dialogue', [
       wbFormIDCk(ONAM, 'Sound Output', [SOPM])
-    ], []);
+    ]);
 
   var wbSceneRadioAction :=
     wbRStruct('Radio', [
       wbFormIDCk(HTID, 'Play Sound', [SNDR, NULL]),
       wbFormIDCk(DMAX, 'Sound Output', [SOPM, NULL]),
       wbFormIDCk(VENC, 'Dialogue Subtype', [KYWD])
-    ], []);
+    ]);
 
   var wbSceneTimerAction :=
     wbRStruct('Timer',[
       wbFloat(SNAM, 'Timer - Max Seconds'),
       wbInteger(SCQS, 'Set Parent Quest Stage', itS16),
       wbFloat(TNAM, 'Timer - Min Seconds')
-    ], []);
+    ]);
 
   var wbScenePlayerDialogueAction :=
     wbRStruct('Player Dialogue', [
@@ -12642,12 +12642,12 @@ begin
       wbRArray('Dialogue Choices', wbRStruct('Dialogue Choice', [
         wbFormId(ESCE, 'Dialogue Exit'),
         wbFormId(ESCS, 'Choice')
-      ], [])),
+      ])),
       wbRStruct('Prior Action Info', [
         wbInteger(ATTR, 'Action to Follow', itU32),
         wbEmpty(ACBS, 'Action Comes Before Start')
-      ],[])
-    ], []);
+      ])
+    ]);
 
   var wbScenePlayerDialogueActionOld :=
     wbRStruct('Player Dialogue Responses', [
@@ -12668,7 +12668,7 @@ begin
       wbFormIDCk(NNUS, 'NPC Neutral Dialogue Subtype', [KYWD]),
       wbFormIDCk(NQUS, 'NPC Question Dialogue Subtype', [KYWD]),
       wbScenePlayerDialogueAction
-    ], []).IncludeFlag(dfAllowAnyMember);
+    ]).IncludeFlag(dfAllowAnyMember);
 
   var wbSceneRadioDialogueAction :=
     wbRStruct('Radio and Dialogue', [
@@ -12676,8 +12676,8 @@ begin
       wbRUnion('',[
         wbSceneDialogueAction,
         wbSceneRadioAction
-      ],[])
-    ], []);
+      ])
+    ]);
 
   wbRecord(SCEN, 'Scene', [
     wbEDID,
@@ -12703,9 +12703,9 @@ begin
       wbRStruct('Phase', [
         wbEmpty(HNAM, 'Marker Phase Start', cpNormal, True),
         wbString(NAM0, 'Name', 0, cpNormal, True),
-        wbRStruct('Start Conditions', [wbCTDAs], []),
+        wbRStruct('Start Conditions', [wbCTDAs]),
         wbEmpty(NEXT, 'Marker Start Conditions', cpNormal, True),
-        wbRStruct('Completion Conditions', [wbCTDAs], []),
+        wbRStruct('Completion Conditions', [wbCTDAs]),
         wbEmpty(NEXT, 'Marker Completion Conditions', cpNormal, True),
         wbInteger(WNAM, 'Editor Width', itU32, nil, cpNormal, True, false, nil, nil, 350),
         wbUnknown(SPPI),
@@ -12723,7 +12723,7 @@ begin
           wbInteger('On Completion', itS16)
         ]),
         wbEmpty(HNAM, 'Marker Phase End', cpNormal, True)
-      ], [])
+      ])
     ),
     wbRArray('Actors', wbRStruct('Actor', [
       wbInteger(ALID, 'Alias ID', itS32, nil, cpNormal, True),
@@ -12743,7 +12743,7 @@ begin
         'OBS_COM Pause',
         'OBS_COM End'
       ]), cpNormal, True, false, nil, nil, 26)
-    ], [])),
+    ])),
     wbRArray('Actions', wbRStruct('Action', [
       wbInteger(ANAM, 'Type', itU16, wbEnum([
         {0} 'Dialogue',
@@ -12802,9 +12802,9 @@ begin
         wbSceneStartSceneActionAlt,
         wbSceneNPCResponseDialogue,
         wbSceneRadioDialogueAction
-      ], []),
+      ]),
       wbEmpty(ANAM, 'End Marker', cpNormal, True)
-    ], [])),
+    ])),
     wbFormIDCk(PNAM, 'Parent Quest', [QUST]),
     wbInteger(INAM, 'Last Action Index', itU32),
     wbUnknown(VNAM),
@@ -13147,7 +13147,7 @@ begin
         wbInteger(INTV, 'RoF (RPM)', itU32),
         wbRArray('Files', wbString(FNAM, 'File')),
         wbEmpty(ITME, 'Marker End')
-      ], []),
+      ]),
       cpNormal, False, nil, wbSNDRRatesOfFireAfterSet
     ),
     wbUnknown(PNAM),
@@ -13472,7 +13472,7 @@ begin
       wbByteArray(NAM9, 'Text Hash'),
       wbFormIDCk(SRAF, 'Camera Path', [CPTH]),
       wbEmpty(WZMD, 'Stop on Scene End')
-    ], [])),
+    ])),
 
     wbCTDAs,
     wbLStringKC(RNAM, 'Prompt', 0, cpTranslate),
@@ -13760,7 +13760,7 @@ begin
       wbLVLV,
       wbLVOG,
       wbLVLT
-    ], [])
+    ])
     .SetSummaryKey([0])
     .IncludeFlag(dfSummaryMembersNoName)
     .IncludeFlag(dfCollapsed, wbCollapseLeveledItems);
@@ -13791,7 +13791,7 @@ begin
       wbLVLV,
       wbLVOG,
       wbLVLT
-    ], [])
+    ])
     .SetSummaryKey([0])
     .IncludeFlag(dfSummaryMembersNoName)
     .IncludeFlag(dfCollapsed, wbCollapseLeveledItems);
@@ -13809,7 +13809,7 @@ begin
       wbLVLV
       //wbLVOG,
       //wbLVLT
-    ], [])
+    ])
     .SetSummaryKey([0])
     .IncludeFlag(dfSummaryMembersNoName)
     .IncludeFlag(dfCollapsed, wbCollapseLeveledItems);
@@ -14133,7 +14133,7 @@ begin
       ]),
       wbUnknown
     ], cpNormal, True)
-  ], []);
+  ]);
 
   wbRecord(MGEF, 'Magic Effect', [
     wbEDID,
@@ -14345,7 +14345,7 @@ begin
       wbFormIDCk(AJNG, 'Level Min Global', [GLOB]),
       wbFormIDCk(AJXG, 'Level Max Global', [GLOB]),
       wbFormIDCk(AJOG, 'Level Offset Global', [GLOB])
-    ],[]).IncludeFlag(dfAllowAnyMember),
+    ]).IncludeFlag(dfAllowAnyMember),
     wbRArrayS('Factions', wbFaction, cpNormal, False, nil, nil, nil{wbActorTemplateUseFactions}),
     wbFormIDCk(INAM, 'Death item', [LVLI], False, cpNormal, False, nil{wbActorTemplateUseTraits}),
     wbFormIDCk(VTCK, 'Voice', [VTYP], False, cpNormal, False, nil{wbActorTemplateUseTraits}),
@@ -14396,7 +14396,7 @@ begin
     wbRStruct('Inventory', [
       wbCOCT,
       wbCNTOs
-    ],[]),
+    ]),
     wbAIDT,
     wbRArray('Packages', wbFormIDCk(PKID, 'Package', [PACK]), cpNormal, False, nil{wbActorTemplateUseAIPackages}),
     wbKeywords,
@@ -14430,7 +14430,7 @@ begin
       wbActorSounds,
       wbEmpty(CS2E, 'End Marker', cpNormal, True),
       wbByteArray(CS2F, 'Finalize', 1, cpNormal, True)
-    ], []),
+    ]),
     wbFormIDCk(CSCR, 'Inherits Sounds From', [NPC_], False, cpNormal, False),
     wbFormIDCk(PFRN, 'Power Armor Stand', [FURN]),
     wbFormIDCk(DOFT, 'Default Outfit', [OTFT], False, cpNormal, False),
@@ -14466,7 +14466,7 @@ begin
           wbByteColors('Color'),
           wbInteger('Template Color Index', itS16)
         ], cpNormal, True, nil, 1)
-      ], [])
+      ])
     ),
     wbStruct(MRSV, 'Body Morph Region Values', [
       wbFloat('Head'),
@@ -14490,7 +14490,7 @@ begin
           wbFloat('Scale'),
           wbByteArray('Unknown')
         ])
-      ], [])
+      ])
     ),
     wbFloat(FMIN, 'Facial Morph Intensity'),
     wbATTX,
@@ -14718,7 +14718,7 @@ begin
     wbInteger(PNAM, 'Flags', itU32, wbFlags([
       'Public'
     ]))
-  ], []));
+  ]));
 
   wbRecord(PACK, 'Package', [
     wbEDID,
@@ -14844,7 +14844,7 @@ begin
         wbUnknown(TPIC)
       ], [], cpNormal, False)),
       wbUNAMs
-    ], []),
+    ]),
     wbByteArray(XNAM, 'Marker', 0, cpNormal, True),
 
     wbRStruct('Procedure Tree', [
@@ -14887,7 +14887,7 @@ begin
           ])
         )
       ], [], cpNormal, False, nil, False, nil, wbConditionsAfterSet))
-    ], []),
+    ]),
     wbUNAMs,
     wbRStruct('OnBegin', [
       wbEmpty(POBA, 'OnBegin Marker', cpNormal, True),
@@ -15059,7 +15059,7 @@ begin
         ])),  //0xE9
         wbByteArray('Unused',3)
       ])
-    ], []),
+    ]),
     wbInteger(ENAM, 'Event', itU32, wbQuestEventEnum),
     wbFormIDCk(LNAM, 'Location', [LCTN]),
     wbFormIDCk(XNAM, 'Quest Completion XP', [GLOB]),
@@ -15095,9 +15095,9 @@ begin
         wbRStruct('More Conditions', [
           wbEmpty(NEXT, 'Marker', cpNormal, True),
           wbCTDAs
-        ], [])
-      ], [])
-    ], []),
+        ])
+      ])
+    ]),
 
     wbRArrayS('Stages', wbRStructSK([0], 'Stage', [
       wbStructSK(INDX, [0], 'Stage Index', [
@@ -15126,8 +15126,8 @@ begin
         wbRArray('Rewards', wbReward),
         wbFormID(QRWD, 'Quest Reward'),
         wbFormID(QUIM, 'Message')
-      ], []))
-    ], [])),
+      ]))
+    ])),
     wbRArray('Objectives', wbRStruct('Objective', [
       wbInteger(QOBJ, 'Objective Index', itU16),
       wbInteger(FNAM, 'Flags', itU32, wbFlags([
@@ -15159,8 +15159,8 @@ begin
           wbFromVersion(151, wbByteArray('Area',4))
         ]),
         wbCTDAs
-      ], []))
-    ], [])),
+      ]))
+    ])),
 
     wbInteger(ANAM, 'Next Alias ID', itU32),
 
@@ -15184,11 +15184,11 @@ begin
             wbInteger(ALFA, 'Alias', itS32, wbQuestAliasToStr, wbStrToAlias),
             wbFormIDCk(KNAM, 'Keyword', [KYWD]),
             wbFormIDCk(ALRT, 'Ref Type', [LCRT])
-          ], []),
+          ]),
           wbRStruct('External Alias Reference', [
             wbFormIDCk(ALEQ, 'Quest', [QUST]),
             wbInteger(ALEA, 'Alias', itS32, wbQuestExternalAliasToStr, wbStrToAlias)
-          ], []),
+          ]),
           wbRStruct('Create Reference to Object', [
             wbFormIDCk(ALCO, 'Object', sigBaseObjects),
             wbStruct(ALCA, 'Alias', [
@@ -15205,18 +15205,18 @@ begin
               'Very Hard',
               'None'
             ]))
-          ], []),
+          ]),
           wbRStruct('Find Matching Reference Near Alias', [
             wbInteger(ALNA, 'Alias', itS32, wbQuestAliasToStr, wbStrToAlias),
             wbInteger(ALNT, 'Type', itU32, wbEnum([
               'Linked From',
               'Linked Ref'
             ]))
-          ], []),
+          ]),
           wbRStruct('Find Matching Reference From Event', [
             wbInteger(ALFE, 'From Event', itU32, wbQuestEventEnum),
             wbInteger(ALFD, 'Event Data', itU32, wbEventMemberEnum)
-          ], []),
+          ]),
           wbInteger(ALCC, 'Closest To Alias', itS32, wbQuestAliasToStr, wbStrToAlias),
           wbCTDAs,
           wbKeywords,
@@ -15257,27 +15257,27 @@ begin
           wbRStruct('Reference Alias Location', [
             wbInteger(ALFA, 'Alias', itS32, wbQuestAliasToStr, wbStrToAlias),
             wbFormIDCk(KNAM, 'Keyword', [KYWD])
-          ], []),
+          ]),
           wbRStruct('External Alias Location', [
             wbFormIDCk(ALEQ, 'Quest', [QUST]),
             wbInteger(ALEA, 'Alias', itS32, wbQuestExternalAliasToStr, wbStrToAlias)
-          ], []),
+          ]),
           wbRStruct('Find Matching Location From Event', [
             wbInteger(ALFE, 'From Event', itU32, wbQuestEventEnum),
             wbInteger(ALFD, 'Event Data', itU32, wbEventMemberEnum)
-          ], []),
+          ]),
           wbCTDAs,
           wbInteger(ALCC, 'Closest To Alias', itS32, wbQuestAliasToStr, wbStrToAlias),
           wbEmpty(ALED, 'Alias End', cpNormal, True)
-        ], []),
+        ]),
 
         // Ref Collection Alias
         wbRStructSK([0], 'Alias', [
           wbInteger(ALCS, 'Collection Alias ID', itU32),
           wbInteger(ALMI, 'Max Initial Fill Count', itU8)
-        ], [])
+        ])
 
-      ], [])
+      ])
     ),
 
     wbString(NNAM, 'Description', 0, cpTranslate, False),
@@ -15303,15 +15303,15 @@ begin
         wbRStruct('Possible Reward', [
           wbString(PEWI, 'Icon'),
           wbLStringKC(PEWR, 'Description')
-        ], [])
+        ])
       )
-    ], []),
+    ]),
     wbByteArray(QQSD, 'QQSD - Unknown 4 bytes', 4),
     wbRArray('QQS Structs',
       wbRStruct('QQS Struct', [
         wbString(QQSK, 'Key'),
         wbString(QQSV, 'Value')
-      ],[])
+      ])
     ),
     wbByteArray(QTFS, 'QTFS - Unknown 2 bytes', 2),
     wbUnknown(QMDE)
@@ -15342,50 +15342,50 @@ begin
   ], cpNormal, False, nil, 1); // only a single value in HandyRace
 
   wbPHWT := wbRStruct('FaceFX Phonemes', [
-    wbRStruct('IY', [wbPhonemeTargets], []),
-    wbRStruct('IH', [wbPhonemeTargets], []),
-    wbRStruct('EH', [wbPhonemeTargets], []),
-    wbRStruct('EY', [wbPhonemeTargets], []),
-    wbRStruct('AE', [wbPhonemeTargets], []),
-    wbRStruct('AA', [wbPhonemeTargets], []),
-    wbRStruct('AW', [wbPhonemeTargets], []),
-    wbRStruct('AY', [wbPhonemeTargets], []),
-    wbRStruct('AH', [wbPhonemeTargets], []),
-    wbRStruct('AO', [wbPhonemeTargets], []),
-    wbRStruct('OY', [wbPhonemeTargets], []),
-    wbRStruct('OW', [wbPhonemeTargets], []),
-    wbRStruct('UH', [wbPhonemeTargets], []),
-    wbRStruct('UW', [wbPhonemeTargets], []),
-    wbRStruct('ER', [wbPhonemeTargets], []),
-    wbRStruct('AX', [wbPhonemeTargets], []),
-    wbRStruct('S',  [wbPhonemeTargets], []),
-    wbRStruct('SH', [wbPhonemeTargets], []),
-    wbRStruct('Z',  [wbPhonemeTargets], []),
-    wbRStruct('ZH', [wbPhonemeTargets], []),
-    wbRStruct('F',  [wbPhonemeTargets], []),
-    wbRStruct('TH', [wbPhonemeTargets], []),
-    wbRStruct('V',  [wbPhonemeTargets], []),
-    wbRStruct('DH', [wbPhonemeTargets], []),
-    wbRStruct('M',  [wbPhonemeTargets], []),
-    wbRStruct('N',  [wbPhonemeTargets], []),
-    wbRStruct('NG', [wbPhonemeTargets], []),
-    wbRStruct('L',  [wbPhonemeTargets], []),
-    wbRStruct('R',  [wbPhonemeTargets], []),
-    wbRStruct('W',  [wbPhonemeTargets], []),
-    wbRStruct('Y',  [wbPhonemeTargets], []),
-    wbRStruct('HH', [wbPhonemeTargets], []),
-    wbRStruct('B',  [wbPhonemeTargets], []),
-    wbRStruct('D',  [wbPhonemeTargets], []),
-    wbRStruct('JH', [wbPhonemeTargets], []),
-    wbRStruct('G',  [wbPhonemeTargets], []),
-    wbRStruct('P',  [wbPhonemeTargets], []),
-    wbRStruct('T',  [wbPhonemeTargets], []),
-    wbRStruct('K',  [wbPhonemeTargets], []),
-    wbRStruct('CH', [wbPhonemeTargets], []),
-    wbRStruct('SIL', [wbPhonemeTargets], []),
-    wbRStruct('SHOTSIL', [wbPhonemeTargets], []),
-    wbRStruct('FLAP', [wbPhonemeTargets], [])
-  ], []);
+    wbRStruct('IY', [wbPhonemeTargets]),
+    wbRStruct('IH', [wbPhonemeTargets]),
+    wbRStruct('EH', [wbPhonemeTargets]),
+    wbRStruct('EY', [wbPhonemeTargets]),
+    wbRStruct('AE', [wbPhonemeTargets]),
+    wbRStruct('AA', [wbPhonemeTargets]),
+    wbRStruct('AW', [wbPhonemeTargets]),
+    wbRStruct('AY', [wbPhonemeTargets]),
+    wbRStruct('AH', [wbPhonemeTargets]),
+    wbRStruct('AO', [wbPhonemeTargets]),
+    wbRStruct('OY', [wbPhonemeTargets]),
+    wbRStruct('OW', [wbPhonemeTargets]),
+    wbRStruct('UH', [wbPhonemeTargets]),
+    wbRStruct('UW', [wbPhonemeTargets]),
+    wbRStruct('ER', [wbPhonemeTargets]),
+    wbRStruct('AX', [wbPhonemeTargets]),
+    wbRStruct('S',  [wbPhonemeTargets]),
+    wbRStruct('SH', [wbPhonemeTargets]),
+    wbRStruct('Z',  [wbPhonemeTargets]),
+    wbRStruct('ZH', [wbPhonemeTargets]),
+    wbRStruct('F',  [wbPhonemeTargets]),
+    wbRStruct('TH', [wbPhonemeTargets]),
+    wbRStruct('V',  [wbPhonemeTargets]),
+    wbRStruct('DH', [wbPhonemeTargets]),
+    wbRStruct('M',  [wbPhonemeTargets]),
+    wbRStruct('N',  [wbPhonemeTargets]),
+    wbRStruct('NG', [wbPhonemeTargets]),
+    wbRStruct('L',  [wbPhonemeTargets]),
+    wbRStruct('R',  [wbPhonemeTargets]),
+    wbRStruct('W',  [wbPhonemeTargets]),
+    wbRStruct('Y',  [wbPhonemeTargets]),
+    wbRStruct('HH', [wbPhonemeTargets]),
+    wbRStruct('B',  [wbPhonemeTargets]),
+    wbRStruct('D',  [wbPhonemeTargets]),
+    wbRStruct('JH', [wbPhonemeTargets]),
+    wbRStruct('G',  [wbPhonemeTargets]),
+    wbRStruct('P',  [wbPhonemeTargets]),
+    wbRStruct('T',  [wbPhonemeTargets]),
+    wbRStruct('K',  [wbPhonemeTargets]),
+    wbRStruct('CH', [wbPhonemeTargets]),
+    wbRStruct('SIL', [wbPhonemeTargets]),
+    wbRStruct('SHOTSIL', [wbPhonemeTargets]),
+    wbRStruct('FLAP', [wbPhonemeTargets])
+  ]);
 
   wbRaceRBPC :=
     wbArray(RBPC, 'Biped Object Condition AVs',
@@ -15407,7 +15407,7 @@ begin
     wbRStruct('Equip Slot', [
       wbFormIDCk(QNAM, 'Equip Slot', [EQUP]),
       wbString(ZNAM, 'Node')
-    ], [])
+    ])
     .SetSummaryKey([1, 0])
     .SetSummaryDelimiter(' = ')
     .IncludeFlag(dfSummaryMembersNoName)
@@ -15418,7 +15418,7 @@ begin
       wbRStructSK([0], 'Part', [
         wbInteger(INDX, 'Index', itU32, wbBodyPartIndexEnum),
         wbGenericModel
-      ], [])
+      ])
       .SetSummaryKey([0, 1])
       .SetSummaryMemberPrefixSuffix(0, '[', ']')
       .SetSummaryDelimiter(' ')
@@ -15586,13 +15586,13 @@ begin
       wbRStruct('Male Skeletal Data', [
         wbString(ANAM, 'Male Skeletal Model'),
         wbMODT
-      ],[]),
+      ]),
       wbEmpty(FNAM, 'Female Marker'),
       wbRStruct('Female Skeletal Data', [
         wbString(ANAM, 'Female Skeletal Model'),
         wbMODT
-      ],[])
-    ],[]),
+      ])
+    ]),
     wbRArrayS('Movement Type Names', wbString(MTNM, 'Name', 4)),
     wbArray(VTCK, 'Voices', wbFormIDCk('Voice', [VTYP]), ['Male', 'Female'], cpNormal, True),
     //wbArray(DNAM, 'Decapitate Armors', wbFormIDCk('Decapitate Armor', [NULL, ARMO]), ['Male', 'Female'], cpNormal, False),
@@ -15631,7 +15631,7 @@ begin
       ], [], cpNormal, True)
       .SetSummaryKey([1])
       .IncludeFlag(dfCollapsed, wbCollapseModels)
-    ],[]),
+    ]),
     wbFormIDCk(NAM4, 'Impact Material Type', [MATT]),
     wbFormIDCk(NAM5, 'Impact Data Set', [IPDS]),
     wbFormIDCk(NAM7, 'Dismember Blood Art', [ARTO]),
@@ -15644,7 +15644,7 @@ begin
     wbRArrayS('Movement Data Overrides', wbRStructSK([0], 'Override', [
       wbFormIDCk(MTYP, 'Movement Type', [MOVT]),
       wbSPED
-    ], [])),
+    ])),
     wbInteger(VNAM, 'Equipment Flags', itU32, wbEquipType),
     wbRArray('Equip Slots', wbEquipSlot),
     wbFormIDCk(UNWP, 'Unarmed Weapon', [WEAP]),
@@ -15678,7 +15678,7 @@ begin
         wbMorphGroups('Male Morph Groups'),
         wbFaceMorphs('Male Face Morphs'),
         wbString(WMAP, 'Male Wrinkle Map Path')
-      ],[]),
+      ]),
 
       // Female head
       wbEmpty(NAM0, 'Head Data Marker'),
@@ -15698,8 +15698,8 @@ begin
         wbMorphGroups('Female Morph Groups'),
         wbFaceMorphs('Female Face Morphs'),
         wbString(WMAP, 'Female Wrinkle Map Path')
-      ],[])
-    ],[]),
+      ])
+    ]),
     wbFormIDCk(NAM8, 'Morph Race', [RACE]),
     wbFormIDCk(RNAM, 'Armor Race', [RACE]),
     wbFormIDCk(CVT1, 'EWS Actor Cost Curve', [CURV]),
@@ -15736,7 +15736,7 @@ begin
         wbInteger(MSID, 'Index', itU32, wbIntToHexStr, wbHexStrToInt),
         wbString(MSM0, 'Min Name'),
         wbString(MSM1, 'Max Name')
-      ], [])
+      ])
     ),
     wbInteger(MLSI, 'Morph Last Index', itU32, wbIntToHexStr, wbHexStrToInt),
     wbString(HNAM, 'Hair Color Lookup Texture'),
@@ -15914,7 +15914,7 @@ begin
       wbRArrayS('Linked Rooms',
         wbFormIDCk(XLRM, 'Linked Room', [REFR])
       ).SetCountPath('XRMR\Linked Rooms Count')
-    ], []),
+    ]),
     wbEmpty(XMBP, 'MultiBound Primitive Marker', cpIgnore),
 
     {--- Ragdoll ---}
@@ -16020,7 +16020,7 @@ begin
           wbFloat('Delay')
         ])
       )
-    ], []),
+    ]),
 
     wbFormIDCk(XLIB, 'Leveled Item Base Object', [LVLI]),
     wbXLCM,
@@ -16083,7 +16083,7 @@ begin
       wbEmpty(XPPA, 'Patrol Script Marker', cpNormal, True),
       wbFormIDCk(INAM, 'Idle', [IDLE, NULL], False, cpNormal, True),
       wbPDTOs
-    ], [])),
+    ])),
 
     {--- Flags ---}
     wbActionFlag,
@@ -16221,7 +16221,7 @@ begin
           113, 'WaypointMarker'
         ]))
       ], cpNormal, True)
-    ], []),
+    ]),
 
     {--- Attach reference ---}
     wbFormIDCk(XATR, 'Attach Ref', [REFR, PGRE, PHZD, PMIS, PARW, PBAR, PBEA, PCON, PFLA, ACHR]),
@@ -16238,7 +16238,7 @@ begin
         wbFormIDCk('Node 2', [REFR, ACHR, NULL]),
         wbFormIDCk('Line', [REFR, NULL]) // BNDS ref
       ]))
-    ], []),
+    ]),
 
     wbStruct(XCVR,'Water Current Zone Data', [
       wbFloat('Unknown'),
@@ -16335,7 +16335,7 @@ begin
         wbFloat('Y')
       ]).SetSummaryKey([1]).IncludeFlag(dfSummaryMembersNoName), 0, wbRPLDAfterLoad),
       wbUnknown(ANAM)
-    ], [])),
+    ])),
     wbRArrayS('Region Data Entries', wbRStructSK([0], 'Region Data Entry', [
       {always starts with an RDAT}
       wbStructSK(RDAT, [0], 'Data Header', [
@@ -16477,7 +16477,7 @@ begin
         wbFloat('Unknown'),
         wbFloat('Unknown')
       ])
-    ], [])),
+    ])),
     wbUnknown(RCBN)
   ], True);
 
@@ -16802,7 +16802,7 @@ begin
             ])
           ])
         ])
-      ], [])
+      ])
     )
   ]);
 
@@ -16958,10 +16958,10 @@ begin
               ]))
             ]),
             wbInteger(YNAM, 'Priority', itU16)
-          ], []),
+          ]),
           cpNormal, False, nil, wbINNRAfterSet
         )
-      ], [])
+      ])
     )
   ]);
 
@@ -17009,7 +17009,7 @@ begin
             {0x02} 'Shrinks When Occluded'
           ]))
         ])
-      ], []),
+      ]),
       cpNormal, False, nil, wbLENSAfterSet
     )
   ]);
@@ -17039,7 +17039,7 @@ begin
         wbString(SNAM, 'Replacement Material'),
         wbString(FNAM, 'Tree Folder (obsolete)'), {Unused, will be moved up to First FNAM}
         wbFloat(CNAM, 'Color Remapping Index')
-      ], [])
+      ])
     )
   ]);
 
@@ -17056,7 +17056,7 @@ begin
         ),
         wbUnknown(INTV),
         wbString(NAM1, 'Model')
-      ], [])
+      ])
     )
   ]);
 
@@ -17097,7 +17097,7 @@ begin
         {0x00000002} 'Unknown 2'
       ])),
       wbFormIDCk(UIUS, 'Sound - Consume', [SNDR])
-    ],[])
+    ])
   ]);
 
   wbRecord(LGDI, 'Legendary Item', [
@@ -17248,7 +17248,7 @@ begin
         .SetSummaryDelimiterOnValue(', ')
         .IncludeFlagOnValue(dfSummaryMembersNoName)
         .IncludeFlag(dfCollapsed, wbCollapseObjectBounds)
-      ], [])
+      ])
     )
   ]);
 
@@ -17273,7 +17273,7 @@ begin
       wbInteger(GNAM, 'Child Pack-In Count', itU32),
       wbFormIDCk(HNAM, 'Child Pack-In', [PKIN]),
       wbArray(INAM, 'References', wbFormIDCk('Reference', [REFR]))
-    ], []),
+    ]),
     wbKeywords,
     wbPRPS,
     wbLString(FULL, 'Name')
@@ -17303,7 +17303,7 @@ begin
         ])
         .SetSummaryKeyOnValue([0, 1])
         .SetRequired
-      ], [])
+      ])
       .SetSummaryKey([0, 1])
       .IncludeFlag(dfCollapsed)
     ),
@@ -17437,7 +17437,7 @@ begin
       wbRStruct('Item', [
         wbLStringKC(BTXT, 'Text', 0, cpTranslate),
         wbCTDAs
-      ], []),
+      ]),
       cpNormal, False, nil, wbTERMDisplayItemsAfterSet
     ),
     wbFormIDCk(QNAM, 'Quest', [QUST]),
@@ -17476,7 +17476,7 @@ begin
         wbString(VNAM, 'Show Image'),
         wbFormIDCk(TNAM, 'Submenu', [TERM]),
         wbCTDAs
-      ], []),
+      ]),
       cpNormal, False, nil, wbTERMMenuItemsAfterSet
     ),
     wbString(SCFC, 'Comments')
@@ -17519,14 +17519,14 @@ begin
       wbString(BNAM, 'Part'),
       wbFloat(RADR),
       wbFloat(WTMX)
-    ], []),
+    ]),
     wbInteger(AAPS, 'Count', itU64),
     wbRStructS('Connections', 'Connection', [
       wbString(ANAM, 'Part'),
       wbString(BNAM, 'Part'),
       wbFloat(RADR),
       wbFloat(WTMX)
-    ], [])
+    ])
   ]);
 
   wbRecord(AAMD, 'Aim Assist Model Data', [
@@ -17564,7 +17564,7 @@ begin
         wbRUnion('Echo Marker', [
           wbEmpty(ECHO, 'Echo Start Marker'),
           wbEmpty(ECHD, 'Echo Default Start Marker')
-        ], []),
+        ]),
         wbFormIDCk(ETRG, 'Trigger', [SNDR]),
         wbFormIDCk(SDSC, 'Sound', [SNDR]),
         wbUnknown(ANAM),
@@ -17574,7 +17574,7 @@ begin
         wbUnknown(ENAM),
         wbString(NNAM, 'Description'),
         wbEmpty(ECHE, 'Echo End Marker')
-      ], [])
+      ])
     )
   ]);
 
@@ -17646,7 +17646,7 @@ begin
        wbByteArray(DATA, 'Unknown', 4),
        wbFormIDCk(PCDP, 'Perk Card', [PCRD]),
        wbEmpty(PRKF, 'Perk Card End')
-    ],[])),
+    ])),
     wbVCRY,
     wbFormIDCk(PPRL, 'Roll Chances', [FLST]),
     wbFormIDCk(PPFC, 'Gold Roll Chances', [FLST]),
@@ -17704,7 +17704,7 @@ begin
         wbFormIDCk(MNAM, 'Male Perk', [PERK]),
         wbFormIDCk(FNAM, 'Female Perk', [PERK]),
         wbEmpty(PRKF, 'End Marker')
-      ], [])
+      ])
     )
   ]);
 
@@ -17735,7 +17735,7 @@ begin
       wbLVLV,
       wbLVOG,
       wbLVLT
-    ], [])
+    ])
     .SetSummaryKey([0])
     .IncludeFlag(dfCollapsed, wbCollapseLeveledItems);
 
@@ -17819,7 +17819,7 @@ begin
         wbFromVersion(187, wbFloat('Unknown')),
         wbFromVersion(187, wbFloat('Unknown'))
       ])
-    ], [])),
+    ])),
     wbArray(BNAM, 'Unknown', wbFloat('Unknown'), 6),
     wbArray(GNAM, 'Unknown', wbFloat('Unknown'), 3),
     wbByteArray(UNAM, 'Unknown', 1),
@@ -17833,7 +17833,7 @@ begin
     wbRArray('Grasses', wbRStruct('Grass', [
       wbFormID(GNAM, 'Grass Texture'),
       wbInteger(DNAM, 'Unknown Int', itU16)
-    ], [])),
+    ])),
     wbRArray('Landscape Textures', wbFormID(LNAM, 'Landscape Texture')),
     wbFloat(YNAM),
     wbFloat(ZNAM, 'Unused Float')
@@ -17988,7 +17988,7 @@ begin
     wbRStruct('More Conditions', [
       wbEmpty(NEXT, 'Marker', cpNormal, True),
       wbCTDAs
-    ],[]),
+    ]),
     wbRArray('Rewards', wbReward),
     wbString(JASF, 'Associated Json File'),
     wbFormIDCk(SCFL, 'SubChallenge Completion List', [FLST]),
@@ -18025,7 +18025,7 @@ begin
     wbRArray('Model Swaps', wbRStruct('Model Swap', [
       wbString(BNAM, 'Initial Model'),
       wbString(SNAM, 'New Model')
-    ],[]))
+    ]))
   ]);
 
   wbRecord(EQWG, 'Event Quest Widget', [
@@ -18078,7 +18078,7 @@ begin
       wbRStruct('Quest Info', [
         wbFormID(EPQA, 'Quest'),
         wbFormIDCk(EPSI, 'Spell Modifier', [SPEL])
-      ], [])
+      ])
     ),
     wbInteger(EPFL, 'Unknown Byte', itU8)
   ]);
@@ -18103,21 +18103,21 @@ begin
         wbLStringKC(QMOT, 'Text'),
         wbByteArray(QMTT, 'QMTT - Unknown 4 Bytes', 4),
         wbByteArray(QMTR, 'QMTR - Unknown 4 Bytes', 4)
-      ],[])
+      ])
     ),
     wbInteger(QMAD, 'Alias Count', itU32),
     wbRArray('Module Aliases',
       wbRStruct('Module Alias', [
         wbInteger(QMAI, 'Index', itU32),
         wbInteger(QMAO, 'Parent Quest Alias', itU32)
-      ],[])
+      ])
     ),
     wbInteger(QMSD, 'Stage Count', itU32),
     wbRArray('Module Stages',
       wbRStruct('Module Stage', [
         wbInteger(QMSI, 'Index', itU16),
         wbInteger(QMSO, 'Parent Quest Stage', itU16)
-      ],[])
+      ])
     )
   ]);
 
@@ -18310,7 +18310,7 @@ begin
       wbENLT,
       wbENLS,
       wbAUUV
-    ], []).IncludeFlag(dfAllowAnyMember),
+    ]).IncludeFlag(dfAllowAnyMember),
     wbStruct(DNAM, 'Data', [
       wbFormIDCk('Ammo', [AMMO, NULL]),
       wbFloat('Speed'),
@@ -18566,7 +18566,7 @@ begin
     wbWeatherDirectionalLighting,
     wbRStruct('Aurora', [
       wbGenericModel
-    ], []),
+    ]),
     wbFormIDCk(GNAM, 'Sun Glare Lens Flare', [LENS]),
     wbWeatherMagic,
     wbFloat(VNAM, 'Volatility Mult')
@@ -18642,7 +18642,7 @@ begin
         ], False, 7), True)
       ).SetRequired
        .IncludeFlag(dfCollapsed, wbCollapseFlags)
-    ], []),
+    ]),
     wbFormIDCk(CNAM, 'Climate', [CLMT])
       .SetDefaultNativeValue(351)
       .SetIsRemovable(wbWorldClimateIsRemovable),
@@ -18654,7 +18654,7 @@ begin
     wbString(ICON, 'Map Image'),
     wbRStruct('Cloud Model', [
       wbGenericModel
-    ], []),
+    ]),
     wbWorldMapData,
     wbWorldMapOffset,
     wbFloat(NAMA, 'Distant LOD Multiplier')

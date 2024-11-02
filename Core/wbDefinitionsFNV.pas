@@ -3527,13 +3527,13 @@ begin
         wbRStructSK([0], 'Model', [
           wbString(DMDL, 'Model FileName'),
           wbDMDT
-        ], [])
+        ])
         .SetSummaryKey([0])
         .IncludeFlag(dfCollapsed, wbCollapseModels),
         wbEmpty(DSTF, 'End Marker', cpNormal, True)
-      ], [])
+      ])
     )
-  ], []);
+  ]);
 
   wbDESTActor := wbRStruct('Destructible', [
     wbStruct(DEST, 'Header', [
@@ -3563,11 +3563,11 @@ begin
         wbRStructSK([0], 'Model', [
           wbString(DMDL, 'Model FileName'),
           wbDMDT
-        ], [])
+        ])
         .SetSummaryKey([0])
         .IncludeFlag(dfCollapsed, wbCollapseModels),
         wbEmpty(DSTF, 'End Marker', cpNormal, True)
-      ], [])
+      ])
     )
   ], [], cpNormal, False, wbActorTemplateUseModelAnimation);
 
@@ -3612,7 +3612,7 @@ begin
 //           WATR, ENCH, TREE, REPU, REGN, CSNO, CHAL, IMOD, RCCT, CMNY, CDCK, CHIP, CCRD,
 //           TERM, HAIR, EYES, ADDN, RCPE, NULL]),
         wbInteger(SCRV, 'Local Variable', itU32)
-      ], [])
+      ])
     ).IncludeFlag(dfNotAlignable);
 
   wbSLSD := wbStructSK(SLSD, [0], 'Local Variable Data', [
@@ -3629,7 +3629,7 @@ begin
     wbRArrayS('Local Variables', wbRStructSK([0], 'Local Variable', [
       wbSLSD,
       wbString(SCVR, 'Name', 0, cpCritical, True)
-    ], [])),
+    ])),
     wbSCROs
   ], [], cpNormal, False, nil, False, wbEmbeddedScriptAfterLoad).SetToStr(wbScriptToStr);
 
@@ -3640,7 +3640,7 @@ begin
     wbRArrayS('Local Variables', wbRStructSK([0], 'Local Variable', [
       wbSLSD,
       wbString(SCVR, 'Name', 0, cpCritical, True)
-    ], [])),
+    ])),
     wbSCROs
   ], [], cpNormal, False, wbEPF2DontShow, False, wbEmbeddedScriptAfterLoad).SetToStr(wbScriptToStr);
 
@@ -3651,7 +3651,7 @@ begin
     wbRArrayS('Local Variables', wbRStructSK([0], 'Local Variable', [
       wbSLSD,
       wbString(SCVR, 'Name', 0, cpCritical, True)
-    ], [])),
+    ])),
     wbSCROs
   ], [], cpNormal, True, nil, False, wbEmbeddedScriptAfterLoad).SetToStr(wbScriptToStr);
 
@@ -3678,7 +3678,7 @@ begin
       wbFormIDCk(INAM, 'Idle', [IDLE, NULL], False, cpNormal, True),
       wbEmbeddedScriptReq,
       wbFormIDCk(TNAM, 'Topic', [DIAL, NULL], False, cpNormal, True)
-    ], []),
+    ]),
 
     {--- Leveled Actor ----}
     wbXLCM,
@@ -3717,7 +3717,7 @@ begin
           wbFloat('Delay')
         ])
       )
-    ], []),
+    ]),
 
     wbStringKC(XATO, 'Activation Prompt'),
 
@@ -3758,7 +3758,7 @@ begin
       wbFormIDCk(INAM, 'Idle', [IDLE, NULL], False, cpNormal, True),
       wbEmbeddedScriptReq,
       wbFormIDCk(TNAM, 'Topic', [DIAL, NULL], False, cpNormal, True)
-    ], []),
+    ]),
 
     {--- Leveled Actor ----}
     wbXLCM,
@@ -3800,7 +3800,7 @@ begin
           wbFloat('Delay')
         ])
       )
-    ], []),
+    ]),
 
     wbStringKC(XATO, 'Activation Prompt'),
 
@@ -4470,7 +4470,7 @@ begin
       wbEFID,
       wbEFIT,
       wbCTDAs
-    ], []);
+    ]);
 
   wbEffects :=
     wbRArray('Effects', wbEffect);
@@ -4838,7 +4838,7 @@ begin
         wbInteger('Count', itS32)
       ]),
       wbCOED
-    ], []).SetToStr(wbItemToStr).IncludeFlag(dfCollapsed, wbCollapseItems);
+    ]).SetToStr(wbItemToStr).IncludeFlag(dfCollapsed, wbCollapseItems);
 
   wbCNTOs := wbRArrayS('Items', wbCNTO);
 
@@ -4874,7 +4874,7 @@ var  wbSoundTypeSoundsOld :=
       wbRStructSK([0], 'Sound', [
         wbFormIDCk(CSDI, 'Sound', [SOUN, NULL], False, cpNormal, True),
         wbInteger(CSDC, 'Sound Chance', itU8, nil, cpNormal, True)
-      ], [])
+      ])
       .SetSummaryKey([0, 1])
       .SetSummaryMemberPrefixSuffix(1, '{Chance: ', '}')
       .IncludeFlag(dfSummaryMembersNoName)
@@ -4909,7 +4909,7 @@ var  wbSoundTypeSoundsOld :=
       {21} 'PlayRandom/Loop'
     ])),
     wbSoundTypeSoundsOld
-  ], []);
+  ]);
 
   wbCSDTs := wbRArrayS('Sound Types', wbCSDT, cpNormal, False, nil, nil, wbActorTemplateUseModelAnimation);
 
@@ -5194,18 +5194,18 @@ var  wbSoundTypeSoundsOld :=
       wbRArray('Shared Infos', wbRStruct('Shared Info', [
         wbFormIDCk(INFC, 'Info Connection', [INFO], False, cpBenign),
         wbInteger(INFX, 'Info Index', itS32, nil, cpBenign)
-      ], []))
-    ], [])),
+      ]))
+    ])),
     // no QSTR in FNV, but keep it just in case
     wbRArrayS('Removed Quests', wbRStructSK([0], 'Removed Quest', [
       wbFormIDCkNoReach(QSTR, 'Quest', [QUST], False, cpBenign)
-    ], [])),
+    ])),
     // some records have INFC INFX (with absent formids) but no QSTI, probably error in GECK
     // i.e. [DIAL:001287C6] and [DIAL:000E9084]
     wbRArray('Unused', wbRStruct('Unused', [
       wbUnknown(INFC, cpIgnore),
       wbUnknown(INFX, cpIgnore)
-    ], []), cpIgnore, False, nil, nil, wbNeverShow),
+    ]), cpIgnore, False, nil, nil, wbNeverShow),
     wbFULL,
     wbFloat(PNAM, 'Priority', cpNormal, True, 1, -1, nil, nil, 50.0),
     wbStringKC(TDUM, 'Dumb Response'),
@@ -5386,7 +5386,7 @@ var  wbSoundTypeSoundsOld :=
       wbString(MNAM, 'Male', 0, cpTranslate),
       wbString(FNAM, 'Female', 0, cpTranslate),
       wbString(INAM, 'Insignia (Unused)')
-    ], []);
+    ]);
 
   wbRecord(FACT, 'Faction', [
     wbEDIDReq,
@@ -5477,7 +5477,7 @@ var  wbSoundTypeSoundsOld :=
       wbString(TX03,'Glow Map / Unused'),
       wbString(TX04,'Parallax Map / Unused'),
       wbString(TX05,'Environment Map / Unused')
-    ], []),
+    ]),
     wbDODT,
     wbInteger(DNAM, 'Flags', itU16, wbFlags([
       'No Specular Map'
@@ -5578,7 +5578,7 @@ var  wbSoundTypeSoundsOld :=
     wbRArrayS('Local Variables', wbRStructSK([0], 'Local Variable', [
       wbSLSD,
       wbString(SCVR, 'Name', 0, cpCritical, True)
-    ], [])),
+    ])),
     wbSCROs
   ]).SetToStr(wbScriptToStr);
 
@@ -5637,7 +5637,7 @@ var  wbSoundTypeSoundsOld :=
         wbFormIDCk(TNAM, 'Sub Menu', [TERM]),
         wbEmbeddedScriptReq,
         wbCTDAs
-      ], [])
+      ])
     )
   ]);
 
@@ -5999,7 +5999,7 @@ var  wbSoundTypeSoundsOld :=
       wbFormIDCk(INAM, 'Idle', [IDLE, NULL], False, cpNormal, True),
       wbEmbeddedScriptReq,
       wbFormIDCk(TNAM, 'Topic', [DIAL, NULL], False, cpNormal, True)
-    ], []),
+    ]),
 
     {--- Ownership ---}
     wbOwnership([XCMT, XCMO]),
@@ -6046,7 +6046,7 @@ var  wbSoundTypeSoundsOld :=
           wbFloat('Delay')
         ])
       )
-    ], []),
+    ]),
 
     wbStringKC(XATO, 'Activation Prompt'),
 
@@ -6081,7 +6081,7 @@ var  wbSoundTypeSoundsOld :=
       wbFormIDCk(INAM, 'Idle', [IDLE, NULL], False, cpNormal, True),
       wbEmbeddedScriptReq,
       wbFormIDCk(TNAM, 'Topic', [DIAL, NULL], False, cpNormal, True)
-    ], []),
+    ]),
 
     {--- Ownership ---}
     wbOwnership([XCMT, XCMO]),
@@ -6128,7 +6128,7 @@ var  wbSoundTypeSoundsOld :=
           wbFloat('Delay')
         ])
       )
-    ], []),
+    ]),
 
     wbStringKC(XATO, 'Activation Prompt'),
 
@@ -6163,7 +6163,7 @@ var  wbSoundTypeSoundsOld :=
       wbFormIDCk(INAM, 'Idle', [IDLE, NULL], False, cpNormal, True),
       wbEmbeddedScriptReq,
       wbFormIDCk(TNAM, 'Topic', [DIAL, NULL], False, cpNormal, True)
-    ], []),
+    ]),
 
     {--- Ownership ---}
     wbOwnership([XCMT, XCMO]),
@@ -6210,7 +6210,7 @@ var  wbSoundTypeSoundsOld :=
           wbFloat('Delay')
         ])
       )
-    ], []),
+    ]),
 
     wbStringKC(XATO, 'Activation Prompt'),
 
@@ -6416,12 +6416,12 @@ var  wbSoundTypeSoundsOld :=
       wbTimeInterpolators(UNAM, 'Start'),
       wbTimeInterpolators(NAM1, 'Ramp Down'),
       wbTimeInterpolators(NAM2, 'Down Start')
-    ], []),
+    ]),
     wbRStruct('Depht of Field', [
       wbTimeInterpolators(WNAM, 'Strength'),
       wbTimeInterpolators(XNAM, 'Distance'),
       wbTimeInterpolators(YNAM, 'Range')
-    ], []),
+    ]),
     wbTimeInterpolators(NAM4, 'Motion Blur Strength'),
     wbRStruct('HDR', [
       wbTimeInterpolatorsMultAdd(_00_IAD, _40_IAD, 'Eye Adapt Speed'),
@@ -6438,12 +6438,12 @@ var  wbSoundTypeSoundsOld :=
       wbTimeInterpolatorsMultAdd(_0B_IAD, _4B_IAD, 'Sunlight Dimmer'),
       wbTimeInterpolatorsMultAdd(_0C_IAD, _4C_IAD, 'Grass Dimmer'),
       wbTimeInterpolatorsMultAdd(_0D_IAD, _4D_IAD, 'Tree Dimmer')
-    ], []),
+    ]),
     wbRStruct('Bloom', [
       wbTimeInterpolatorsMultAdd(_0E_IAD, _4E_IAD, 'Blur Radius'),
       wbTimeInterpolatorsMultAdd(_0F_IAD, _4F_IAD, 'Alpha Mult Interior'),
       wbTimeInterpolatorsMultAdd(_10_IAD, _50_IAD, 'Alpha Mult Exterior')
-    ], []),
+    ]),
     wbCinematicIMAD,
     wbFormIDCk(RDSD, 'Sound - Intro', [SOUN]),
     wbFormIDCk(RDSI, 'Sound - Outro', [SOUN])
@@ -6579,7 +6579,7 @@ var  wbSoundTypeSoundsOld :=
         wbEmbeddedScriptPerk
       ], [], cpNormal, False, wbPERKPRKCDontShow),
       wbEmpty(PRKF, 'End Marker', cpIgnore, True)
-    ], []);
+    ]);
 
   wbRecord(PERK, 'Perk', [
     wbEDIDReq,
@@ -6803,7 +6803,7 @@ var  wbSoundTypeSoundsOld :=
     wbRStruct('Menu Button', [
       wbStringKC(ITXT, 'Button Text', 0, cpTranslate),
       wbCTDAs
-    ], []);
+    ]);
 
   wbRecord(MESG, 'Message', [
     wbEDIDReq,
@@ -7079,7 +7079,7 @@ var  wbSoundTypeSoundsOld :=
         wbString(NAM3, 'Edits'),
         wbFormIDCk(SNAM, 'Speaker Animation', [IDLE]),
         wbFormIDCk(LNAM, 'Listener Animation', [IDLE])
-      ], [])
+      ])
     ),
     wbCTDAs,
     wbRArray('Choices', wbFormIDCk(TCLT, 'Choice', [DIAL])),
@@ -7291,7 +7291,7 @@ var  wbSoundTypeSoundsOld :=
       .IncludeFlagOnValue(dfSummaryMembersNoName)
       .IncludeFlagOnValue(dfSummaryNoSortKey)
       , wbCOED
-    ], [])
+    ])
     .SetSummaryMemberMaxDepth(0, 1)
     .IncludeFlag(dfCollapsed, wbCollapseLeveledItems);
 
@@ -7311,7 +7311,7 @@ var  wbSoundTypeSoundsOld :=
       .IncludeFlagOnValue(dfSummaryMembersNoName)
       .IncludeFlagOnValue(dfSummaryNoSortKey)
       , wbCOED
-    ], [])
+    ])
     .SetSummaryMemberMaxDepth(0, 1)
     .IncludeFlag(dfCollapsed, wbCollapseLeveledItems);
 
@@ -7331,7 +7331,7 @@ var  wbSoundTypeSoundsOld :=
       .IncludeFlagOnValue(dfSummaryMembersNoName)
       .IncludeFlagOnValue(dfSummaryNoSortKey)
       , wbCOED
-    ], [])
+    ])
     .SetSummaryMemberMaxDepth(0, 1)
     .IncludeFlag(dfCollapsed, wbCollapseLeveledItems);
 
@@ -8163,8 +8163,8 @@ var  wbSoundTypeSoundsOld :=
         wbStringKC(CNAM, 'Log Entry', 0, cpTranslate),
         wbEmbeddedScriptReq,
         wbFormIDCk(NAM0, 'Next Quest', [QUST])
-      ], []))
-    ], [])),
+      ]))
+    ])),
     wbRArray('Objectives', wbRStruct('Objective', [
       wbInteger(QOBJ, 'Objective Index', itS32),
       wbStringKC(NNAM, 'Description', 0, cpNormal, True),
@@ -8177,8 +8177,8 @@ var  wbSoundTypeSoundsOld :=
           wbByteArray('Unused', 3)
         ]),
         wbCTDAs
-      ], []))
-    ], []))
+      ]))
+    ]))
   ]);
 
   wbHeadPartIndexEnum := wbEnum([
@@ -8208,7 +8208,7 @@ var  wbSoundTypeSoundsOld :=
         wbInteger(INDX, 'Index', itU32, wbBodyPartIndexEnum),
         wbICON,
         wbGenericModel(True)
-      ], [])
+      ])
       .SetSummaryKey([0, 2])
       .SetSummaryMemberPrefixSuffix(0, '[', ']')
       .SetSummaryDelimiter(' ')
@@ -8460,7 +8460,7 @@ var  wbSoundTypeSoundsOld :=
         wbByteArray('Unused', 1)
       ], cpNormal, True),
       wbFormIDCk(WMI1, 'Reputation', [REPU])
-    ], []),
+    ]),
 
     {--- Audio Data ---}
     wbRStruct('Audio Data', [
@@ -8470,7 +8470,7 @@ var  wbSoundTypeSoundsOld :=
       wbInteger(BNAM, 'Flags', itU32, wbFlags(['Use Controller Values'])),
       wbFloat(MNAM, 'Layer 2 Trigger %', cpNormal, True, 100),
       wbFloat(NNAM, 'Layer 3 Trigger %', cpNormal, True, 100)
-    ], []),
+    ]),
 
     wbInteger(XSRF, 'Special Rendering Flags', itU32,
       wbFlags(wbSparseFlags([
@@ -8493,7 +8493,7 @@ var  wbSoundTypeSoundsOld :=
       wbFormIDCk(INAM, 'Idle', [IDLE, NULL], False, cpNormal, True),
       wbEmbeddedScriptReq,
       wbFormIDCk(TNAM, 'Topic', [DIAL, NULL], False, cpNormal, True)
-    ], []),
+    ]),
 
     {--- Radio ---}
     wbStruct(XRDO, 'Radio Data', [
@@ -8531,7 +8531,7 @@ var  wbSoundTypeSoundsOld :=
     wbRStruct('Ammo', [
       wbFormIDCk(XAMT, 'Type', [AMMO], False, cpNormal, True),
       wbInteger(XAMC, 'Count', itS32, nil, cpNormal, True)
-    ], []),
+    ]),
 
     {--- Reflected By / Refracted By ---}
     wbRArrayS('Reflected/Refracted By',
@@ -8575,7 +8575,7 @@ var  wbSoundTypeSoundsOld :=
           wbFloat('Delay')
         ])
       )
-    ], []),
+    ]),
 
     wbStringKC(XATO, 'Activation Prompt'),
 
@@ -8613,7 +8613,7 @@ var  wbSoundTypeSoundsOld :=
       wbRArrayS('Linked Rooms',
         wbFormIDCk(XLRM, 'Linked Room', [REFR])
       ).SetCountPath('XRMR\Linked Rooms Count')
-    ], []),
+    ]),
 
     wbSizePosRot(XOCP, 'Occlusion Plane Data'),
     wbArray(XORD, 'Linked Occlusion Planes', wbFormIDCk('Plane', [REFR, NULL]), [
@@ -8646,7 +8646,7 @@ var  wbSoundTypeSoundsOld :=
         wbFloat('X'),
         wbFloat('Y')
       ]), 0, wbRPLDAfterLoad)
-    ], [])),
+    ])),
 
     wbRArrayS('Region Data Entries', wbRStructSK([0], 'Region Data Entry', [
       {always starts with an RDAT}
@@ -8729,7 +8729,7 @@ var  wbSoundTypeSoundsOld :=
 
       {--- Imposter ---}
       wbArrayS(RDID, 'Imposters', wbFormIDCk('Imposter', [REFR]), 0, cpNormal, False, nil, nil, wbREGNImposterDontShow)
-    ], []))
+    ]))
   ], True);
 
   wbRecord(SOUN, 'Sound', [
@@ -9047,7 +9047,7 @@ var  wbSoundTypeSoundsOld :=
     wbRStruct('High Res Image', [
       wbString(TX00, 'Face'),
       wbString(TX01, 'Back')
-    ], []),
+    ]),
     wbRStruct('Card', [
       wbInteger(INTV, 'Suit', itU32, wbEnum([
         '',
@@ -9075,7 +9075,7 @@ var  wbSoundTypeSoundsOld :=
         'King',
         'Joker'
       ]))
-    ], []),
+    ]),
     wbInteger(DATA, 'Value', itU32)
   ]);
 
@@ -9179,7 +9179,7 @@ var  wbSoundTypeSoundsOld :=
       wbString(MODL, '$100 Chip'),
       wbString(MODL, '$500 Chip'),
       wbString(MODL, 'Roulette Chip')
-    ], []),
+    ]),
     wbString(MODL, 'Slot Machine Model'),
     wbString(MOD2, 'Slot Machine Model (again?)'),
     wbString(MOD3, 'BlackJack Table Model'),
@@ -9193,13 +9193,13 @@ var  wbSoundTypeSoundsOld :=
       wbString(ICON, 'Symbol 5'),
       wbString(ICON, 'Symbol 6'),
       wbString(ICON, 'Symbol W')
-    ], []),
+    ]),
       wbRStruct('BlackJack Decks', [
       wbString(ICO2, 'Deck 1'),
       wbString(ICO2, 'Deck 2'),
       wbString(ICO2, 'Deck 3'),
       wbString(ICO2, 'Deck 4')
-    ], [])
+    ])
   ]);
 
   wbRecord(DEHY, 'Dehydration Stage', [
@@ -9309,13 +9309,13 @@ var  wbSoundTypeSoundsOld :=
     wbRStruct('Ingredient', [
       wbFormIDCk(RCIL, 'Item', [ARMO, AMMO, MISC, WEAP, BOOK, KEYM, ALCH, NOTE, IMOD, CMNY, CCRD, CHIP, LIGH], False, cpNormal, True),
       wbInteger(RCQY, 'Quantity', itU32, nil, cpNormal, True)
-    ], []);
+    ]);
 
   wbOutput :=
     wbRStruct('Output', [
       wbFormIDCk(RCOD, 'Item', [ARMO, AMMO, MISC, WEAP, BOOK, KEYM, ALCH, NOTE, IMOD, CMNY, CCRD, CHIP, LIGH], False, cpNormal, True),
       wbInteger(RCQY, 'Quantity', itU32, nil, cpNormal, True)
-    ], []);
+    ]);
 
   wbRecord(RCPE, 'Recipe', [
     wbEDIDReq,
@@ -9545,7 +9545,7 @@ var  wbSoundTypeSoundsOld :=
     wbRStruct('Sound - Gun', [
       wbFormIDCk(SNAM, 'Shoot 3D', [SOUN]),
       wbFormIDCk(SNAM, 'Shoot Dist', [SOUN])
-    ], []),
+    ]),
     //wbFormIDCk(SNAM, 'Sound - Gun - Shoot 3D', [SOUN]),
     //wbFormIDCk(SNAM, 'Sound - Gun - Shoot Dist', [SOUN]),
     wbFormIDCk(XNAM, 'Sound - Gun - Shoot 2D', [SOUN]),
@@ -9558,7 +9558,7 @@ var  wbSoundTypeSoundsOld :=
     wbRStruct('Sound - Mod 1', [
       wbFormIDCk(WMS1, 'Shoot 3D', [SOUN]),
       wbFormIDCk(WMS1, 'Shoot Dist', [SOUN])
-    ], []),
+    ]),
     //wbFormIDCk(WMS1, 'Sound - Mod 1 - Shoot 3D', [SOUN]),
     //wbFormIDCk(WMS1, 'Sound - Mod 1 - Shoot Dist', [SOUN]),
     wbFormIDCk(WMS2, 'Sound - Mod 1 - Shoot 2D', [SOUN]),
@@ -9750,7 +9750,7 @@ var  wbSoundTypeSoundsOld :=
     wbWeatherCloudTextures,
     wbRStruct('Precipitation', [
       wbGenericModel
-    ], []),
+    ]),
     wbInteger(LNAM, 'Max Cloud Layers', itU32)
       .SetDefaultNativeValue(4)
       .SetRequired,
@@ -9803,7 +9803,7 @@ var  wbSoundTypeSoundsOld :=
         ], False, 6))
       ).SetRequired
        .IncludeFlag(dfCollapsed, wbCollapseFlags)
-    ], []),
+    ]),
     wbFormIDCk(CNAM, 'Climate', [CLMT])
       .SetDefaultNativeValue(351)
       .SetIsRemovable(wbWorldClimateIsRemovable),

@@ -3939,7 +3939,7 @@ begin
     wbFloat(aSigs[0], 'Red', cpNormal, False, 255, 0).SetRequired,
     wbFloat(aSigs[1], 'Green', cpNormal, False, 255, 0).SetRequired,
     wbFloat(aSigs[2], 'Blue', cpNormal, False, 255, 0).SetRequired
-  ], []).SetToStr(wbRGBAToStr).IncludeFlag(dfCollapsed, wbCollapseRGBA);
+  ]).SetToStr(wbRGBAToStr).IncludeFlag(dfCollapsed, wbCollapseRGBA);
 end;
 
 function wbFloatRGBA(const aSignature: TwbSignature; const aName: string = 'Color'): IwbRecordMemberDef;
@@ -4255,7 +4255,7 @@ begin
     wbRStruct(aName, [
       wbTimeInterpolators(aSignatureMult, sMult),
       wbTimeInterpolators(aSignatureAdd, sAdd)
-    ], [])
+    ])
     .SetSummaryKey([0, 1])
     .IncludeFlag(dfCollapsed, wbCollapseTimeInterpolatorsMultAdd);
 end;
@@ -4289,7 +4289,7 @@ begin
     wbICON := wbRStruct('Icon', [
       wbString(ICON, 'Large Icon FileName'),
       wbString(MICO, 'Small Icon FileName')
-    ], []);
+    ]);
 
   Result :=
     wbRStructSK([0], IfThen(wbGameMode < gmTES5, 'Part', 'Head Part'), [
@@ -4949,7 +4949,7 @@ begin
         wbInteger(ANAM, 'Capacity', itU16),
         wbInteger(EAMT, 'Capacity', itU16)
       )
-    ], []).IncludeFlag(dfAllowAnyMember);
+    ]).IncludeFlag(dfAllowAnyMember);
 
   wbHEDR :=
     wbStruct(HEDR, 'Header', [
@@ -4968,7 +4968,7 @@ begin
       wbArrayS(KWDA, 'Keywords',
         wbFormIDCk('Keyword', [KYWD,NULL])
       ).SetCountPathOnValue(KSIZ, False).SetRequired
-    ], []).SetSummaryKey([1]);
+    ]).SetSummaryKey([1]);
 
   wbRagdoll :=
     wbRStruct('Ragdoll Data', [
@@ -4984,7 +4984,7 @@ begin
         nil,
         wbVec3(XRGB, 'Biped Rotation')
       )
-    ], []);
+    ]);
 
   wbColorInterpolator :=
     wbStructSK([0], 'Data', [
@@ -5081,7 +5081,7 @@ begin
         wbTimeInterpolatorsMultAdd(_12_IAD, _52_IAD, 'Contrast'),
         wbTimeInterpolatorsMultAdd(_13_IAD, _53_IAD, 'Contrast Avg Lum'),
         wbTimeInterpolatorsMultAdd(_14_IAD, _54_IAD, 'Brightness')
-      ], [])
+      ])
   else
     wbCinematicIMAD :=
       wbRStruct('Cinematic', [
@@ -5089,7 +5089,7 @@ begin
         wbTimeInterpolatorsMultAdd(_12_IAD, _52_IAD, 'Brightness'),
         wbTimeInterpolatorsMultAdd(_13_IAD, _53_IAD, 'Contrast'),
         wbTimeInterpolatorsMultAdd(_14_IAD, _54_IAD, 'Unused')
-      ], []);
+      ]);
 
   wbDATAPosRot :=
     wbVec3PosRot(DATA).SetRequired;
@@ -5192,7 +5192,7 @@ begin
     wbRArray('Sounds',
       wbRStruct('Sound Files', [
         wbString(ANAM, 'File Name')
-      ], [])
+      ])
       .SetSummaryKey([0])
       .IncludeFlag(dfSummaryMembersNoName)
       .IncludeFlag(dfCollapsed)
@@ -5203,7 +5203,7 @@ begin
       wbRStructSK([0], 'Sound', [
         wbFormIDCk(CSDI, 'Sound', [SNDR, NULL], False, cpNormal, True),
         wbInteger(CSDC, 'Sound Chance', itU8, nil, cpNormal, True)
-      ], [])
+      ])
       .SetSummaryKey([0, 1])
       .SetSummaryMemberPrefixSuffix(1, '{Chance: ', '}')
       .IncludeFlag(dfSummaryMembersNoName)
@@ -5327,7 +5327,7 @@ begin
             wbByteArray('Unused', 1, cpIgnore, False, wbNeverShow),
             wbInteger('Layer', itU16)
           ])
-        ], []),
+        ]),
         wbRStructSK([0], 'Alpha Layer', [
           wbStructSK(ATXT, [1, 3], 'Alpha Layer Header', [
             wbFormIDCk('Texture', [LTEX, NULL]),
@@ -5343,8 +5343,8 @@ begin
                 wbByteArray('Unused', 2, cpIgnore, False, wbNeverShow),
                 wbFloat('Opacity')
               ])))
-        ], [])
-      ], []));
+        ])
+      ]));
 
 
 {>>>Navmesh Common Defs<<<}
@@ -5425,7 +5425,7 @@ Can't properly represent that with current record definition methods.
           wbString(BNAM, 'Layer #3')
             .SetDefaultEditValue('Sky\Alpha.dds')
         ).SetRequired
-      ], []).IncludeFlag(dfAllowAnyMember)
+      ]).IncludeFlag(dfAllowAnyMember)
             .IncludeFlag(dfCollapsed)
             .IncludeFlag(dfStructFirstNotRequired)
             .SetRequired,
@@ -5459,7 +5459,7 @@ Can't properly represent that with current record definition methods.
         wbString(J0TX, 'Layer #26'),
         wbString(K0TX, 'Layer #27'),
         wbString(L0TX, 'Layer #28')
-      ], []).IncludeFlag(dfAllowAnyMember)
+      ]).IncludeFlag(dfAllowAnyMember)
             .IncludeFlag(dfCollapsed)
             .IncludeFlag(dfStructFirstNotRequired)
     );
@@ -5480,7 +5480,7 @@ Can't properly represent that with current record definition methods.
             .SetDefaultEditValue('0'),
 	    	32).IncludeFlag(dfNotAlignable)
            .SetRequired
-	    ], [])
+	    ])
     ).SetRequired;
 
   //FO3,FNV,TES4,FO4,FO76,SF1
@@ -5771,7 +5771,7 @@ Can't properly represent that with current record definition methods.
         wbFromVersion(111, DALC, wbAmbientColors('Late Sunset'))
           .SetRequired,
         nil)
-    ], []).SetRequired;
+    ]).SetRequired;
 
   //FO4,FO76,SF1
   wbWeatherMagic :=
@@ -5888,7 +5888,7 @@ Can't properly represent that with current record definition methods.
       wbFormIDCk(NAM3, 'LOD Water', [WATR])
         .SetDefaultNativeValue(24),
       wbFloat(NAM4, 'LOD Water Height').SetRequired
-    ], []).SetIsRemovable(wbWorldLODDataIsRemovable);
+    ]).SetIsRemovable(wbWorldLODDataIsRemovable);
 
   //FO3,FNV,TES5,FO4,FO76,SF1
   wbWorldLandData :=
@@ -6028,7 +6028,7 @@ Can't properly represent that with current record definition methods.
         wbString('Grass', 30),
         wbString('Water', 30)
       ], cpNormal, True).IncludeFlag(dfCollapsed)
-    ], []).IncludeFlag(dfCollapsed);
+    ]).IncludeFlag(dfCollapsed);
 
   //FO76,SF1
   wbWorldRegionEditorMap :=
@@ -6045,7 +6045,7 @@ Can't properly represent that with current record definition methods.
       .SetSummaryPrefixSuffixOnValue(2, 'Max(X: ', ', ')
       .SetSummaryPrefixSuffixOnValue(3, 'Y: ', ')]')
       .IncludeFlag(dfCollapsed)
-    ], []);
+    ]);
 
   //FO76,SF1
   wbWorldWaterHeightData :=
@@ -6066,7 +6066,7 @@ Can't properly represent that with current record definition methods.
       ).IncludeFlagOnValue(dfArrayCanBeEmpty)
       .SetRequired
       .IncludeFlag(dfNotAlignable)
-    ], []);
+    ]);
 
   //FO4,FO76,SF1
   wbWorldLevelData :=
@@ -6088,7 +6088,7 @@ Can't properly represent that with current record definition methods.
         .SetSummaryDelimiter(', ')
       ]),
       wbByteArray(WLEV, 'Cell Data')
-    ], []);
+    ]);
 
   //TES4,FO3,FNV,TES5,SSE,FO4,FO76,SF1
   wbWorldOffsetData :=

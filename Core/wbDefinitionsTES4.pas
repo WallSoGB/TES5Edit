@@ -43,7 +43,6 @@ uses
 
 var
   wbEDID: IwbSubRecordDef;
-  wbXGLB: IwbSubRecordDef;
   wbSLSD: IwbRecordMemberDef;
   wbSPLO: IwbSubRecordDef;
   wbSPLOs: IwbSubRecordArrayDef;
@@ -1391,7 +1390,7 @@ begin
     wbRStruct('Unused', [
       wbFormIDCk(XPCI, 'Unused', [CELL]),
       wbString(FULL, 'Unused')
-    ], []),
+    ]),
     wbXLOD,
     wbXESP,
     wbFormIDCk(XMRC, 'Merchant container', [REFR], True),
@@ -1600,7 +1599,7 @@ begin
         wbByteArray('Unused', 3)
       ], cpNormal, True, nil, 1),
       wbFULLReq
-    ], []);
+    ]);
 
   wbSCITOBME :=
     wbRStructSK([0], 'Script effect', [
@@ -1612,7 +1611,7 @@ begin
         wbByteArray('Unused', 3)
       ], cpNormal, True, nil, 1),
       wbFULLReq
-    ], []);
+    ]);
 
 
   wbOBMEResolutionInfo := wbEnum(['None', 'FormID', 'Magic Effect Code', 'Actor Value']);
@@ -1638,7 +1637,7 @@ begin
       wbSCITOBME,
       wbString(EFII, 'Icon'),
       wbEFIX
-    ], []);
+    ]);
 
   wbEffects := wbRArray('Effects',
     wbRUnion('Effects', [
@@ -1646,13 +1645,13 @@ begin
         wbEFID,
         wbEFIT,
         wbSCIT
-      ], []),
+      ]),
       wbRStruct('Effects', [
         wbRArray('Effects', wbEffect),
         wbEmpty(EFXX, 'Effects End Marker', cpNormal, True),
         wbFULLReq
-      ], [])
-    ], [])
+      ])
+    ])
   );
 
 //  wbEffects :=
@@ -1662,8 +1661,8 @@ begin
 //          wbEFID,
 //          wbEFIT,
 //          wbSCIT
-//        ], [])
-//      ], []),
+//        ])
+//      ]),
 //      wbRStruct('Effects', [
 //        wbRStructs('Effects','Effect', [
 //          wbStruct(EFME, 'Oblivion Magic Extender', [
@@ -1678,11 +1677,11 @@ begin
 //          wbSCITOBME,
 //          wbString(EFII, 'Icon'),
 //          wbEFIX
-//        ], []),
+//        ]),
 //        wbEmpty(EFXX, 'Effects End Marker', cpNormal, True),
 //        wbFULLReq
-//      ], [])
-//    ], []);
+//      ])
+//    ]);
 
   wbRecord(ALCH, 'Potion',
     wbFlags(wbFlagsList([
@@ -2008,7 +2007,7 @@ var  wbSoundTypeSoundsOld :=
       wbRStructSK([0], 'Sound', [
         wbFormIDCk(CSDI, 'Sound', [SOUN, NULL], False, cpNormal, True),
         wbInteger(CSDC, 'Sound Chance', itU8, nil, cpNormal, True)
-      ], [])
+      ])
       .SetSummaryKey([0, 1])
       .SetSummaryMemberPrefixSuffix(1, '{Chance: ', '}')
       .IncludeFlag(dfSummaryMembersNoName)
@@ -2030,7 +2029,7 @@ var  wbSoundTypeSoundsOld :=
       {0x09} 'Weapon'
     ])),
     wbSoundTypeSoundsOld
-  ], []);
+  ]);
 
   wbCSDTs := wbRArrayS('Sound Types', wbCSDT);
 
@@ -2358,7 +2357,7 @@ var  wbSoundTypeSoundsOld :=
       wbString(MNAM, 'Male', 0, cpTranslate),
       wbString(FNAM, 'Female', 0, cpTranslate),
       wbString(INAM, 'Insignia')
-    ], []);
+    ]);
 
   wbRecord(FACT, 'Faction', [
     wbEDID,
@@ -2687,7 +2686,7 @@ var  wbSoundTypeSoundsOld :=
         ]),
      {7}wbEmpty('Unused', cpIgnore)
       ])
-    ], []);
+    ]);
 
   wbCTDAs := wbRArray('Conditions', wbCTDA);
 
@@ -2732,7 +2731,7 @@ var  wbSoundTypeSoundsOld :=
       .SetSummaryPrefixSuffixOnValue(3, 'VariableCount = ', '}')
       .IncludeFlagOnValue(dfSummaryMembersNoName)
       .IncludeFlag(dfCollapsed, wbCollapseScriptData)
-    ], []);
+    ]);
 
   wbSCROs :=
     wbRArray('References',
@@ -2744,7 +2743,7 @@ var  wbSoundTypeSoundsOld :=
 //           FACT, ACHR, REFR, ACRE, GLOB, DIAL, CELL, SOUN, MGEF, WTHR, CLAS, EFSH, RACE,
 //           LVLC, CSTY, WATR, WRLD, SCPT, BSGN, TREE, ENCH, NULL]),
         wbInteger(SCRV, 'Local Variable', itU32)
-      ], [])
+      ])
     ).IncludeFlag(dfNotAlignable);
 
   wbResultScript := wbRStruct('Result Script', [
@@ -2752,7 +2751,7 @@ var  wbSoundTypeSoundsOld :=
     wbByteArray(SCDA, 'Compiled result script'),
     wbStringScript(SCTX, 'Result script source'),
     wbSCROs
-  ], []).SetToStr(wbScriptToStr);
+  ]).SetToStr(wbScriptToStr);
 
   wbRecord(IDLE, 'Idle Animation', [
     wbEDID,
@@ -2807,7 +2806,7 @@ var  wbSoundTypeSoundsOld :=
         ]),
         wbStringKC(NAM1, 'Response Text', 0, cpTranslate),
         wbString(NAM2, 'Actor notes', 0, cpTranslate)
-      ], [])
+      ])
     ),
     wbCTDAs,
     wbRArray('Choices', wbFormIDCk(TCLT, 'Choice', [DIAL])),
@@ -3493,8 +3492,8 @@ var  wbSoundTypeSoundsOld :=
         wbCTDAs,
         wbStringKC(CNAM, 'Log Entry', 0, cpTranslate),
         wbResultScript
-      ], []).SetSummaryKey([2, 1]))
-    ], []).SetSummaryKey([1])),
+      ]).SetSummaryKey([2, 1]))
+    ]).SetSummaryKey([1])),
     wbRArray('Targets', wbRStruct('Target', [
       wbStructSK(QSTA, [0], 'Target', [
         wbFormIDCkNoReach('Target', [REFR, ACRE, ACHR], True),
@@ -3504,7 +3503,7 @@ var  wbSoundTypeSoundsOld :=
         wbByteArray('Unused', 3)
       ]),
       wbCTDAs
-    ], []).SetSummaryKey([0, 1]))
+    ]).SetSummaryKey([0, 1]))
   ]);
 
   var wbHeadPartIndexEnum :=
@@ -3534,7 +3533,7 @@ var  wbSoundTypeSoundsOld :=
       wbRStructSK([0], 'Part', [
         wbInteger(INDX, 'Index', itU32, wbBodyDataIndexEnum),
         wbICON
-      ], [])
+      ])
       .SetSummaryKey([0, 1])
       .SetSummaryMemberPrefixSuffix(0, '[', ']')
       .SetSummaryMemberPrefixSuffix(1, 'ICON: ', '')
@@ -3665,7 +3664,7 @@ var  wbSoundTypeSoundsOld :=
     wbRStruct('Unused', [
       wbFormIDCk(XPCI, 'Unused', [CELL]),
       wbString(FULL, 'Unused')
-    ], []),
+    ]),
     wbInteger(XLCM, 'Level Modifier', itS32),
     wbFormIDCk(XRTM, 'Reference Teleport Marker', [REFR]),
     wbActionFlag,
@@ -3695,7 +3694,7 @@ var  wbSoundTypeSoundsOld :=
         ])),
         wbByteArray('Unused', 1)
       ], cpNormal, True)
-    ], []),
+    ]),
     wbEmpty(ONAM, 'Open by Default'),
     wbRagdoll,
     wbXSCL,
@@ -3718,7 +3717,7 @@ var  wbSoundTypeSoundsOld :=
         wbFloat('X'),
         wbFloat('Y')
       ]), 0, wbRPLDAfterLoad)
-    ], []).SetSummaryKey([1]).IncludeFlag(dfSummaryMembersNoName), cpNormal, True),
+    ]).SetSummaryKey([1]).IncludeFlag(dfSummaryMembersNoName), cpNormal, True),
 
     wbRArrayS('Region Data Entries', wbRStructSK([0], 'Region Data Entry', [
       {always starts with an RDAT}
@@ -3793,7 +3792,7 @@ var  wbSoundTypeSoundsOld :=
         wbFormIDCk('Weather', [WTHR]),
         wbInteger('Chance', itU32)
       ]))
-    ], []))
+    ]))
   ], True).SetSummaryKey([3, 4]).IncludeFlag(dfSummaryMembersNoName);
 
   wbRecord(ROAD, 'Road', [
@@ -3830,7 +3829,7 @@ var  wbSoundTypeSoundsOld :=
     wbRArrayS('Local Variables', wbRStructSK([0], 'Local Variable', [
       wbSLSD,
       wbString(SCVR, 'Name', 0, cpCritical)
-    ], []).SetSummaryKey([1]).IncludeFlag(dfSummaryMembersNoName)),
+    ]).SetSummaryKey([1]).IncludeFlag(dfSummaryMembersNoName)),
     wbSCROs
   ]).SetToStr(wbScriptToStr);
 
@@ -3994,7 +3993,7 @@ var  wbSoundTypeSoundsOld :=
     wbRArray('Master Files', wbRStruct('Master File', [
       wbStringForward(MAST, 'FileName', 0, cpNormal, True),
       wbByteArray(DATA, 'Unused', 8, cpIgnore, True)
-    ], [])).IncludeFlag(dfInternalEditOnly, not wbAllowMasterFilesEdit)
+    ])).IncludeFlag(dfInternalEditOnly, not wbAllowMasterFilesEdit)
   ], False, nil, cpNormal, True);
 
   wbRecord(PLYR, 'Player Reference', [
@@ -4116,7 +4115,7 @@ var  wbSoundTypeSoundsOld :=
     wbString(DNAM, 'Cloud Texture Upper Layer'),
     wbRStruct('Precipitation', [
       wbTexturedModel('Model', [MODL, MODB, MODT])
-    ], []),
+    ]),
     wbWeatherColors,
     wbWeatherFogDistance,
     wbStruct(HNAM, 'HDR Data', [

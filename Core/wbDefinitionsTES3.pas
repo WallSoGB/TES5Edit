@@ -441,7 +441,7 @@ begin
         ])),
         wbString(BNAM, 'Male Part Name'),
         wbString(CNAM, 'Female Body Part Name')
-      ], [])
+      ])
     ),
     wbString(ENAM, 'EnchantID')
   ]).SetFormIDBase($40);
@@ -656,7 +656,7 @@ begin
         wbInteger(INDX, 'Body Part Index', itU8),
         wbString(BNAM, 'Male Body Part Name'),
         wbString(CNAM, 'Female Body Part Name')
-      ], [])
+      ])
     ),
     wbString(ENAM, 'EnchantID'),
     wbString(SCRI, 'ScriptID')
@@ -877,8 +877,8 @@ begin
       wbRUnion('Result', [
         wbInteger(INTV, 'Result - Integer', itS32),
         wbFloat(FLTV, 'Result - Float')
-      ], [])
-    ], [])),
+      ])
+    ])),
     wbString(BNAM, 'Result text (not compiled)')
   ]).SetFormIDBase($90);
 
@@ -939,7 +939,7 @@ begin
     wbRStructs('Relations','Relation', [
       wbString(ANAM, 'FactionID'),
       wbInteger(INTV, 'Reaction', its32)
-    ], [])
+    ])
   ]).SetFormIDBase($1C);
 
   wbRecord(GLOB, 'Global', [
@@ -962,7 +962,7 @@ begin
       wbString(STRV, 'String Value'),
       wbInteger(INTV, 'Interer Value', its32),
       wbFloat(FLTV, 'Float Value')
-    ], [])
+    ])
   ])
   .SetFormIDBase($50)
   .IncludeFlag(dfIndexEditorID);
@@ -1107,7 +1107,7 @@ begin
       wbRStruct('Leveled Creature', [
         wbString(CNAM, 'Creature Name'),
         wbInteger(INTV, 'Creature Level', itS16)
-      ], [])
+      ])
     )
   ]).SetFormIDBase($40);
 
@@ -1123,7 +1123,7 @@ begin
       wbRStruct('Leveled Item', [
         wbString(INAM, 'Item Name'),
         wbInteger(INTV, 'Item Level', itS16)
-      ], [])
+      ])
     )
   ]).SetFormIDBase($40);
 
@@ -1646,7 +1646,7 @@ begin
     wbRArray('Master Files', wbRStruct('Master File', [
       wbStringForward(MAST, 'Filename', 0, cpNormal, True),
       wbInteger(DATA, 'Master Size', itU64, nil, cpNormal, True)
-    ], [])).IncludeFlag(dfInternalEditOnly, not wbAllowMasterFilesEdit)
+    ])).IncludeFlag(dfInternalEditOnly, not wbAllowMasterFilesEdit)
   ], False, nil, cpNormal, True).SetGetFormIDCallback(function(const aMainRecord: IwbMainRecord; out aFormID: TwbFormID): Boolean begin
     Result := True;
     aFormID := TwbFormID.Null;
