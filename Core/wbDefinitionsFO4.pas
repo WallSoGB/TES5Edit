@@ -176,8 +176,6 @@ var
   wbDMDS: IwbSubRecordDef;
   wbMO5S: IwbSubRecordDef;
   wbSPCT: IwbSubRecordDef;
-  wbXOWN: IwbSubRecordDef;
-  wbXRNK: IwbSubRecordDef;
   wbPhonemeTargets: IwbSubRecordDef;
   wbPHWT: IwbSubRecordStructDef;
   wbQUSTAliasFlags: IwbSubRecordDef;
@@ -4679,8 +4677,7 @@ end;
       wbFormIDCk(XRFG, 'Reference Group', [RFGP]),
       wbUnknown(XCVR),
       wbXESP,
-      wbXOWN,
-      wbXRNK,
+      wbOwnership,
       wbFormIDCk(XEMI, 'Emittance', [LIGH, REGN]),
       wbFormIDCk(XMBR, 'MultiBound Reference', [REFR]),
       wbEmpty(XIS2, 'Ignored by Sandbox'),
@@ -5800,14 +5797,6 @@ begin
     'Very Hard'
   ]));
 
-  wbXOWN := wbStruct(XOWN, 'Owner', [
-    wbFormIDCkNoReach('Owner', [FACT, ACHR, NPC_]),
-    wbByteArray('Unknown', 4),
-    wbInteger('Flags', itU8, wbFlags(['No Crime'])),
-    wbByteArray('Unused', 3)
-  ]);
-  wbXRNK := wbInteger(XRNK, 'Owner Faction Rank', itS32);
-
 	wbNVNM :=
     wbStruct(NVNM, 'Navmesh Geometry', [
 	    wbInteger('Version', itU32).SetDefaultNativeValue(15),
@@ -6003,8 +5992,7 @@ begin
     wbXESP,
 
     {--- Ownership ---}
-    wbXOWN,
-    wbXRNK,
+    wbOwnership,
 
     {--- Emittance ---}
     wbFormIDCk(XEMI, 'Emittance', [LIGH, REGN]),
@@ -7661,8 +7649,7 @@ begin
     wbFormIDCk(XCWT, 'Water', [WATR]),
 
     {--- Ownership ---}
-    wbXOWN,
-    wbXRNK,
+    wbOwnership,
 
     wbFormIDCk(XILL, 'Lock List', [FLST, NPC_]),
 
@@ -13194,8 +13181,7 @@ begin
     wbEmpty(XIS2, 'Ignored by Sandbox'),
 
     {--- Ownership ---}
-    wbXOWN,
-    wbXRNK,
+    wbOwnership,
 
     wbInteger(XCNT, 'Item Count', itS32),
     wbInteger(XHLT, 'Health %', itU32),

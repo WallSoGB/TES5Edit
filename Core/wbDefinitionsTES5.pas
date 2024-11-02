@@ -165,7 +165,6 @@ var
   wbZNAM: IwbSubRecordDef;
   wbTVDT: IwbSubRecordDef;
   wbNVNM: IwbSubRecordDef;
-  wbXOWN: IwbSubRecordDef;
   wbStaticPart: IwbRecordMemberDef;
   wbLeveledListEntryItem: IwbRecordMemberDef;
   wbLeveledListEntryNPC: IwbRecordMemberDef;
@@ -3143,7 +3142,7 @@ end;
       wbVMAD,
       wbFormIDCk(NAME, 'Projectile', [PROJ, HAZD]),
       wbFormIDCk(XEZN, 'Encounter Zone', [ECZN]),
-      wbOwnership(wbXOWN, [XRGD]),
+      wbOwnership([XRGD]),
       wbFloat(XHTW, 'Head-Tracking Weight'),
       wbFloat(XFVC, 'Favor Cost'),
       wbRArrayS('Reflected/Refracted By',
@@ -4136,8 +4135,6 @@ begin
   wbTVDT := wbByteArray(TVDT, 'Occlusion Data', 0, cpNormal);
 //  wbTVDT := wbArray(TVDT, 'Occlusion Data', wbInteger('Unknown', itS32)),
 
-  wbXOWN := wbFormIDCkNoReach(XOWN, 'Owner', [FACT, ACHR, NPC_]);
-
   wbRefRecord(ACHR, 'Placed NPC',
     wbFlags(wbFlagsList([
       9, 'Starts Dead',
@@ -4220,7 +4217,7 @@ begin
     wbXESP,
 
     {--- Ownership ---}
-    wbOwnership(wbXOWN, [XRGD]),
+    wbOwnership([XRGD]),
 
     {--- Emittance ---}
     wbFormIDCk(XEMI, 'Emittance', [LIGH, REGN]),
@@ -5328,7 +5325,7 @@ begin
     .IncludeFlag(dfCollapsed)
     .IncludeFlag(dfNotAlignable),
     wbFormIDCk(XCWT, 'Water', [WATR]),
-    wbOwnership(wbXOWN, [XRGD]),
+    wbOwnership([XRGD]),
     wbFormIDCk(XILL, 'Lock List', [FLST, NPC_]),
     wbString(XWEM, 'Water Environment Map'),
     wbFormIDCk(XCCM, 'Sky/Weather from Region', [REGN]),
@@ -10839,7 +10836,7 @@ begin
     wbEmpty(XIS2, 'Ignored by Sandbox'),
 
     {--- Ownership ---}
-    wbOwnership(wbXOWN, [XRGD]),
+    wbOwnership([XRGD]),
 
     wbInteger(XCNT, 'Item Count', itS32),
     wbFloat(XCHG, 'Charge'),

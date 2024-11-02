@@ -5468,14 +5468,6 @@ begin
     'Very Hard'
   ]));
 
-  var wbXOWN := wbStruct(XOWN, 'Ownership', [
-    wbFormIDCkNoReach('Owner', [FACT, ACHR, NPC_]),
-    wbByteArray('Unknown', 4),
-    wbInteger('Flags', itU8, wbFlags(['No Crime'])).IncludeFlag(dfCollapsed, wbCollapseFlags),
-    wbUnused(3)
-  ]);
-  var wbXRNK := wbInteger(XRNK, 'Owner Faction Rank', itS32);
-
   var wbXEED :=
     wbStruct(XEED, 'External Emittance', [
     { 0} wbFloat('External Emittance Luminance Scale'),
@@ -9122,11 +9114,9 @@ end;
 
         wbEmpty(XIS2, 'Ignored by Sandbox'),
 
-        wbXRNK,
-
         wbLinkedReferences,
 
-        wbXOWN,
+        wbOwnership,
 
         wbFormIDCk(XEZN, 'Location Override', [LCTN]),
 
@@ -9272,7 +9262,7 @@ end;
 
     wbFormIDCk(XCCM, 'Cell Sky Region', [REGN]),
 
-    wbXOWN,
+    wbOwnership,
 
     wbFormIDCk(XLCN, 'Location', [LCTN]),
 
@@ -16059,8 +16049,6 @@ end;
 
     wbEmpty(XIS2, 'Ignored by Sandbox'),
 
-    wbXRNK,
-
     wbXPLKs,
 
     wbLinkedReferences,
@@ -16070,7 +16058,7 @@ end;
     wbXEED,
 
     {--- Ownership ---}
-    wbXOWN,
+    wbOwnership,
 
     wbFormIDCk(XEZN, 'Location Override', [LCTN]),
 
@@ -16387,8 +16375,6 @@ end;
 
     wbEmpty(XIS2, 'Ignored by Sandbox'),
 
-    wbXRNK,
-
     wbStruct(XLGD, 'Gobo Animated Properties', [
       wbFloat('Static Rotation'),
       wbFloat('Animated Rotation Speed'),
@@ -16579,7 +16565,7 @@ end;
 
     wbXEED,
 
-    wbXOWN,
+    wbOwnership,
 
     wbXLRD,
 

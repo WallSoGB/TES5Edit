@@ -71,7 +71,6 @@ var
   wbDEST: IwbSubRecordStructDef;
   wbDESTActor: IwbSubRecordStructDef;
   wbDODT: IwbSubRecordDef;
-  wbXOWN: IwbSubRecordDef;
   wbSLSD: IwbSubRecordDef;
   wbSPLO: IwbSubRecordDef;
   wbSPLOs: IwbSubRecordArrayDef;
@@ -3739,8 +3738,6 @@ begin
     wbDATAPosRot
   ], True, wbPlacedAddInfo);
 
-  wbXOWN := wbFormIDCkNoReach(XOWN, 'Owner', [FACT, ACHR, CREA, NPC_]); // Ghouls can own too aparently !
-
   wbRefRecord(ACRE, 'Placed Creature',
     wbFlags(wbFlagsList([
       10, 'Persistent',
@@ -3767,7 +3764,7 @@ begin
     wbXLCM,
 
     {--- Ownership ---}
-    wbOwnership(wbXOWN, [XCMT, XCMO]),
+    wbOwnership([XCMT, XCMO]),
 
     {--- Merchant Container ----}
     wbFormIDCk(XMRC, 'Merchant Container', [REFR], True),
@@ -4769,7 +4766,7 @@ begin
     wbFormIDCk(XEZN, 'Encounter Zone', [ECZN]),
     wbFormIDCk(XCCM, 'Climate', [CLMT]),
     wbFormIDCk(XCWT, 'Water', [WATR]),
-    wbOwnership(wbXOWN, [XCMT, XCMO]),
+    wbOwnership([XCMT, XCMO]),
     wbFormIDCk(XCAS, 'Acoustic Space', [ASPC]),
     wbByteArray(XCMT, 'Unused', 1, cpIgnore),
     wbFormIDCk(XCMO, 'Music Type', [MUSC])
@@ -6005,7 +6002,7 @@ var  wbSoundTypeSoundsOld :=
     ], []),
 
     {--- Ownership ---}
-    wbOwnership(wbXOWN, [XCMT, XCMO]),
+    wbOwnership([XCMT, XCMO]),
 
     {--- Extra ---}
     wbInteger(XCNT, 'Count', itS32),
@@ -6087,7 +6084,7 @@ var  wbSoundTypeSoundsOld :=
     ], []),
 
     {--- Ownership ---}
-    wbOwnership(wbXOWN, [XCMT, XCMO]),
+    wbOwnership([XCMT, XCMO]),
 
     {--- Extra ---}
     wbInteger(XCNT, 'Count', itS32),
@@ -6169,7 +6166,7 @@ var  wbSoundTypeSoundsOld :=
     ], []),
 
     {--- Ownership ---}
-    wbOwnership(wbXOWN, [XCMT, XCMO]),
+    wbOwnership([XCMT, XCMO]),
 
     {--- Extra ---}
     wbInteger(XCNT, 'Count', itS32),
@@ -8513,7 +8510,7 @@ var  wbSoundTypeSoundsOld :=
     ]),
 
     {--- Ownership ---}
-    wbOwnership(wbXOWN, [XCMT, XCMO]),
+    wbOwnership([XCMT, XCMO]),
 
     {--- Lock ---}
     wbStruct(XLOC, 'Lock Data', [

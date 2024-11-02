@@ -43,7 +43,6 @@ uses
 
 var
   wbEDID: IwbSubRecordDef;
-  wbXOWN: IwbSubRecordDef;
   wbXGLB: IwbSubRecordDef;
   wbSLSD: IwbRecordMemberDef;
   wbSPLO: IwbSubRecordDef;
@@ -1402,11 +1401,6 @@ begin
     wbDATAPosRot
   ], True, wbPlacedAddInfo, cpNormal, False, wbREFRAfterLoad);
 
-  wbXOWN := wbFormIDCkNoReach(XOWN, 'Owner', [FACT, NPC_]);
-
-  // TES4 only
-  wbXGLB := wbFormIDCk(XGLB, 'Global variable', [GLOB]);
-
   wbRefRecord(ACRE, 'Placed Creature',
     wbFlags(wbFlagsList([
       10, 'Persistent',
@@ -1415,7 +1409,7 @@ begin
     ])), [
     wbEDID,
     wbFormIDCk(NAME, 'Base', [CREA], False, cpNormal, True),
-    wbOwnership(wbXOWN, [], wbXGLB),
+    wbOwnership,
     wbRagdoll,
     wbXLOD,
     wbXESP,
@@ -1876,7 +1870,7 @@ begin
     wbFloat(XCLW, 'Water Height', cpBenign),
     wbFormIDCk(XCCM, 'Climate', [CLMT]),
     wbFormIDCk(XCWT, 'Water', [WATR]),
-    wbOwnership(wbXOWN, [XCLW, XCMT, XCCM], wbXGLB)
+    wbOwnership([XCCM, XCLW, XCMT])
   ], True, wbCellAddInfo, cpNormal, False, wbCELLAfterLoad);
 
   wbServiceFlags :=
@@ -3655,7 +3649,7 @@ var  wbSoundTypeSoundsOld :=
       wbInteger('Flags', itU8, wbFlags(['', '', 'Leveled Lock'])),
       wbByteArray('Unused', 3)
     ]),
-    wbOwnership(wbXOWN, [XLOC], wbXGLB),
+    wbOwnership([XLOC]),
     wbXESP,
     wbFormIDCk(XTRG, 'Target', [REFR, ACHR, ACRE], True),
     wbStruct(XSED, 'SpeedTree', [

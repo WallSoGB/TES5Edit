@@ -401,7 +401,7 @@ function wbModelInfo(aSignature: TwbSignature; aName: string = ''): IwbRecordMem
 function wbOBND(aRequired: Boolean = False): IwbRecordMemberDef;
 
 {>>> Multiple Record Defs <<<} //1
-function wbOwnership(aOwner: IwbSubRecordDef; aSkipSigs: TwbSignatures; aGlobal: IwbSubRecordDef = nil): IwbRecordMemberDef;
+function wbOwnership(aSkipSigs: TwbSignatures = nil): IwbRecordMemberDef;
 
 {>>> Record Header Def <<<} //1
 function wbRecordHeader(aRecordFlags: IwbIntegerDef): IwbValueDef;
@@ -4091,20 +4091,31 @@ end;
 {>>> Multiple Record Defs <<<} //1
 
 //ACHR,ACRE,CELL,PBEA,PGRE,PMIS,REFR
-function wbOwnership(aOwner: IwbSubRecordDef; aSkipSigs: TwbSignatures; aGlobal: IwbSubRecordDef = nil): IwbRecordMemberDef;
+function wbOwnership(aSkipSigs: TwbSignatures = nil): IwbRecordMemberDef;
 begin
   Result :=
     wbRStruct('Ownership', [
-      aOwner,
+      IfThen(wbIsFallout4 or wbIsFallout76 or wbIsStarfield,
+        wbStruct(XOWN, 'Owner', [
+          wbFormIDCkNoReach('Owner', [FACT, NPC_]),
+          wbUnused(4),
+          wbInteger('No Crime', itU8, wbBoolEnum),
+          wbUnused(3)
+        ]).SetSummaryKeyOnValue([0]),
+        wbFormIDCkNoReach(XOWN, 'Owner', [FACT, NPC_])
+      ),
       wbInteger(XRNK, 'Faction rank', itS32),
-      IsTES4(aGlobal, nil)
-    ], aSkipSigs)
-    .SetSummaryKey([0, 1])
-    .SetSummaryMemberPrefixSuffix(1, '{Rank: ', '}')
-    .SetSummaryDelimiter(' ')
-    .IncludeFlag(dfSummaryMembersNoName)
-    .IncludeFlag(dfSummaryNoSortKey)
-    .IncludeFlag(dfCollapsed, wbCollapseFactions);
+      IsTES4(
+        wbFormIDCk(XGLB, 'Global', [GLOB]),
+        nil
+      )
+    ], aSkipSigs, cpNormal, False, nil, True)
+      .SetSummaryKey([0, 1])
+      .SetSummaryMemberPrefixSuffix(1, '[Rank: ', ']')
+      .SetSummaryDelimiter(' ')
+      .IncludeFlag(dfCollapsed)
+      .IncludeFlag(dfSummaryMembersNoName)
+      .IncludeFlag(dfSummaryNoSortKey);
 end;
 
 {>>> Record Header Def <<<} //1
