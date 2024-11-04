@@ -8951,7 +8951,7 @@ begin
   var wbBoneDataItem :=
       wbRStruct('Bone Data Set', [
         wbRStruct('Bone Weight Scale Data', [
-          wbInteger(BSMP, 'Weight Scale Target Gender', itU32, wbEnum(['Male', 'Female'])),
+          wbInteger(BSMP, 'Weight Scale Target Gender', itU32, wbSexEnum),
           wbRArrayS('Bone Weight Scales',
             wbRStructSK([0], 'Bone Weight Scale Set', [
               wbString(BSMB, 'Name'),
@@ -8972,7 +8972,7 @@ begin
           )
         ]),
         wbRStruct('Bone Range Modifier Data', [
-          wbInteger(BMMP, 'Range Modifier Target Gender', itU32, wbEnum(['Male', 'Female'])),
+          wbInteger(BMMP, 'Range Modifier Target Gender', itU32, wbSexEnum),
           wbRArrayS('Bone Range Modifiers',
             wbRStructSK([0], 'Bone Range Modifier', [
               wbString(BSMB, 'Name'),
@@ -8998,7 +8998,7 @@ begin
 
   var wbArmorAddonBoneDataItem :=
       wbRStruct('Bone Scale Modifier Set', [
-        wbInteger(BSMP, 'Target Gender', itU32, wbEnum(['Male', 'Female'])),
+        wbInteger(BSMP, 'Target Gender', itU32, wbSexEnum),
         wbRArrayS('Bone Scale Modifiers',
           wbRStructSK([0], 'Bone Scale Modifier', [
             wbString(BSMB, 'Bone Name'),
