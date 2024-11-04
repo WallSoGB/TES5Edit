@@ -492,8 +492,8 @@ begin
       {0x00002000}'Blocked'
     ]));
 
-  {In CREA, there are unknown flags in this def. Will
-  investigate later.}
+  {In CREA, there are unknown flags in this def. I have yet
+  to figure them out yet.}
   wbServiceFlags :=
     wbFlags([
       {0x00000001} 'Weapons',
@@ -542,11 +542,11 @@ begin
         wbInteger('Magic Effect', itU16, wbMagicEffectEnum), //[MGEF]
         wbInteger('Skill', itS8, wbSkillEnum), //[SKIL]
         wbInteger('Attribute', itS8, wbAttributeEnum),
-        wbInteger('Range', itU32, wbRangeEnum),
-        wbInteger('Area', itU32),
-        wbInteger('Duration', itU32),
-        wbInteger('Magnitude Minimum', itU32),
-        wbInteger('Magnitude Maximum', itU32)
+        wbInteger('Range', itS32, wbRangeEnum),
+        wbInteger('Area', itS32),
+        wbInteger('Duration', itS32),
+        wbInteger('Magnitude Minimum', itS32),
+        wbInteger('Magnitude Maximum', itS32)
       ], cpNormal, True));
 
   //For ARMO & CLOT.
@@ -613,15 +613,15 @@ begin
              aFormID := TwbFormID.Null;
            end);
 
-  {Every form type's name is reflective of the Construction Set. A lot of the
+  {Every form type's name is reflective of the Construction Set now. A lot of the
   names for definitions were standardized and more closely match the other games
-  without being too far from the original CS name. DELE is added (in the correct
+  without being too far from the original CS name. DELE was added (in the correct
   order) to all applicable form types. SCIP only exists on SCPT. Adding the
   signature to any other form type (like DOOR) would cause the CS to throw an error
   during plugin load. Signatures are now in the correct order for each form type
   (god fucking forbid any of them be consistent with each other). Most integer
   values used in forms (value, uses, etc.) in the CS are signed but do not allow
-  negative values. I only used signed integers when the CS allowed negative values.}
+  for negative values.}
 
   //Standardized.
   wbRecord(ACTI, 'Activator', [
@@ -644,7 +644,7 @@ begin
     wbString(FNAM, 'Full Name'),
     wbStruct(ALDT, 'Alchemy Data', [
       wbFloat('Weight'),
-      wbInteger('Value', itU32),
+      wbInteger('Value', itS32),
       wbInteger('Auto Calculate Value', itU32, wbBoolEnum)
     ], cpNormal, True),
     wbENAM
@@ -666,7 +666,7 @@ begin
       ])),
       wbFloat('Quality'),
       wbFloat('Weight'),
-      wbInteger('Value', itU32)
+      wbInteger('Value', itS32)
     ], cpNormal, True),
     wbString(ITEX, 'Icon Filename')
   ]).SetFormIDBase($40);
@@ -693,10 +693,10 @@ begin
         {10} 'Right Bracer'
       ])),
       wbFloat('Weight'),
-      wbInteger('Value', itU32),
-      wbInteger('Health', itU32),
-      wbInteger('Enchanting Charge', itU32),
-      wbInteger('Armor Rating', itU32)
+      wbInteger('Value', itS32),
+      wbInteger('Health', itS32),
+      wbInteger('Enchanting Charge', itS32),
+      wbInteger('Armor Rating', itS32)
     ], cpNormal, True),
     wbString(ITEX, 'Icon Filename'),
     wbBipedObjects,
@@ -754,10 +754,10 @@ begin
     wbString(FNAM, 'Full Name'),
     wbStruct(BKDT, 'Book Data', [
       wbFloat('Weight'),
-      wbInteger('Value', itU32),
+      wbInteger('Value', itS32),
       wbInteger('Is Scroll', itU32, wbBoolEnum),
-      wbInteger('Teaches', itU32, wbSkillEnum), //[SKIL]
-      wbInteger('Enchanting Charge', itU32)
+      wbInteger('Teaches', itS32, wbSkillEnum), //[SKIL]
+      wbInteger('Enchanting Charge', itS32)
     ], cpNormal, True),
     wbString(SCRI, 'Script'), //[SCPT]
     wbString(ITEX, 'Icon Filename'),
@@ -782,22 +782,22 @@ begin
     wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])),
     wbStruct(DATA, 'Cell Data', [
       wbInteger('Flags', itU32, wbFlags([
-        {0x01} 'Is Interior Cell',
-        {0x02} 'Has Water',
-        {0x04} 'Illegal to Sleep Here',
-        {0x08} '',
-        {0x10} '',
-        {0x20} '',
-        {0x40} 'Has Map Color',
-        {0x80} 'Behave Like Exterior'
+        {0x00000001} 'Is Interior Cell',
+        {0x00000002} 'Has Water',
+        {0x00000004} 'Illegal to Sleep Here',
+        {0x00000008} '',
+        {0x00000010} '',
+        {0x00000020} '',
+        {0x00000040} 'Has Map Color',
+        {0x00000080} 'Behave Like Exterior'
       ])),
       wbStruct('Grid', [
         wbInteger('X', itS32),
         wbInteger('Y', itS32)
       ])
     ], cpCritical, True),
-    {INTV is not Number of Uses, but the old Water Height format. You can
-    observe the change from INTV to WHGT in the official DLC with CELL
+    {INTV is not Number of Uses but the old Water Height format. You can
+    observe the change from INTV to WHGT in the official DLCs with CELL
     overwrites. The Construction Set will swap the value in edited CELLs.}
     wbInteger(INTV, 'Water Height (Old Format)', itS32),
     wbString(RGNN, 'Region'),  //[REGN]
@@ -805,7 +805,7 @@ begin
         wbInteger('Red', itU8),
         wbInteger('Green', itU8),
         wbInteger('Blue', itU8),
-        wbInteger('Unused Alpha', itU8, nil, cpIgnore)
+        wbInteger('Alpha (Unused)', itU8, nil, cpIgnore)
     ], cpNormal, True),
     wbFloat(WHGT, 'Water Height'),
     wbStruct(AMBI, 'Ambience', [
@@ -813,19 +813,19 @@ begin
           wbInteger('Red', itU8),
           wbInteger('Green', itU8),
           wbInteger('Blue', itU8),
-          wbInteger('Unused Alpha', itU8, nil, cpIgnore)
+          wbInteger('Alpha (Unused)', itU8, nil, cpIgnore)
         ]),
         wbStruct('Sunlight Color', [
           wbInteger('Red', itU8),
           wbInteger('Green', itU8),
           wbInteger('Blue', itU8),
-          wbInteger('Unused Alpha', itU8, nil, cpIgnore)
+          wbInteger('Alpha (Unused)', itU8, nil, cpIgnore)
         ]),
         wbStruct('Fog Color', [
           wbInteger('Red', itU8),
           wbInteger('Green', itU8),
           wbInteger('Blue', itU8),
-          wbInteger('Unused Alpha', itU8, nil, cpIgnore)
+          wbInteger('Alpha (Unused)', itU8, nil, cpIgnore)
         ]),
         wbFloat('Fog Density')
     ], cpNormal, True)
@@ -891,32 +891,28 @@ begin
         {0x00000008} 'User Created/Edited'
       ])),
       wbArray(VNML, 'Vertex Normals',
-        wbStruct('Row', [
-          wbArray('Columns',
-            wbStruct('Column', [
-              wbInteger('X', itS8),
-              wbInteger('Y', itS8),
-              wbInteger('Z', itS8)
-            ]),
-          65)
-        ]),
+        wbArray('Row',
+          wbStruct('Column', [
+            wbInteger('X', itS8),
+            wbInteger('Y', itS8),
+            wbInteger('Z', itS8)
+          ]),
+        65),
       65),
       wbStruct(VHGT, 'Vertex Height Map', [
         wbFloat('Offset'),
         wbByteArray('Unused Byte', 1, cpIgnore),
-        wbArray('Rows',
-          wbStruct('Row', [
-            wbArray('Columns',
-              wbInteger('Column', itS8),
-            65)
-          ]),
+        wbArray('Height Map',
+          wbArray('Row',
+            wbInteger('Column', itS8),
+          65),
         65),
         {This is some sort of editor specific stamp/tag. It changes
-        randomly whenever the plugin is saved in the CS. Any new
-        LAND forms will have their tag locked regardless of how
-        many times the plugin is saved, but any overwrites of
-        official master LAND forms will have their tag changed with
-        each save.}
+        randomly whenever the plugin is saved in the CS and is the
+        same value for all LAND forms. Any new LAND forms will have
+        their tag locked regardless of how many times the plugin is
+        saved, but any overwrites of official master LAND forms will
+        have their tag changed with each save.}
         wbByteArray('Editor Tag', 2, cpIgnore)
       ]),
       {I originally thought this was related to sea level as negative
@@ -924,30 +920,24 @@ begin
       Then I loaded the game to test something and remembered it has a
       map. A map that pulls the WNAM to paint the map screen shades of
       blue and brown to represent height.}
-      wbArray(WNAM, 'World Map',
-        wbStruct('Row', [
-          wbArray('Columns',
-            wbInteger('Column', itS8),
-          9)
-        ]),
+      wbArray(WNAM, 'World Map Painting',
+        wbArray('Row',
+          wbInteger('Column', itS8),
+        9),
       9),
       wbArray(VCLR, 'Vertex Colors',
-        wbStruct('Row', [
-          wbArray('Columns',
-            wbStruct('Column', [
-              wbInteger('R', itU8),
-              wbInteger('G', itU8),
-              wbInteger('B', itU8)
-            ]),
-          65)
-        ]),
+        wbArray('Row',
+          wbStruct('Column', [
+            wbInteger('Red', itU8),
+            wbInteger('Green', itU8),
+            wbInteger('Blue', itU8)
+          ]),
+        65),
       65),
       wbArray(VTEX, 'Textures',
-        wbStruct('Row', [
-          wbArray('Columns',
-            wbInteger('Column', itU16), //[LTEX]
-          16)
-        ]),
+        wbArray('Row',
+          wbInteger('Column', itU16), //[LTEX]
+        16),
       16)
     ]);
 
@@ -1014,7 +1004,9 @@ begin
         {This looks like another editor specific stamp/tag but it's
         not consistent. It changes randomly whenever the plugin is
         saved but only for auto-generated points or the final point
-        in the array, which either case can end up being 00 00.}
+        in the array, which either case can end up being 00 00.
+        Unlike the LAND's tag, these are never the same across all
+        points or PGRD.}
         wbByteArray('Editor Tag?', 2, cpIgnore)
       ])),
     wbArray(PGRC, 'Grid Point Connections',
@@ -1055,14 +1047,14 @@ begin
       wbString(ANAM, 'Owner'), //[NPC_]
       wbString(BNAM, 'Global Variable'), //[GLOB]
       wbString(CNAM, 'Faction Owner'), //[FACT]
-      wbInteger(INDX, 'Faction Rank', itU32)
+      wbInteger(INDX, 'Faction Rank', itS32)
     ], [], cpNormal, False, nil, True),
     wbFloat(XCHG, 'Enchanting Charge'),
     wbString(XSOL, 'Soul'), //[CREA]
     {Wanted to make this a union based on the Base Object, but it's
     a string, not a FormID so I don't see an easy way of doing that.}
-    wbInteger(INTV, 'Health/Uses Left/Count', itU32),
-    wbInteger(NAM9, 'Gold Value', itU32),
+    wbInteger(INTV, 'Health/Uses Left/Count', itS32),
+    wbInteger(NAM9, 'Gold Value', itS32),
     wbRStructSK([], 'Teleport Data', [
       wbStruct(DODT, 'Teleport Destination', [
         wbStruct('Position', [
@@ -1115,17 +1107,17 @@ begin
     wbString(FNAM, 'Full Name'),
     wbStruct(CLDT, 'Class Data', [
       wbArray('Primary Attributes',
-        wbInteger('Primary Attribute', itU32, wbAttributeEnum),
+        wbInteger('Primary Attribute', itS32, wbAttributeEnum),
       2),
       wbInteger('Specialization', itU32, wbSpecializationEnum),
       wbArray('Major & Minor Skill Sets',
         wbStruct('Skill Set', [
-          wbInteger('Minor', itU32, wbSkillEnum), //[SKIL]
-          wbInteger('Major', itU32, wbSkillEnum) //[SKIL]
+          wbInteger('Minor', itS32, wbSkillEnum), //[SKIL]
+          wbInteger('Major', itS32, wbSkillEnum) //[SKIL]
         ]),
       5),
       wbInteger('Playable', itU32, wbBoolEnum),
-      wbInteger('Auto Calculate Buy/Sell Flags', its32, wbServiceFlags)
+      wbInteger('Auto Calculate Buy/Sell Flags', itU32, wbServiceFlags)
     ], cpNormal, True),
     wbString(DESC, 'Description')
   ]).SetFormIDBase($18);
@@ -1150,8 +1142,8 @@ begin
         {9} 'Amulet'
       ])),
       wbFloat('Weight'),
-      wbInteger('Value', itU16),
-      wbInteger('Enchanting Charge', itU16)
+      wbInteger('Value', itS16),
+      wbInteger('Enchanting Charge', itS16)
     ], cpNormal, True),
     wbString(SCRI, 'Script'), //[SCPT]
     wbString(ITEX, 'Icon Filename'),
@@ -1179,7 +1171,9 @@ begin
     wbString(SCRI, 'Script'), //[SCPT]
     wbRArray('Item Entries',
       wbStruct(NPCO, 'Item Entry', [
-        wbInteger('Count', itU32),
+        {Soooo, negative values for NPCOs mean it restocks. I did not
+        know that. Fixed it.}
+        wbInteger('Count', itS32),
         wbString('Item', 32) //[ALCH, APPA, ARMO, BOOK, CLOT, INGR, LEVI, LIGH, LOCK, MISC, PROB, REPA, WEAP]
       ]))
   ]).SetFormIDBase($40);
@@ -1199,43 +1193,43 @@ begin
         {2} 'Undead',
         {3} 'Humanoid'
       ])),
-      wbInteger('Level', itU32),
+      wbInteger('Level', itS32),
       wbStruct('Attributes', [
-        wbInteger('Strength', itU32),
-        wbInteger('Intelligence', itU32),
-        wbInteger('Willpower', itU32),
-        wbInteger('Agility', itU32),
-        wbInteger('Speed', itU32),
-        wbInteger('Endurance', itU32),
-        wbInteger('Personality', itU32),
-        wbInteger('Luck', itU32)
+        wbInteger('Strength', itS32),
+        wbInteger('Intelligence', itS32),
+        wbInteger('Willpower', itS32),
+        wbInteger('Agility', itS32),
+        wbInteger('Speed', itS32),
+        wbInteger('Endurance', itS32),
+        wbInteger('Personality', itS32),
+        wbInteger('Luck', itS32)
       ]),
-      wbInteger('Health', itU32),
-      wbInteger('Magicka', itU32),
-      wbInteger('Fatigue', itU32),
-      wbInteger('Soul', itU32),
+      wbInteger('Health', itS32),
+      wbInteger('Magicka', itS32),
+      wbInteger('Fatigue', itS32),
+      wbInteger('Soul', itU32), //Confirmed Unsigned.
       wbStruct('Skills', [
-        wbInteger('Combat', itU32),
-        wbInteger('Magic', itU32),
-        wbInteger('Stealth', itU32)
+        wbInteger('Combat', itS32),
+        wbInteger('Magic', itS32),
+        wbInteger('Stealth', itS32)
       ]),
       wbStruct('Attacks', [
         wbStruct('Set 1', [
-          wbInteger('Minimum', itU32),
-          wbInteger('Maximum', itU32)
+          wbInteger('Minimum', itS32),
+          wbInteger('Maximum', itS32)
         ]),
         wbStruct('Set 2', [
-          wbInteger('Minimum', itU32),
-          wbInteger('Maximum', itU32)
+          wbInteger('Minimum', itS32),
+          wbInteger('Maximum', itS32)
         ]),
         wbStruct('Set 3', [
-          wbInteger('Minimum', itU32),
-          wbInteger('Maximum', itU32)
+          wbInteger('Minimum', itS32),
+          wbInteger('Maximum', itS32)
         ])
       ]),
-      wbInteger('Barter Gold', itU32)
+      wbInteger('Barter Gold', itU32) //Confirmed Unsigned.
     ], cpNormal, True),
-    {These were all out of order.}
+    {These were a little out of order.}
     wbInteger(FLAG, 'Creature Flags', itU32, wbFlags([
         {0x00000001} 'Biped',
         {0x00000002} 'Respawn',
@@ -1508,9 +1502,9 @@ begin
         {2} 'Cast When Used',
         {3} 'Constant Effect'
       ])),
-      wbInteger('Enchantment Cost', itU32),
-      wbInteger('Charge Amount', itU32),
-      wbInteger('Auto Calculate', itU32)
+      wbInteger('Enchantment Cost', itS32),
+      wbInteger('Charge Amount', itS32),
+      wbInteger('Auto Calculate', itU32, wbBoolEnum)
     ], cpNormal, True),
     wbENAM
   ]).SetFormIDBase($04);
@@ -1524,7 +1518,7 @@ begin
       wbStringForward(RNAM, 'Rank', 32)),
     wbStruct(FADT, 'Faction Data', [
       wbArray('Attributes',
-        wbInteger('Attribute', itU32, wbAttributeEnum),
+        wbInteger('Attribute', itS32, wbAttributeEnum),
       2),
       wbArray('Ranks',
         wbStruct('Rank', [
@@ -1557,7 +1551,7 @@ begin
       $6C, 'Long',
       $73, 'Short'
     ])),
-    {"So it's always float32 regardless of the type?"
+    {"So it's always float32 regardless of type?"
     "Always has been."}
     wbUnion(FLTV, 'Value', wbGLOBUnionDecider, [
       wbFloat('Value - Short'),
@@ -1585,7 +1579,7 @@ begin
     wbString(FNAM, 'Full Name'),
     wbStruct(IRDT, 'Ingredient Data', [
       wbFloat('Weight'),
-      wbInteger('Value', itU32),
+      wbInteger('Value', itS32),
       {Instead of something that makes sense, we get this disordered
       mess. Wanted to make a function that will clear invalid Attributes
       and Skills for the corresponding Magic Effect, buuuuut I don't
@@ -1645,14 +1639,14 @@ begin
     wbString(ITEX, 'Icon Filename'),
     wbStruct(LHDT, 'Light Data', [
       wbFloat('Weight'),
-      wbInteger('Value', itU32),
+      wbInteger('Value', itS32),
       wbInteger('Time', itS32),
-      wbInteger('Radius', itU32),
+      wbInteger('Radius', itS32),
       wbStruct('Color', [
         wbInteger('Red', itU8),
         wbInteger('Green', itU8),
         wbInteger('Blue', itU8),
-        wbInteger('Unused Alpha', itU8, nil, cpIgnore)
+        wbInteger('Alpha (Unused)', itU8, nil, cpIgnore)
       ]),
       wbInteger('Flags', itU32, wbFlags([
         {0x00000001} 'Dynamic',
@@ -1678,9 +1672,9 @@ begin
     wbString(FNAM, 'Full Name'),
     wbStruct(LKDT, 'Lockpick Data', [
       wbFloat('Weight'),
-      wbInteger('Value', itU32),
+      wbInteger('Value', itS32),
       wbFloat('Quality'),
-      wbInteger('Uses', itU32)
+      wbInteger('Uses', itS32)
     ], cpNormal, True),
     wbString(SCRI, 'Script'), //[SCPT]
     wbString(ITEX, 'Icon Filename')
@@ -1699,7 +1693,7 @@ begin
   is four bytes, not one, like a normal, sane person would do. Also,
   the Size and Speed values were not in the correct order or
   pointing to the right data (two of them were pointing to the
-  color data).}
+  oversized color data).}
   wbRecord(MGEF, 'Magic Effect', @wbKnownSubRecordSignaturesDESC, [
     wbInteger(INDX, 'Magic Effect ID', itU32, wbMagicEffectEnum),
     wbStruct(MEDT, 'Magic Effect Data', [
@@ -1756,7 +1750,7 @@ begin
     wbString(FNAM, 'Full Name'),
     wbStruct(MCDT,'Miscellaneous Item Data', [
       wbFloat('Weight'),
-      wbInteger('Value', itU32),
+      wbInteger('Value', itS32),
       {The only forms that have a true value are keys, but
       not all keys have a true value. Fuck if I know.}
       wbInteger('Is Key', itU32, wbBoolEnum)
@@ -1780,7 +1774,7 @@ begin
     wbStruct(NPDT, 'Non-Player Character Data', [
       wbUnion('Data', wbNPCDataDecider, [
         wbStruct('Non-Auto Calculated Data', [
-          wbInteger('Level', itU16),
+          wbInteger('Level', itS16),
           wbStruct('Attributes', [
             wbInteger('Strength', itU8),
             wbInteger('Intelligence', itU8),
@@ -1828,7 +1822,7 @@ begin
           wbInteger('Reputation', itU8),
           wbInteger('Rank', itU8),
           wbByteArray('Unused Byte', 1, cpIgnore),
-          wbInteger('Gold', itU32)
+          wbInteger('Gold', itU32) //Confirmed Unsigned.
         ]),
         wbStruct('Auto Calculated Data', [
           wbInteger('Level', itU16),
@@ -1836,7 +1830,7 @@ begin
           wbInteger('Reputation', itU8),
           wbInteger('Rank', itU8),
           wbByteArray('Unused Bytes', 3, cpIgnore),
-          wbInteger('Gold', itU32)
+          wbInteger('Gold', itU32) //Confirmed Unsigned.
         ])
       ])
     ], cpNormal, True),
@@ -1931,9 +1925,9 @@ begin
     wbString(FNAM, 'Full Name'),
     wbStruct(PBDT, 'Probe Data', [
       wbFloat('Weight'),
-      wbInteger('Value', itU32),
+      wbInteger('Value', itS32),
       wbFloat('Quality'),
-      wbInteger('Uses', itU32)
+      wbInteger('Uses', itS32)
     ], cpNormal, True),
     wbString(SCRI, 'Script'), //[SCPT]
     wbString(ITEX, 'Icon Filename')
@@ -1948,41 +1942,41 @@ begin
       wbArray('Skill Bonuses',
         wbStruct('Skill Bonus', [
           wbInteger('Skill', itS32, wbSkillEnum),
-          wbInteger('Bonus', itU32)
+          wbInteger('Bonus', itS32)
         ]),
       7),
       wbStruct('Base Attributes', [
         wbStruct('Strength', [
-          wbInteger('Male', itU32),
-          wbInteger('Female', itU32)
+          wbInteger('Male', itS32),
+          wbInteger('Female', itS32)
         ]),
         wbStruct('Intelligence', [
-          wbInteger('Male', itU32),
-          wbInteger('Female', itU32)
+          wbInteger('Male', itS32),
+          wbInteger('Female', itS32)
         ]),
         wbStruct('Willpower', [
-          wbInteger('Male', itU32),
-          wbInteger('Female', itU32)
+          wbInteger('Male', itS32),
+          wbInteger('Female', itS32)
         ]),
         wbStruct('Agility', [
-          wbInteger('Male', itU32),
-          wbInteger('Female', itU32)
+          wbInteger('Male', itS32),
+          wbInteger('Female', itS32)
         ]),
         wbStruct('Speed', [
-          wbInteger('Male', itU32),
-          wbInteger('Female', itU32)
+          wbInteger('Male', itS32),
+          wbInteger('Female', itS32)
         ]),
         wbStruct('Endurance', [
-          wbInteger('Male', itU32),
-          wbInteger('Female', itU32)
+          wbInteger('Male', itS32),
+          wbInteger('Female', itS32)
         ]),
         wbStruct('Personality', [
-          wbInteger('Male', itU32),
-          wbInteger('Female', itU32)
+          wbInteger('Male', itS32),
+          wbInteger('Female', itS32)
         ]),
         wbStruct('Luck', [
-          wbInteger('Male', itU32),
-          wbInteger('Female', itU32)
+          wbInteger('Male', itS32),
+          wbInteger('Female', itS32)
         ])
       ]),
       wbStruct('Height', [
@@ -1994,8 +1988,8 @@ begin
         wbFloat('Female')
       ]),
       wbInteger('Flags', itU32, wbFlags([
-        'Playable',
-        'Beast Race'
+        {0x00000001} 'Playable',
+        {0x00000002} 'Beast Race'
       ]))
     ], cpNormal, True),
     wbRArray('Spells',
@@ -2029,7 +2023,7 @@ begin
       wbInteger('Red', itU8),
       wbInteger('Green', itU8),
       wbInteger('Blue', itU8),
-      wbInteger('Unused Alpha', itU8, nil, cpIgnore)
+      wbInteger('Alpha (Unused)', itU8, nil, cpIgnore)
     ]),
     wbRArray('Sound Records',
       wbStruct(SNAM, 'Sound Record', [
@@ -2047,8 +2041,8 @@ begin
     wbString(FNAM, 'Full Name'),
     wbStruct(RIDT, 'Repair Item Data', [
       wbFloat('Weight'),
-      wbInteger('Value', itU32),
-      wbInteger('Uses', itU32),
+      wbInteger('Value', itS32),
+      wbInteger('Uses', itS32),
       wbFloat('Quality')
     ]),
     wbString(SCRI, 'Script'), //[SCPT]
@@ -2082,7 +2076,7 @@ begin
   wbRecord(SKIL, 'Skill', @wbKnownSubRecordSignaturesDESC, [
     wbInteger(INDX, 'Skill', itU32, wbSkillEnum),
     wbStruct(SKDT, 'Skill Data', [
-      wbInteger('Attribute', itU32, wbAttributeEnum),
+      wbInteger('Attribute', itS32, wbAttributeEnum),
       wbInteger('Type', itU32, wbEnum([
        {0}'Combat',
        {1}'Magic',
@@ -2307,7 +2301,7 @@ begin
         {4} 'Curse',
         {5} 'Power'
       ])),
-      wbInteger('Spell Cost', itU32),
+      wbInteger('Spell Cost', itS32),
       wbInteger('Flags', itU32, wbFlags([
         {0x00000001} 'Auto Calculate Cost',
         {0x00000002} 'PC Start Spell',
@@ -2339,7 +2333,7 @@ begin
     wbString(FNAM, 'Full Name'),
     wbStruct(WPDT, 'Weapon Data', [
       wbFloat('Weight'),
-      wbInteger('Value', itU32),
+      wbInteger('Value', itS32),
       wbInteger('Type', itU16, wbEnum([
         { 0} 'Short Blade One Hand',
         { 1} 'Long Blade One Hand',
