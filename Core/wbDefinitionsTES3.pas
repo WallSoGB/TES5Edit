@@ -53,18 +53,6 @@ begin
       Result := 1;
 end;
 
-{When a DIAL is marked deleted, the DATA sig changes from a single byte to four bytes. The extra three
-bytes are always 00 00 00 so tying them into the enumerator doesn't effect the out come.}
-function wbDIALDataDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
-var
-  SubRecord: IwbSubRecord;
-begin
-  Result := 0;
-  if Assigned(aElement) and Supports(aElement.Container, IwbSubRecord, SubRecord) then
-    if SubRecord.SubRecordHeaderSize = 4 then
-      Result := 1;
-end;
-
 {Since FNAM in GLOB is now an enumerator, the first character of the string is now capitalized so this
 had to be updated.}
 function wbGLOBUnionDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
@@ -570,7 +558,7 @@ begin
       wbInteger('Flee', itU8),
       wbInteger('Alarm', itU8),
       wbByteArray('Unused Bytes', 3, cpIgnore),
-      wbInteger('Flags', itU32, wbServiceFlags)
+      wbInteger('Auto Calculate Buy/Sell Flags', itU32, wbServiceFlags)
     ], cpNormal, True);
 
   //For CREA & NPC_.
@@ -1142,8 +1130,8 @@ begin
         {9} 'Amulet'
       ])),
       wbFloat('Weight'),
-      wbInteger('Value', itS16),
-      wbInteger('Enchanting Charge', itS16)
+      wbInteger('Value', itU16),
+      wbInteger('Enchanting Charge', itU16)
     ], cpNormal, True),
     wbString(SCRI, 'Script'), //[SCPT]
     wbString(ITEX, 'Icon Filename'),
@@ -1160,13 +1148,9 @@ begin
     wbFloat(CNDT, 'Weight', cpNormal, True),
     wbInteger(FLAG, 'Container Flags', itU32, wbFlags([
       {0x00000001} 'Organic',
-      {0x00000002} 'Respawns, (Organic Only)',
+      {0x00000002} 'Respawns',
       {0x00000004} '',
-      {0x00000008} 'Default',
-      {0x00000010} '',
-      {0x00000020} '',
-      {0x00000040} '',
-      {0x00000080} ''
+      {0x00000008} 'Default'
     ])),
     wbString(SCRI, 'Script'), //[SCPT]
     wbRArray('Item Entries',
@@ -1213,20 +1197,12 @@ begin
         wbInteger('Magic', itS32),
         wbInteger('Stealth', itS32)
       ]),
-      wbStruct('Attacks', [
-        wbStruct('Set 1', [
+      wbArray('Attack Sets',
+        wbStruct('Attack Set', [
           wbInteger('Minimum', itS32),
           wbInteger('Maximum', itS32)
         ]),
-        wbStruct('Set 2', [
-          wbInteger('Minimum', itS32),
-          wbInteger('Maximum', itS32)
-        ]),
-        wbStruct('Set 3', [
-          wbInteger('Minimum', itS32),
-          wbInteger('Maximum', itS32)
-        ])
-      ]),
+      3),
       wbInteger('Barter Gold', itU32) //Confirmed Unsigned.
     ], cpNormal, True),
     {These were a little out of order.}
@@ -1267,7 +1243,7 @@ begin
         wbStruct(AI_W, 'AI Wander', [
           wbInteger('Distance', itU16),
           wbInteger('Duration In Hours', itU16),
-          wbInteger('Time Of Day', itU8),
+          wbInteger('Time of Day', itU8),
           wbStruct('Idle Chances', [
             wbInteger('Idle 2', itU8),
             wbInteger('Idle 3', itU8),
@@ -1316,14 +1292,9 @@ begin
   //Standardized.
   wbRecord(DIAL, 'Dialog Topic', [
     wbString(NAME, 'Editor ID'),
-    {Deleted forms will have a DATA of 4 bytes instead of the normal single byte.
-    Because fuck you that's why. This also has to be in a struct or the function
-    doesn't work correctly.}
-    wbStruct(DATA, 'Dialog Type', [
-      wbUnion('Data', wbDIALDataDecider, [
-        wbInteger('Dialog Type (Non-Deleted)', itU8, wbDialogTypeEnum),
-        wbInteger('Dialog Type (Deleted)', itU32, wbDialogTypeEnum)
-      ])
+    wbStruct(DATA, 'Dialog Topic Data', [
+        wbInteger('Dialog Type', itU8, wbDialogTypeEnum),
+        wbByteArray('Unused', 3, cpIgnore) //Looks like unused data but investigating.
     ], cpNormal, True),
     wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[]))
   ]).SetFormIDBase($80);
@@ -1870,7 +1841,7 @@ begin
         wbStruct(AI_W, 'AI Wander', [
           wbInteger('Distance', itU16),
           wbInteger('Duration In Hours', itU16),
-          wbInteger('Time Of Day', itU8),
+          wbInteger('Time of Day', itU8),
           wbStruct('Idle Chances', [
             wbInteger('Idle 2', itU8),
             wbInteger('Idle 3', itU8),
