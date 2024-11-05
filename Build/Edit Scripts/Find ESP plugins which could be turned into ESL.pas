@@ -69,7 +69,7 @@ begin
     if GetLoadOrder(f) = 0 then
       Continue;
     // check non-light plugins only
-    if (GetElementNativeValues(ElementByIndex(f, 0), 'Record Header\Record Flags\ESL') = 0) and not SameText(ExtractFileExt(GetFileName(f)), '.esl') then
+    if not GetIsEsl and not SameText(ExtractFileExt(GetFileName(f)), '.esl') then
       CheckForESL(f);
   end;
 end;
