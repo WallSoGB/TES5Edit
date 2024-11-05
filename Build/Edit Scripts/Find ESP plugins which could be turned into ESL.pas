@@ -4,7 +4,7 @@
 unit FindPotentialESL;
 
 const
-  iESLMaxRecords = $800; // max possible new records in ESL
+  iESLMaxRecords = $ffe; // max possible new records in ESL
   iESLMaxFormID = $fff; // max allowed FormID number in ESL
 
 
@@ -54,7 +54,7 @@ begin
     
   // check if plugin has new cell(s)
   if HasCELL then
-    AddMessage(#9'Warning: Plugin has new CELL(s) which won''t work when turned into ESL and overridden by other mods due to the game bug');
+    AddMessage(#9'Warning: Plugin has new CELL(s) which won''t work when flagged ESL + ESM and overridden by other mods due to the game bug');
 end;
   
 function Initialize: integer;
