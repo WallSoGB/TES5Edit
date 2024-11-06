@@ -333,7 +333,8 @@ function wbIsFlag(aFlag: Integer; const aValue: IwbValueDef; aIsUnused: Boolean 
 function wbIsNotFlag(aFlag: Integer; const aSignature: TwbSignature; const aValue: IwbValueDef; aIsUnused: Boolean = True): IwbRecordMemberDef; overload;
 function wbIsNotFlag(aFlag: Integer; const aValue: IwbValueDef; aIsUnused: Boolean = True): IwbValueDef; overload;
 
-{>>> Game Mode IfThen Defs <<<} //11
+{>>> Game Mode IfThen Defs <<<} //13
+function IsTES4(const aDef1, aDef2: Integer): Integer; overload;
 function IsTES4(const aDef1, aDef2: IwbRecordMemberDef): IwbRecordMemberDef; overload;
 function IsTES4(const aDef1, aDef2: IwbValueDef): IwbValueDef; overload;
 function IsFO3(const aDef1, aDef2: Integer): Integer; overload;
@@ -349,6 +350,7 @@ function IsSSE(const aDef1, aDef2: IwbRecordMemberDef): IwbRecordMemberDef; over
 function IsSSE(const aDef1, aDef2: IwbValueDef): IwbValueDef; overload;
 function IsFO76(const aDef1, aDef2: IwbValueDef): IwbValueDef; overload;
 function IsFO76(const aDef1, aDef2: string): string; overload;
+function IsSF1(const aDef1, aDef2: Integer): Integer; overload;
 function IsSF1(const aDef1, aDef2: IwbRecordMemberDef): IwbRecordMemberDef; overload;
 function IsSF1(const aDef1, aDef2: IwbValueDef): IwbValueDef; overload;
 function IsSF1(const aDef1, aDef2: string): string; overload;
@@ -400,8 +402,12 @@ function wbFloatRGBA(const aName: string = 'Color'): IwbValueDef; overload;
 function wbModelInfo(aSignature: TwbSignature; aName: string = ''): IwbRecordMemberDef;
 function wbOBND(aRequired: Boolean = False): IwbRecordMemberDef;
 
-{>>> Multiple Record Defs <<<} //1
+{>>> Multiple Record Defs <<<} //2
 function wbOwnership(aSkipSigs: TwbSignatures = nil): IwbRecordMemberDef;
+function wbTexturedModel(aSubRecordName     : string;
+                         aSignatures        : TwbSignatures;
+                         aTextureSubRecords : array of IwbRecordMemberDef)
+                                            : IwbRecordMemberDef;
 
 {>>> Record Header Def <<<} //1
 function wbRecordHeader(aRecordFlags: IwbIntegerDef): IwbValueDef;
@@ -3386,7 +3392,15 @@ begin
       ]).IncludeFlag(dfMustBeUnion);
 end;
 
-{>>> wbGameMode IfThen Defs <<<} //11
+{>>> wbGameMode IfThen Defs <<<} //13
+
+function IsTES4(const aDef1, aDef2: Integer): Integer;
+begin
+  if wbIsOblivion then
+    Result := aDef1
+  else
+    Result := aDef2;
+end;
 
 function IsTES4(const aDef1, aDef2: IwbRecordMemberDef): IwbRecordMemberDef;
 begin
@@ -3503,6 +3517,14 @@ end;
 function IsFO76(const aDef1, aDef2: string): string;
 begin
   if wbIsFallout76 then
+    Result := aDef1
+  else
+    Result := aDef2;
+end;
+
+function IsSF1(const aDef1, aDef2: Integer): Integer;
+begin
+  if wbIsStarfield then
     Result := aDef1
   else
     Result := aDef2;
@@ -4088,9 +4110,8 @@ begin
     .IncludeFlag(dfCollapsed, wbCollapseObjectBounds);
 end;
 
-{>>> Multiple Record Defs <<<} //1
+{>>> Multiple Record Defs <<<} //2
 
-//ACHR,ACRE,CELL,PBEA,PGRE,PMIS,REFR
 function wbOwnership(aSkipSigs: TwbSignatures = nil): IwbRecordMemberDef;
 begin
   Result :=
@@ -4116,6 +4137,41 @@ begin
       .IncludeFlag(dfCollapsed)
       .IncludeFlag(dfSummaryMembersNoName)
       .IncludeFlag(dfSummaryNoSortKey);
+end;
+
+function wbTexturedModel(aSubRecordName     : string;
+                         aSignatures        : TwbSignatures;
+                         aTextureSubRecords : array of IwbRecordMemberDef)
+                                            : IwbRecordMemberDef;
+var
+  Members : array of IwbRecordMemberDef;
+begin
+  SetLength(Members,
+    Length(aTextureSubRecords) +
+    1 +            //Model Filename
+    IsTES4(1, 0) + //Bound Radius if TES4
+    IsSF1(0, 1)    //Model Info if not SF1
+  );
+
+  Members[0] := wbString(aSignatures[0], 'Model Filename');
+  if wbIsOblivion then begin
+    Members[1] := wbFloat(aSignatures[1], 'Bound Radius', cpBenign);
+    Members[2] := wbModelInfo(aSignatures[2]);
+  end else if not wbIsStarfield then begin
+    Members[1] := wbModelInfo(aSignatures[1]);
+  end;
+
+  for var i := Low(aTextureSubRecords) to High(aTextureSubRecords) do
+    Members[Length(Members) - Length(aTextureSubRecords) + i] := aTextureSubRecords[i];
+
+  Result :=
+    wbRStruct(aSubRecordName, Members, [], cpNormal, False, nil, True)
+      .SetSummaryKey([0])
+      .IncludeFlag(dfSummaryMembersNoName)
+      .IncludeFlag(dfSummaryNoSortKey)
+      .IncludeFlag(dfAllowAnyMember)
+      .IncludeFlag(dfCollapsed, wbCollapseModels)
+      .IncludeFlag(dfStructFirstNotRequired);
 end;
 
 {>>> Record Header Def <<<} //1

@@ -145,23 +145,6 @@ begin
     .IncludeFlag(dfCollapsed, wbCollapseModels);
 end;
 
-function wbTexturedModel(aSubRecordName: string; aSignatures: TwbSignatures; aTextureSubRecords: array of IwbSubRecordDef): IwbRecordMemberDef;
-begin
-  Result :=
-    wbRStruct(aSubRecordName, [
-      wbString(aSignatures[0], 'Model FileName', 0, cpNormal, True),
-      wbModelInfo(aSignatures[1]),
-      aTextureSubRecords[0],
-      aTextureSubRecords[1]
-    ], [], cpNormal, False, nil, True)
-    .SetSummaryKey([0, 2])
-    .SetSummaryMemberPrefixSuffix(2, '', '')
-    .SetSummaryDelimiter(' ')
-    .IncludeFlag(dfSummaryMembersNoName)
-    .IncludeFlag(dfSummaryNoSortKey)
-    .IncludeFlag(dfCollapsed, wbCollapseModels);
-end;
-
 function wbEPFDActorValueToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
 var
   AsCardinal : Cardinal;

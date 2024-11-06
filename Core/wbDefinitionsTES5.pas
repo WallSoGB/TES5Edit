@@ -190,22 +190,6 @@ begin
     .IncludeFlag(dfCollapsed, wbCollapseModels);
 end;
 
-function wbTexturedModel(aSubRecordName: string; aSignatures: TwbSignatures; aTextureSubRecord: IwbSubRecordDef): IwbRecordMemberDef;
-begin
-  Result :=
-    wbRStruct(aSubRecordName, [
-      wbString(aSignatures[0], 'Model FileName'),
-      wbModelInfo(aSignatures[1]),
-      aTextureSubRecord
-    ])
-    .SetSummaryKey([0, 2])
-    .SetSummaryMemberPrefixSuffix(2, '', '')
-    .SetSummaryDelimiter(' ')
-    .IncludeFlag(dfSummaryMembersNoName)
-    .IncludeFlag(dfSummaryNoSortKey)
-    .IncludeFlag(dfCollapsed, wbCollapseModels);
-end;
-
 function wbEPFDActorValueToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
 var
   AsCardinal : Cardinal;
@@ -5127,9 +5111,9 @@ begin
     wbFULL,
     wbEITM,
     wbInteger(EAMT, 'Enchantment Amount', itU16),
-    wbTexturedModel('Male World Model', [MOD2, MO2T], wbMO2S),
+    wbTexturedModel('Male World Model', [MOD2, MO2T], [wbMO2S]),
     wbICON,
-    wbTexturedModel('Female World Model', [MOD4, MO4T], wbMO4S),
+    wbTexturedModel('Female World Model', [MOD4, MO4T], [wbMO4S]),
     wbICO2,
     wbBODTBOD2,
     wbDEST,
@@ -5172,10 +5156,10 @@ begin
       wbByteArray('Unknown', 1),
       wbFloat('Weapon Adjust')
     ], cpNormal, True),
-    wbTexturedModel('Male Biped Model', [MOD2, MO2T], wbMO2S),
-    wbTexturedModel('Female Biped Model', [MOD3, MO3T], wbMO3S),
-    wbTexturedModel('Male 1st Person', [MOD4, MO4T], wbMO4S),
-    wbTexturedModel('Female 1st Person', [MOD5, MO5T], wbMO5S),
+    wbTexturedModel('Male Biped Model', [MOD2, MO2T], [wbMO2S]),
+    wbTexturedModel('Female Biped Model', [MOD3, MO3T], [wbMO3S]),
+    wbTexturedModel('Male 1st Person', [MOD4, MO4T], [wbMO4S]),
+    wbTexturedModel('Female 1st Person', [MOD5, MO5T], [wbMO5S]),
     wbFormIDCK(NAM0, 'Male Skin Texture', [TXST, NULL]),
     wbFormIDCK(NAM1, 'Female Skin texture', [TXST, NULL]),
     wbFormIDCK(NAM2, 'Male Skin Texture Swap List', [FLST, NULL]),
@@ -11440,7 +11424,7 @@ begin
     wbZNAM,
     wbKeywords,
     wbDESC,
-    wbTexturedModel('Has Scope', [MOD3, MO3T], wbMO3S),
+    wbTexturedModel('Has Scope', [MOD3, MO3T], [wbMO3S]),
     wbFormIDCK(EFSD, 'Scope Effect', [EFSH]),
     wbByteArray(NNAM, 'Unused', 0, cpIgnore, False), // leftover
     wbFormIDCk(INAM, 'Impact Data Set', [IPDS, NULL]),

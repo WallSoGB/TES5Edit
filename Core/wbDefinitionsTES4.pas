@@ -75,20 +75,6 @@ var
   wbSCIT: IwbSubRecordStructDef;
   wbSCITOBME: IwbSubRecordStructDef;
 
-function wbTexturedModel(aSubRecordName: string; aSignatures: TwbSignatures): IwbRecordMemberDef;
-begin
-  Result :=
-    wbRStruct(aSubRecordName, [
-      wbString(aSignatures[0], 'Model FileName', 0, cpNormal, True),
-      wbFloat(aSignatures[1], 'Bound Radius', cpBenign),
-      wbModelInfo(aSignatures[2])
-    ], [], cpNormal, False, nil, True)
-    .SetSummaryKey([0])
-    .IncludeFlag(dfSummaryMembersNoName)
-    .IncludeFlag(dfSummaryNoSortKey)
-    .IncludeFlag(dfCollapsed, wbCollapseModels);
-end;
-
 var
   wbCtdaTypeFlags : IwbFlagsDef;
 
@@ -1423,7 +1409,7 @@ begin
     ])), [
     wbEDID,
     wbFULL,
-    wbTexturedModel('Model', [MODL, MODB, MODT]),
+    wbTexturedModel('Model', [MODL, MODB, MODT], []),
     wbSCRI,
     wbFormIDCk(SNAM, 'Sound', [SOUN])
   ]);
@@ -1694,7 +1680,7 @@ begin
       wbByteArray('Unused', $1C)
     ], cpNormal, False, wbOBMEDontShow),
     wbFULL,
-    wbTexturedModel('Model', [MODL, MODB, MODT]),
+    wbTexturedModel('Model', [MODL, MODB, MODT], []),
     wbICON,
     wbSCRI,
     wbFloat(DATA, 'Weight', cpNormal, True),
@@ -1712,7 +1698,7 @@ begin
     ])), [
     wbEDID,
     wbFULL,
-    wbTexturedModel('Model', [MODL, MODB, MODT]),
+    wbTexturedModel('Model', [MODL, MODB, MODT], []),
     wbICON,
     wbFormIDCk(ENAM, 'Enchantment', [ENCH]),
     wbInteger(ANAM, 'Enchantment Points', itU16),
@@ -1728,14 +1714,14 @@ begin
 
   wbRecord(ANIO, 'Animated Object', [
     wbEDID,
-    wbTexturedModel('Model', [MODL, MODB, MODT]),
+    wbTexturedModel('Model', [MODL, MODB, MODT], []),
     wbFormIDCk(DATA, 'IDLE animation', [IDLE], False, cpNormal, True)
   ]).SetSummaryKey([1, 2]).IncludeFlag(dfSummaryMembersNoName);
 
   wbRecord(APPA, 'Alchemical Apparatus', [
     wbEDID,
     wbFULL,
-    wbTexturedModel('Model', [MODL, MODB, MODT]),
+    wbTexturedModel('Model', [MODL, MODB, MODT], []),
     wbICON,
     wbSCRI,
     wbStruct(DATA, '', [
@@ -1786,11 +1772,11 @@ begin
       ])),
       wbByteArray('Unused', 1)
     ], cpNormal, True),
-    wbTexturedModel('Male Biped Model', [MODL, MODB, MODT]),
-    wbTexturedModel('Male World Model', [MOD2, MO2B, MO2T]),
+    wbTexturedModel('Male Biped Model', [MODL, MODB, MODT], []),
+    wbTexturedModel('Male World Model', [MOD2, MO2B, MO2T], []),
     wbString(ICON, 'Male Icon Filename'),
-    wbTexturedModel('Female Biped Model', [MOD3, MO3B, MO3T]),
-    wbTexturedModel('Female World Model', [MOD4, MO4B, MO4T]),
+    wbTexturedModel('Female Biped Model', [MOD3, MO3B, MO3T], []),
+    wbTexturedModel('Female World Model', [MOD4, MO4B, MO4T], []),
     wbString(ICO2, 'Female Icon Filename'),
     wbStruct(DATA, '', [
       wbInteger('Armor', itU16, wbDiv(100)),
@@ -1806,7 +1792,7 @@ begin
     ])), [
     wbEDID,
     wbFULL,
-    wbTexturedModel('Model', [MODL, MODB, MODT]),
+    wbTexturedModel('Model', [MODL, MODB, MODT], []),
     wbICON,
     wbSCRI,
     wbENAM,
@@ -1921,7 +1907,7 @@ begin
     ])),
     wbString(FNAM, 'Sun Texture'),
     wbString(GNAM, 'Sun Glare Texture'),
-    wbTexturedModel('Model', [MODL, MODB, MODT]),
+    wbTexturedModel('Model', [MODL, MODB, MODT], []),
     wbClimateTiming(wbClmtTime, wbClmtMoonsPhaseLength)
   ]);
 
@@ -1965,11 +1951,11 @@ begin
       ])),
       wbByteArray('Unused', 1)
     ], cpNormal, True),
-    wbTexturedModel('Male biped model', [MODL, MODB, MODT]),
-    wbTexturedModel('Male world model', [MOD2, MO2B, MO2T]),
+    wbTexturedModel('Male biped model', [MODL, MODB, MODT], []),
+    wbTexturedModel('Male world model', [MOD2, MO2B, MO2T], []),
     wbString(ICON, 'Male icon FileName'),
-    wbTexturedModel('Female biped model', [MOD3, MO3B, MO3T]),
-    wbTexturedModel('Female world model', [MOD4, MO4B, MO4T]),
+    wbTexturedModel('Female biped model', [MOD3, MO3B, MO3T], []),
+    wbTexturedModel('Female world model', [MOD4, MO4B, MO4T], []),
     wbString(ICO2, 'Female icon FileName'),
     wbStruct(DATA, '', [
       wbInteger('Value', itU32),
@@ -1991,7 +1977,7 @@ begin
     ])), [
     wbEDID,
     wbFULL,
-    wbTexturedModel('Model', [MODL, MODB, MODT]),
+    wbTexturedModel('Model', [MODL, MODB, MODT], []),
     wbSCRI,
     wbCNTOs,
     wbStruct(DATA, '', [
@@ -2040,7 +2026,7 @@ var  wbSoundTypeSoundsOld :=
     ])), [
     wbEDID,
     wbFULL,
-    wbTexturedModel('Model', [MODL, MODB, MODT]),
+    wbTexturedModel('Model', [MODL, MODB, MODT], []),
     wbCNTOs,
     wbSPLOs,
     wbArrayS(NIFZ, 'Models', wbStringLC('Model')),
@@ -2235,7 +2221,7 @@ var  wbSoundTypeSoundsOld :=
     ])), [
     wbEDID,
     wbFULL,
-    wbTexturedModel('Model', [MODL, MODB, MODT]),
+    wbTexturedModel('Model', [MODL, MODB, MODT], []),
     wbSCRI,
     wbFormIDCk(SNAM, 'Open sound', [SOUN]),
     wbFormIDCk(ANAM, 'Close sound', [SOUN]),
@@ -2371,7 +2357,7 @@ var  wbSoundTypeSoundsOld :=
   wbRecord(FLOR, 'Flora', [
     wbEDID,
     wbFULL,
-    wbTexturedModel('Model', [MODL, MODB, MODT]),
+    wbTexturedModel('Model', [MODL, MODB, MODT], []),
     wbSCRI,
     wbFormIDCk(PFIG, 'Ingredient', [INGR]),
     wbSeasons
@@ -2383,7 +2369,7 @@ var  wbSoundTypeSoundsOld :=
     ])), [
     wbEDID,
     wbFULL,
-    wbTexturedModel('Model', [MODL, MODB, MODT]),
+    wbTexturedModel('Model', [MODL, MODB, MODT], []),
     wbSCRI,
     wbByteArray(MNAM, 'Marker Flags', 0, cpNormal, True)
   ]);
@@ -2410,7 +2396,7 @@ var  wbSoundTypeSoundsOld :=
 
   wbRecord(GRAS, 'Grass', [
     wbEDID,
-    wbTexturedModel('Model', [MODL, MODB, MODT]),
+    wbTexturedModel('Model', [MODL, MODB, MODT], []),
     wbStruct(DATA, '', [
       wbInteger('Density', itU8),
       wbInteger('Min Slope', itU8),
@@ -2444,7 +2430,7 @@ var  wbSoundTypeSoundsOld :=
   wbRecord(HAIR, 'Hair', [
     wbEDID,
     wbFULL,
-    wbTexturedModel('Model', [MODL, MODB, MODT]),
+    wbTexturedModel('Model', [MODL, MODB, MODT], []),
     wbString(ICON, 'Texture', 0, cpNormal, True),
     wbInteger(DATA, 'Flags', itU8, wbFlags([
       'Playable',
@@ -2755,7 +2741,7 @@ var  wbSoundTypeSoundsOld :=
 
   wbRecord(IDLE, 'Idle Animation', [
     wbEDID,
-    wbTexturedModel('Model', [MODL, MODB, MODT]),
+    wbTexturedModel('Model', [MODL, MODB, MODT], []),
     wbCTDAs,
     wbInteger(ANAM, 'Animation Group Section', itU8, wbIdleAnam, nil, cpNormal, True),
     wbArray(DATA, 'Related Idle Animations', wbFormIDCk('Related Idle Animation', [IDLE, NULL]), ['Parent', 'Previous Sibling'], cpNormal, True)
@@ -2825,7 +2811,7 @@ var  wbSoundTypeSoundsOld :=
       wbByteArray('Unused', $1C)
     ], cpNormal, False, wbOBMEDontShow),
     wbFULL,
-    wbTexturedModel('Model', [MODL, MODB, MODT]),
+    wbTexturedModel('Model', [MODL, MODB, MODT], []),
     wbICON,
     wbSCRI,
     wbFloat(DATA, 'Weight', cpNormal, True),
@@ -2843,7 +2829,7 @@ var  wbSoundTypeSoundsOld :=
     ])), [
     wbEDID,
     wbFULL,
-    wbTexturedModel('Model', [MODL, MODB, MODT]),
+    wbTexturedModel('Model', [MODL, MODB, MODT], []),
     wbICON,
     wbSCRI,
     wbStruct(DATA, '', [
@@ -2883,7 +2869,7 @@ var  wbSoundTypeSoundsOld :=
       10, 'Quest'
     ])), [
     wbEDID,
-    wbTexturedModel('Model', [MODL, MODB, MODT]),
+    wbTexturedModel('Model', [MODL, MODB, MODT], []),
     wbSCRI,
     wbFULL,
     wbICON,
@@ -3092,7 +3078,7 @@ var  wbSoundTypeSoundsOld :=
     wbFULL,
     wbDESC,
     wbICON,
-    wbTexturedModel('Model', [MODL, MODB, MODT]),
+    wbTexturedModel('Model', [MODL, MODB, MODT], []),
     wbStruct(DATA, 'Data', [
       wbInteger('Flags', itU32, wbFlags([
         {0x00000001} 'Hostile',
@@ -3163,7 +3149,7 @@ var  wbSoundTypeSoundsOld :=
     ])), [
     wbEDID,
     wbFULL,
-    wbTexturedModel('Model', [MODL, MODB, MODT]),
+    wbTexturedModel('Model', [MODL, MODB, MODT], []),
     wbICON,
     wbSCRI,
     wbStruct(DATA, '', [
@@ -3201,7 +3187,7 @@ var  wbSoundTypeSoundsOld :=
     ])), [
     wbEDID,
     wbFULL,
-    wbTexturedModel('Model', [MODL, MODB, MODT]),
+    wbTexturedModel('Model', [MODL, MODB, MODT], []),
     wbStruct(ACBS, 'Configuration', [
       wbInteger('Flags', itU32, wbFlags([
         {0x000001} 'Female',
@@ -3604,17 +3590,17 @@ var  wbSoundTypeSoundsOld :=
     ]),
     wbRStruct('Face Data', [
       wbEmpty(NAM0, 'Face Data Marker'),
-      wbRArrayS('Parts', wbHeadPart(wbHeadPartIndexEnum, wbTexturedModel('Model', [MODL, MODB, MODT]), nil))
+      wbRArrayS('Parts', wbHeadPart(wbHeadPartIndexEnum, wbTexturedModel('Model', [MODL, MODB, MODT], []), nil))
     ], [], cpNormal, True),
     wbEmpty(NAM1, 'Body Data Marker', cpNormal, True),
     wbRStruct('Male Body Data', [
       wbEmpty(MNAM, 'Male Body Data Marker'),
-      wbTexturedModel('Model', [MODL, MODB, MODT]),
+      wbTexturedModel('Model', [MODL, MODB, MODT], []),
       wbBodyParts
     ], [], cpNormal, True),
     wbRStruct('Female Body Data', [
       wbEmpty(FNAM, 'Female Body Data Marker'),
-      wbTexturedModel('Model', [MODL, MODB, MODT]),
+      wbTexturedModel('Model', [MODL, MODB, MODT], []),
       wbBodyParts
     ], [], cpNormal, True),
     wbArrayS(HNAM, 'Hairs', wbFormIDCk('Hair', [HAIR]), 0, cpNormal, True),
@@ -3841,7 +3827,7 @@ var  wbSoundTypeSoundsOld :=
       wbByteArray('Unused', $1C)
     ], cpNormal, False, wbOBMEDontShow),
     wbFULL,
-    wbTexturedModel('Model', [MODL, MODB, MODT]),
+    wbTexturedModel('Model', [MODL, MODB, MODT], []),
     wbICON,
     wbSCRI,
     wbEffects,
@@ -3875,7 +3861,7 @@ var  wbSoundTypeSoundsOld :=
     ])), [
     wbEDID,
     wbFULL,
-    wbTexturedModel('Model', [MODL, MODB, MODT]),
+    wbTexturedModel('Model', [MODL, MODB, MODT], []),
     wbICON,
     wbSCRI,
     wbStruct(DATA, '', [
@@ -3978,7 +3964,7 @@ var  wbSoundTypeSoundsOld :=
       10, 'Quest Item'
     ])), [
     wbEDID,
-    wbTexturedModel('Model', [MODL, MODB, MODT])
+    wbTexturedModel('Model', [MODL, MODB, MODT], [])
   ]).SetSummaryKey([1]);
 
   wbRecord(TES4, 'Main File Header',
@@ -4003,7 +3989,7 @@ var  wbSoundTypeSoundsOld :=
 
   wbRecord(TREE, 'Tree', [
     wbEDID,
-    wbTexturedModel('Model', [MODL, MODB, MODT]),
+    wbTexturedModel('Model', [MODL, MODB, MODT], []),
     wbICON,
     wbArrayS(SNAM, 'SpeedTree Seeds', wbInteger('SpeedTree Seed', itU32)),
     wbStruct(CNAM, 'Tree Data', [
@@ -4086,7 +4072,7 @@ var  wbSoundTypeSoundsOld :=
     ])), [
     wbEDID,
     wbFULL,
-    wbTexturedModel('Model', [MODL, MODB, MODT]),
+    wbTexturedModel('Model', [MODL, MODB, MODT], []),
     wbICON,
     wbSCRI,
     wbEnchantment,
@@ -4114,7 +4100,7 @@ var  wbSoundTypeSoundsOld :=
     wbString(CNAM, 'Cloud Texture Lower Layer'),
     wbString(DNAM, 'Cloud Texture Upper Layer'),
     wbRStruct('Precipitation', [
-      wbTexturedModel('Model', [MODL, MODB, MODT])
+      wbTexturedModel('Model', [MODL, MODB, MODT], [])
     ]),
     wbWeatherColors,
     wbWeatherFogDistance,

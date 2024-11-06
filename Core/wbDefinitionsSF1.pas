@@ -70,26 +70,6 @@ begin
     .IncludeFlag(dfCollapsed, wbCollapseObjectBounds);
 end;
 
-function wbTexturedModel(aSubRecordName: string; const aSignatures: TwbSignatures; const aTextureSubRecords: array of IwbRecordMemberDef): IwbRecordMemberDef;
-var
-  Members: array of IwbRecordMemberDef;
-begin
-  SetLength(Members, Length(aTextureSubRecords) + 1);
-  Members[0] := wbString(aSignatures[0], 'Model FileName');
-  //Members[1] := wbModelInfo(aSignatures[1]);
-  for var i := Low(aTextureSubRecords) to High(aTextureSubRecords) do
-    Members[1 + i] := aTextureSubRecords[i];
-
-  Result :=
-    wbRStruct(aSubRecordName, Members, [])
-    .SetSummaryKey([0])
-    .IncludeFlag(dfSummaryMembersNoName)
-    .IncludeFlag(dfSummaryNoSortKey)
-    .IncludeFlag(dfCollapsed, wbCollapseModels)
-    .IncludeFlag(dfAllowAnyMember)
-    .IncludeFlag(dfStructFirstNotRequired)
-end;
-
 function wbDamageTypeArray(aItemName: string): IwbSubRecordDef;
 begin
   Result := wbArrayS(DAMA, aItemName+'s', wbStructSK([0], aItemName, [

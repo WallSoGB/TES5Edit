@@ -228,25 +228,6 @@ begin
     .IncludeFlag(dfAllowAnyMember);
 end;
 
-function wbTexturedModel(aSubRecordName: string; const aSignatures: TwbSignatures; const aTextureSubRecords: array of IwbRecordMemberDef): IwbRecordMemberDef;
-var
-  Members: array of IwbRecordMemberDef;
-begin
-  SetLength(Members, Length(aTextureSubRecords) + 2);
-  Members[0] := wbString(aSignatures[0], 'Model FileName');
-  Members[1] := wbModelInfo(aSignatures[1]);
-  for var i := Low(aTextureSubRecords) to High(aTextureSubRecords) do
-    Members[2 + i] := aTextureSubRecords[i];
-
-  Result :=
-    wbRStruct(aSubRecordName, Members, [])
-    .SetSummaryKey([0])
-    .IncludeFlag(dfSummaryMembersNoName)
-    .IncludeFlag(dfSummaryNoSortKey)
-    .IncludeFlag(dfCollapsed, wbCollapseModels)
-    .IncludeFlag(dfAllowAnyMember);
-end;
-
 function wbEPFDActorValueToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
 var
   AsCardinal : Cardinal;
