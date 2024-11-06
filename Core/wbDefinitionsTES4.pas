@@ -1362,7 +1362,7 @@ begin
     wbInteger('Flags', itU8, wbFlags([
       'Set Enable State to Opposite of Parent'
     ])),
-    wbByteArray('Unused', 3)
+    wbUnused(3)
   ]);
 
   wbRefRecord(ACHR, 'Placed NPC',
@@ -1582,7 +1582,7 @@ begin
         wbInteger('Magic school', itU32, wbMagicSchoolEnum),
         wbInteger('Visual effect name', itU32, wbChar4),
         wbInteger('Flags', itU8, wbFlags(['Hostile'])),
-        wbByteArray('Unused', 3)
+        wbUnused(3)
       ], cpNormal, True, nil, 1),
       wbFULLReq
     ]);
@@ -1594,7 +1594,7 @@ begin
         wbInteger('Magic school', itU32, wbMagicSchoolEnum),
         wbStringMgefCode('Visual Effect Code', 4),
         wbInteger('Flags', itU8, wbFlags(['Hostile'])),
-        wbByteArray('Unused', 3)
+        wbUnused(3)
       ], cpNormal, True, nil, 1),
       wbFULLReq
     ]);
@@ -1616,7 +1616,7 @@ begin
         wbOBMEVersion,
         wbInteger('EFIT Param Info', itU8, wbOBMEResolutionInfo),
         wbInteger('EFIX Param Info', itU8, wbOBMEResolutionInfo),
-        wbByteArray('Unused', $0A)
+        wbUnused($0A)
       ]),
       wbEFIDOBME,
       wbEFITOBME,
@@ -1656,7 +1656,7 @@ begin
 //            wbOBMEVersion,
 //            wbInteger('EFIT Param Info', itU8, wbOBMEResolutionInfo),
 //            wbInteger('EFIX Param Info', itU8, wbOBMEResolutionInfo),
-//            wbByteArray('Unused', $0A)
+//            wbUnused($0A)
 //          ]),
 //          wbEFIDOBME,
 //          wbEFITOBME,
@@ -1677,7 +1677,7 @@ begin
     wbStruct(OBME, 'Oblivion Magic Extender', [
       wbInteger('Record Version', itU8),
       wbOBMEVersion,
-      wbByteArray('Unused', $1C)
+      wbUnused($1C)
     ], cpNormal, False, wbOBMEDontShow),
     wbFULL,
     wbTexturedModel('Model', [MODL, MODB, MODT], []),
@@ -1687,7 +1687,7 @@ begin
     wbStruct(ENIT, '', [
       wbInteger('Value', itS32),
       wbInteger('Flags', itU8, wbFlags(['No auto-calculation', 'Food item'])),
-      wbByteArray('Unused', 3)
+      wbUnused(3)
     ], cpNormal, True),
     wbEffects
   ]);
@@ -1705,7 +1705,7 @@ begin
     wbStruct(DATA, '', [
       wbFloat('Speed'),
       wbInteger('Flags', itU8, wbFlags(['Ignores Normal Weapon Resistance'])),
-      wbByteArray('Unused', 3),
+      wbUnused(3),
       wbInteger('Value', itU32),
       wbFloat('Weight'),
       wbInteger('Damage', itU16)
@@ -1770,7 +1770,7 @@ begin
         {0x0040} 'Non-Playable',
         {0x0080} 'Heavy armor'
       ])),
-      wbByteArray('Unused', 1)
+      wbUnused(1)
     ], cpNormal, True),
     wbTexturedModel('Male Biped Model', [MODL, MODB, MODT], []),
     wbTexturedModel('Male World Model', [MOD2, MO2B, MO2T], []),
@@ -1949,7 +1949,7 @@ begin
         {0x0040} 'Non-Playable',
         {0x0080} '' {Heavy armor}
       ])),
-      wbByteArray('Unused', 1)
+      wbUnused(1)
     ], cpNormal, True),
     wbTexturedModel('Male biped model', [MODL, MODB, MODT], []),
     wbTexturedModel('Male world model', [MOD2, MO2B, MO2T], []),
@@ -2073,7 +2073,7 @@ var  wbSoundTypeSoundsOld :=
       wbInteger('Buys/Sells and Services', itU32, wbServiceFlags),
       wbInteger('Teaches', itS8, wbSkillEnum),
       wbInteger('Maximum training level', itU8),
-      wbByteArray('Unused', 2)
+      wbUnused(2)
     ], cpNormal, True),
     wbRArray('AI Packages', wbFormIDCk(PKID, 'AI Package', [PACK])),
     wbArrayS(KFFZ, 'Animations', wbStringLC('Animation')),
@@ -2090,9 +2090,9 @@ var  wbSoundTypeSoundsOld :=
       wbInteger('Magic Skill', itU8),
       wbInteger('Stealth Skill', itU8),
       wbInteger('Soul', itU8, wbSoulGemEnum),
-      wbByteArray('Unused', 1),
+      wbUnused(1),
       wbInteger('Health', itU16),
-      wbByteArray('Unused', 2),
+      wbUnused(2),
       wbInteger('Attack Damage', itU16),
       wbInteger('Strength', itU8),
       wbInteger('Intelligence', itU8),
@@ -2119,7 +2119,7 @@ var  wbSoundTypeSoundsOld :=
     wbStruct(CSTD, 'Standard', [
       {000}wbInteger('Dodge % Chance', itU8),
       {001}wbInteger('Left/Right % Chance', itU8),
-      {002}wbByteArray('Unused', 2),
+      {002}wbUnused(2),
       {004}wbFloat('Dodge L/R Timer (min)'),
       {008}wbFloat('Dodge L/R Timer (max)'),
       {012}wbFloat('Dodge Forward Timer (min)'),
@@ -2130,12 +2130,12 @@ var  wbSoundTypeSoundsOld :=
       {032}wbFloat('Idle Timer max'),
       {036}wbInteger('Block % Chance', itU8),
       {037}wbInteger('Attack % Chance', itU8),
-      {038}wbByteArray('Unused', 2),
+      {038}wbUnused(2),
       {040}wbFloat('Recoil/Stagger Bonus to Attack'),
       {044}wbFloat('Unconscious Bonus to Attack'),
       {048}wbFloat('Hand-To-Hand Bonus to Attack'),
       {052}wbInteger('Power Attack % Chance', itU8),
-      {053}wbByteArray('Unused', 3),
+      {053}wbUnused(3),
       {056}wbFloat('Recoil/Stagger Bonus to Power'),
       {060}wbFloat('Unconscious Bonus to Power Attack'),
       {064}wbInteger('Power Attack - Normal', itU8),
@@ -2143,7 +2143,7 @@ var  wbSoundTypeSoundsOld :=
       {066}wbInteger('Power Attack - Back', itU8),
       {067}wbInteger('Power Attack - Left', itU8),
       {068}wbInteger('Power Attack - Right', itU8),
-      {069}wbByteArray('Unused', 3),
+      {069}wbUnused(3),
       {072}wbFloat('Hold Timer (min)'),
       {076}wbFloat('Hold Timer (max)'),
       {080}wbInteger('Flags 1', itU8, wbFlags([
@@ -2157,7 +2157,7 @@ var  wbSoundTypeSoundsOld :=
              'Melee Alert OK'
            ])),
       {081}wbInteger('Acrobatic Dodge % Chance', itU8),
-      {082}wbByteArray('Unused', 2),
+      {082}wbUnused(2),
       {084}wbFloat('Range Mult (Optimal)'),
       {088}wbFloat('Range Mult (Max)'),
       {092}wbFloat('Switch Distance (Melee)'),
@@ -2166,7 +2166,7 @@ var  wbSoundTypeSoundsOld :=
       {104}wbFloat('Ranged standoff Distance'),
       {108}wbFloat('Group standoff Distance'),
       {112}wbInteger('Rushing Attack % Chance', itU8),
-      {113}wbByteArray('Unused', 3),
+      {113}wbUnused(3),
       {116}wbFloat('Rushing Attack Distance Mult'),
       {120}wbInteger('Flags 2', itU32, wbFlags([
              'Do Not Acquire'
@@ -2248,7 +2248,7 @@ var  wbSoundTypeSoundsOld :=
         {4} 'Edge Effect - Inverse',
         {5} 'Membrane Shader - Affect Skin Only'
       ])),
-      wbByteArray('Unused', 3),
+      wbUnused(3),
       wbInteger('Membrane Shader - Source Blend Mode', itU32, wbBlendModeEnum),
       wbInteger('Membrane Shader - Blend Operation', itU32, wbBlendOpEnum),
       wbInteger('Membrane Shader - Z Test Function', itU32, wbZTestFuncEnum),
@@ -2312,7 +2312,7 @@ var  wbSoundTypeSoundsOld :=
     wbStruct(OBME, 'Oblivion Magic Extender', [
       wbInteger('Record Version', itU8),
       wbOBMEVersion,
-      wbByteArray('Unused', $1C)
+      wbUnused($1C)
     ], cpNormal, False, wbOBMEDontShow),
     wbFULL,
     wbStruct(ENIT, '', [
@@ -2325,7 +2325,7 @@ var  wbSoundTypeSoundsOld :=
       wbInteger('Charge Amount', itU32),
       wbInteger('Enchant Cost', itU32),
       wbInteger('Flags', itU8, wbFlags(['Manual Enchant Cost (Autocalc Off)'])),
-      wbByteArray('Unused', 3)
+      wbUnused(3)
     ], cpNormal, True),
     wbEffects
   ]);
@@ -2523,13 +2523,13 @@ var  wbSoundTypeSoundsOld :=
     wbRUnion('Condition', [
       wbStructSK(CTDA, [3, 5, 6], 'Condition', [
      {0}wbInteger('Type', itU8, wbCtdaType),
-     {1}wbByteArray('Unused', 3),
+     {1}wbUnused(3),
      {2}wbUnion('Comparison Value', wbCTDACompValueDecider, [
           wbFloat('Comparison Value - Float'),
           wbFormIDCk('Comparison Value - Global', [GLOB])
         ]),
      {3}wbInteger('Function', itU16, wbCTDAFunctionToStr, wbCTDAFunctionToInt),   // Limited to itu16
-     {4}wbByteArray('Unused', 2, cpIgnore, False, wbNeverShow),
+     {4}wbUnused(2),
      {5}wbUnion('Parameter #1', wbCTDAParam1Decider, [
           {00} wbByteArray('Unknown', 4),
           {01} wbByteArray('None', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
@@ -2599,13 +2599,13 @@ var  wbSoundTypeSoundsOld :=
 
       wbStructSK(CTDT, [3, 4], 'Condition (old format)', [
      {0}wbInteger('Type', itU8, wbCtdaType),
-     {1}wbByteArray('Unused', 3),
+     {1}wbUnused(3),
      {2}wbUnion('Comparison Value', wbCTDACompValueDecider, [
           wbFloat('Comparison Value - Float'),
           wbFormIDCk('Comparison Value - Global', [GLOB])
         ]),
      {3}wbInteger('Function', itU16, wbCTDAFunctionToStr, wbCTDAFunctionToInt),   // Limited to itu16
-     {4}wbByteArray('Unused', 2, cpIgnore, False, wbNeverShow),
+     {4}wbUnused(2),
      {5}wbUnion('Parameter #1', wbCTDAParam1Decider, [
           {00} wbByteArray('Unknown', 4),
           {01} wbByteArray('None', 4, cpIgnore),
@@ -2679,7 +2679,7 @@ var  wbSoundTypeSoundsOld :=
   wbSCHR :=
     wbRUnion('Basic Script Data', [
       wbStruct(SCHR, 'Basic Script Data', [
-        wbByteArray('Unused', 4),
+        wbUnused(4),
         wbInteger('RefCount', itU32),
         wbInteger('CompiledSize', itU32),
         wbInteger('VariableCount', itU32),
@@ -2698,7 +2698,7 @@ var  wbSoundTypeSoundsOld :=
       .IncludeFlagOnValue(dfSummaryMembersNoName)
       .IncludeFlag(dfCollapsed, wbCollapseScriptData),
       wbStruct(SCHD, 'Basic Script Data', [
-        wbByteArray('Unused', 4),
+        wbUnused(4),
         wbInteger('RefCount', itU32),
         wbInteger('CompiledSize', itU32),
         wbInteger('VariableCount', itU32),
@@ -2786,9 +2786,9 @@ var  wbSoundTypeSoundsOld :=
             {6} 'Surprise'
           ])),
           wbInteger('Emotion Value', itS32),
-          wbByteArray('Unused', 4),
+          wbUnused(4),
           wbInteger('Response number', itU8),
-          wbByteArray('Unused', 3)
+          wbUnused(3)
         ]),
         wbStringKC(NAM1, 'Response Text', 0, cpTranslate),
         wbString(NAM2, 'Actor notes', 0, cpTranslate)
@@ -2808,7 +2808,7 @@ var  wbSoundTypeSoundsOld :=
     wbStruct(OBME, 'Oblivion Magic Extender', [
       wbInteger('Record Version', itU8),
       wbOBMEVersion,
-      wbByteArray('Unused', $1C)
+      wbUnused($1C)
     ], cpNormal, False, wbOBMEDontShow),
     wbFULL,
     wbTexturedModel('Model', [MODL, MODB, MODT], []),
@@ -2818,7 +2818,7 @@ var  wbSoundTypeSoundsOld :=
     wbStruct(ENIT, '', [
       wbInteger('Value', itS32),
       wbInteger('Flags', itU8, wbFlags(['No auto-calculation', 'Food item'])),
-      wbByteArray('Unused', 3)
+      wbUnused(3)
     ], cpNormal, True),
     wbEffects
   ]);
@@ -2950,10 +2950,10 @@ var  wbSoundTypeSoundsOld :=
   wbLeveledListEntryCreature :=
     wbStructExSK(LVLO, [0, 2], [3], 'Leveled List Entry', [
       wbInteger('Level', itS16),
-      wbByteArray('Unused', 2),
+      wbUnused(2),
       wbFormIDCk('Reference', [NPC_, CREA, LVLC]),
       wbInteger('Count', itS16),
-      wbByteArray('Unused', 2)
+      wbUnused(2)
     ], cpNormal, False, nil, 3)
     .SetSummaryKeyOnValue([0, 3, 2])
     .SetSummaryPrefixSuffixOnValue(0, '[Lv', ']')
@@ -2966,10 +2966,10 @@ var  wbSoundTypeSoundsOld :=
   wbLeveledListEntryItem :=
     wbStructExSK(LVLO, [0, 2], [3], 'Leveled List Entry', [
       wbInteger('Level', itS16),
-      wbByteArray('Unused', 2),
+      wbUnused(2),
       wbFormIDCk('Reference', [ARMO, AMMO, MISC, WEAP, INGR, SLGM, SGST, BOOK, LVLI, KEYM, CLOT, ALCH, APPA, LIGH]),
       wbInteger('Count', itS16),
-      wbByteArray('Unused', 2)
+      wbUnused(2)
     ], cpNormal, False, nil, 3)
     .SetSummaryKeyOnValue([0, 3, 2])
     .SetSummaryPrefixSuffixOnValue(0, '[Lv', ']')
@@ -2982,10 +2982,10 @@ var  wbSoundTypeSoundsOld :=
   wbLeveledListEntrySpell :=
     wbStructExSK(LVLO, [0, 2], [3], 'Leveled List Entry', [
       wbInteger('Level', itS16),
-      wbByteArray('Unused', 2),
+      wbUnused(2),
       wbFormIDCk('Reference', [SPEL, LVSP]),
       wbInteger('Count', itS16),
-      wbByteArray('Unused', 2)
+      wbUnused(2)
     ], cpNormal, False, nil, 3)
     .SetSummaryKeyOnValue([0, 3, 2])
     .SetSummaryPrefixSuffixOnValue(0, '[Lv', ']')
@@ -3015,7 +3015,7 @@ var  wbSoundTypeSoundsOld :=
       {0x02} 'Calculate for each item in count'
     ]), cpNormal, True),
     wbRArrayS('Leveled List Entries', wbLeveledListEntryItem, cpNormal, True),
-    wbByteArray(DATA, 'Unused', 1)
+    wbUnused(DATA, 1)
   ], False, nil, cpNormal, False, wbLVLAfterLoad).SetSummaryKey([3]);
 
   wbRecord(LVSP, 'Leveled Spell', [
@@ -3036,7 +3036,7 @@ var  wbSoundTypeSoundsOld :=
       wbOBMEVersion,
       wbInteger('Param A Info', itU8, wbOBMEResolutionInfo),
       wbInteger('Param B Info', itU8, wbOBMEResolutionInfo),
-      wbByteArray('Unused', 2),
+      wbUnused(2),
       wbString('Handler', 4),
       wbInteger('Flag Overrides', itU32, wbFlags([
         { 0} '',
@@ -3072,7 +3072,7 @@ var  wbSoundTypeSoundsOld :=
         {30} 'Hidden'
       ])),
       wbByteArray('ParamB', 4),
-      wbByteArray('Unused', $1C)
+      wbUnused($1C)
     ], cpNormal, False, wbOBMEDontShow),
     wbString(EDDX, 'EditorID', 0, cpNormal, False, wbEDDXDontShow),
     wbFULL,
@@ -3125,7 +3125,7 @@ var  wbSoundTypeSoundsOld :=
       wbInteger('Magic School', itS32, wbMagicSchoolEnum),
       wbInteger('Resist value', itS32, wbActorValueEnum),
       wbInteger('Counter Effect Count', itU16), //!!! must be updated automatically when ESCE length changes!
-      wbByteArray('Unused', 2),
+      wbUnused(2),
       wbFormIDCk('Light', [LIGH, NULL]),
       wbFloat('Projectile speed'),
       wbFormIDCk('Effect Shader', [EFSH, NULL]),
@@ -3233,7 +3233,7 @@ var  wbSoundTypeSoundsOld :=
       wbInteger('Buys/Sells and Services', itU32, wbServiceFlags),
       wbInteger('Teaches', itS8, wbSkillEnum),
       wbInteger('Maximum training level', itU8),
-      wbByteArray('Unused', 2)
+      wbUnused(2)
     ], cpNormal, True),
     wbRArray('AI Packages', wbFormIDCk(PKID, 'AI Package', [PACK])),
     wbArrayS(KFFZ, 'Animations', wbString('Animation')),
@@ -3261,7 +3261,7 @@ var  wbSoundTypeSoundsOld :=
       wbInteger('Sneak', itU8),
       wbInteger('Speechcraft', itU8),
       wbInteger('Health', itU16),
-      wbByteArray('Unused', 2),
+      wbUnused(2),
       wbInteger('Strength', itU8),
       wbInteger('Intelligence', itU8),
       wbInteger('Willpower', itU8),
@@ -3340,12 +3340,12 @@ var  wbSoundTypeSoundsOld :=
       wbStruct('', [
         wbInteger('Flags', itU16, wbPKDTFlags),
         wbInteger('Type', itU8, wbPKDTType),
-        wbByteArray('Unused', 1)
+        wbUnused(1)
       ]).SetSummaryKey([1]).IncludeFlag(dfSummaryMembersNoName),
       wbStruct('', [
         wbInteger('Flags', itU32, wbPKDTFlags),
         wbInteger('Type', itU8, wbPKDTType),
-        wbByteArray('Unused', 3)
+        wbUnused(3)
       ]).SetSummaryKey([1]).IncludeFlag(dfSummaryMembersNoName)
     ]).IncludeFlag(dfSummaryMembersNoName),
     wbStruct(PLDT, 'Location', [
@@ -3419,7 +3419,7 @@ var  wbSoundTypeSoundsOld :=
       wbFloat('Y'),
       wbFloat('Z (Even = Red/Orange, Odd = Blue)'),
       wbInteger('Connections', itU8{, wbPGRPConnectionsCallback}),
-      wbByteArray('Unused', 3)
+      wbUnused(3)
     ]), 0, nil, nil, cpNormal, True);
 
       {The Connection Count in the PGRP record specifies how many entries in this
@@ -3441,7 +3441,7 @@ var  wbSoundTypeSoundsOld :=
     ),
     wbArrayS(PGRI, 'Inter-Cell Connections', wbStructSK([0,2,3,4], 'Inter-Cell Connection', [
       wbInteger('Point', itU16),
-      wbByteArray('Unused', 2),
+      wbUnused(2),
       wbFloat('X'),
       wbFloat('Y'),
       wbFloat('Z')
@@ -3486,7 +3486,7 @@ var  wbSoundTypeSoundsOld :=
         wbInteger('Flags', itU8, wbFlags([
           {0x01} 'Compass marker ignores locks'
         ])),
-        wbByteArray('Unused', 3)
+        wbUnused(3)
       ]),
       wbCTDAs
     ]).SetSummaryKey([0, 1]))
@@ -3546,7 +3546,7 @@ var  wbSoundTypeSoundsOld :=
       .SetSummaryDelimiter(' ')
       .IncludeFlag(dfSummaryNoSortKey)
       .IncludeFlag(dfSummaryMembersNoName).IncludeFlag(dfCollapsed), 7),
-      wbByteArray('Unused', 2),
+      wbUnused(2),
       wbFloat('Male Height'),
       wbFloat('Female Height'),
       wbFloat('Male Weight'),
@@ -3625,14 +3625,14 @@ var  wbSoundTypeSoundsOld :=
     ]),
     wbStruct(XLOC, 'Lock information', [
       wbInteger('Lock Level', itU8),
-      wbByteArray('Unused', 3),
+      wbUnused(3),
       wbFormIDCk('Key', [KEYM, NULL]),
       wbUnion('Unused', wbXLOCFillerDecider, [
         wbUnused(),
-        wbByteArray('Unused', 4)
+        wbUnused(4)
       ]),
       wbInteger('Flags', itU8, wbFlags(['', '', 'Leveled Lock'])),
-      wbByteArray('Unused', 3)
+      wbUnused(3)
     ]),
     wbOwnership([XLOC]),
     wbXESP,
@@ -3641,7 +3641,7 @@ var  wbSoundTypeSoundsOld :=
       wbInteger('Seed', itU8),
       wbUnion('Unused', wbREFRXSEDDecider, [
         wbEmpty('Unused', cpIgnore),
-        wbByteArray('Unused', 3, cpIgnore)
+        wbUnused(3)
       ])
     ]),
     wbXLOD,
@@ -3678,7 +3678,7 @@ var  wbSoundTypeSoundsOld :=
           {0x0B} 'Oblivion Gate',
           {0x0C} 'Unknown? (door icon)'
         ])),
-        wbByteArray('Unused', 1)
+        wbUnused(1)
       ], cpNormal, True)
     ]),
     wbEmpty(ONAM, 'Open by Default'),
@@ -3720,7 +3720,7 @@ var  wbSoundTypeSoundsOld :=
         ),
         wbInteger('Override', itU8, wbBoolEnum),
         wbInteger('Priority', itU8),
-        wbByteArray('Unused', 2)
+        wbUnused(2)
       ], cpNormal, True, nil, 3),
 
       {followed by one of these: }
@@ -3729,7 +3729,7 @@ var  wbSoundTypeSoundsOld :=
       wbArray(RDOT, 'Objects', wbStruct('Object', [
         wbFormIDCk('Object', [TREE, FLOR, STAT, LTEX]),
         wbInteger('Parent Index', itU16, wbHideFFFF),
-        wbByteArray('Unused', 2),
+        wbUnused(2),
         wbFloat('Density'),
         wbInteger('Clustering', itU8),
         wbInteger('Min Slope', itU8),
@@ -3756,8 +3756,8 @@ var  wbSoundTypeSoundsOld :=
           wbInteger('Y', itU16),
           wbInteger('Z', itU16)
         ]).SetToStr(wbVec3ToStr).IncludeFlag(dfCollapsed, wbCollapseVec3),
-        wbByteArray('Unused', 2),
-        wbByteArray('Unknown', 4)
+        wbUnused(2),
+        wbUnused(4)
       ])),
 
       {--- Map ---}
@@ -3766,7 +3766,7 @@ var  wbSoundTypeSoundsOld :=
       {--- Grass ---}
       wbArrayS(RDGS, 'Grasses', wbStructSK([0], 'Grass', [
         wbFormIDCk('Grass', [GRAS]),
-        wbByteArray('Unused', 4)
+        wbUnused(4)
       ])),
 
       {--- Sound ---}
@@ -3801,7 +3801,7 @@ var  wbSoundTypeSoundsOld :=
 
   wbSLSD := wbStructSK(SLSD, [0], 'Local Variable Data', [
     wbInteger('Index', itU32),
-    wbByteArray('Unused', 12),
+    wbUnused(12),
     wbInteger('Flags', itU8, wbFlags(['IsLongOrShort']), cpCritical),
     wbByteArray('Unused')
   ]).IncludeFlag(dfSummaryMembersNoName);
@@ -3824,7 +3824,7 @@ var  wbSoundTypeSoundsOld :=
     wbStruct(OBME, 'Oblivion Magic Extender', [
       wbInteger('Record Version', itU8),
       wbOBMEVersion,
-      wbByteArray('Unused', $1C)
+      wbUnused($1C)
     ], cpNormal, False, wbOBMEDontShow),
     wbFULL,
     wbTexturedModel('Model', [MODL, MODB, MODT], []),
@@ -3880,7 +3880,7 @@ var  wbSoundTypeSoundsOld :=
         wbInteger('Minimum attenuation distance', itU8, wbMul(5)),
         wbInteger('Maximum attenuation distance', itU8, wbMul(100)),
         wbInteger('Frequency adjustment %', itS8),
-        wbByteArray('Unused', 1),
+        wbUnused(1),
         wbInteger('Flags', itU16, wbFlags([
           {0x0001} 'Random Frequency Shift',
           {0x0002} 'Play At Random',
@@ -3891,7 +3891,7 @@ var  wbSoundTypeSoundsOld :=
           {0x0040} '2D',
           {0x0080} '360 LFE'
         ])),
-        wbByteArray('Unused', 2),
+        wbUnused(2),
         wbInteger('Static Attenuation (db)', itU16, wbDiv(100)),
         wbInteger('Stop time', itU8),
         wbInteger('Start time', itU8)
@@ -3900,7 +3900,7 @@ var  wbSoundTypeSoundsOld :=
         wbInteger('Minimum attenuation distance', itU8, wbMul(5)),
         wbInteger('Maximum attenuation distance', itU8, wbMul(100)),
         wbInteger('Frequency adjustment %', itS8),
-        wbByteArray('Unused', 1),
+        wbUnused(1),
         wbInteger('Flags', itU16, wbFlags([
           {0x0001} 'Random Frequency Shift',
           {0x0002} 'Play At Random',
@@ -3911,7 +3911,7 @@ var  wbSoundTypeSoundsOld :=
           {0x0040} '2D',
           {0x0080} '360 LFE'
         ])),
-        wbByteArray('Unused', 2),
+        wbUnused(2),
         wbUnused,
         wbUnused,
         wbUnused
@@ -3924,7 +3924,7 @@ var  wbSoundTypeSoundsOld :=
     wbStruct(OBME, 'Oblivion Magic Extender', [
       wbInteger('Record Version', itU8),
       wbOBMEVersion,
-      wbByteArray('Unused', $1C)
+      wbUnused($1C)
     ], cpNormal, False, wbOBMEDontShow),
     wbFULL,
     wbStruct(SPIT, '', [
@@ -3954,7 +3954,7 @@ var  wbSoundTypeSoundsOld :=
         {0x00000040} 'Disallow Spell Absorb/Reflect',
         {0x00000080} 'Touch Spell Explodes w/ no Target'
       ])),
-      wbByteArray('Unused', 3)
+      wbUnused(3)
     ], cpNormal, True),
     wbEffects
   ]);
@@ -3978,7 +3978,7 @@ var  wbSoundTypeSoundsOld :=
     wbString(SNAM, 'Description', 0, cpTranslate),
     wbRArray('Master Files', wbRStruct('Master File', [
       wbStringForward(MAST, 'FileName', 0, cpNormal, True),
-      wbByteArray(DATA, 'Unused', 8, cpIgnore, True)
+      wbUnused(DATA, 8, True)
     ])).IncludeFlag(dfInternalEditOnly, not wbAllowMasterFilesEdit)
   ], False, nil, cpNormal, True);
 
