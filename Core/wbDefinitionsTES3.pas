@@ -565,16 +565,8 @@ begin
     wbRArray('Travel Services',
       wbRStruct('Travel Service', [
         wbStruct(DODT, 'Destination', [
-          wbStruct('Position', [
-            wbFloat('X'),
-            wbFloat('Y'),
-            wbFloat('Z')
-          ]),
-          wbStruct('Rotation', [
-            wbFloat('X'),
-            wbFloat('Y'),
-            wbFloat('Z')
-          ])
+          wbVec3('Position'),
+          wbVec3('Rotation')
         ], cpNormal, True),
         wbStringForward(DNAM, 'Cell', 64)
       ]));
@@ -1022,16 +1014,8 @@ begin
     wbInteger(NAM9, 'Gold Value', itS32),
     wbRStructSK([], 'Teleport Data', [
       wbStruct(DODT, 'Teleport Destination', [
-        wbStruct('Position', [
-          wbFloat('X'),
-          wbFloat('Y'),
-          wbFloat('Z')
-        ]),
-        wbStruct('Rotation', [
-          wbFloat('X'),
-          wbFloat('Y'),
-          wbFloat('Z')
-        ])
+        wbVec3('Position'),
+        wbVec3('Rotation')
       ]),
       wbString(DNAM, 'Teleport Cell') //[CELL]
     ]),
@@ -1044,16 +1028,8 @@ begin
     have a different value other than 0. For reasons.}
     wbInteger(DELE, 'Deleted', itU32, wbEnum([],[4729956, 'Deleted'])),
     wbStruct(DATA, 'Reference Data', [
-      wbStruct('Position', [
-        wbFloat('X'),
-        wbFloat('Y'),
-        wbFloat('Z')
-      ]),
-      wbStruct('Rotation', [
-        wbFloat('X'),
-        wbFloat('Y'),
-        wbFloat('Z')
-      ])
+      wbVec3('Position'),
+      wbVec3('Rotation')
     ])
   ]).SetGetFormIDCallback(function(const aMainRecord: IwbMainRecord; out aFormID: TwbFormID): Boolean begin
       var lFRMR := aMainRecord.RecordBySignature[FRMR];
@@ -1210,11 +1186,7 @@ begin
     wbRArray('AI Packages',
       wbRUnion('AI Packages', [
         wbStruct(AI_T, 'AI Travel', [
-          wbStruct('Position', [
-            wbFloat('X'),
-            wbFloat('Y'),
-            wbFloat('Z')
-          ]),
+          wbVec3('Position'),
           wbInteger('Repeat', itU32, wbBoolEnum)
         ], cpNormal, True),
         wbStruct(AI_W, 'AI Wander', [
@@ -1235,11 +1207,7 @@ begin
         ], cpNormal, True),
         wbRStruct('AI Escort', [
           wbStruct(AI_E, 'AI Escort', [
-            wbStruct('Position', [
-              wbFloat('X'),
-              wbFloat('Y'),
-              wbFloat('Z')
-            ]),
+            wbVec3('Position'),
             wbInteger('Duration In Hours', itU16),
             wbString(True, 'Target', 32), //[CREA, NPC_]
             wbInteger('Repeat', itU16, wbBoolEnum)
@@ -1248,11 +1216,7 @@ begin
         ]),
         wbRStruct('AI Follow', [
           wbStruct(AI_F, 'AI Follow', [
-            wbStruct('Position', [
-              wbFloat('X'),
-              wbFloat('Y'),
-              wbFloat('Z')
-            ]),
+            wbVec3('Position'),
             wbInteger('Duration In Hours', itU16),
             wbString(True, 'Target', 32), //[CREA, NPC_]
             wbInteger('Repeat', itU16, wbBoolEnum)
@@ -1808,11 +1772,7 @@ begin
     wbRArray('AI Packages',
       wbRUnion('AI Packages', [
         wbStruct(AI_T, 'AI Travel', [
-          wbStruct('Position', [
-            wbFloat('X'),
-            wbFloat('Y'),
-            wbFloat('Z')
-          ]),
+          wbVec3('Position'),
           wbInteger('Repeat', itU32, wbBoolEnum)
         ], cpNormal, True),
         wbStruct(AI_W, 'AI Wander', [
@@ -1833,11 +1793,7 @@ begin
         ], cpNormal, True),
         wbRStruct('AI Escort', [
           wbStruct(AI_E, 'AI Escort', [
-            wbStruct('Position', [
-              wbFloat('X'),
-              wbFloat('Y'),
-              wbFloat('Z')
-            ]),
+            wbVec3('Position'),
             wbInteger('Duration In Hours', itU16),
             wbString(True, 'Target', 32), //[CREA, NPC_]
             wbInteger('Repeat', itU16, wbBoolEnum)
@@ -1846,11 +1802,7 @@ begin
         ]),
         wbRStruct('AI Follow', [
           wbStruct(AI_F, 'AI Follow', [
-            wbStruct('Position', [
-              wbFloat('X'),
-              wbFloat('Y'),
-              wbFloat('Z')
-            ]),
+            wbVec3('Position'),
             wbInteger('Duration In Hours', itU16),
             wbString(True, 'Target', 32), //[CREA, NPC_]
             wbInteger('Repeat', itU16, wbBoolEnum)
