@@ -8350,14 +8350,14 @@ function wbUnused(const aSignature : TwbSignature;
                         aRequired  : Boolean = False)
                                    : IwbSubRecordDef;
 begin
-  Result := wbEmpty(aSignature, 'Unused', cpIgnore, aRequired, nil, nil);
+  Result := wbEmpty(aSignature, 'Unused', cpIgnore, aRequired, wbNeverShow);
   Result.IncludeFlag(dfNoReport);
 end;
 
 function wbUnused(aRequired : Boolean = False)
                             : IwbValueDef;
 begin
-  Result := wbEmpty('Unused', cpIgnore, aRequired, nil, False, nil);
+  Result := wbEmpty('Unused', cpIgnore, aRequired, wbNeverShow, False);
   Result.IncludeFlag(dfNoReport);
 end;
 
@@ -8366,7 +8366,7 @@ function wbUnused(const aSignature : TwbSignature;
                         aRequired  : Boolean = False)
                                    : IwbSubRecordDef;
 begin
-  Result := wbByteArray(aSignature, 'Unused', aSize, cpIgnore, aRequired, False, nil, nil);
+  Result := wbByteArray(aSignature, 'Unused', aSize, cpIgnore, aRequired, False, wbNeverShow);
   Result.IncludeFlag(dfNoReport);
 end;
 
@@ -8374,7 +8374,7 @@ function wbUnused(aSize     : Integer;
                   aRequired : Boolean = False)
                             : IwbValueDef;
 begin
-  Result := wbByteArray('Unused', aSize, cpIgnore, aRequired, nil, nil);
+  Result := wbByteArray('Unused', aSize, cpIgnore, aRequired, wbNeverShow);
   Result.IncludeFlag(dfNoReport);
 end;
 
