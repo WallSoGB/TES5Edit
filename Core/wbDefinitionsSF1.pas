@@ -3597,7 +3597,7 @@ begin
 
   var wbIdxStarID := wbNamedIndex('StarID', True);
 
-  var wbNull := wbByteArray('Unused', -255);
+  var wbNull := wbUnused(-255);
   var wbLLCT := wbInteger(LLCT, 'Count', itU8, nil, cpBenign);
   var wbCITC := wbInteger(CITC, 'Condition Count', itU32, nil, cpBenign).IncludeFlag(dfSkipImplicitEdit);
   var wbCITCReq := wbInteger(CITC, 'Condition Count', itU32, nil, cpBenign, True).IncludeFlag(dfSkipImplicitEdit);
@@ -5149,10 +5149,10 @@ begin
       {3} wbFormIDCk('Keyword', [KYWD, NULL]),
       {4} wbInteger('Alias', itS32, wbPackageLocationAliasToStr, wbStrToAlias),
       {5} wbInteger('Interrupt Data', itU32),
-      {6} wbByteArray('Unused', 4, cpIgnore), // padding unused by Self reference
+      {6} wbUnused(4), // padding unused by Self reference
       {7} wbFormIDCk('Keyword', [KYWD, NULL]),
       {8} wbInteger('Alias Collection', itS32, wbPackageLocationAliasToStr, wbStrToAlias),
-      {9} wbByteArray('Unused', 4, cpIgnore) // padding unused by Scene Primary Actor
+      {9} wbUnused(4) // padding unused by Scene Primary Actor
     ]),
     wbInteger('Count / Distance / Index', itS32)
   ]);
@@ -17548,7 +17548,7 @@ end;
     wbNTRM,
     wbStruct(MOLM, 'Material Swaps', [
       wbArrayS('Material Swaps', wbFormIDCk('Layered Material Swap', [LMSW]), -2),
-      wbByteArray('Unused', 0, cpIgnore).SetDontShow(wbNeverShow).IncludeFlag(dfDontAssign)
+      wbUnused(0).IncludeFlag(dfDontAssign)
     ]),
     wbFULL
   ]).SetSummaryKey([12]);

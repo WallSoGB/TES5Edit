@@ -5553,7 +5553,7 @@ begin
 
   wbSizeOfMainRecordStruct := 24;
 
-  wbNull := wbByteArray('Unused', -255);
+  wbNull := wbUnused(-255);
   wbLLCT := wbInteger(LLCT, 'Count', itU8, nil, cpBenign);
   wbCNDC := wbInteger(CNDC, 'Condition Position', itU32, nil, cpBenign);
   wbCITC := wbInteger(CITC, 'Condition Count', itU32, nil, cpBenign);
@@ -5606,7 +5606,7 @@ begin
   wbCOED := wbStructExSK(COED, [2], [0, 1], 'Extra Data', [
     {00} wbFormIDCkNoReach('Owner', [NPC_, FACT, NULL]),
     {04} wbUnion('', wbCOEDOwnerDecider, [
-           wbByteArray('Unused', 4, cpIgnore),
+           wbUnused(4),
            wbFormIDCk('Global Variable', [GLOB, NULL]),
            wbInteger('Required Rank', itS32)
          ]),
@@ -6672,7 +6672,7 @@ begin
       {4} wbFormIDCkNoReach('Object ID', [NULL, ACTI, DOOR, STAT, MSTT, FURN, SPEL, NPC_, CONT, ARMO, AMMO, MISC, WEAP, OMOD, BOOK, NOTE, KEYM, ALCH, INGR, LIGH, FACT, FLST, IDLM, TXST, PROJ]),
       {5} wbInteger('Object Type', itU32, wbObjectTypeEnum),
       {6} wbFormIDCk('Keyword', [NULL, KYWD]),
-      {7} wbByteArray('Unused', 4, cpIgnore),
+      {7} wbUnused(4),
       {8} wbInteger('Ref Alias', itS32, wbPackageLocationAliasToStr, wbStrToAlias),
       {9} wbInteger('Loc Alias', itS32, wbPackageLocationAliasToStr, wbStrToAlias),
      {10} wbInteger('Interrupt Data', itU32),
@@ -6695,7 +6695,7 @@ begin
       {4} wbFormIDCkNoReach('Object ID', [NULL, ACTI, DOOR, STAT, MSTT, FURN, SPEL, NPC_, CONT, ARMO, AMMO, MISC, WEAP, OMOD, BOOK, NOTE, KEYM, ALCH, INGR, LIGH, FACT, FLST, IDLM, TXST, PROJ]),
       {5} wbInteger('Object Type', itU32, wbObjectTypeEnum),
       {6} wbFormIDCk('Keyword', [NULL, KYWD]),
-      {7} wbByteArray('Unused', 4, cpIgnore),
+      {7} wbUnused(4),
       {8} wbInteger('Ref Alias', itS32, wbPackageLocationAliasToStr, wbStrToAlias),
       {9} wbInteger('Loc Alias', itS32, wbPackageLocationAliasToStr, wbStrToAlias),
      {10} wbInteger('Interrupt Data', itU32),
@@ -6765,7 +6765,7 @@ begin
       'Set Enable State to Opposite of Parent',
       'Pop In'
     ])),
-    wbByteArray('Unused', 3, cpIgnore)
+    wbUnused(3)
   ]);
 
   wbXLWT := wbFloat(XLWT, 'Light Weight');
@@ -7988,13 +7988,13 @@ begin
   wbCTDA := wbRStructSK([0], 'Condition', [
     wbStructSK(CTDA, [3, 5, 6], '', [
    {0}wbInteger('Type', itU8, wbCtdaTypeToStr, wbCtdaTypeToInt, cpNormal, False, nil, wbCtdaTypeAfterSet),
-   {1}wbByteArray('Unused', 3, cpIgnore, False, wbNeverShow),
+   {1}wbUnused(3),
    {2}wbUnion('Comparison Value', wbCTDACompValueDecider, [
         wbFloat('Comparison Value - Float'),
         wbFormIDCk('Comparison Value - Global', [GLOB])
       ]),
    {3}wbInteger('Function', itU16, wbCTDAFunctionToStr, wbCTDAFunctionToInt),
-   {4}wbByteArray('Unused', 2, cpIgnore, False, wbNeverShow),
+   {4}wbUnused(2),
    {5}wbUnion('Parameter #1', wbCTDAParam1Decider, [
         { unknown }
         wbByteArray('Unknown', 4).IncludeFlag(dfZeroSortKey),
@@ -8382,7 +8382,7 @@ begin
     wbStruct(DEST, 'Header', [
       wbInteger('Health', itS32),
       wbInteger('DEST Count', itU8),
-      wbByteArray('Unused',3),
+      wbUnused(3),
       wbInteger('Flags', itU32, wbFlags([
       { 0x0001 } 'VATS Targetable',
       { 0x0002 } 'Large Actor Destroys',
@@ -8691,7 +8691,7 @@ begin
         'Unused 6',
         'Unused 7'
       ]))),
-      wbFromVersion(125, wbByteArray('Unused',3))
+      wbFromVersion(125, wbUnused(3))
     ], cpNormal, False, nil, 4);
 
   wbSNAMMarkerParams := wbArray(SNAM, 'Marker Parameters', wbNAMMarkerParam);
@@ -8862,16 +8862,16 @@ begin
         {5} 'Enum',
         {6} 'FormID,Float'
       ])),
-      wbByteArray('Unused', 3, cpIgnore),
+      wbUnused(3),
       wbUnion('Function Type', wbOMODDataFunctionTypeDecider, [
         { Float }  wbInteger('Function Type', itU8, wbEnum(['SET', 'MUL+ADD', 'ADD'])),
         { Bool }   wbInteger('Function Type', itU8, wbEnum(['SET', 'AND', 'OR'])),
         { Enum }   wbInteger('Function Type', itU8, wbEnum(['SET'])),
         { FormID } wbInteger('Function Type', itU8, wbEnum(['SET', 'REM', 'ADD']))
       ]),
-      wbByteArray('Unused', 3, cpIgnore),
+      wbUnused(3),
       wbInteger('Property', itU16, wbObjectModPropertyToStr, wbObjectModPropertyToInt),
-      wbByteArray('Unused', 2, cpIgnore),
+      wbUnused(2),
       wbUnion('Value 1', wbOMODDataPropertyValue1Decider, [
         { 0} wbByteArray('Value 1 - Unknown', 4),
         { 1} wbInteger('Value 1 - Int', itS32),
@@ -8884,7 +8884,7 @@ begin
         { 8} wbInteger('Hit Behaviour', itU32, wbHitBehaviourEnum)
       ]),
       wbUnion('Value 2', wbOMODDataPropertyValue2Decider, [
-        wbByteArray('Unused', 4, cpIgnore),
+        wbUnused(4),
         wbInteger('Value 2 - Int', itU32),
         wbFloat('Value 2 - Float'),
         wbInteger('Value 2 - Bool', itU32, wbBoolEnum)
@@ -8899,9 +8899,9 @@ begin
     wbInteger('Include Count', itU32),  // fixed name for wbOMOD* handlers
     wbInteger('Property Count', itU32), // fixed name for wbOMOD* handlers
     wbInteger('Level Min', itU8),
-    wbByteArray('Unused', 1),
+    wbUnused(1),
     wbInteger('Level Max', itU8),
-    wbByteArray('Unused', 1),
+    wbUnused(1),
     wbInteger('Addon IndexParent Combination Index', itS16{, wbOBTEAddonIndexToStr, nil, cpNormal, True, nil, nil, -1}),
     wbInteger('Default', itU8, wbBoolEnum),
     wbArray('Keywords', wbFormIDCk('Keyword', [KYWD, NULL]), -4),
@@ -9258,7 +9258,7 @@ begin
         {0x02} 'Non-Playable',
         {0x04} 'Has Count Based 3D'
       ])),
-      wbByteArray('Unused', 3),
+      wbUnused(3),
       wbFloat('Damage'),
       wbInteger('Health', itU32)
     ], cpNormal, True),
@@ -9423,7 +9423,7 @@ begin
         {0x20} 'Is Recipe'//???
       ])),
       wbUnion('Teaches', wbBOOKTeachesDecider, [
-        wbByteArray('Unused', 4),
+        wbUnused(4),
         wbFormIDCk('Actor Value', [AVIF, NULL]),
         wbFormIDCk('Spell', [SPEL, NULL]),
         wbFormIDCk('Perk', [PERK, NULL])
@@ -10120,7 +10120,7 @@ begin
     wbUnknown(DATA),  // if form version < 62, ignored otherwise
     // format depends on Form Version (appear with form version 62, changed in form version 106), different for older records starting from the first field
     wbStruct(DNAM, 'Data', [
-      wbBelowVersion(107, wbByteArray('Unused', 1)),
+      wbBelowVersion(107, wbUnused(1)),
       wbInteger('Membrane Shader - Source Blend Mode', itU32, wbBlendModeEnum),
       wbInteger('Membrane Shader - Blend Operation', itU32, wbBlendOpEnum),
       wbInteger('Membrane Shader - Z Test Function', itU32, wbZTestFuncEnum),
@@ -10144,12 +10144,12 @@ begin
       wbFloat('Fill/Texture Effect - Full Alpha Ratio'),
       wbFloat('Edge Effect - Full Alpha Ratio'),
       wbInteger('Membrane Shader - Dest Blend Mode', itU32, wbBlendModeEnum),
-      wbBelowVersion(107, wbByteArray('Unused', 152)),
+      wbBelowVersion(107, wbUnused(152)),
       wbFloat('Holes Animation - Start Time'),
       wbFloat('Holes Animation - End Time'),
       wbFloat('Holes Animation - Start Value'),
       wbFloat('Holes Animation - End Value'),
-      wbBelowVersion(107, wbByteArray('Unused', 44)),
+      wbBelowVersion(107, wbUnused(44)),
       wbFormIDCk('Ambient Sound', [SNDR, NULL]),
       wbByteColors('Fill/Texture Effect - Color Key 2'),
       wbByteColors('Fill/Texture Effect - Color Key 3'),
@@ -10162,7 +10162,7 @@ begin
         wbFloat('Color Key 2 - Time'),
         wbFloat('Color Key 3 - Time')
       ]),
-      wbBelowVersion(107, wbByteArray('Unused', 40)),
+      wbBelowVersion(107, wbUnused(40)),
       wbInteger('Flags', itU32, wbFlags([
         'No Membrane Shader',
         'Membrane Grayscale Color',
@@ -10192,7 +10192,7 @@ begin
       ])),
       wbFloat('Fill/Texture Effect - Texture Scale (U)'),
       wbFloat('Fill/Texture Effect - Texture Scale (V)'),
-      wbBelowVersion(107, wbByteArray('Unused', 2)),
+      wbBelowVersion(107, wbUnused(2)),
       wbFromVersion(196, wbUnknown())
     ], cpNormal, True),
     wbGenericModel
@@ -11054,7 +11054,7 @@ begin
       wbFloat('Strength'),
       wbFloat('Distance'),
       wbFloat('Range'),
-      wbByteArray('Unused', 2, cpIgnore),
+      wbUnused(2),
       wbInteger('Sky / Blur Radius', itU16, wbEnum([], [
             0, 'None',
         16384, 'Radius 0',
@@ -11327,7 +11327,7 @@ begin
             ])),
             wbUnion('Unused', wbFormVersionDecider(34, 126), [
               wbUnused(),
-              wbByteArray('Unused', 2)
+              wbUnused(2)
             ])
           ]),
           wbActorValue
@@ -11364,7 +11364,7 @@ begin
             ])),
             wbUnion('Unused', wbFormVersionDecider(34, 126), [
               wbUnused(),
-              wbByteArray('Unused', 2)
+              wbUnused(2)
             ])
           ]),
           wbActorValue
@@ -11461,7 +11461,7 @@ begin
           wbInteger('Severable - Decal Count', itU8),
           wbInteger('Explodable - Decal Count', itU8),
           wbInteger('Geometry Segment Index', itU8),
-          wbBelowVersion(78, wbByteArray('Unused',1)),
+          wbBelowVersion(78, wbUnused(1)),
           wbFromVersion(95, wbStruct('On Cripple', [
             wbFormIDCk('On Cripple - Art Object', [ARTO, NULL]),
             wbFormIDCk('On Cripple - Debris', [DEBR, NULL]),
@@ -13433,7 +13433,7 @@ begin
     wbRArray('Responses', wbRStruct('Response', [
      wbStruct(TRDA, 'Response Data', [
         wbFromVersion(86, wbFormIDCk('Emotion', [KYWD, FFFF])),
-        wbBelowVersion(119, wbByteArray('Unused', 4)),
+        wbBelowVersion(119, wbUnused(4)),
         wbInteger('Response number', itU8),
         wbFormIDCk('Sound File', [SNDR, NULL]),
         wbByteArray('Unknown', 1),
@@ -13703,11 +13703,11 @@ begin
         wbUnion('', wbFormVersionDecider(69), [
           wbStructExSK([0, 2], [3], 'Base Data', [
             wbInteger('Level', itU16),
-            wbByteArray('Unused', 2, cpIgnore, false, wbNeverShow),
+            wbUnused(2),
             wbFormIDCk('Reference', sigBaseObjects),
             wbInteger('Count', itU16),
             wbEmpty('Chance None'),
-            wbByteArray('Unused', 2, cpIgnore, false, wbNeverShow)
+            wbUnused(2)
           ])
           .SetSummaryKey([0, 3, 2])
           .SetSummaryMemberPrefixSuffix(0, '[', ']')
@@ -13716,11 +13716,11 @@ begin
           .IncludeFlag(dfSummaryMembersNoName),
           wbStructExSK([0, 2], [3], 'Base Data', [
             wbInteger('Level', itU16),
-            wbByteArray('Unused', 2, cpIgnore, false, wbNeverShow),
+            wbUnused(2),
             wbFormIDCk('Reference', sigBaseObjects),
             wbInteger('Count', itU16),
             wbInteger('Chance None', itU8),
-            wbByteArray('Unused', 1, cpIgnore, false, wbNeverShow)
+            wbUnused(1)
           ])
           .SetSummaryKey([0, 3, 2, 4])
           .SetSummaryMemberPrefixSuffix(0, '[', ']')
@@ -13751,11 +13751,11 @@ begin
       wbUnion(LVLO, '', wbFormVersionDecider(174), [
         wbStructExSK([0, 2], [3], 'Base Data', [
           wbInteger('Level', itU16),
-          wbByteArray('Unused', 2, cpIgnore, false, wbNeverShow),
+          wbUnused(2),
           wbFormIDCk('Reference', [NPC_, LVLN]),
           wbInteger('Count', itS16),
           wbInteger('Chance None', itU8),
-          wbByteArray('Unused', 1, cpIgnore, false, wbNeverShow)
+          wbUnused(1)
         ])
         .SetSummaryKey([0, 3, 2, 4])
         .SetSummaryMemberPrefixSuffix(0, '[', ']')
@@ -14073,7 +14073,7 @@ begin
       wbByteArray('Magic Skill (unused)', 4),
       wbFormIDCk('Resist Value', [AVIF, NULL]),
       wbInteger('Counter Effect count', itU16),
-      wbByteArray('Unused', 2),
+      wbUnused(2),
       wbFormIDCk('Casting Light', [LIGH, NULL]),
       wbFloat('Taper Weight'),
       wbFormIDCk('Hit Shader', [EFSH, NULL]),
@@ -14392,7 +14392,7 @@ begin
       wbInteger('Calculated Action Points', itU16),
       wbInteger('Far Away Model Distance', itU16),
       wbInteger('Geared Up Weapons', itU8),
-      wbByteArray('Unused', 1, cpIgnore)
+      wbUnused(1)
     ]),
     wbFormIDCk(ZNAM, 'Combat Style', [CSTY], False, cpNormal, False),
     wbFormIDCk(GNAM, 'Gift Filter', [FLST], False, cpNormal, False),
@@ -14781,7 +14781,7 @@ begin
       wbInteger('Date', itU8),
       wbInteger('Hour', itS8),
       wbInteger('Minute', itS8),
-      wbByteArray('Unused', 3, cpIgnore),
+      wbUnused(3),
       wbInteger('Duration (minutes)', itS32)
     ], cpNormal, True),
 
@@ -14985,7 +14985,7 @@ begin
           {0x80000000} 'Unknown 31'
         ])),
         wbInteger('Priority',itU8), //0xE8
-        wbByteArray('Unused',3),
+        wbUnused(3),
         wbFloat('Delay Time'), //0xE0
         wbInteger('Quest Type',itU8, wbEnum([
           'None',
@@ -15002,7 +15002,7 @@ begin
           'Module',
           'Caravan'
         ])),  //0xE9
-        wbByteArray('Unused',3)
+        wbUnused(3)
       ]),
       wbStruct(DNAM, 'General', [
         wbInteger('Flags', itU16, wbFlags([
@@ -15021,7 +15021,7 @@ begin
           {0x1000} 'Unknown 13'
         ])),
         wbInteger('Priority', itU8),
-        wbByteArray('Unused', 1),
+        wbUnused(1),
         wbFloat('Delay Time'),
         wbInteger('Quest Type',itU8, wbEnum([
           'None',
@@ -15038,7 +15038,7 @@ begin
           'Module',
           'Caravan'
         ])),  //0xE9
-        wbByteArray('Unused',3)
+        wbUnused(3)
       ])
     ]),
     wbInteger(ENAM, 'Event', itU32, wbQuestEventEnum),
@@ -15969,7 +15969,7 @@ begin
       wbFloat('Thickness'),
       wbVec3('Half Extents'),
       wbInteger('Wind - Detached End', itU8, wbBoolEnum),
-      wbByteArray('Unused', 3), // junk data?
+      wbUnused(3), // junk data?
       wbBelowVersion(131, wbFloat('Unknown')), // not shown in editor
       wbBelowVersion(131, wbFloat('Unknown')) // not shown in editor
     ], cpNormal, False, nil, 5),
@@ -16026,12 +16026,12 @@ begin
        254, 'Inaccessible',
        255, 'Requires Key'
       ])),
-      wbByteArray('Unused', 3, cpIgnore),
+      wbUnused(3),
       wbFormIDCkNoReach('Key', [KEYM, NULL]),
       wbInteger('Flags', itU8, wbFlags(['', '', 'Leveled Lock'])),
-      wbByteArray('Unused', 3, cpIgnore),
+      wbUnused(3),
       wbInteger('Unknown', itU8), { Exe does an |= 1 on this byte }
-      wbByteArray('Unused', 3, cpIgnore)
+      wbUnused(3)
     ], cpNormal, False, nil, 4),
 
     wbXEZN,
@@ -16040,7 +16040,7 @@ begin
     wbStruct(XNDP, 'Navmesh Door Link', [
       wbFormIDCk('Navmesh', [NAVM]),
       wbInteger('Triangle', itS16, wbREFRNavmeshTriangleToStr, wbStringToInt),
-      wbByteArray('Unused', 2, cpIgnore)
+      wbUnused(2)
     ]),
 
     wbFormIDCk(XLRL, 'Location Reference', [LCRT, LCTN, NULL], False, cpBenignIfAdded),
@@ -16819,7 +16819,7 @@ begin
       wbFloat('Max Delay'),
       wbInteger('Requires Line of Sight', itU8, wbBoolEnum),
       wbInteger('Combat Target', itU8, wbBoolEnum),
-      wbByteArray('Unused', 2)
+      wbUnused(2)
     ], cpNormal, True)
   ]);
 
@@ -17694,11 +17694,11 @@ begin
       wbUnion(LVLO, '', wbFormVersionDecider(174), [
         wbStructExSK([0, 2], [3], 'Base Data', [
           wbInteger('Level', itU16),
-          wbByteArray('Unused', 2, cpIgnore, false, wbNeverShow),
+          wbUnused(2),
           wbFormIDCk('Reference', [PCRD]),
           wbInteger('Count', itS16),
           wbInteger('Chance None', itU8),
-          wbByteArray('Unused', 1, cpIgnore, false, wbNeverShow)
+          wbUnused(1)
         ])
         .SetSummaryKey([0, 3, 2, 4])
         .SetSummaryMemberPrefixSuffix(0, '[', ']')
@@ -18385,7 +18385,7 @@ begin
       wbFromVersion(105, wbFloat('Min Power Per Shot')),
       wbFromVersion(87, wbInteger('Stagger', itU32, wbStaggerEnum)),
       wbUnion('', wbFormVersionDecider(146), [
-        wbByteArray('Unused', 4),
+        wbUnused(4),
         wbFloat('Color Remapping Index')
       ]),
       wbFromVersion(146, wbInteger('Health',itU32)),
@@ -18592,7 +18592,7 @@ begin
         'WORKSHOP_AI_ARE_ALLIES',
         'WORKSHOP_TRAPS_ARE_ALLIES'
       ])),
-      wbByteArray('Unused', 4)
+      wbUnused(4)
     ])
   ]);
 

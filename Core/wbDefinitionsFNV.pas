@@ -3452,7 +3452,7 @@ begin
   wbCOED := wbStructExSK(COED, [2], [0, 1], 'Extra Data', [
     {00} wbFormIDCkNoReach('Owner', [NPC_, FACT, NULL]),
     {04} wbUnion('Global Variable / Required Rank', wbCOEDOwnerDecider, [
-           wbByteArray('Unused', 4, cpIgnore),
+           wbUnused(4),
            wbFormIDCk('Global Variable', [GLOB, NULL]),
            wbInteger('Required Rank', itS32)
          ]),
@@ -3489,7 +3489,7 @@ begin
       wbInteger('Flags', itU8, wbFlags([
         'VATS Targetable'
       ], True)),
-      wbByteArray('Unused', 2)
+      wbUnused(2)
     ]),
     wbRArray('Stages',
       wbRStruct('Stage', [
@@ -3525,7 +3525,7 @@ begin
       wbInteger('Flags', itU8, wbFlags([
         'VATS Targetable'
       ])),
-      wbByteArray('Unused', 2)
+      wbUnused(2)
     ]),
     wbRArray('Stages',
       wbRStruct('Stage', [
@@ -3564,11 +3564,11 @@ begin
       'Set Enable State to Opposite of Parent',
       'Pop In'
     ])),
-    wbByteArray('Unused', 3)
+    wbUnused(3)
   ]);
 
   wbSCHRReq := wbStruct(SCHR, 'Basic Script Data', [
-    wbByteArray('Unused', 4),
+    wbUnused(4),
     wbInteger('RefCount', itU32),
     wbInteger('CompiledSize', itU32),
     wbInteger('VariableCount', itU32),
@@ -3600,9 +3600,9 @@ begin
 
   wbSLSD := wbStructSK(SLSD, [0], 'Local Variable Data', [
     wbInteger('Index', itU32),
-    wbByteArray('Unused', 12),
+    wbUnused(12),
     wbInteger('Type', itU8, wbEnum(['FloatOrRef', 'Integer', 'String (xNVSE)', 'Array (xNVSE)', 'Ref (xNVSE)', 'Invalid (xNVSE)']), cpCritical),
-    wbByteArray('Unused', 7)
+    wbUnused(7)
   ]);
 
   wbEmbeddedScript := wbRStruct('Embedded Script', [
@@ -4259,13 +4259,13 @@ begin
   wbCTDA :=
     wbStructSK(CTDA, [3, 5, 6], 'Condition', [
    {0}wbInteger('Type', itU8, wbCtdaTypeToStr, wbCtdaTypeToInt, cpNormal, False, nil, wbCtdaTypeAfterSet),
-   {1}wbByteArray('Unused', 3),
+   {1}wbUnused(3),
    {2}wbUnion('Comparison Value', wbCTDACompValueDecider, [
         wbFloat('Comparison Value - Float'),
         wbFormIDCk('Comparison Value - Global', [GLOB])
       ]),
    {3}wbInteger('Function', itU16, wbCTDAFunctionToStr, wbCTDAFunctionToInt),   // Limited to itu16
-   {4}wbByteArray('Unused', 2, cpIgnore, False, wbNeverShow),
+   {4}wbUnused(2),
    {5}wbUnion('Parameter #1', wbCTDAParam1Decider, [
         {00} wbByteArray('Unknown', 4),
         {01} wbByteArray('None', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
@@ -4367,7 +4367,7 @@ begin
                wbFormIDCkNoReach('Weapon List', [FLST], [WEAP]),
                wbFormIDCkNoReach('Target', [NPC_, CREA]),
                wbFormIDCkNoReach('Target List', [FLST], [NPC_, CREA]),
-               wbByteArray('Unused', 4, cpIgnore),
+               wbUnused(4),
                wbInteger('Target Part', itS32, wbActorValueEnum),
                wbInteger('VATS Action', itU32, wbEnum([
                  'Unarmed Attack',
@@ -4391,17 +4391,17 @@ begin
                  'Kill Camera Shot',
                  'Throw Weapon'
                ])),
-               wbByteArray('Unused', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
-               wbByteArray('Unused', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
+               wbUnused(4).IncludeFlag(dfZeroSortKey),
+               wbUnused(4).IncludeFlag(dfZeroSortKey),
                wbFormIDCkNoReach('Critical Effect', [SPEL]),
                wbFormIDCkNoReach('Critical Effect List', [FLST], [SPEL]),
-               wbByteArray('Unused', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
-               wbByteArray('Unused', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
-               wbByteArray('Unused', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
-               wbByteArray('Unused', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
+               wbUnused(4).IncludeFlag(dfZeroSortKey),
+               wbUnused(4).IncludeFlag(dfZeroSortKey),
+               wbUnused(4).IncludeFlag(dfZeroSortKey),
+               wbUnused(4).IncludeFlag(dfZeroSortKey),
                wbInteger('Weapon Type', itU32, wbWeaponAnimTypeEnum),
-               wbByteArray('Unused', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
-               wbByteArray('Unused', 4, cpIgnore).IncludeFlag(dfZeroSortKey)
+               wbUnused(4).IncludeFlag(dfZeroSortKey),
+               wbUnused(4).IncludeFlag(dfZeroSortKey)
              ]),
         {41} wbInteger('Creature Type', itU32, wbCreatureTypeEnum),
         {42} wbInteger('Menu Mode', itU32, wbMenuModeEnum),
@@ -4484,7 +4484,7 @@ begin
         'Food Item',
         'Medicine'
       ])),
-      wbByteArray('Unused', 3),
+      wbUnused(3),
       wbFormIDCk('Withdrawal Effect', [SPEL, NULL]),
       wbFloat('Addiction Chance'),
       wbFormIDCk('Sound - Consume', [SOUN, NULL])
@@ -4508,7 +4508,7 @@ begin
         'Ignores Normal Weapon Resistance',
         'Non-Playable'
       ])),
-      wbByteArray('Unused', 3),
+      wbUnused(3),
       wbInteger('Value', itS32),
       wbInteger('Clip Rounds', itU8)
     ], cpNormal, True),
@@ -4565,7 +4565,7 @@ begin
         {0x0040} 'Non-Playable',
         {0x0080} 'Heavy'
       ], True)),
-      wbByteArray('Unused', 3)
+      wbUnused(3)
     ], cpNormal, True);
 
   wbRecord(ARMO, 'Armor',
@@ -4601,19 +4601,19 @@ begin
     ], cpNormal, True),
     wbStruct(DNAM, '', [
       wbInteger('DR', itS16, wbDiv(100)),
-      wbByteArray('Unused', 2),
+      wbUnused(2),
       wbFloat('DT'),
       wbInteger('Flags', itU16, wbFlags([
         'Modulates Voice'
       ])),
-      wbByteArray('Unused', 2)
+      wbUnused(2)
     ], cpNormal, True, nil, 2),
     wbInteger(BNAM, 'Overrides Animation Sounds', itU32, wbBoolEnum),
     wbRArray('Animation Sounds',
       wbStruct(SNAM, 'Animation Sound', [
         wbFormIDCk('Sound', [SOUN]),
         wbInteger('Chance', itU8),
-        wbByteArray('Unused', 3),
+        wbUnused(3),
         wbInteger('Type', itU32, wbEnum([], [
           19, 'Run',
           21, 'Run (Armor)',
@@ -4652,7 +4652,7 @@ begin
         'Modulates Voice'
       ])),
       wbFloat('DT'),
-      wbByteArray('Unused', 4)
+      wbUnused(4)
     ], cpNormal, True, nil, 2)
   ]);
 
@@ -4788,7 +4788,7 @@ begin
       wbInteger('Buys/Sells and Services', itU32, wbServiceFlags),
       wbInteger('Teaches', itS8, wbSkillEnum),
       wbInteger('Maximum training level', itU8),
-      wbByteArray('Unused', 2)
+      wbUnused(2)
     ], cpNormal, True),
     wbArray(ATTR, 'Attributes', wbInteger('Attribute', itU8), [
       'Strength',
@@ -4914,7 +4914,7 @@ var  wbSoundTypeSoundsOld :=
      {02} wbInteger('Energy Level', itU8),
      {03} wbInteger('Responsibility', itU8),
      {04} wbInteger('Mood', itU8, wbMoodEnum),
-     {05} wbByteArray('Unused', 3),   // Mood is stored as a DWord as shown by endianSwapping but is truncated to byte during load :)
+     {05} wbUnused(3),   // Mood is stored as a DWord as shown by endianSwapping but is truncated to byte during load :)
      {08} wbInteger('Buys/Sells and Services', itU32, wbServiceFlags),
      {0C} wbInteger('Teaches', itS8, wbSkillEnum),
      {0D} wbInteger('Maximum training level', itU8),
@@ -5048,7 +5048,7 @@ var  wbSoundTypeSoundsOld :=
       {02} wbInteger('Magic Skill', itU8, nil, cpNormal, False, wbActorTemplateUseStats),
       {03} wbInteger('Stealth Skill', itU8, nil, cpNormal, False, wbActorTemplateUseStats),
       {04} wbInteger('Health', itS16, nil, cpNormal, False, wbActorTemplateUseStats),
-      {06} wbByteArray('Unused', 2),
+      {06} wbUnused(2),
       {08} wbInteger('Damage', itS16, nil, cpNormal, False, wbActorTemplateUseStats),
       {10} wbArray('Attributes', wbInteger('Attribute', itU8), [
             'Strength',
@@ -5079,7 +5079,7 @@ var  wbSoundTypeSoundsOld :=
     wbStruct(CSTD, 'Advanced - Standard', [
       {000}wbInteger('Maneuver Decision - Dodge % Chance', itU8),
       {001}wbInteger('Maneuver Decision - Left/Right % Chance', itU8),
-      {002}wbByteArray('Unused', 2),
+      {002}wbUnused(2),
       {004}wbFloat('Maneuver Decision - Dodge L/R Timer (min)'),
       {008}wbFloat('Maneuver Decision - Dodge L/R Timer (max)'),
       {012}wbFloat('Maneuver Decision - Dodge Forward Timer (min)'),
@@ -5090,12 +5090,12 @@ var  wbSoundTypeSoundsOld :=
       {032}wbFloat('Maneuver Decision - Idle Timer max'),
       {036}wbInteger('Melee Decision - Block % Chance', itU8),
       {037}wbInteger('Melee Decision - Attack % Chance', itU8),
-      {038}wbByteArray('Unused', 2),
+      {038}wbUnused(2),
       {040}wbFloat('Melee Decision - Recoil/Stagger Bonus to Attack'),
       {044}wbFloat('Melee Decision - Unconscious Bonus to Attack'),
       {048}wbFloat('Melee Decision - Hand-To-Hand Bonus to Attack'),
       {052}wbInteger('Melee Decision - Power Attacks - Power Attack % Chance', itU8),
-      {053}wbByteArray('Unused', 3),
+      {053}wbUnused(3),
       {056}wbFloat('Melee Decision - Power Attacks - Recoil/Stagger Bonus to Power'),
       {060}wbFloat('Melee Decision - Power Attacks - Unconscious Bonus to Power Attack'),
       {064}wbInteger('Melee Decision - Power Attacks - Normal', itU8),
@@ -5103,7 +5103,7 @@ var  wbSoundTypeSoundsOld :=
       {066}wbInteger('Melee Decision - Power Attacks - Back', itU8),
       {067}wbInteger('Melee Decision - Power Attacks - Left', itU8),
       {068}wbInteger('Melee Decision - Power Attacks - Right', itU8),
-      {069}wbByteArray('Unused', 3),
+      {069}wbUnused(3),
       {072}wbFloat('Melee Decision - Hold Timer (min)'),
       {076}wbFloat('Melee Decision - Hold Timer (max)'),
       {080}wbInteger('Flags', itU16, wbFlags([
@@ -5117,10 +5117,10 @@ var  wbSoundTypeSoundsOld :=
              'Ignore Damaging Spectators',
              'Cannot Use Stealthboy'
            ])),
-      {082}wbByteArray('Unused', 2),
+      {082}wbUnused(2),
       {085}wbInteger('Maneuver Decision - Acrobatic Dodge % Chance', itU8),
       {085}wbInteger('Melee Decision - Power Attacks - Rushing Attack % Chance', itU8),
-      {086}wbByteArray('Unused', 2),
+      {086}wbUnused(2),
       {088}wbFloat('Melee Decision - Power Attacks - Rushing Attack Distance Mult')
     ], cpNormal, True),
     wbStruct(CSAD, 'Advanced - Advanced', [
@@ -5156,7 +5156,7 @@ var  wbSoundTypeSoundsOld :=
       {24} wbFloat('Fire Timer (min)'),
       {28} wbFloat('Fire Timer (max)'),
       {32} wbFloat('Ranged Weapon Range Mult (min)'),
-      {36} wbByteArray('Unused', 4),
+      {36} wbUnused(4),
       {40} wbInteger('Weapon Restrictions', itU32, wbEnum([
         'None',
         'Melee Only',
@@ -5250,7 +5250,7 @@ var  wbSoundTypeSoundsOld :=
         {4} 'Edge Effect - Inverse',
         {5} 'Membrane Shader - Affect Skin Only'
       ])),
-      wbByteArray('Unused', 3),
+      wbUnused(3),
       wbInteger('Membrane Shader - Source Blend Mode', itU32, wbBlendModeEnum),
       wbInteger('Membrane Shader - Blend Operation', itU32, wbBlendOpEnum),
       wbInteger('Membrane Shader - Z Test Function', itU32, wbZTestFuncEnum),
@@ -5340,14 +5340,14 @@ var  wbSoundTypeSoundsOld :=
         {2} 'Weapon',
         {3} 'Apparel'
       ])),
-      wbByteArray('Unused', 4),
-      wbByteArray('Unused', 4),
+      wbUnused(4),
+      wbUnused(4),
       wbInteger('Flags', itU8, wbFlags([
         'No Auto-Calc',
         'Auto Calculate',
         'Hide Effect'
       ])),
-      wbByteArray('Unused', 3)
+      wbUnused(3)
     ], cpNormal, True),
     wbEffectsReq
   ]);
@@ -5385,7 +5385,7 @@ var  wbSoundTypeSoundsOld :=
         'Track Crime',
         'Allow Sell'
       ])),
-      wbByteArray('Unused', 2)
+      wbUnused(2)
     ], cpNormal, True, nil, 1),
     wbFloat(CNAM, 'Unused'),
     wbRArrayS('Ranks', wbFactionRank),
@@ -5446,7 +5446,7 @@ var  wbSoundTypeSoundsOld :=
                 'Alpha - Blending',
                 'Alpha - Testing'
               ], True)),
-              wbByteArray('Unused', 2),
+              wbUnused(2),
               wbByteColors('Color')
             ]);
 
@@ -5606,7 +5606,7 @@ var  wbSoundTypeSoundsOld :=
         '-Server 9-',
         '-Server 10-'
       ])),
-      wbByteArray('Unused', 1)
+      wbUnused(1)
     ], cpNormal, True),
     wbRArray('Menu Items',
       wbRStruct('Menu Item', [
@@ -5722,7 +5722,7 @@ var  wbSoundTypeSoundsOld :=
     ]), cpNormal, True),
     wbStruct(IDLC, '', [
       wbInteger('Animation Count', itU8),
-      wbByteArray('Unused', 3)
+      wbUnused(3)
     ], cpNormal, True, nil, 1),
     wbFloat(IDLT, 'Idle Timer Setting', cpNormal, True),
     wbArray(IDLA, 'Animations', wbFormIDCk('Animation', [IDLE, NULL]), 0, nil, wbIDLAsAfterSet, cpNormal, True)  // NULL looks valid if IDLS\Animation Count is 0
@@ -6304,16 +6304,16 @@ var  wbSoundTypeSoundsOld :=
         ])
       ]),
       wbByteArray('Unknown', 4),
-      wbFromVersion(10, wbByteArray('Unused', 4)),
-      wbFromVersion(10, wbByteArray('Unused', 4)),
-      wbFromVersion(10, wbByteArray('Unused', 4)),
+      wbFromVersion(10, wbUnused(4)),
+      wbFromVersion(10, wbUnused(4)),
+      wbFromVersion(10, wbUnused(4)),
       wbFromVersion(13, wbInteger('Flags', itU8, wbFlags([
         'Saturation',
         'Contrast',
         'Tint',
         'Brightness'
       ], True))),
-      wbFromVersion(13, wbByteArray('Unused', 3))
+      wbFromVersion(13, wbUnused(3))
     ], cpNormal, True, nil, 5)
   ]);
 
@@ -6454,7 +6454,7 @@ var  wbSoundTypeSoundsOld :=
         wbStructSK([0, 1], 'Quest + Stage', [
           wbFormIDCk('Quest', [QUST]),
           wbInteger('Quest Stage', itU8, wbPerkDATAQuestStageToStr, wbCTDAParam2QuestStageToInt),
-          wbByteArray('Unused', 3)
+          wbUnused(3)
         ]),
         wbFormIDCk('Ability', [SPEL]),
         wbStructSK([0, 1], 'Entry Point', [
@@ -6610,7 +6610,7 @@ var  wbSoundTypeSoundsOld :=
     {72} wbFormIDCk('Explodable - Impact DataSet', [IPDS, NULL]),
     {28} wbInteger('Severable - Decal Count', itU8),
     {28} wbInteger('Explodable - Decal Count', itU8),
-    {76} wbByteArray('Unused', 2),
+    {76} wbUnused(2),
     {80} wbFloat('Limb Replacement Scale')
   ], cpNormal, True);
 
@@ -6778,7 +6778,7 @@ var  wbSoundTypeSoundsOld :=
         'Never Resets',
         'Match PC Below Minimum Level'
       ])),
-      wbByteArray('Unused', 1)
+      wbUnused(1)
     ], cpNormal, True)
   ]);
 
@@ -6816,7 +6816,7 @@ var  wbSoundTypeSoundsOld :=
     wbInteger(NVER, 'Version', itU32, nil, cpNormal, True),
     wbStruct(DATA, 'General Data', [
       wbInteger('Dynamic Bone Count', itU32),
-      wbByteArray('Unused', 4),
+      wbUnused(4),
       wbStruct('Enabled', [
         wbInteger('Feedback', itU8, wbBoolEnum),
         wbInteger('Foot IK (broken, don''t use)', itU8, wbBoolEnum),
@@ -6824,7 +6824,7 @@ var  wbSoundTypeSoundsOld :=
         wbInteger('Grab IK (broken, don''t use)', itU8, wbBoolEnum),
         wbInteger('Pose Matching', itU8, wbBoolEnum)
       ]),
-      wbByteArray('Unused', 1)
+      wbUnused(1)
     ], cpNormal, True),
     wbFormIDCk(XNAM, 'Actor Base', [CREA, NPC_], False, cpNormal, True),
     wbFormIDCk(TNAM, 'Body Part Data', [BPTD], False, cpNormal, True),
@@ -6857,7 +6857,7 @@ var  wbSoundTypeSoundsOld :=
     {06} wbInteger('Flags', itU8, wbFlags([
            'Disable On Move'
          ])),
-    {07} wbByteArray('Unused', 1),
+    {07} wbUnused(1),
     {08} wbFloat('Motors Strength'),
     {12} wbFloat('Pose Activation Delay Time'),
     {16} wbFloat('Match Error Allowance'),
@@ -6986,12 +6986,12 @@ var  wbSoundTypeSoundsOld :=
         wbInteger('Min', itU8),
         wbInteger('Max', itU8)
       ]),
-      wbByteArray('Unused', 1),
+      wbUnused(1),
       wbInteger('Replay Delay', itS16),
       wbInteger('Flags', itU8, wbFlags([
         'No attacking'
       ])),
-      wbByteArray('Unused', 1)
+      wbUnused(1)
     ], cpNormal, True, nil, 4)
   ]);
 
@@ -7048,14 +7048,14 @@ var  wbSoundTypeSoundsOld :=
             {7} 'Pained'
           ])),
           wbInteger('Emotion Value', itS32),
-          wbByteArray('Unused', 4),
+          wbUnused(4),
           wbInteger('Response number', itU8),
-          wbByteArray('Unused', 3),
+          wbUnused(3),
           wbFormIDCk('Sound', [SOUN, NULL]),
           wbInteger('Flags', itU8, wbFlags([
             'Use Emotion Animation'
           ])),
-          wbByteArray('Unused', 3)
+          wbUnused(3)
         ], cpNormal, False, nil, 5),
         wbStringKC(NAM1, 'Response Text', 0, cpTranslate, True),
         wbString(NAM2, 'Script Notes', 0, cpTranslate, True),
@@ -7101,7 +7101,7 @@ var  wbSoundTypeSoundsOld :=
     wbStruct(ENIT, 'Effect Data', [
       wbInteger('Value', itS32),
       wbInteger('Flags', itU8, wbFlags(['No auto-calculation', 'Food item'])),
-      wbByteArray('Unused', 3)
+      wbUnused(3)
     ], cpNormal, True),
     wbEffectsReq
   ]);
@@ -7262,10 +7262,10 @@ var  wbSoundTypeSoundsOld :=
     wbRStructExSK([0], [1], 'Leveled List Entry', [
       wbStructExSK(LVLO, [0, 2], [3], 'Base Data', [
         wbInteger('Level', itS16),
-        wbByteArray('Unused', 2),
+        wbUnused(2),
         wbFormIDCk('Reference', [CREA, LVLC]),
         wbInteger('Count', itS16),
-        wbByteArray('Unused', 2)
+        wbUnused(2)
       ])
       .SetSummaryKeyOnValue([0, 3, 2])
       .SetSummaryPrefixSuffixOnValue(0, '[Lv', ']')
@@ -7282,10 +7282,10 @@ var  wbSoundTypeSoundsOld :=
     wbRStructExSK([0], [1], 'Leveled List Entry', [
       wbStructExSK(LVLO, [0, 2], [3], 'Base Data', [
         wbInteger('Level', itS16),
-        wbByteArray('Unused', 2),
+        wbUnused(2),
         wbFormIDCk('Reference', [ARMO, AMMO, MISC, WEAP, BOOK, LVLI, KEYM, ALCH, NOTE, IMOD, CMNY, CCRD, CHIP]),
         wbInteger('Count', itS16),
-        wbByteArray('Unused', 2)
+        wbUnused(2)
       ])
       .SetSummaryKeyOnValue([0, 3, 2])
       .SetSummaryPrefixSuffixOnValue(0, '[Lv', ']')
@@ -7302,10 +7302,10 @@ var  wbSoundTypeSoundsOld :=
     wbRStructExSK([0], [1], 'Leveled List Entry', [
       wbStructExSK(LVLO, [0, 2], [3], 'Base Data', [
         wbInteger('Level', itS16),
-        wbByteArray('Unused', 2),
+        wbUnused(2),
         wbFormIDCk('Reference', [NPC_, LVLN]),
         wbInteger('Count', itS16),
-        wbByteArray('Unused', 2)
+        wbUnused(2)
       ])
       .SetSummaryKeyOnValue([0, 3, 2])
       .SetSummaryPrefixSuffixOnValue(0, '[Lv', ']')
@@ -7408,7 +7408,7 @@ var  wbSoundTypeSoundsOld :=
       ])),
       {16} wbInteger('Resistance Type', itS32, wbActorValueEnum),
       {20} wbInteger('Counter effect count', itU16),
-      {22} wbByteArray('Unused', 2),
+      {22} wbUnused(2),
       {24} wbFormIDCk('Light', [LIGH, NULL]),
       {28} wbFloat('Projectile speed'),
       {32} wbFormIDCk('Effect Shader', [EFSH, NULL]),
@@ -7778,7 +7778,7 @@ var  wbSoundTypeSoundsOld :=
     wbStruct(PKDT, 'General', [
       wbInteger('General Flags', itU32, wbPKDTFlags),
       wbInteger('Type', itU8, wbPKDTType),
-      wbByteArray('Unused', 1),
+      wbUnused(1),
       wbInteger('Fallout Behavior Flags', itU16, wbFlags([
         {0x00000001}'Hellos To Player',
         {0x00000002}'Random Conversations',
@@ -7878,7 +7878,7 @@ var  wbSoundTypeSoundsOld :=
         wbInteger('Type Specific Flags - Dialogue', itU16, wbFlags([], wbPKDTSpecificFlagsUnused)),
         wbInteger('Type Specific Flags - Use Weapon', itU16, wbFlags([], wbPKDTSpecificFlagsUnused))
       ]),
-      wbByteArray('Unused', 2)
+      wbUnused(2)
     ], cpNormal, True, nil, 2),
     wbRStruct('Locations', [
       wbStruct(PLDT, 'Location 1', [
@@ -7895,12 +7895,12 @@ var  wbSoundTypeSoundsOld :=
         wbUnion('Location', wbPxDTLocationDecider, [
           wbFormIDCkNoReach('Reference', [REFR, PGRE, PMIS, PBEA, ACHR, ACRE, PLYR], True),
           wbFormIDCkNoReach('Cell', [CELL]),
-          wbByteArray('Unused', 4, cpIgnore),
-          wbByteArray('Unused', 4, cpIgnore),
+          wbUnused(4),
+          wbUnused(4),
           wbFormIDCkNoReach('Object ID', [ACTI, DOOR, STAT, FURN, CREA, SPEL, NPC_, CONT, ARMO, AMMO, MISC, WEAP, BOOK, KEYM, ALCH, LIGH, CHIP, CMNY, CCRD, IMOD]),
           wbInteger('Object Type', itU32, wbObjectTypeEnum),
-          wbByteArray('Unused', 4, cpIgnore),
-          wbByteArray('Unused', 4, cpIgnore)
+          wbUnused(4),
+          wbUnused(4)
         ]),
         wbInteger('Radius', itS32)
       ], cpNormal{, True}),
@@ -7918,12 +7918,12 @@ var  wbSoundTypeSoundsOld :=
         wbUnion('Location', wbPxDTLocationDecider, [
           wbFormIDCkNoReach('Reference', [REFR, PGRE, PMIS, PBEA, ACHR, ACRE, PLYR], True),
           wbFormIDCkNoReach('Cell', [CELL]),
-          wbByteArray('Unused', 4, cpIgnore),
-          wbByteArray('Unused', 4, cpIgnore),
+          wbUnused(4),
+          wbUnused(4),
           wbFormIDCkNoReach('Object ID', [ACTI, DOOR, STAT, FURN, CREA, SPEL, NPC_, CONT, ARMO, AMMO, MISC, WEAP, BOOK, KEYM, ALCH, LIGH, CHIP, CMNY, CCRD, IMOD]),
           wbInteger('Object Type', itU32, wbObjectTypeEnum),
-          wbByteArray('Unused', 4, cpIgnore),
-          wbByteArray('Unused', 4, cpIgnore)
+          wbUnused(4),
+          wbUnused(4)
         ]),
         wbInteger('Radius', itS32)
       ])
@@ -7960,7 +7960,7 @@ var  wbSoundTypeSoundsOld :=
         wbFormIDCkNoReach('Reference', [ACHR, ACRE, REFR, PGRE, PMIS, PBEA, PLYR], True),
         wbFormIDCkNoReach('Object ID', [ACTI, DOOR, STAT, FURN, CREA, SPEL, NPC_, LVLN, LVLC, CONT, ARMO, AMMO, MISC, WEAP, BOOK, KEYM, ALCH, LIGH, FACT, FLST, IDLM, CHIP, CMNY, CCRD, IMOD]),
         wbInteger('Object Type', itU32, wbObjectTypeEnum),
-        wbByteArray('Unused', 4, cpIgnore)
+        wbUnused(4)
       ]),
       wbInteger('Count / Distance', itS32),
       wbFloat('Unknown')
@@ -7974,7 +7974,7 @@ var  wbSoundTypeSoundsOld :=
       ]), cpNormal, True),
       wbStruct(IDLC, '', [
         wbInteger( 'Animation Count', itU8),
-        wbByteArray('Unused', 3)
+        wbUnused(3)
       ], cpNormal, True, nil, 1),
       wbFloat(IDLT, 'Idle Timer Setting', cpNormal, True),
       wbArray(IDLA, 'Animations', wbFormIDCk('Animation', [IDLE]), 0, nil, wbIDLAsAfterSet, cpNormal, True),
@@ -7986,7 +7986,7 @@ var  wbSoundTypeSoundsOld :=
     wbFloat(PKFD, 'Follow - Start Location - Trigger Radius'),
     wbStruct(PKPT, 'Patrol Flags', [
       wbInteger('Repeatable', itU8, wbBoolEnum, cpNormal, False, nil, nil, 1),
-      wbByteArray('Unused', 1)
+      wbUnused(1)
     ], cpNormal, False, nil, 1),
     wbStruct(PKW3, 'Use Weapon Data', [
       wbInteger('Flags', itU32, wbFlags([
@@ -8033,7 +8033,7 @@ var  wbSoundTypeSoundsOld :=
         wbFloat('Min'),
         wbFloat('Max')
       ]),
-      wbByteArray('Unused', 4)
+      wbUnused(4)
     ]),
     wbStruct(PTD2, 'Target 2', [
       wbInteger('Type', itS32, wbEnum([
@@ -8046,7 +8046,7 @@ var  wbSoundTypeSoundsOld :=
         wbFormIDCkNoReach('Reference', [ACHR, ACRE, REFR, PGRE, PMIS, PBEA, PLYR], True),
         wbFormIDCkNoReach('Object ID', [ACTI, DOOR, STAT, FURN, CREA, SPEL, NPC_, LVLN, LVLC, CONT, ARMO, AMMO, MISC, WEAP, BOOK, KEYM, ALCH, LIGH, FACT, FLST, CHIP, CMNY, CCRD, IMOD]),
         wbInteger('Object Type', itU32, wbObjectTypeEnum),
-        wbByteArray('Unused', 4, cpIgnore)
+        wbUnused(4)
       ]),
       wbInteger('Count / Distance', itS32),
       wbFloat('Unknown')
@@ -8067,7 +8067,7 @@ var  wbSoundTypeSoundsOld :=
         '',
         'Don''t Control Target Movement'
       ])),
-      wbByteArray('Unused', 4),
+      wbUnused(4),
       wbInteger('Dialogue Type', itU32, wbEnum([
         'Conversation',
         'Say To'
@@ -8088,12 +8088,12 @@ var  wbSoundTypeSoundsOld :=
       wbUnion('Location', wbPxDTLocationDecider, [
         wbFormIDCkNoReach('Reference', [REFR, PGRE, PMIS, PBEA, ACHR, ACRE, PLYR], True),
         wbFormIDCkNoReach('Cell', [CELL]),
-        wbByteArray('Unused', 4, cpIgnore),
-        wbByteArray('Unused', 4, cpIgnore),
+        wbUnused(4),
+        wbUnused(4),
         wbFormIDCkNoReach('Object ID', [ACTI, DOOR, STAT, FURN, CREA, SPEL, NPC_, CONT, ARMO, AMMO, MISC, WEAP, BOOK, KEYM, ALCH, LIGH, CHIP, CMNY, CCRD, IMOD]),
         wbInteger('Object Type', itU32, wbObjectTypeEnum),
-        wbByteArray('Unused', 4, cpIgnore),
-        wbByteArray('Unused', 4, cpIgnore)
+        wbUnused(4),
+        wbUnused(4)
       ]),
       wbInteger('Radius', itS32)
     ]),
@@ -8131,7 +8131,7 @@ var  wbSoundTypeSoundsOld :=
         {0x10} 'Default Script Processing Delay'
       ])),
       wbInteger('Priority', itU8),
-      wbByteArray('Unused', 2),
+      wbUnused(2),
       wbFloat('Quest Delay')
     ], cpNormal, True, nil, 3),
     wbCTDAs,
@@ -8157,7 +8157,7 @@ var  wbSoundTypeSoundsOld :=
           wbInteger('Flags', itU8, wbFlags([
             {0x01} 'Compass Marker Ignores Locks'
           ])),
-          wbByteArray('Unused', 3)
+          wbUnused(3)
         ]),
         wbCTDAs
       ]))
@@ -8216,7 +8216,7 @@ var  wbSoundTypeSoundsOld :=
       .SetSummaryDelimiter(' ')
       .IncludeFlag(dfSummaryNoSortKey)
       .IncludeFlag(dfSummaryMembersNoName).IncludeFlag(dfCollapsed), 7),
-      wbByteArray('Unused', 2),
+      wbUnused(2),
       wbFloat('Male Height'),
       wbFloat('Female Height'),
       wbFloat('Male Weight'),
@@ -8318,13 +8318,13 @@ var  wbSoundTypeSoundsOld :=
         wbInteger('Red', itU8),
         wbInteger('Green', itU8),
         wbInteger('Blue', itU8),
-        wbByteArray('Unused', 1)
+        wbUnused(1)
       ]),
       wbStruct('Link End Color', [
         wbInteger('Red', itU8),
         wbInteger('Green', itU8),
         wbInteger('Blue', itU8),
-        wbByteArray('Unused', 1)
+        wbUnused(1)
       ])
     ], cpIgnore),}
     wbByteArray(RCLR, 'Unused', 0, cpIgnore),
@@ -8440,7 +8440,7 @@ var  wbSoundTypeSoundsOld :=
           'Metro',
           'Vault'
         ])),
-        wbByteArray('Unused', 1)
+        wbUnused(1)
       ], cpNormal, True),
       wbFormIDCk(WMI1, 'Reputation', [REPU])
     ]),
@@ -8498,10 +8498,10 @@ var  wbSoundTypeSoundsOld :=
     {--- Lock ---}
     wbStruct(XLOC, 'Lock Data', [
       wbInteger('Level', itU8),
-      wbByteArray('Unused', 3),
+      wbUnused(3),
       wbFormIDCkNoReach('Key', [KEYM, NULL]),
       wbInteger('Flags', itU8, wbFlags(['', '', 'Leveled Lock'])),
-      wbByteArray('Unused', 3),
+      wbUnused(3),
       wbByteArray('Unknown', 8)
     ], cpNormal, False, nil, 5),
 
@@ -8580,7 +8580,7 @@ var  wbSoundTypeSoundsOld :=
     wbStruct(XNDP, 'Navmesh Door Link', [
       wbFormIDCk('Navmesh', [NAVM]),
       wbInteger('Triangle', itS16, wbREFRNavmeshTriangleToStr, wbStringToInt),
-      wbByteArray('Unused', 2)
+      wbUnused(2)
     ]),
 
     wbArray(XPOD, 'Portal Data', wbFormIDCk('Room', [REFR, NULL]), 2),
@@ -8656,7 +8656,7 @@ var  wbSoundTypeSoundsOld :=
       wbArray(RDOT, 'Objects', wbStruct('Object', [
         wbFormIDCk('Object', [TREE, STAT, LTEX]),
         wbInteger('Parent Index', itU16, wbHideFFFF),
-        wbByteArray('Unused', 2),
+        wbUnused(2),
         wbFloat('Density'),
         wbInteger('Clustering', itU8),
         wbInteger('Min Slope', itU8),
@@ -8683,7 +8683,7 @@ var  wbSoundTypeSoundsOld :=
           wbInteger('Y', itU16),
           wbInteger('Z', itU16)
         ]).SetToStr(wbVec3ToStr).IncludeFlag(dfCollapsed, wbCollapseVec3),
-        wbByteArray('Unused', 2),
+        wbUnused(2),
         wbByteArray('Unknown', 4)
       ]), 0, nil, nil, cpNormal, False, wbREGNObjectsDontShow),
 
@@ -8725,7 +8725,7 @@ var  wbSoundTypeSoundsOld :=
         wbInteger('Minimum Attenuation Distance', itU8, wbMul(5)),
         wbInteger('Maximum Attenuation Distance', itU8, wbMul(100)),
         wbInteger('Frequency Adjustment %', itS8),
-        wbByteArray('Unused', 1),
+        wbUnused(1),
         wbInteger('Flags', itU32, wbFlags([
           {0x0001} 'Random Frequency Shift',
           {0x0002} 'Play At Random',
@@ -8758,7 +8758,7 @@ var  wbSoundTypeSoundsOld :=
         wbInteger('Minimum attenuation distance', itU8, wbMul(5)),
         wbInteger('Maximum attenuation distance', itU8, wbMul(100)),
         wbInteger('Frequency adjustment %', itS8),
-        wbByteArray('Unused', 1),
+        wbUnused(1),
         wbInteger('Flags', itU32, wbFlags([
           {0x0001} 'Random Frequency Shift',
           {0x0002} 'Play At Random',
@@ -8815,7 +8815,7 @@ var  wbSoundTypeSoundsOld :=
         {0x00000040} 'Disable Absorb/Reflect',
         {0x00000080} 'Force Touch Explode'
       ])),
-      wbByteArray('Unused', 3)
+      wbUnused(3)
     ], cpNormal, True),
     wbEffectsReq
   ]);
@@ -9351,13 +9351,13 @@ var  wbSoundTypeSoundsOld :=
         wbFloat('Water Properties - Sun Power'),
         wbFloat('Water Properties - Reflectivity Amount'),
         wbFloat('Water Properties - Fresnel Amount'),
-        wbByteArray('Unused', 4),
+        wbUnused(4),
         wbFloat('Fog Properties - Above Water - Fog Distance - Near Plane'),
         wbFloat('Fog Properties - Above Water - Fog Distance - Far Plane'),
         wbByteColors('Shallow Color'),
         wbByteColors('Deep Color'),
         wbByteColors('Reflection Color'),
-        wbByteArray('Unused', 4),
+        wbUnused(4),
         wbFloat('Rain Simulator - Force'),
         wbFloat('Rain Simulator - Velocity'),
         wbFloat('Rain Simulator - Falloff'),
@@ -9402,13 +9402,13 @@ var  wbSoundTypeSoundsOld :=
         wbFloat('Water Properties - Sun Power'),
         wbFloat('Water Properties - Reflectivity Amount'),
         wbFloat('Water Properties - Fresnel Amount'),
-        wbByteArray('Unused', 4),
+        wbUnused(4),
         wbFloat('Fog Properties - Above Water - Fog Distance - Near Plane'),
         wbFloat('Fog Properties - Above Water - Fog Distance - Far Plane'),
         wbByteColors('Shallow Color'),
         wbByteColors('Deep Color'),
         wbByteColors('Reflection Color'),
-        wbByteArray('Unused', 4),
+        wbUnused(4),
         wbFloat('Rain Simulator - Force'),
         wbFloat('Rain Simulator - Velocity'),
         wbFloat('Rain Simulator - Falloff'),
@@ -9702,12 +9702,12 @@ var  wbSoundTypeSoundsOld :=
 
    wbStruct(CRDT, 'Critical Data', [
       {00} wbInteger('Critical Damage', itU16),
-      {09} wbByteArray('Unused', 2),
+      {09} wbUnused(2),
       {04} wbFloat('Crit % Mult'),
       {08} wbInteger('Flags', itU8, wbFlags([
         'On Death'
       ])),
-      {09} wbByteArray('Unused', 3),
+      {09} wbUnused(3),
       {12} wbFormIDCk('Effect', [SPEL, NULL])
     ], cpNormal, True),
     wbStruct(VATS, 'VATS', [
@@ -9717,7 +9717,7 @@ var  wbSoundTypeSoundsOld :=
      wbFloat('AP'),
      wbInteger('Silent', itU8, wbBoolEnum),
      wbInteger('Mod Required', itU8, wbBoolEnum),
-     wbByteArray('Unused', 2)
+     wbUnused(2)
     ]),
     wbInteger(VNAM, 'Sound Level', itU32, wbSoundLevelEnum, cpNormal, True)
   ], True, nil, cpNormal, False, wbWEAPAfterLoad);

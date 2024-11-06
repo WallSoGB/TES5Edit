@@ -3175,7 +3175,7 @@ begin
 
   wbSizeOfMainRecordStruct := 24;
 
-  wbNull := wbByteArray('Unused', -255);
+  wbNull := wbUnused(-255);
   wbLLCT := wbInteger(LLCT, 'Count', itU8, nil, cpBenign);
   wbCITC := wbInteger(CITC, 'Condition Count', itU32, nil, cpBenign);
   wbCITCReq := wbInteger( CITC, 'Condition Count', itU32, nil, cpBenign, True);
@@ -3188,7 +3188,7 @@ begin
   wbCOED := wbStructExSK(COED, [2], [0, 1], 'Extra Data', [
     {00} wbFormIDCkNoReach('Owner', [NPC_, FACT, NULL]),
     {04} wbUnion('Global Variable / Required Rank', wbCOEDOwnerDecider, [
-           wbByteArray('Unused', 4, cpIgnore),
+           wbUnused(4),
            wbFormIDCk('Global Variable', [GLOB, NULL]),
            wbInteger('Required Rank', itS32)
          ]),
@@ -3309,7 +3309,7 @@ begin
       {0x00000040}'Unknown 7',
       {0x00000080}'Unknown 8'
     ], True)),
-    wbByteArray('Unused', 3, cpIgnore),
+    wbUnused(3),
     wbInteger('Armor Type', itU32, wbArmorTypeEnum)
   ], cpNormal, False, nil, 3);
 
@@ -3353,7 +3353,7 @@ begin
           {0x00000040}'Unknown 7',
           {0x00000080}'Unknown 8'
         ], True)),
-        wbByteArray('Unused', 3, cpIgnore),
+        wbUnused(3),
         wbInteger('Armor Type', itU32, wbArmorTypeEnum)
       ], cpNormal, True, nil, 3)
         .SetSummaryKeyOnValue([3, 0])
@@ -3949,7 +3949,7 @@ begin
       {4} wbFormIDCkNoReach('Object ID', [NULL, ACTI, DOOR, STAT, MSTT, FURN, SPEL, SCRL, NPC_, CONT, ARMO, AMMO, MISC, WEAP, BOOK, KEYM, ALCH, LIGH, FACT, FLST, IDLM, SHOU]),
       {5} wbInteger('Object Type', itU32, wbObjectTypeEnum),
       {6} wbFormIDCk('Keyword', [NULL, KYWD]),
-      {7} wbByteArray('Unused', 4, cpIgnore),
+      {7} wbUnused(4),
       {8} wbInteger('Alias', itS32, wbPackageLocationAliasToStr, wbStrToAlias),
       {9} wbInteger('Reference', itS32, wbPackageLocationAliasToStr, wbStrToAlias),
      {10} wbByteArray('Unknown', 4, cpIgnore),
@@ -3969,7 +3969,7 @@ begin
       {4} wbFormIDCkNoReach('Object ID', [NULL, ACTI, DOOR, STAT, MSTT, FURN, SPEL, SCRL, NPC_, CONT, ARMO, AMMO, MISC, WEAP, BOOK, KEYM, ALCH, INGR, LIGH, FACT, FLST, IDLM, SHOU]),
       {5} wbInteger('Object Type', itU32, wbObjectTypeEnum),
       {6} wbFormIDCk('Keyword', [NULL, KYWD]),
-      {7} wbByteArray('Unused', 4, cpIgnore),
+      {7} wbUnused(4),
       {8} wbInteger('Alias', itS32, wbPackageLocationAliasToStr, wbStrToAlias),
       {9} wbInteger('Reference', itS32, wbPackageLocationAliasToStr, wbStrToAlias),
      {10} wbByteArray('Unknown', 4, cpIgnore),
@@ -4092,7 +4092,7 @@ begin
       'Set Enable State to Opposite of Parent',
       'Pop In'
     ])),
-    wbByteArray('Unused', 3, cpIgnore)
+    wbUnused(3)
   ]);
 
   wbPDTO :=
@@ -4795,13 +4795,13 @@ begin
     wbRStructSK([0], 'Condition', [
       wbStructSK(CTDA, [3, 5, 6], '', [
      {0}wbInteger('Type', itU8, wbCtdaTypeToStr, wbCtdaTypeToInt, cpNormal, False, nil, wbCtdaTypeAfterSet),
-     {1}wbByteArray('Unused', 3, cpIgnore, False, wbNeverShow),
+     {1}wbUnused(3),
      {2}wbUnion('Comparison Value', wbCTDACompValueDecider, [
           wbFloat('Comparison Value - Float'),
           wbFormIDCk('Comparison Value - Global', [GLOB])
         ]),
      {3}wbInteger('Function', itU16, wbCTDAFunctionToStr, wbCTDAFunctionToInt),
-     {4}wbByteArray('Unused', 2, cpIgnore, False, wbNeverShow),
+     {4}wbUnused(2),
      {5}wbUnion('Parameter #1', wbCTDAParam1Decider, [
           wbByteArray('Unknown', 4),
           wbByteArray('None', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
@@ -5195,7 +5195,7 @@ begin
       wbInteger('Type', itU8, wbEnum([], [
         0, 'Book/Tome', 255, 'Note/Scroll'
       ])),
-      wbByteArray('Unused', 2),
+      wbUnused(2),
       wbUnion('Teaches', wbBOOKTeachesDecider, [
         wbInteger('Skill', itS32, wbSkillEnum),
         wbFormIDCk('Spell', [SPEL])
@@ -6973,7 +6973,7 @@ begin
         wbStructSK([0, 1], 'Quest + Stage', [
           wbFormIDCk('Quest', [QUST]),
           wbInteger('Quest Stage', itU8, wbPerkDATAQuestStageToStr, wbCTDAParam2QuestStageToInt),
-          wbByteArray('Unused', 3)
+          wbUnused(3)
         ]),
         wbFormIDCk('Ability', [SPEL]),
         wbStructSK([0, 1], 'Entry Point', [
@@ -7424,7 +7424,7 @@ begin
       'Set Enable State to Opposite of Parent',
       'Pop In'
     ]), cpBenign),
-    wbByteArray('Unused', 3, cpIgnore)
+    wbUnused(3)
     ]), 0, cpBenign),
     wbArrayS(LCEP,'Master Enable Parent References', wbStructSK([0],'Reference', [
       wbFormIDCk('Ref', [PLYR, ACHR, REFR, PGRE, PHZD, PMIS, PARW, PBAR, PBEA, PCON, PFLA], False, cpBenign),
@@ -7433,7 +7433,7 @@ begin
       'Set Enable State to Opposite of Parent',
       'Pop In'
     ]), cpBenign),
-    wbByteArray('Unused', 3, cpIgnore)
+    wbUnused(3)
     ]), 0, cpBenign),
 
     wbFULL,
@@ -8761,14 +8761,14 @@ begin
       wbStruct(TRDT, 'Response Data', [
         wbInteger('Emotion Type', itU32, wbEmotionTypeEnum),
         wbInteger('Emotion Value', itU32),
-        wbByteArray('Unused', 4),
+        wbUnused(4),
         wbInteger('Response number', itU8),
-        wbByteArray('Unused', 3),
+        wbUnused(3),
         wbFormIDCk('Sound', [SNDR, NULL]),
         wbInteger('Flags', itU8, wbFlags([
           'Use Emotion Animation'
         ])),
-        wbByteArray('Unused', 3)
+        wbUnused(3)
       ]),
       wbLStringKC(NAM1, 'Response Text', 0, cpTranslate),
       wbString(NAM2, 'Script Notes'),
@@ -9168,7 +9168,7 @@ begin
       wbInteger('Magic Skill', itS32, wbActorValueEnum),
       wbInteger('Resist Value', itS32, wbActorValueEnum),
       wbInteger('Counter Effect count', itU16),
-      wbByteArray('Unused', 2),
+      wbUnused(2),
       wbFormIDCk('Casting Light', [LIGH, NULL]),
       wbFloat('Taper Weight'),
       wbFormIDCk('Hit Shader', [EFSH, NULL]),
@@ -9377,7 +9377,7 @@ begin
       wbStructSK(PRKR, [0], 'Perk', [
         wbFormIDCk('Perk', [PERK]),
         wbInteger('Rank', itU8),
-        wbByteArray('Unused', 3, cpIgnore)
+        wbUnused(3)
       ]), cpNormal, False, nil, wbPRKRsAfterSet
     ),
     wbCOCT,
@@ -9434,10 +9434,10 @@ begin
       wbInteger('Health', itU16),
       wbInteger('Magicka', itU16),
       wbInteger('Stamina', itU16),
-      wbByteArray('Unused', 2, cpIgnore),
+      wbUnused(2),
       wbFloat('Far away model distance'),
       wbInteger('Geared up weapons', itU8),
-      wbByteArray('Unused', 3, cpIgnore)
+      wbUnused(3)
     ], cpNormal, False, nil{wbActorTemplateUseStatsAutoCalc}),
     wbRArrayS('Head Parts', wbFormIDCk(PNAM, 'Head Part', [HDPT]), cpNormal, False, nil, nil, nil{wbActorTemplateUseModelAnimation}),
     wbFormIDCk(HCLF, 'Hair Color', [CLFM], False, cpNormal, False),
@@ -9636,7 +9636,7 @@ begin
       wbInteger('Date', itU8),
       wbInteger('Hour', itS8),
       wbInteger('Minute', itS8),
-      wbByteArray('Unused', 3, cpIgnore),
+      wbUnused(3),
       wbInteger('Duration (minutes)', itS32)
     ], cpNormal, True),
     wbCTDAs,
@@ -10800,11 +10800,11 @@ begin
        100, 'Master',
        255, 'Requires Key'
       ])),
-      wbByteArray('Unused', 3, cpIgnore),
+      wbUnused(3),
       wbFormIDCkNoReach('Key', [KEYM, NULL]),
       wbInteger('Flags', itU8, wbFlags(['', '', 'Leveled Lock'])),
-      wbByteArray('Unused', 3, cpIgnore),
-      wbByteArray('Unused', 8, cpIgnore)
+      wbUnused(3),
+      wbUnused(8)
     ], cpNormal, False, nil, 4),
 
     wbFormIDCk(XEZN, 'Encounter Zone', [ECZN]),
@@ -10813,7 +10813,7 @@ begin
     wbStruct(XNDP, 'Navmesh Door Link', [
       wbFormIDCk('Navmesh', [NAVM]),
       wbInteger('Triangle', itS16, wbREFRNavmeshTriangleToStr, wbStringToInt),
-      wbByteArray('Unused', 2, cpIgnore)
+      wbUnused(2)
     ]),
 
     wbArray(XLRT, 'Location Ref Type', wbFormIDCk('Ref', [LCRT, NULL])),
@@ -10860,7 +10860,7 @@ begin
       wbFULLReq,
       wbStruct(TNAM, '', [
         wbInteger('Type', itU8, wbMapMarkerEnum),
-        wbByteArray('Unused', 1)
+        wbUnused(1)
       ], cpNormal, True)
     ]),
     {--- Attach reference ---}
@@ -11094,7 +11094,7 @@ begin
         wbInteger('Flags', itU8, wbFlags([
           {0x01} 'Considered Snow'
         ])),
-        wbByteArray('Unused', 3, cpIgnore)
+        wbUnused(3)
       ], cpNormal, True, nil, 2),
       wbStruct(DNAM, 'Direction Material', [
         wbFloat('Max Angle (30-120)'),
@@ -11443,7 +11443,7 @@ begin
     ]),
     wbStruct(DNAM, 'Data', [
       wbInteger('Animation Type', itU8, wbWeaponAnimTypeEnum),
-      wbByteArray('Unused', 3, cpIgnore),
+      wbUnused(3),
       wbFloat('Speed'),
       wbFloat('Reach'),
       wbInteger('Flags', itU16, wbFlags([
@@ -11456,7 +11456,7 @@ begin
         {0x0040}'Don''t Use 1st Person IS Anim (unused)',
         {0x0080}'Non-playable'
       ], [1, 2, 4, 5, 6])),
-      wbByteArray('Unused', 2, cpIgnore),
+      wbUnused(2),
       wbFloat('Sight FOV'),
       wbByteArray('Unknown', 4),
       wbInteger('Base VATS To-Hit Chance', itU8),

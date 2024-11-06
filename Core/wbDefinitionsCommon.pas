@@ -3848,7 +3848,7 @@ begin
     wbInteger('Red', itU8),
     wbInteger('Green', itU8),
     wbInteger('Blue', itU8),
-    wbByteArray('Unused', 1)
+    wbUnused(1)
   ]).SetToStr(wbRGBAToStr).IncludeFlag(dfCollapsed, wbCollapseRGBA);
 end;
 
@@ -3858,7 +3858,7 @@ begin
     wbInteger('Red', itU8),
     wbInteger('Green', itU8),
     wbInteger('Blue', itU8),
-    wbByteArray('Unused', 1)
+    wbUnused(1)
   ]).SetToStr(wbRGBAToStr).IncludeFlag(dfCollapsed, wbCollapseRGBA);
 end;
 
@@ -5121,7 +5121,7 @@ begin
         wbInteger('X', itS32),
         wbInteger('Y', itS32),
         wbInteger('Land Flags', itU8, wbLandFlags),
-        wbByteArray('Unused', 3, cpIgnore)
+        wbUnused(3)
       ], cpNormal, False, nil, 2)
       .SetSummaryKeyOnValue([0, 1, 2])
       .SetSummaryPrefixSuffixOnValue(0, '(', '')
@@ -5154,7 +5154,7 @@ begin
     wbStructSK(SNAM, [0], 'Faction', [
       wbFormIDCk('Faction', [FACT]),
       wbInteger('Rank', itS8),
-      IfThen(wbGameMode in [gmFO4, gmFO76, gmSF1], nil, wbByteArray('Unused', 3))
+      IfThen(wbGameMode in [gmFO4, gmFO76, gmSF1], nil, wbUnused(3))
     ])
     .SetSummaryKeyOnValue([0, 1])
     .SetSummaryPrefixSuffixOnValue(1, '{Rank: ', '}')
@@ -5350,7 +5350,7 @@ begin
             wbInteger('Column', itS8),
           33),
         33),
-        wbByteArray('Unused', 3, cpIgnore, False, wbNeverShow)
+        wbUnused(3)
       ]));
 
   //TES4,FO3,FNV,TES5,FO4,FO76
@@ -5380,7 +5380,7 @@ begin
           wbStructSK(BTXT, [1, 3], 'Base Layer', [
             wbFormIDCk('Texture', [LTEX, NULL]),
             wbInteger('Quadrant', itU8, wbQuadrantEnum),
-            wbByteArray('Unused', 1, cpIgnore, False, wbNeverShow),
+            wbUnused(1),
             wbInteger('Layer', itU16)
           ])
         ]),
@@ -5388,7 +5388,7 @@ begin
           wbStructSK(ATXT, [1, 3], 'Alpha Layer Header', [
             wbFormIDCk('Texture', [LTEX, NULL]),
             wbInteger('Quadrant', itU8, wbQuadrantEnum),
-            wbByteArray('Unused', 1, cpIgnore, False, wbNeverShow),
+            wbUnused(1),
             wbInteger('Layer', itU16)
           ]),
           IfThen(wbSimpleRecords,
@@ -5396,7 +5396,7 @@ begin
             wbArrayS(VTXT, 'Alpha Layer Data',
               wbStructSK([0], 'Cell', [
                 wbInteger('Position', itU16, wbVTXTPosition),
-                wbByteArray('Unused', 2, cpIgnore, False, wbNeverShow),
+                wbUnused(2),
                 wbFloat('Opacity')
               ])))
         ])

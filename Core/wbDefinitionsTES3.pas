@@ -1235,7 +1235,7 @@ begin
     wbString(NAME, 'Editor ID'),
     wbStruct(DATA, 'Dialog Topic Data', [
         wbInteger('Dialog Type', itU8, wbDialogTypeEnum),
-        wbByteArray('Unused', 3, cpIgnore) //Looks like unused data but investigating.
+        wbUnused(3) //Looks like unused data but investigating.
     ], cpNormal, True),
     wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted']))
   ]).SetFormIDBase($80);
