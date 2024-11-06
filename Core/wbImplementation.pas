@@ -10749,7 +10749,7 @@ begin
       else if _File.IsMedium and (FormID.ObjectID > $FFFF) and (FixedFormID.FileID = _File.FileFileID[True]) then
         Result := 'ObjectID ' + IntToHex64((FormID.ToCardinal and $00FFFFFF),6) + ' is invalid for a medium module.'
       else begin
-        if FormID <> FixedFormID then
+        if (FormID <> FixedFormID) and not wbIsMorrowind then
           Result := 'Warning: internal file FormID is a HITME: ' + FormID.ToString(True) + ' (should be ' + FixedFormID.ToString(True) + ' )';
       end;
     end;

@@ -4913,6 +4913,7 @@ var
 function wbDefToName(const aDef: IwbDef): string;
 function wbDefsToPath(const aDefs: TwbDefPath): string;
 
+function wbIsMorrowind: Boolean; inline;
 function wbIsOblivion: Boolean; inline;
 function wbIsFallout3: Boolean; inline;
 function wbIsFalloutNV: Boolean; inline;
@@ -5492,6 +5493,11 @@ var
 begin
   for i:= Low(wbRecordDefs) to High(wbRecordDefs) do
     wbRecordDefs[i].rdeDef.Report(nil);
+end;
+
+function wbIsMorrowind: Boolean; inline;
+begin
+  Result := wbGameMode in [gmTES3];
 end;
 
 function wbIsOblivion: Boolean; inline;
