@@ -1835,10 +1835,6 @@ begin
       {0x40} 'Hand changed',
       {0x80} 'Behave like exterior'
     ]), cpNormal, True),
-    wbStruct(XCLC, 'Grid', [
-      wbInteger('X', itS32),
-      wbInteger('Y', itS32)
-    ]),
     wbStruct(XCLL, 'Lighting', [
       wbByteColors('Ambient Color'),
       wbByteColors('Directional Color'),
@@ -1855,7 +1851,11 @@ begin
     wbFloat(XCLW, 'Water Height', cpBenign),
     wbFormIDCk(XCCM, 'Climate', [CLMT]),
     wbFormIDCk(XCWT, 'Water', [WATR]),
-    wbOwnership([XCCM, XCLW, XCMT])
+    wbOwnership([XCCM, XCLW, XCMT]),
+    wbStruct(XCLC, 'Grid', [
+      wbInteger('X', itS32),
+      wbInteger('Y', itS32)
+    ])
   ], True, wbCellAddInfo, cpNormal, False, wbCELLAfterLoad);
 
   wbServiceFlags :=
