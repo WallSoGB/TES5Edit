@@ -134,8 +134,7 @@ function wbPlacedAddInfo(const aMainRecord: IwbMainRecord): string;
 function wbROADAddInfo(const aMainRecord: IwbMainRecord): string;
 function wbSCENAddInfo(const aMainRecord: IwbMainRecord): string;
 
-{>>> After Load Callbacks <<<} //3
-procedure wbKeywordsAfterLoad(const aElement: IwbElement);
+{>>> After Load Callbacks <<<} //2
 procedure wbRPLDAfterLoad(const aElement: IwbElement);
 procedure wbWorldAfterLoad(const aElement: IwbElement);
 
@@ -560,26 +559,7 @@ begin
   end;
 end;
 
-{>>> After Load Callbacks <<<} //3
-
-procedure wbKeywordsAfterLoad(const aElement: IwbElement);
-var
-  Container  : IwbContainerElementRef;
-  MainRecord : IwbMainRecord;
-begin
-  if wbBeginInternalEdit then try
-    if not wbTryGetContainerWithValidMainRecord(aElement, Container, MainRecord) then
-      Exit;
-
-    if Assigned(Container.ElementBySignature['KSIZ']) then
-      Exit;
-
-    if Assigned(Container.ElementBySignature['KWDA']) then
-      Container.ElementBySignature['KWDA'].Remove;
-  finally
-    wbEndInternalEdit;
-  end;
-end;
+{>>> After Load Callbacks <<<} //2
 
 procedure wbRPLDAfterLoad(const aElement: IwbElement);
 var
