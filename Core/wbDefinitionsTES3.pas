@@ -6,8 +6,6 @@
 
 *******************************************************************************}
 
-{Morrowind, fully decoded. Well, the official vanilla shit anyway.}
-
 unit wbDefinitionsTES3;
 
 interface
@@ -53,8 +51,16 @@ begin
       Result := 1;
 end;
 
-{Since FNAM in GLOB is now an enumerator, the first character of the string is now capitalized so this
-had to be updated.}
+function wbREGNDataDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+var
+  SubRecord: IwbSubRecord;
+begin
+  Result := 0;
+  if Assigned(aElement) and Supports(aElement.Container, IwbSubRecord, SubRecord) then
+    if SubRecord.SubRecordHeaderSize = 10 then
+      Result := 1;
+end;
+
 function wbGLOBUnionDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
 var
   rValue: IwbRecord;
@@ -75,8 +81,6 @@ begin
   end;
 end;
 
-{This selects the struct of named Actions based on the INDX of SKIL. This is a hamfisted approach
-which will be depricated to probably how it once was when taking user created SKILs into account.}
 function wbSKILUnionDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
 var
   aMainRecord: IwbMainRecord;
@@ -137,8 +141,6 @@ begin
 end;
 
 const
-  {Updated, removed and added a few of these to make TES3 more consistent
-  with how it appears along side the other games.}
   wbKnownSubRecordSignaturesNoFNAM : TwbKnownSubRecordSignatures = (
     'NAME',
     '____',
@@ -208,9 +210,6 @@ begin
   wbKnownSubRecordSignatures[ksrBaseRecord] := '____';
   wbKnownSubRecordSignatures[ksrGridCell] := 'DATA';
 
-  //Removed the Actor Value enumerator as it wasn't used.
-
-  //Makes MGEF's INDX descriptive instead of just a number.
   wbMagicEffectEnum :=
     wbEnum([
   	  {  0} 'Water Breathing',
@@ -461,7 +460,6 @@ begin
       {4} 'Journal'
     ]);
 
-  //Looks more in line with the other games now.
   wbRecordFlags :=
     wbInteger('Record Flags', itU32, wbFlags([
       {0x00000001}'ESM',
@@ -480,8 +478,6 @@ begin
       {0x00002000}'Blocked'
     ]));
 
-  {In CREA, there are unknown flags in this def. I have yet
-  to figure them out yet.}
   wbServiceFlags :=
     wbFlags([
       {0x00000001} 'Weapons',
@@ -501,7 +497,14 @@ begin
       {0x00004000} 'Training',
       {0x00008000} 'Spellmaking',
       {0x00010000} 'Enchanting',
-      {0x00020000} 'Repair Items'
+      {0x00020000} 'Repair Items',
+      {0x00040000} '',
+      {0x00080000} 'Unknown 19', //To be determined.
+      {0x00100000} '',
+      {0x00200000} 'Unknown 21', //To be determined.
+      {0x00400000} 'Unknown 22', //To be determined.
+      {0x00800000} 'Unknown 23', //To be determined.
+      {0x01000000} 'Unknown 24'  //To be determined.
     ]);
 
   wbLeveledFlags :=
@@ -510,7 +513,6 @@ begin
       {0x00000002} 'Calculate for each item in count'
     ]);
 
-  //Added SetToStr(wbVCI1ToStrBeforeFO4) to 'Version Control Info.'
   wbMainRecordHeader := wbStruct('Record Header', [
     wbString('Signature', 4, cpCritical),
     wbInteger('Data Size', itU32, nil, cpIgnore),
@@ -523,7 +525,6 @@ begin
   {Any definition with a //[] after it is the appropriate form types for that
   definition. For possible future use.}
 
-  //For ALCH, ENCH, & SPEL.
   wbENAM :=
     wbRArray('Effects',
       wbStruct(ENAM, 'Effect', [
@@ -537,7 +538,6 @@ begin
         wbInteger('Magnitude Maximum', itS32)
       ], cpNormal, True));
 
-  //For ARMO & CLOT.
   wbBipedObjects :=
     wbRArray('Biped Objects',
       wbRStruct('Biped Object', [
@@ -546,11 +546,6 @@ begin
         wbString(CNAM, 'Female Armor') //[BODY]
       ], [], cpNormal, True));
 
-  //For CREA & NPC_.
-  {Hello is two bytes, not one. You can enter a larger number than 255 in the
-  Construction Set and immediately hit OK/Save on the AI dialog box, which
-  causes the CS to save the value (clamped to 16 bits) instead of 100. Works
-  for the others too but they are only 8 bits.}
   wbAIDT :=
     wbStruct(AIDT, 'AI Data', [
       wbInteger('Hello', itU16),
@@ -561,7 +556,6 @@ begin
       wbInteger('Auto Calculate Buy/Sell Flags', itU32, wbServiceFlags)
     ], cpNormal, True);
 
-  //For CREA & NPC_.
   wbTravelServices :=
     wbRArray('Travel Services',
       wbRStruct('Travel Service', [
@@ -580,9 +574,6 @@ begin
         wbStringForward(DNAM, 'Cell', 64)
       ], []));
 
-  //wbPackages would be here, if it didn't fuck with aForward on wbString.
-
-  //Moved to the top.
   wbRecord(TES3, 'Main File Header', [
     wbStruct(HEDR, 'Header', [
       wbFloat('Version'),
@@ -601,31 +592,17 @@ begin
              aFormID := TwbFormID.Null;
            end);
 
-  {Every form type's name is reflective of the Construction Set now. A lot of the
-  names for definitions were standardized and more closely match the other games
-  without being too far from the original CS name. DELE was added (in the correct
-  order) to all applicable form types. SCIP only exists on SCPT. Adding the
-  signature to any other form type (like DOOR) would cause the CS to throw an error
-  during plugin load. Signatures are now in the correct order for each form type
-  (god fucking forbid any of them be consistent with each other). Most integer
-  values used in forms (value, uses, etc.) in the CS are signed but do not allow
-  for negative values.}
-
-  //Standardized.
   wbRecord(ACTI, 'Activator', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(MODL, 'Model Filename'),
     wbString(FNAM, 'Full Name'),
     wbString(SCRI, 'Script') //[SCPT]
   ]).SetFormIDBase($40);
 
-  //Standardized.
-  {The original code only accounted for a single effect, leading to unused data
-  errors in xEdit/xView for ALCHs with more than one effect.}
   wbRecord(ALCH, 'Alchemy', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(MODL, 'Model Filename'),
     wbString(TEXT, 'Icon Filename'),
     wbString(SCRI, 'Script'), //[SCPT]
@@ -638,10 +615,9 @@ begin
     wbENAM
   ]).SetFormIDBase($40);
 
-  //Standardized.
   wbRecord(APPA, 'Apparatus', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(MODL, 'Model Filename'),
     wbString(FNAM, 'Full Name'),
     wbString(SCRI, 'Script'), //[SCPT]
@@ -659,10 +635,9 @@ begin
     wbString(ITEX, 'Icon Filename')
   ]).SetFormIDBase($40);
 
-  //Standardized.
   wbRecord(ARMO, 'Armor', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(MODL, 'Model Filename'),
     wbString(FNAM, 'Full Name'),
     wbString(SCRI, 'Script'), //[SCPT]
@@ -691,12 +666,9 @@ begin
     wbString(ENAM, 'Enchantment') //[ENCH]
   ]).SetFormIDBase($40);
 
-  //Standardized.
-  {Argonian is the default race for armor pieces so FNAM didn't make
-  for a good Name for the records.}
   wbRecord(BODY, 'Body Part', @wbKnownSubRecordSignaturesNoFNAM, [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(MODL, 'Model Filename'),
     wbString(FNAM, 'Skin Race'), //[RACE]
     wbStruct(BYDT, 'Body Part Data', [
@@ -733,11 +705,9 @@ begin
     ], cpNormal, True)
   ]).SetFormIDBase($20);
 
-  //Standardized.
-  {Is Scroll is now a bool. Swapped to wbLStringKC for TEXT.}
   wbRecord(BOOK, 'Book', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(MODL, 'Model Filename'),
     wbString(FNAM, 'Full Name'),
     wbStruct(BKDT, 'Book Data', [
@@ -753,9 +723,8 @@ begin
     wbString(ENAM, 'Enchantment') //[ENCH]
   ]).SetFormIDBase($40);
 
-  //Standardized.
   wbRecord(BSGN, 'Birthsign', [
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(NAME, 'Editor ID'),
     wbString(FNAM, 'Full Name'),
     wbString(TNAM, 'Constellation Image'),
@@ -764,10 +733,9 @@ begin
       wbStringForward(NPCS, 'Spell', 32)) //[SPEL]
   ]).SetFormIDBase($10);
 
-  //Standardized.
   wbRecord(CELL, 'Cell', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbStruct(DATA, 'Cell Data', [
       wbInteger('Flags', itU32, wbFlags([
         {0x00000001} 'Is Interior Cell',
@@ -784,9 +752,6 @@ begin
         wbInteger('Y', itS32)
       ])
     ], cpCritical, True),
-    {INTV is not Number of Uses but the old Water Height format. You can
-    observe the change from INTV to WHGT in the official DLCs with CELL
-    overwrites. The Construction Set will swap the value in edited CELLs.}
     wbInteger(INTV, 'Water Height (Old Format)', itS32),
     wbString(RGNN, 'Region'),  //[REGN]
     wbStruct(NAM5, 'Map Color', [
@@ -818,7 +783,6 @@ begin
         wbFloat('Fog Density')
     ], cpNormal, True)
   ]).SetFormIDBase($B0)
-    {Updated the path for the Grid position.}
     .SetGetGridCellCallback(function(const aSubRecord: IwbSubRecord; out aGridCell: TwbGridCell): Boolean begin
       with aGridCell, aSubRecord do begin
         Result := not (ElementNativeValues['Flags\Is Interior Cell'] = True);
@@ -840,9 +804,6 @@ begin
         Result := aMainRecord.EditorID;
     end);
 
-  //Standardized.
-  {The arrays for VNML and VCLR were set too large, leading to expecting 1 byte
-  errors. 66 -> 65.}
   if wbSimpleRecords then begin
 
     wbLAND := wbRecord(LAND, 'Landscape', @wbKnownSubRecordSignaturesLAND, [
@@ -870,8 +831,6 @@ begin
         wbInteger('X', itS32),
         wbInteger('Y', itS32)
       ], cpCritical, True),
-      {Flags are pretty much the same as the other games, except 0x00000008 only
-      appears on LAND that is not native to the official masters or is edited.}
       wbInteger(DATA, 'Flags', itU32, wbFlags([
         {0x00000001} 'Has Vertex Normals/Height Map',
         {0x00000002} 'Has Vertex Colors',
@@ -895,19 +854,8 @@ begin
             wbInteger('Column', itS8),
           65),
         65),
-        {This is some sort of editor specific stamp/tag. It changes
-        randomly whenever the plugin is saved in the CS and is the
-        same value for all LAND forms. Any new LAND forms will have
-        their tag locked regardless of how many times the plugin is
-        saved, but any overwrites of official master LAND forms will
-        have their tag changed with each save.}
         wbByteArray('Editor Tag', 2, cpIgnore)
       ]),
-      {I originally thought this was related to sea level as negative
-      values were consistent with landscape being submerged by water.
-      Then I loaded the game to test something and remembered it has a
-      map. A map that pulls the WNAM to paint the map screen shades of
-      blue and brown to represent height.}
       wbArray(WNAM, 'World Map Painting',
         wbArray('Row',
           wbInteger('Column', itS8),
@@ -945,12 +893,6 @@ begin
             Result := '';
         end);
 
-  //Standardized.
-  {PGAG doesn't appear to be a valid signature in Morrowind.
-  Adding one will cause the Construction Set to throw and
-  error about unrecognized subrecord and crash. So I removed
-  it. It's in Oblivion, but not found anywhere in Morrowind's
-  official plugins.}
   if wbSimpleRecords then begin
 
   wbPGRD := wbRecord(PGRD, 'Path Grid', [
@@ -982,20 +924,13 @@ begin
     wbArray(PGRP, 'Grid Points',
       wbStruct('Grid Point', [
         wbStruct('Position', [
-          {Why are these integers? Todd? Why?}
           wbInteger('X', itS32),
           wbInteger('Y', itS32),
           wbInteger('Z', itS32)
         ]),
         wbInteger('User Created Point', itU8, wbBoolEnum),
         wbInteger('Number of Connections', itU8),
-        {This looks like another editor specific stamp/tag but it's
-        not consistent. It changes randomly whenever the plugin is
-        saved but only for auto-generated points or the final point
-        in the array, which either case can end up being 00 00.
-        Unlike the LAND's tag, these are never the same across all
-        points or PGRD.}
-        wbByteArray('Editor Tag?', 2, cpIgnore)
+        wbByteArray('Editor Tag', 2, cpIgnore)
       ])),
     wbArray(PGRC, 'Grid Point Connections',
       wbArrayS('Grid Point Connection',
@@ -1005,7 +940,6 @@ begin
   end;
 
   wbPGRD.SetFormIDBase($F0)
-        {Updated the path for the Grid position.}
         .SetFormIDNameBase($B0).SetGetGridCellCallback(function(const aSubRecord: IwbSubRecord; out aGridCell: TwbGridCell): Boolean begin
           with aGridCell, aSubRecord do begin
             X := ElementNativeValues['Grid\X'];
@@ -1025,11 +959,14 @@ begin
             Result := aMainRecord.EditorID;
         end);
 
-  //Standardized.
-  wbRecord(REFR, 'Reference', @wbKnownSubRecordSignaturesREFR, [
+  wbRecord(REFR, 'Placed Object', @wbKnownSubRecordSignaturesREFR, [
+    wbStruct(CNDT, 'Former Cell Grid Owner', [
+      wbInteger('X', itS32),
+      wbInteger('Y', itS32)
+    ], cpNormal, True),
     wbInteger(FRMR, 'Object Index', itU32, wbFRMRToString, nil, cpIgnore, True).IncludeFlag(dfInternalEditOnly),
     wbString(NAME, 'Base Object'), //[ACTI, ALCH, APPA, ARMO, BODY, BOOK, CLOT, CONT, CREA, DOOR, INGR, LEVC, LOCK, MISC, NPC_, PROB, REPA, STAT, WEAP]
-    wbInteger(UNAM, 'Reference Blocked', itU8, wbEnum(['Blocked'],[])),
+    wbInteger(UNAM, 'Reference Blocked', itU8, wbEnum(['Blocked'],[])).SetDefaultNativeValue(0),
     wbFloat(XSCL, 'Scale'),
     wbRStructSK([], 'Owner Data', [
       wbString(ANAM, 'Owner'), //[NPC_]
@@ -1039,8 +976,6 @@ begin
     ], [], cpNormal, False, nil, True),
     wbFloat(XCHG, 'Enchanting Charge'),
     wbString(XSOL, 'Soul'), //[CREA]
-    {Wanted to make this a union based on the Base Object, but it's
-    a string, not a FormID so I don't see an easy way of doing that.}
     wbInteger(INTV, 'Health/Uses Left/Count', itS32),
     wbInteger(NAM9, 'Gold Value', itS32),
     wbRStructSK([], 'Teleport Data', [
@@ -1063,9 +998,10 @@ begin
       wbString(KNAM, 'Key'), //[MISC]
       wbString(TNAM, 'Trap') //[ENCH]
     ], [], cpNormal, False, nil, True),
-    {Besides DELE being randomly placed in form types, it also can
-    have a different value other than 0. For reasons.}
-    wbInteger(DELE, 'Deleted', itU32, wbEnum([],[4729956, 'Deleted'])),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum([],[
+      $00482C64, 'Deleted (Temporary Ref)',
+      $11842014, 'Deleted (Persistent Ref)'
+    ])).SetDefaultNativeValue(4729956),
     wbStruct(DATA, 'Reference Data', [
       wbStruct('Position', [
         wbFloat('X'),
@@ -1088,10 +1024,9 @@ begin
       end;
     end);
 
-  //Standardized.
   wbRecord(CLAS, 'Class', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(FNAM, 'Full Name'),
     wbStruct(CLDT, 'Class Data', [
       wbArray('Primary Attributes',
@@ -1110,10 +1045,9 @@ begin
     wbString(DESC, 'Description')
   ]).SetFormIDBase($18);
 
-  //Standardized.
   wbRecord(CLOT, 'Clothing', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(MODL, 'Model Filename'),
     wbString(FNAM, 'Full Name'),
     wbStruct(CTDT, 'Clothing Data', [
@@ -1139,10 +1073,9 @@ begin
     wbString(ENAM, 'Enchantment') //[ENCH]
   ]).SetFormIDBase($40);
 
-  //Standardized.
   wbRecord(CONT, 'Container', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(MODL, 'Model Filename'),
     wbString(FNAM, 'Full Name'),
     wbFloat(CNDT, 'Weight', cpNormal, True),
@@ -1155,17 +1088,14 @@ begin
     wbString(SCRI, 'Script'), //[SCPT]
     wbRArray('Item Entries',
       wbStruct(NPCO, 'Item Entry', [
-        {Soooo, negative values for NPCOs mean it restocks. I did not
-        know that. Fixed it.}
         wbInteger('Count', itS32),
         wbString('Item', 32) //[ALCH, APPA, ARMO, BOOK, CLOT, INGR, LEVI, LIGH, LOCK, MISC, PROB, REPA, WEAP]
       ]))
   ]).SetFormIDBase($40);
 
-  //Standardized.
   wbRecord(CREA, 'Creature', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(MODL, 'Model Filename'),
     wbString(CNAM, 'Sound Generator Creature'), //[CREA]
     wbString(FNAM, 'Full Name'),
@@ -1191,7 +1121,7 @@ begin
       wbInteger('Health', itS32),
       wbInteger('Magicka', itS32),
       wbInteger('Fatigue', itS32),
-      wbInteger('Soul', itU32), //Confirmed Unsigned.
+      wbInteger('Soul', itU32),
       wbStruct('Skills', [
         wbInteger('Combat', itS32),
         wbInteger('Magic', itS32),
@@ -1203,9 +1133,8 @@ begin
           wbInteger('Maximum', itS32)
         ]),
       3),
-      wbInteger('Barter Gold', itU32) //Confirmed Unsigned.
+      wbInteger('Barter Gold', itU32)
     ], cpNormal, True),
-    {These were a little out of order.}
     wbInteger(FLAG, 'Creature Flags', itU32, wbFlags([
         {0x00000001} 'Biped',
         {0x00000002} 'Respawn',
@@ -1238,7 +1167,10 @@ begin
             wbFloat('Y'),
             wbFloat('Z')
           ]),
-          wbInteger('Repeat', itU32, wbBoolEnum)
+          wbInteger('Reset', itU32, wbEnum([],[
+            $00000001, 'Reset',
+            $00000101, 'Reset'
+          ]))
         ], cpNormal, True),
         wbStruct(AI_W, 'AI Wander', [
           wbInteger('Distance', itU16),
@@ -1254,7 +1186,7 @@ begin
             wbInteger('Idle 8', itU8),
             wbInteger('Idle 9', itU8)
           ]),
-          wbInteger('Repeat', itU8, wbBoolEnum)
+          wbInteger('Reset', itU8, wbBoolEnum)
         ], cpNormal, True),
         wbRStruct('AI Escort', [
           wbStruct(AI_E, 'AI Escort', [
@@ -1265,7 +1197,7 @@ begin
             ]),
             wbInteger('Duration In Hours', itU16),
             wbString(True, 'Target', 32), //[CREA, NPC_]
-            wbInteger('Repeat', itU16, wbBoolEnum)
+            wbInteger('Reset', itU16, wbBoolEnum)
           ], cpNormal, True),
           wbString(CNDT, 'Escort To Cell') //[CELL]
         ], []),
@@ -1278,25 +1210,24 @@ begin
             ]),
             wbInteger('Duration In Hours', itU16),
             wbString(True, 'Target', 32), //[CREA, NPC_]
-            wbInteger('Repeat', itU16, wbBoolEnum)
+            wbInteger('Reset', itU16, wbBoolEnum)
           ], cpNormal, True),
           wbString(CNDT, 'Follow To Cell') //[CELL]
         ], []),
         wbStruct(AI_A, 'AI Activate', [
           wbString(True, 'Target', 32), //[ACTI, ALCH, APPA, ARMO, BODY, BOOK, CLOT, CONT, CREA, DOOR, ENCH, INGR, LIGH, LEVC, LEVI, LOCK, MISC, NPC_, PROB, REPA, SPEL, STAT, WEAP]
-          wbInteger('Repeat', itU8, wbBoolEnum)
+          wbInteger('Reset', itU8, wbBoolEnum)
         ], cpNormal, True)
       ],[]))
   ]).SetFormIDBase($40);
 
-  //Standardized.
   wbRecord(DIAL, 'Dialog Topic', [
     wbString(NAME, 'Editor ID'),
     wbStruct(DATA, 'Dialog Topic Data', [
         wbInteger('Dialog Type', itU8, wbDialogTypeEnum),
-        wbByteArray('Unused', 3, cpIgnore) //Looks like unused data but investigating.
+        wbByteArray('Unused Bytes', 3, cpIgnore)
     ], cpNormal, True),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[]))
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0)
   ]).SetFormIDBase($80);
 
   wbRecord(INFO, 'Dialog Response', @wbKnownSubRecordSignaturesINFO, [
@@ -1326,15 +1257,10 @@ begin
     wbString(NAME, 'Response'),
     wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])),
     wbRUnion('Quest Data', [
-      wbInteger(QSTN, 'Quest Name', itU8, wbEnum([], [1, 'Quest Name'])),
-      wbInteger(QSTF, 'Quest Finished', itU8, wbEnum([], [1, 'Quest Finished'])),
-      wbInteger(QSTR, 'Quest Restarted', itU8, wbEnum([], [1, 'Quest Restarted']))
+      wbInteger(QSTN, 'Quest Name', itU8, wbEnum([], [1, 'Quest Name'])).SetDefaultNativeValue(1),
+      wbInteger(QSTF, 'Quest Finished', itU8, wbEnum([], [1, 'Quest Finished'])).SetDefaultNativeValue(1),
+      wbInteger(QSTR, 'Quest Restarted', itU8, wbEnum([], [1, 'Quest Restarted'])).SetDefaultNativeValue(1)
     ],[]),
-    {Took awhile to figure this string out but it's a compound string. The
-    first char is the position of the condition, which is pointless to show
-    since it's in an array. The next three chars are the function itself.
-    The next char is the operator. Anything left in the string after that
-    is the variable/object the function checks against.}
     wbRArray('Conditions',
       wbRStructSK([], 'Condition', [
         wbStruct(SCVR, 'Condition Union', [
@@ -1345,7 +1271,7 @@ begin
             $33, '4th', //3
             $34, '5th', //4
             $35, '6th' //5
-          ]), cpIgnore),
+          ])),
           wbInteger('Function', itU24, wbEnum([], [
             $313030, 'Reaction Low', //100
             $313031, 'Reaction High', //101
@@ -1421,7 +1347,7 @@ begin
             $313731, 'Should Attack', //171
             $313732, 'Werewolf', //172
             $313733, 'PC Werewolf Kills', //173
-            $326658, 'Global', //2fX //[GLOB]
+            $327358, 'Global', //2sX //[GLOB]
             $344A58, 'Journal', //4JX //[DIAL]
             $354958, 'Item', //5IX //[ALCH, APPA, ARMO, BOOK, CLOT, INGR, LIGH, LOCK, MISC, PROB, REPA, WEAP]
             $364458, 'Dead', //6DX //[CREA, NPC_]
@@ -1451,10 +1377,9 @@ begin
     wbString(BNAM, 'Result')
   ]).SetFormIDBase($90);
 
-  //Standardized.
   wbRecord(DOOR, 'Door', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(MODL, 'Model Filename'),
     wbString(FNAM, 'Full Name'),
     wbString(SCRI, 'Script'), //[SCPT]
@@ -1462,10 +1387,9 @@ begin
     wbString(ANAM, 'Close Sound') //[SOUN]
   ]).SetFormIDBase($40);
 
-  //Standardized.
   wbRecord(ENCH, 'Enchantment', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbStruct(ENDT, 'Enchantment Data', [
       wbInteger('Cast Type', itU32, wbEnum([
         {0} 'Cast Once',
@@ -1475,15 +1399,18 @@ begin
       ])),
       wbInteger('Enchantment Cost', itS32),
       wbInteger('Charge Amount', itS32),
-      wbInteger('Auto Calculate', itU32, wbBoolEnum)
+      wbInteger('Auto Calculate', itU32, wbEnum([
+        'False',
+        'True'], [
+        $0000FFFE, 'Blocked - Constant Effect'
+      ]))
     ], cpNormal, True),
     wbENAM
   ]).SetFormIDBase($04);
 
-  //Standardized.
   wbRecord(FACT, 'Faction', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(FNAM, 'Full Name'),
     wbRArray('Ranks',
       wbStringForward(RNAM, 'Rank', 32)),
@@ -1513,10 +1440,9 @@ begin
       ], []))
   ]).SetFormIDBase($1C);
 
-  //Standardized.
   wbRecord(GLOB, 'Global', @wbKnownSubRecordSignaturesNoFNAM,  [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbInteger(FNAM, 'Variable Type', itU8, wbEnum([], [
       $66, 'Float',
       $6C, 'Long',
@@ -1531,7 +1457,6 @@ begin
     ])
   ]).SetFormIDBase($58);
 
-  //Standardized.
   wbRecord(GMST, 'Game Setting', [
     wbString(NAME, 'Editor ID'),
     wbRUnion('Value', [
@@ -1542,21 +1467,14 @@ begin
   ]).SetFormIDBase($50)
     .IncludeFlag(dfIndexEditorID);
 
-  //Standardized.
   wbRecord(INGR, 'Ingredient', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(MODL, 'Model Filename'),
     wbString(FNAM, 'Full Name'),
     wbStruct(IRDT, 'Ingredient Data', [
       wbFloat('Weight'),
       wbInteger('Value', itS32),
-      {Instead of something that makes sense, we get this disordered
-      mess. Wanted to make a function that will clear invalid Attributes
-      and Skills for the corresponding Magic Effect, buuuuut I don't
-      know how, or if that can be done. Oh, Attributes and Skills can
-      be saved with invalid values because the CS likes to flip a coin
-      and use a proper -1 or a get fucked 0 for null Skills and Attributes.}
       wbStruct('Effects', [
         wbArray('Magic Effects',
           wbInteger('Magic Effect', itS32, wbMagicEffectEnum),
@@ -1573,10 +1491,9 @@ begin
     wbString(ITEX, 'Icon Filename')
   ]).SetFormIDBase($40);
 
-  //Standardized
   wbRecord(LEVC, 'Leveled Creature', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbInteger(DATA, 'Leveled Flags', itU32, wbLeveledFlags),
     wbInteger(NNAM, 'Chance None', itU8),
     wbInteger(INDX, 'Entry Count', itU32),
@@ -1587,10 +1504,9 @@ begin
       ], []))
   ]).SetFormIDBase($40);
 
-  //Standardized
   wbRecord(LEVI, 'Leveled Item', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbInteger(DATA, 'Levlved Flags', itU32, wbLeveledFlags),
     wbInteger(NNAM, 'Chance None', itU8),
     wbInteger(INDX, 'Entry Count', itU32),
@@ -1601,10 +1517,9 @@ begin
       ], []))
   ]).SetFormIDBase($40);
 
-  //Standardized
   wbRecord(LIGH, 'Light', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(MODL, 'Model Filename'),
     wbString(FNAM, 'Full Name'),
     wbString(ITEX, 'Icon Filename'),
@@ -1635,10 +1550,9 @@ begin
     wbString(SNAM, 'Sound') //[SOUN]
   ]).SetFormIDBase($40);
 
-  //Standardized
   wbRecord(LOCK, 'Lockpick', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(MODL, 'Model Filename'),
     wbString(FNAM, 'Full Name'),
     wbStruct(LKDT, 'Lockpick Data', [
@@ -1651,20 +1565,13 @@ begin
     wbString(ITEX, 'Icon Filename')
   ]).SetFormIDBase($40);
 
-  //Standardized
   wbRecord(LTEX, 'Landscape Texture', [
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(NAME, 'Editor ID'),
     wbInteger(INTV, 'Texture ID', itU32),
     wbString(DATA, 'Texture Filename')
   ]).SetFormIDBase($60);
 
-  //Standardized
-  {This was pretty messed up. For whatever reason, each color value
-  is four bytes, not one, like a normal, sane person would do. Also,
-  the Size and Speed values were not in the correct order or
-  pointing to the right data (two of them were pointing to the
-  oversized color data).}
   wbRecord(MGEF, 'Magic Effect', @wbKnownSubRecordSignaturesDESC, [
     wbInteger(INDX, 'Magic Effect ID', itU32, wbMagicEffectEnum),
     wbStruct(MEDT, 'Magic Effect Data', [
@@ -1678,18 +1585,27 @@ begin
       ])),
       wbFloat('Base Cost'),
       wbInteger('Flags', itU32, wbFlags([
-        {0x00000001} '',
-        {0x00000002} '',
-        {0x00000004} '',
-        {0x00000008} '',
-        {0x00000010} '',
-        {0x00000020} '',
-        {0x00000040} '',
-        {0x00000080} '',
-        {0x00000100} '',
+        //Fixed, Hardcoded Flags
+        {0x00000001} 'Target Skill',
+        {0x00000002} 'Target Attribute',
+        {0x00000004} 'No Duration',
+        {0x00000008} 'No Magnitude',
+        {0x00000010} 'Harmful',
+        {0x00000020} 'Continuous VFX',
+        {0x00000040} 'Cast Self',
+        {0x00000080} 'Cast Touch',
+        {0x00000100} 'Cast Target',
+        //Modifiable Flags
         {0x00000200} 'Spellmaking',
         {0x00000400} 'Enchanting',
-        {0x00000800} 'Negative'
+        {0x00000800} 'Negative',
+        //Fixed, Hardcoded Flags
+        {0x00001000} 'Applied Once',
+        {0x00002000} 'Stealth', //Unused.
+        {0x00004000} 'Non-Recastable',
+        {0x00008000} 'Illegal Daedra', //Unused.
+        {0x00010000} 'Non-reflectable',
+        {0x00020000} 'Caster Linked'
       ])),
       wbStruct('Color', [
         wbInteger('Red', itU32),
@@ -1713,27 +1629,23 @@ begin
     wbString(DESC, 'Description')
   ]).SetFormIDBase($02);
 
-  //Standardized
   wbRecord(MISC, 'Miscellaneous Item', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(MODL, 'Model Filename'),
     wbString(FNAM, 'Full Name'),
     wbStruct(MCDT,'Miscellaneous Item Data', [
       wbFloat('Weight'),
       wbInteger('Value', itS32),
-      {The only forms that have a true value are keys, but
-      not all keys have a true value. Fuck if I know.}
       wbInteger('Is Key', itU32, wbBoolEnum)
     ], cpNormal, True),
     wbString(SCRI, 'Script'), //[SCPT]
     wbString(ITEX, 'Icon Filename')
   ]).SetFormIDBase($40);
 
-  //Standardized
-  wbRecord(NPC_, 'Non-Player Character', [
+ wbRecord(NPC_, 'Non-Player Character', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(MODL, 'Model Filename'),
     wbString(FNAM, 'Full Name'),
     wbString(RNAM, 'Race'), //[RACE]
@@ -1785,15 +1697,15 @@ begin
             wbInteger('Mercantile', itU8),
             wbInteger('Hand-to-Hand', itU8)
           ]),
-          wbByteArray('Unused Byte', 1, cpIgnore),
+          wbByteArray('Unused Byte 1', 1, cpIgnore),
           wbInteger('Health', itU16),
           wbInteger('Magicka', itU16),
           wbInteger('Fatigue', itU16),
           wbInteger('Disposition', itU8),
           wbInteger('Reputation', itU8),
           wbInteger('Rank', itU8),
-          wbByteArray('Unused Byte', 1, cpIgnore),
-          wbInteger('Gold', itU32) //Confirmed Unsigned.
+          wbByteArray('Unused Byte 2', 1, cpIgnore),
+          wbInteger('Gold', itU32)
         ]),
         wbStruct('Auto Calculated Data', [
           wbInteger('Level', itU16),
@@ -1801,7 +1713,7 @@ begin
           wbInteger('Reputation', itU8),
           wbInteger('Rank', itU8),
           wbByteArray('Unused Bytes', 3, cpIgnore),
-          wbInteger('Gold', itU32) //Confirmed Unsigned.
+          wbInteger('Gold', itU32)
         ])
       ])
     ], cpNormal, True),
@@ -1836,7 +1748,10 @@ begin
             wbFloat('Y'),
             wbFloat('Z')
           ]),
-          wbInteger('Repeat', itU32, wbBoolEnum)
+          wbInteger('Reset', itU32, wbEnum([],[
+            $00000001, 'Reset',
+            $00000101, 'Reset'
+          ]))
         ], cpNormal, True),
         wbStruct(AI_W, 'AI Wander', [
           wbInteger('Distance', itU16),
@@ -1852,7 +1767,7 @@ begin
             wbInteger('Idle 8', itU8),
             wbInteger('Idle 9', itU8)
           ]),
-          wbInteger('Repeat', itU8, wbBoolEnum)
+          wbInteger('Reset', itU8, wbBoolEnum)
         ], cpNormal, True),
         wbRStruct('AI Escort', [
           wbStruct(AI_E, 'AI Escort', [
@@ -1863,7 +1778,7 @@ begin
             ]),
             wbInteger('Duration In Hours', itU16),
             wbString(True, 'Target', 32), //[CREA, NPC_]
-            wbInteger('Repeat', itU16, wbBoolEnum)
+            wbInteger('Reset', itU16, wbBoolEnum)
           ], cpNormal, True),
           wbString(CNDT, 'Escort To Cell') //[CELL]
         ], []),
@@ -1882,16 +1797,15 @@ begin
         ], []),
         wbStruct(AI_A, 'AI Activate', [
           wbString(True, 'Target', 32), //[ACTI, ALCH, APPA, ARMO, BODY, BOOK, CLOT, CONT, CREA, DOOR, ENCH, INGR, LIGH, LEVC, LEVI, LOCK, MISC, NPC_, PROB, REPA, SPEL, STAT, WEAP]
-          wbInteger('Repeat', itU8, wbBoolEnum)
+          wbInteger('Reset', itU8, wbBoolEnum)
         ], cpNormal, True)
       ],[])),
     wbFloat(XSCL, 'Scale')
   ]).SetFormIDBase($40);
 
-  //Standardized
   wbRecord(PROB, 'Probe', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(MODL, 'Model Filename'),
     wbString(FNAM, 'Full Name'),
     wbStruct(PBDT, 'Probe Data', [
@@ -1904,10 +1818,9 @@ begin
     wbString(ITEX, 'Icon Filename')
   ]).SetFormIDBase($40);
 
-  //Standardized
   wbRecord(RACE, 'Race', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(FNAM, 'Full Name'),
     wbStruct(RADT, 'Race Data', [
       wbArray('Skill Bonuses',
@@ -1968,26 +1881,35 @@ begin
     wbString(DESC, 'Description')
   ]).SetFormIDBase($14);
 
-  //Standardized
-  {Snow and Blizzard were missing. Originally, this had
-  a bunch of data after the string for the sound. It was
-  junk data as small sound strings would cause unused
-  data errors.}
   wbRecord(REGN, 'Region', [
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(NAME, 'Editor ID'),
     wbString(FNAM, 'Full Name'),
     wbStruct(WEAT, 'Weather Chances', [
-      wbInteger('Clear', itU8),
-      wbInteger('Cloudy', itU8),
-      wbInteger('Foggy', itU8),
-      wbInteger('Overcast', itU8),
-      wbInteger('Rain', itU8),
-      wbInteger('Thunder', itU8),
-      wbInteger('Ash', itU8),
-      wbInteger('Blight', itU8),
-      wbInteger('Snow', itU8),
-      wbInteger('Blizzard', itU8)
+      wbUnion('Format', wbREGNDataDecider, [
+        wbStruct('Weather Chances (Old Format)', [
+          wbInteger('Clear', itU8),
+          wbInteger('Cloudy', itU8),
+          wbInteger('Foggy', itU8),
+          wbInteger('Overcast', itU8),
+          wbInteger('Rain', itU8),
+          wbInteger('Thunder', itU8),
+          wbInteger('Ash', itU8),
+          wbInteger('Blight', itU8)
+        ]),
+        wbStruct('Weather Chances', [
+          wbInteger('Clear', itU8),
+          wbInteger('Cloudy', itU8),
+          wbInteger('Foggy', itU8),
+          wbInteger('Overcast', itU8),
+          wbInteger('Rain', itU8),
+          wbInteger('Thunder', itU8),
+          wbInteger('Ash', itU8),
+          wbInteger('Blight', itU8),
+          wbInteger('Snow', itU8),
+          wbInteger('Blizzard', itU8)
+        ])
+      ])
     ]),
     wbString(BNAM, 'Sleep Creature'), //[LEVC]
     wbStruct(CNAM, 'Map Color', [
@@ -2004,10 +1926,9 @@ begin
     )
   ]).SetFormIDBase($70);
 
-  //Standardized
   wbRecord(REPA, 'Repair Item', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(MODL, 'Model Filename'),
     wbString(FNAM, 'Full Name'),
     wbStruct(RIDT, 'Repair Item Data', [
@@ -2020,7 +1941,6 @@ begin
     wbString(ITEX, 'Icon Filename')
   ]).SetFormIDBase($40);
 
-  //Standardized
   wbRecord(SCPT, 'Script', @wbKnownSubRecordSignaturesSCPT, [
     wbStruct(SCHD, 'Script Header', [
       wbString('Name', 32),
@@ -2030,7 +1950,7 @@ begin
       wbInteger('Script Data Size', itU32),
       wbInteger('Local Variable Size', itU32)
     ]),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbArray(SCVR, 'Script Variables',
       wbString('Script Variable', 0, cpCritical)),
     wbByteArray(SCDT, 'Compiled Script'),
@@ -2053,7 +1973,6 @@ begin
        {1}'Magic',
        {2}'Stealth'
       ])),
-      //Cursed. The Emperor is not pleased.
       wbUnion('Actions', wbSKILUnionDecider, [
         wbStruct('Block', [
           wbFloat('Successful Block'),
@@ -2228,7 +2147,6 @@ begin
     wbString(DESC, 'Description')
   ]).SetFormIDBase($01);
 
-  //Standardized
   wbRecord(SNDG, 'Sound Generator', [
     wbString(NAME, 'Editor ID'),
     wbInteger(DATA, 'Type', itU32, wbEnum([
@@ -2243,13 +2161,12 @@ begin
     ])),
     wbString(CNAM, 'Creature'), //[CREA]
     wbString(SNAM, 'Sound'), //[SOUN]
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[]))
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0)
   ]).SetFormIDBase($28);
 
-  //Standardized
   wbRecord(SOUN, 'Sound', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(FNAM, 'Sound Filename'),
     wbStruct(DATA, 'Sound Data', [
       wbInteger('Volume', itU8),
@@ -2258,10 +2175,9 @@ begin
     ])
   ]).SetFormIDBase($40);
 
-  //Standardized
   wbRecord(SPEL, 'Spellmaking', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(FNAM, 'Full Name'),
     wbStruct(SPDT, 'Spellmaking Data', [
       wbInteger('Type', itU32, wbEnum([
@@ -2282,24 +2198,21 @@ begin
     wbENAM
   ]).SetFormIDBase($0A);
 
-  //Standardized
   wbRecord(SSCR, 'Start Script', @wbKnownSubRecordSignaturesSSCR, [
-    wbInteger(DELE, 'Deleted', itU32, wbEnum([],[1, 'Deleted'])),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum([],[1, 'Deleted'])).SetDefaultNativeValue(1),
     wbString(DATA, 'Start Script ID'),
     wbString(NAME, 'Script') //[SCPT]
   ]).SetFormIDBase($3F);
 
-  //Standardized
   wbRecord(STAT, 'Static', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(MODL, 'Model Filename')
   ]).SetFormIDBase($40);
 
-  //Standardized
   wbRecord(WEAP, 'Weapon', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(MODL, 'Model Filename'),
     wbString(FNAM, 'Full Name'),
     wbStruct(WPDT, 'Weapon Data', [

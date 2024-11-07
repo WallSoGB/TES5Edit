@@ -5738,10 +5738,10 @@ begin
           end else
             DialRecord := nil;
 
-          if (Signature = 'LAND') or (Signature = 'PGRD') or (Signature = 'FRMR') or (Signature = 'NAM0') then begin
+          if (Signature = 'LAND') or (Signature = 'PGRD') or (Signature = 'FRMR') or (Signature = 'NAM0') or (Signature = 'MVRF') or (Signature = 'CNDT') then begin
             if (Signature = 'LAND') or (Signature = 'PGRD') then
               GroupType := 9;
-            if Signature <> 'NAM0' then begin
+            if (Signature <> 'NAM0') and (Signature <> 'MVRF') then begin
               if Assigned(GroupRecord) then
                 if not Assigned(CellRecord) or (GroupRecord.GroupType <> GroupType) or not CellRecord.Equals(GroupRecord.ChildrenOf) then
                   GroupRecord := nil;
@@ -5759,7 +5759,7 @@ begin
           end else
             CellRecord := nil;
 
-          if Signature <> 'NAM0' then begin
+          if (Signature <> 'NAM0') and (Signature <> 'MVRF') then begin
             if not Assigned(Container) then begin
               if Assigned(GroupRecord) then
                 if (GroupRecord.GroupType <> 0) or (GroupRecord.GroupLabelSignature <> Signature) then
@@ -5805,7 +5805,7 @@ begin
                 GroupType := 8;
               end;
             end else
-              if Rec.Signature = 'NAM0' then
+              if (Rec.Signature = 'NAM0') or (Rec.Signature = 'MVRF') then
                 GroupType := 9;
           end else
             flProgress(Rec.Name + ' processed');
@@ -8597,7 +8597,7 @@ begin
       if PwbSignature(aPtr)^ = 'GRUP' then
         Result := TwbGroupRecord.Create(aContainer, aPtr, aEndPtr, aPrevMainRecord)
       else begin
-        if (wbGameMode = gmTES3) and (PwbSignature(aPtr)^ = 'NAM0') then
+        if (wbGameMode = gmTES3) and ((PwbSignature(aPtr)^ = 'NAM0') or (PwbSignature(aPtr)^ = 'MVRF')) then
           Result := TwbSubRecord.Create(nil, aPtr, aEndPtr, nil)
         else
           Result := TwbMainRecord.Create(aContainer, aPtr, aEndPtr, aPrevMainRecord);
@@ -10137,7 +10137,7 @@ begin
 
   CurrentPtr := GetDataBasePtr;
   while NativeUInt(CurrentPtr) < NativeUInt(dcDataEndPtr) do begin
-    if (IsTES3Cell or (FRMRCount > 0)) and ((PwbSignature(CurrentPtr)^ = 'FRMR') or (PwbSignature(CurrentPtr)^ = 'NAM0')) then begin
+    if (IsTES3Cell or (FRMRCount > 0)) and ((PwbSignature(CurrentPtr)^ = 'FRMR') or (PwbSignature(CurrentPtr)^ = 'NAM0') or (PwbSignature(CurrentPtr)^ = 'MVRF') or (PwbSignature(CurrentPtr)^ = 'CNDT')) then begin
       if dcEndPtr = dcDataEndPtr then
         dcEndPtr := CurrentPtr;
       dcDataEndPtr := CurrentPtr;
@@ -12251,7 +12251,7 @@ var
   p         : PwbMainRecordStruct;
 begin
   if Assigned(dcEndPtr) then
-    if (wbGameMode = gmTES3) and (PwbSignature(dcBasePtr)^ = 'FRMR') then begin
+    if (wbGameMode = gmTES3) and ((PwbSignature(dcBasePtr)^ = 'FRMR') or (PwbSignature(dcBasePtr)^ = 'CNDT')) then begin
       Assert(not (mrsBasePtrAllocated in mrStates));
       dcDataBasePtr := dcBasePtr;
       dcDataEndPtr := dcEndPtr;
