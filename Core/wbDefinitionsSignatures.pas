@@ -887,6 +887,7 @@ const
   MUID : TwbSignature = 'MUID'; { New To Starfield }
   MUSC : TwbSignature = 'MUSC';
   MUST : TwbSignature = 'MUST';
+  MVRF : TwbSignature = 'MVRF'; { Morrowind Moved Ref Sig}
   MWD1 : TwbSignature = 'MWD1';
   MWD2 : TwbSignature = 'MWD2';
   MWD3 : TwbSignature = 'MWD3';
