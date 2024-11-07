@@ -180,13 +180,17 @@ function wbWeatherCloudColorsCounter(aBasePtr: Pointer; aEndPtr: Pointer; const 
 function wbWorldColumnsCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Cardinal;
 function wbWorldRowsCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Cardinal;
 
-{>>> Don't Show Callbacks <<<} //14
+{>>> Flag Don't Show Callbacks <<<} //6
 function wbFlagNavmeshFilterDontSHow(const aElement: IwbElement): Boolean;
 function wbFlagNavmeshBoundingBoxDontSHow(const aElement: IwbElement): Boolean;
 function wbFlagNavmeshOnlyCutDontSHow(const aElement: IwbElement): Boolean;
 function wbFlagNavmeshIgnoreErosionDontSHow(const aElement: IwbElement): Boolean;
 function wbFlagNavmeshGroundDontSHow(const aElement: IwbElement): Boolean;
 function wbFlagPartialFormDontShow(const aElement: IwbElement): Boolean;
+
+{>>> Don't Show Callbacks <<<} //10
+function wbCellGridDontShow(const aElement: IwbElement): Boolean;
+function wbCellLightingDontShow(const aElement: IwbElement): Boolean;
 function wbModelInfoDontShow(const aElement: IwbElement): Boolean;
 function wbREGNGrassDontShow(const aElement: IwbElement): Boolean;
 function wbREGNImposterDontShow(const aElement: IwbElement): Boolean;
@@ -212,7 +216,9 @@ procedure wbModelInfoUnknownGetCP(const aElement: IwbElement; var aConflictPrior
 {>>> Integer Formaters <<<} //1
 function wbBoolEnumSummary(const aTrueSummary: string; const aFalseSummary: string = ''): IwbEnumDef;
 
-{>>> Is Removable Callbacks <<<} //7
+{>>> Is Removable Callbacks <<<} //9
+function wbCellGridIsRemovable(const aElement: IwbElement): Boolean;
+function wbCellLightingIsRemovable(const aElement: IwbElement): Boolean;
 function wbModelInfoHeaderIsRemovable(const aElement: IwbElement): Boolean;
 function wbWorldLandDataIsRemovable(const aElement: IwbElement): Boolean;
 function wbWorldLODDataIsRemovable(const aElement: IwbElement): Boolean;
@@ -1169,7 +1175,7 @@ begin
   Result := Round(MaxY) - Round(MinY) + 1;
 end;
 
-{>>> Don't Show Callbacks <<<} //14
+{>>> Flag Don't Show Callbacks <<<} //6
 
 function wbFlagNavmeshFilterDontSHow(const aElement: IwbElement): Boolean;
 begin
@@ -1223,6 +1229,18 @@ begin
     Exit;
   Result := not lMainRecord.CanBePartial;
 end;
+
+{>>> Don't Show Callbacks <<<} //10
+
+function wbCellGridDontShow(const aElement: IwbElement): Boolean;
+begin
+  Result := (aElement.ContainingMainRecord.ElementNativeValues['DATA'] and 1 = 1);
+end;
+
+function wbCellLightingDontShow(const aElement: IwbElement): Boolean;
+Begin
+  Result := (aElement.ContainingMainRecord.ElementNativeValues['DATA'] and 1 = 0);
+End;
 
 function wbModelInfoDontShow(const aElement: IwbElement): Boolean;
 begin
@@ -1437,7 +1455,17 @@ begin
     ]);
 end;
 
-{>>> Is Removable Callbacks <<<} //7
+{>>> Is Removable Callbacks <<<} //9
+
+function wbCellGridIsRemovable(const aElement: IwbElement): Boolean;
+begin
+  Result := (aElement.ContainingMainRecord.ElementNativeValues['DATA'] and 1 = 1);
+end;
+
+function wbCellLightingIsRemovable(const aElement: IwbElement): Boolean;
+begin
+  Result := (aElement.ContainingMainRecord.ElementNativeValues['DATA'] and 1 = 0);
+end;
 
 function wbModelInfoHeaderIsRemovable(const aElement: IwbElement): Boolean;
 begin
@@ -5106,29 +5134,17 @@ begin
     wbStruct(XCLC, 'Grid', [
       wbInteger('X', itS32),
       wbInteger('Y', itS32),
-      wbInteger('Land Flags', itU32, wbLandFlags)
+      wbInteger('Land Flags', itU8, wbLandFlags),
+      wbUnused(3)
     ], cpNormal, False, nil, 2)
     .SetSummaryKeyOnValue([0, 1, 2])
     .SetSummaryPrefixSuffixOnValue(0, '(', '')
     .SetSummaryPrefixSuffixOnValue(1, '', ')')
     .SetSummaryPrefixSuffixOnValue(2, ' {Land: ', '}')
     .IncludeFlagOnValue(dfSummaryMembersNoName)
+    .SetDontShow(wbCellGridDontShow)
+    .SetIsRemovable(wbCellGridIsRemovable)
     .IncludeFlag(dfCollapsed);
-
-  if wbGameMode in [gmSSE] then
-    wbCellGrid :=
-      wbStruct(XCLC, 'Grid', [
-        wbInteger('X', itS32),
-        wbInteger('Y', itS32),
-        wbInteger('Land Flags', itU8, wbLandFlags),
-        wbUnused(3)
-      ], cpNormal, False, nil, 2)
-      .SetSummaryKeyOnValue([0, 1, 2])
-      .SetSummaryPrefixSuffixOnValue(0, '(', '')
-      .SetSummaryPrefixSuffixOnValue(1, '', ')')
-      .SetSummaryPrefixSuffixOnValue(2, ' {Land: ', '}')
-      .IncludeFlagOnValue(dfSummaryMembersNoName)
-      .IncludeFlag(dfCollapsed);
 
   if wbGameMode <= gmFNV then
     wbCinematicIMAD :=

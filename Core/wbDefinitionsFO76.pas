@@ -9586,7 +9586,9 @@ begin
       wbFloat('Unknown'),
       wbFloat('Unknown'),
       wbFloat('Unknown')
-    ], cpNormal, False, nil, 11),
+    ], cpNormal, False, nil, 11)
+      .SetDontShow(wbCellLightingDontShow)
+      .SetIsRemovable(wbCellLightingIsRemovable),
 
     wbInteger(CNAM, 'Precombined Object Level XY', itU8),
     wbInteger(ZNAM, 'Precombined Object Level Z', itU8),

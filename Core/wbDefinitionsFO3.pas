@@ -4282,7 +4282,9 @@ begin
       wbFloat('Directional Fade'),
       wbFloat('Fog Clip Dist'),
       wbFloat('Fog Power')
-    ], cpNormal, False, nil, 7),
+    ], cpNormal, False, nil, 7)
+      .SetDontShow(wbCellLightingDontShow)
+      .SetIsRemovable(wbCellLightingIsRemovable),
     wbArray(IMPF, 'Footstep Materials', wbString('Unknown', 30), [
       'ConcSolid',
       'ConcBroken',

@@ -5285,7 +5285,9 @@ begin
         {0x00000200}'Fog Max',
         {0x00000400}'Light Fade Distances'
       ]))
-    ], cpNormal, False, nil, 11),
+    ], cpNormal, False, nil, 11)
+      .SetDontShow(wbCellLightingDontShow)
+      .SetIsRemovable(wbCellLightingIsRemovable),
 
     wbTVDT,
     wbMHDTCELL

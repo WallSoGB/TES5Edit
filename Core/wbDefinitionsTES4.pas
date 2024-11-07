@@ -1845,7 +1845,8 @@ begin
       wbInteger('Directional Rotation Z', itS32),
       wbFloat('Directional Fade', cpNormal, False, 1, -1, nil, nil, 1.0),
       wbFloat('Fog Clip Dist')
-    ]),
+    ]).SetDontShow(wbCellLightingDontShow)
+      .SetIsRemovable(wbCellLightingIsRemovable),
     wbArrayS(XCLR, 'Regions', wbFormIDCk('Region', [REGN])),
     wbInteger(XCMT, 'Music', itU8, wbMusicEnum),
     wbFloat(XCLW, 'Water Height', cpBenign),
@@ -1855,7 +1856,8 @@ begin
     wbStruct(XCLC, 'Grid', [
       wbInteger('X', itS32),
       wbInteger('Y', itS32)
-    ])
+    ]).SetDontShow(wbCellGridDontShow)
+      .SetIsRemovable(wbCellGridIsRemovable)
   ], True, wbCellAddInfo, cpNormal, False, wbCELLAfterLoad);
 
   wbServiceFlags :=

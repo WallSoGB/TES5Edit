@@ -7603,7 +7603,9 @@ begin
       wbFloat('Fog High Far Scale'),
       wbFloat('Far Height Mid'),
       wbFloat('Far Height Range')
-    ], cpNormal, False, nil, 11),
+    ], cpNormal, False, nil, 11)
+      .SetDontShow(wbCellLightingDontShow)
+      .SetIsRemovable(wbCellLightingIsRemovable),
 
     wbInteger(CNAM, 'Precombined Object Level XY', itU8),
     wbInteger(ZNAM, 'Precombined Object Level Z', itU8),
