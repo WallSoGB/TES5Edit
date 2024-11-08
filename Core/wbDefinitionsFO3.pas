@@ -29,7 +29,6 @@ var
   wbMiscStatEnum: IwbEnumDef;
   wbMoodEnum: IwbEnumDef;
   wbObjectTypeEnum: IwbEnumDef;
-  wbPKDTType: IwbEnumDef;
   wbPlayerActionEnum: IwbEnumDef;
   wbReloadAnimEnum: IwbEnumDef;
   wbSkillEnum: IwbEnumDef;
@@ -7100,26 +7099,6 @@ var  wbSoundTypeSoundsOld :=
           {0x80000000} ''
         ]);
 
-  wbPKDTType := wbEnum([
-           {0} 'Find',
-           {1} 'Follow',
-           {2} 'Escort',
-           {3} 'Eat',
-           {4} 'Sleep',
-           {5} 'Wander',
-           {6} 'Travel',
-           {7} 'Accompany',
-           {8} 'Use Item At',
-           {9} 'Ambush',
-          {10} 'Flee Not Combat',
-          {11} '',
-          {12} 'Sandbox',
-          {13} 'Patrol',
-          {14} 'Guard',
-          {15} 'Dialogue',
-          {16} 'Use Weapon'
-        ]);
-
   wbObjectTypeEnum := wbEnum([
           ' NONE',
           'Activators',
@@ -7163,7 +7142,7 @@ var  wbSoundTypeSoundsOld :=
     wbEDIDReq,
     wbStruct(PKDT, 'General', [
       wbInteger('General Flags', itU32, wbPKDTFlags),
-      wbInteger('Type', itU8, wbPKDTType),
+      wbInteger('Type', itU8, wbPackageTypeEnum),
       wbUnused(1),
       wbInteger('Fallout Behavior Flags', itU16, wbFlags([
         {0x00000001}'Hellos To Player',

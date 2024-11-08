@@ -22,7 +22,6 @@ var
   wbFormTypeEnum: IwbEnumDef;
   wbMagicSchoolEnum: IwbEnumDef;
   wbOBMEResolutionInfo: IwbEnumDef;
-  wbPKDTType: IwbEnumDef;
   wbSkillEnum: IwbEnumDef;
   wbSpecializationEnum: IwbEnumDef;
 
@@ -3304,21 +3303,6 @@ var  wbSoundTypeSoundsOld :=
           {0x80000000} ''
         ]);
 
-  wbPKDTType := wbEnumSummary([
-           {0} 'Find', '',
-           {1} 'Follow', '',
-           {2} 'Escort', '',
-           {3} 'Eat', '',
-           {4} 'Sleep', '',
-           {5} 'Wander', '',
-           {6} 'Travel', '',
-           {7} 'Accompany', '',
-           {8} 'Use item at', 'Use',
-           {9} 'Ambush', '',
-          {10} 'Flee not combat', 'Flee',
-          {11} 'Cast magic', 'Cast'
-        ]);
-
   wbRecord(PACK, 'AI Package',
     wbFlags(wbFlagsList([
       14, 'Unknown 14',
@@ -3328,12 +3312,12 @@ var  wbSoundTypeSoundsOld :=
     wbUnion(PKDT, 'General', wbPACKPKDTDecider, [
       wbStruct('', [
         wbInteger('Flags', itU16, wbPKDTFlags),
-        wbInteger('Type', itU8, wbPKDTType),
+        wbInteger('Type', itU8, wbPackageTypeEnum),
         wbUnused(1)
       ]).SetSummaryKey([1]).IncludeFlag(dfSummaryMembersNoName),
       wbStruct('', [
         wbInteger('Flags', itU32, wbPKDTFlags),
-        wbInteger('Type', itU8, wbPKDTType),
+        wbInteger('Type', itU8, wbPackageTypeEnum),
         wbUnused(3)
       ]).SetSummaryKey([1]).IncludeFlag(dfSummaryMembersNoName)
     ]).IncludeFlag(dfSummaryMembersNoName),

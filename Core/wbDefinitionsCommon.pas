@@ -41,6 +41,7 @@ var
   wbCrimeTypeEnum: IwbEnumDef;
   wbCreatureTypeEnum: IwbEnumDef;
   wbMusicEnum: IwbEnumDef;
+  wbPackageTypeEnum: IwbEnumDef;
   wbQuadrantEnum: IwbEnumDef;
   wbQuestEventEnum: IwbEnumDef;
   wbSexEnum: IwbEnumDef;
@@ -4916,6 +4917,33 @@ begin
       0, 'Default',
       1, 'Public',
       2, 'Dungeon'
+    ]);
+
+  wbPackageTypeEnum :=
+    wbEnum([], [
+      0, 'Find',
+      1, 'Follow',
+      2, 'Escort',
+      3, 'Eat',
+      4, 'Sleep',
+      5, 'Wander',
+      6, 'Travel',
+      7, 'Accompany',
+      8, 'Use Item At',
+      9, 'Ambush',
+     10, 'Flee Not Combat',
+     11, IsTES4('Cast Magic',
+                ''),
+     12, IsFO3('Sandbox',
+               ''),
+     13, IsFO3('Patrol',
+               ''),
+     14, IsFO3('Guard',
+               ''),
+     15, IsFO3('Dialogue',
+               ''),
+     16, IsFO3('Use Weapon',
+               '')
     ]);
 
   wbQuadrantEnum :=
