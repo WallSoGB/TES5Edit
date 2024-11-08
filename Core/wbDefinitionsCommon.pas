@@ -51,6 +51,7 @@ var
   wbZTestFuncEnum: IwbEnumDef;
 
   wbPackageFlags: IwbFlagsDef;
+  wbServiceFlags: IwbFlagsDef;
 
   wbActionFlag: IwbRecordMemberDef;
   wbActorSounds: IwbRecordMemberDef;
@@ -343,7 +344,8 @@ function wbIsFlag(aFlag: Integer; const aValue: IwbValueDef; aIsUnused: Boolean 
 function wbIsNotFlag(aFlag: Integer; const aSignature: TwbSignature; const aValue: IwbValueDef; aIsUnused: Boolean = True): IwbRecordMemberDef; overload;
 function wbIsNotFlag(aFlag: Integer; const aValue: IwbValueDef; aIsUnused: Boolean = True): IwbValueDef; overload;
 
-{>>> Game Mode IfThen Defs <<<} //23
+{>>> Game Mode IfThen Defs <<<} //24
+function IsTES3(const aDef1, aDef2: String): string; overload;
 function IsTES4(const aDef1, aDef2: Integer): Integer; overload;
 function IsTES4(const aDef1, aDef2: IwbRecordMemberDef): IwbRecordMemberDef; overload;
 function IsTES4(const aDef1, aDef2: IwbValueDef): IwbValueDef; overload;
@@ -3421,7 +3423,15 @@ begin
       ]).IncludeFlag(dfMustBeUnion);
 end;
 
-{>>> wbGameMode IfThen Defs <<<} //23
+{>>> wbGameMode IfThen Defs <<<} //24
+
+function IsTES3(const aDef1, aDef2: string): string;
+begin
+  if wbIsMorrowind then
+    Result := aDef1
+  else
+    Result := aDef2;
+end;
 
 function IsTES4(const aDef1, aDef2: Integer): Integer;
 begin
@@ -3447,7 +3457,7 @@ begin
     Result := aDef2;
 end;
 
-function IsTES4(const aDef1, aDef2: String): String;
+function IsTES4(const aDef1, aDef2: string): string;
 begin
   if wbIsOblivion then
     Result := aDef1
@@ -3455,7 +3465,7 @@ begin
     Result := aDef2;
 end;
 
-function IsTES4FO3(const aDef1, aDef2: String): String;
+function IsTES4FO3(const aDef1, aDef2: string): string;
 begin
   if wbIsOblivion or wbIsFallout3 then
     Result := aDef1
@@ -3511,7 +3521,7 @@ begin
     Result := aDef2;
 end;
 
-function IsTES5(const aDef1, aDef2: String): string;
+function IsTES5(const aDef1, aDef2: string): string;
 begin
   if wbIsSkyrim then
     Result := aDef1
@@ -3535,7 +3545,7 @@ begin
     Result := aDef2;
 end;
 
-function IsSSE(const aDef1, aDef2: String): String;
+function IsSSE(const aDef1, aDef2: string): string;
 begin
   if wbIsSkyrimSE then
     Result := aDef1
@@ -5139,6 +5149,34 @@ begin
      30, IsSF1    ('Group Package', ''),
      31, IsSF1    ('Weapon Drawr: Alert', '')
     ]));
+
+  wbServiceFlags :=
+    wbFlags(wbSparseFlags([
+      0,        'Weapons',
+      1,        'Armor',
+      2, IsFO3 ('Alcohol',
+                'Clothing'),
+      3,        'Books',
+      4, IsFO3 ('Food',
+                'Ingredients'),
+      5, IsTES3('Picks',
+         IsFO3 ('Chems', '')),
+      6, IsTES3('Probes',
+         IsFO3 ('Stimpaks', '')),
+      7, IsFO3 ('', 'Lights'),
+      8, IsFO3 ('', 'Apparatus'),
+      9, IsTES4('Repair', ''),
+     10,        'Miscellaneous',
+     11, IsFO3 ('', 'Spells'),
+     12, IsFO3 ('', 'Magic Items'),
+     13, IsFO3 ('', 'Potions'),
+     14,        'Training',
+     15, IsTES3('Spellmaking', ''),
+     16, IsTES3('Enchanting',
+                'Recharge'),
+     17, IsTES3('Repair Items',
+                'Repair')
+    ], False, 18));
 
   wbEnchantment :=
     wbRStruct('Enchantment', [

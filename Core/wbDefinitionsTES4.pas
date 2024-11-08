@@ -16,8 +16,6 @@ uses
   wbInterface;
 
 var
-  wbServiceFlags: IwbFlagsDef;
-
   wbFormTypeEnum: IwbEnumDef;
   wbMagicSchoolEnum: IwbEnumDef;
   wbOBMEResolutionInfo: IwbEnumDef;
@@ -1856,28 +1854,6 @@ begin
     ]).SetDontShow(wbCellGridDontShow)
       .SetIsRemovable(wbCellGridIsRemovable)
   ], True, wbCellAddInfo, cpNormal, False, wbCELLAfterLoad);
-
-  wbServiceFlags :=
-    wbFlags([
-      {0x00000001} 'Weapons',
-      {0x00000002} 'Armor',
-      {0x00000004} 'Clothing',
-      {0x00000008} 'Books',
-      {0x00000010} 'Ingredients',
-      {0x00000020} '',
-      {0x00000040} '',
-      {0x00000080} 'Lights',
-      {0x00000100} 'Apparatus',
-      {0x00000200} '',
-      {0x00000400} 'Miscellaneous',
-      {0x00000800} 'Spells',
-      {0x00001000} 'Magic Items',
-      {0x00002000} 'Potions',
-      {0x00004000} 'Training',
-      {0x00008000} '',
-      {0x00010000} 'Recharge',
-      {0x00020000} 'Repair'
-    ]);
 
   wbSpecializationEnum := wbEnum(['Combat', 'Magic', 'Stealth']);
 
