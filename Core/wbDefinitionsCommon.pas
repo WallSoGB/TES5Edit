@@ -4693,7 +4693,7 @@ begin
     ]);
 
   wbSexEnum :=
-    wbEnum(['Male','Female']);
+    wbEnum(['Male','Female'], [-1, 'None']); //Morrowind is special :)
 
   wbWorldImpactMaterialEnum :=
     wbEnum([

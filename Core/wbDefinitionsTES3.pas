@@ -173,9 +173,9 @@ const
     '____'
   );
 
-  wbKnownSubRecordSignaturesDESC : TwbKnownSubRecordSignatures = (
+  wbKnownSubRecordSignaturesINDX : TwbKnownSubRecordSignatures = (
     'INDX',
-    'DESC',
+    '____',
     '____',
     '____',
     '____'
@@ -499,12 +499,12 @@ begin
       {0x00010000} 'Enchanting',
       {0x00020000} 'Repair Items',
       {0x00040000} '',
-      {0x00080000} 'Unknown 19', //To be determined.
+      {0x00080000} 'Unknown 19', //Appears to be Runtime or internal.
       {0x00100000} '',
-      {0x00200000} 'Unknown 21', //To be determined.
-      {0x00400000} 'Unknown 22', //To be determined.
-      {0x00800000} 'Unknown 23', //To be determined.
-      {0x01000000} 'Unknown 24'  //To be determined.
+      {0x00200000} 'Unknown 21', //Appears to be Runtime or internal.
+      {0x00400000} 'Unknown 22', //Appears to be Runtime or internal.
+      {0x00800000} 'Unknown 23', //Appears to be Runtime or internal.
+      {0x01000000} 'Unknown 24'  //Appears to be Runtime or internal.
     ]);
 
   wbLeveledFlags :=
@@ -553,7 +553,7 @@ begin
       wbInteger('Flee', itU8),
       wbInteger('Alarm', itU8),
       wbByteArray('Unused Bytes', 3, cpIgnore),
-      wbInteger('Auto Calculate Buy/Sell Flags', itU32, wbServiceFlags)
+      wbInteger('Service Flags', itU32, wbServiceFlags)
     ], cpNormal, True);
 
   wbTravelServices :=
@@ -596,7 +596,7 @@ begin
     wbString(NAME, 'Editor ID'),
     wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(MODL, 'Model Filename'),
-    wbString(FNAM, 'Full Name'),
+    wbString(FNAM, 'Name'),
     wbString(SCRI, 'Script') //[SCPT]
   ]).SetFormIDBase($40);
 
@@ -606,8 +606,8 @@ begin
     wbString(MODL, 'Model Filename'),
     wbString(TEXT, 'Icon Filename'),
     wbString(SCRI, 'Script'), //[SCPT]
-    wbString(FNAM, 'Full Name'),
-    wbStruct(ALDT, 'Alchemy Data', [
+    wbString(FNAM, 'Name'),
+    wbStruct(ALDT, 'Data', [
       wbFloat('Weight'),
       wbInteger('Value', itS32),
       wbInteger('Auto Calculate Value', itU32, wbBoolEnum)
@@ -619,9 +619,9 @@ begin
     wbString(NAME, 'Editor ID'),
     wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(MODL, 'Model Filename'),
-    wbString(FNAM, 'Full Name'),
+    wbString(FNAM, 'Name'),
     wbString(SCRI, 'Script'), //[SCPT]
-    wbStruct(AADT, 'Apparatus Data', [
+    wbStruct(AADT, 'Data', [
       wbInteger('Type', itU32, wbEnum([
         {0} 'Mortar and Pestle',
         {1} 'Alembic',
@@ -639,9 +639,9 @@ begin
     wbString(NAME, 'Editor ID'),
     wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(MODL, 'Model Filename'),
-    wbString(FNAM, 'Full Name'),
+    wbString(FNAM, 'Name'),
     wbString(SCRI, 'Script'), //[SCPT]
-    wbStruct(AODT, 'Armor Data', [
+    wbStruct(AODT, 'Data', [
       wbInteger('Type', itU32, wbEnum([
         { 0} 'Helmet',
         { 1} 'Cuirass',
@@ -671,7 +671,7 @@ begin
     wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(MODL, 'Model Filename'),
     wbString(FNAM, 'Skin Race'), //[RACE]
-    wbStruct(BYDT, 'Body Part Data', [
+    wbStruct(BYDT, 'Data', [
       wbInteger('Part', itU8, wbEnum([
         { 0} 'Head',
         { 1} 'Hair',
@@ -693,7 +693,7 @@ begin
         {0} 'Normal',
         {1} 'Vampire'
       ])),
-      wbInteger('Body Part Flags', itU8, wbFlags([
+      wbInteger('Flags', itU8, wbFlags([
         {0x01} 'Female',
         {0x02} 'Not Playable'
       ])),
@@ -709,8 +709,8 @@ begin
     wbString(NAME, 'Editor ID'),
     wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(MODL, 'Model Filename'),
-    wbString(FNAM, 'Full Name'),
-    wbStruct(BKDT, 'Book Data', [
+    wbString(FNAM, 'Name'),
+    wbStruct(BKDT, 'Data', [
       wbFloat('Weight'),
       wbInteger('Value', itS32),
       wbInteger('Is Scroll', itU32, wbBoolEnum),
@@ -726,7 +726,7 @@ begin
   wbRecord(BSGN, 'Birthsign', [
     wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(NAME, 'Editor ID'),
-    wbString(FNAM, 'Full Name'),
+    wbString(FNAM, 'Name'),
     wbString(TNAM, 'Constellation Image'),
     wbString(DESC, 'Description'),
     wbRArray('Spells',
@@ -736,7 +736,7 @@ begin
   wbRecord(CELL, 'Cell', [
     wbString(NAME, 'Editor ID'),
     wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
-    wbStruct(DATA, 'Cell Data', [
+    wbStruct(DATA, 'Data', [
       wbInteger('Flags', itU32, wbFlags([
         {0x00000001} 'Is Interior Cell',
         {0x00000002} 'Has Water',
@@ -896,7 +896,7 @@ begin
   if wbSimpleRecords then begin
 
   wbPGRD := wbRecord(PGRD, 'Path Grid', [
-    wbStruct(DATA, 'Path Grid Data', [
+    wbStruct(DATA, 'Data', [
       wbStruct('Grid', [
         wbInteger('X', itS32),
         wbInteger('Y', itS32)
@@ -904,7 +904,7 @@ begin
       wbInteger('Granularity', itU16),
       wbInteger('Number of Points', itU16)
     ], cpNormal, True),
-    wbString(NAME, 'ID'),
+    wbString(NAME, 'Location ID', 0, cpIgnore), //PGRD cannot have a unique ID. It just takes its ID from the cell or region it is in.
     wbByteArray(PGRP, 'Grid Points'),
     wbByteArray(PGRC, 'Grid Connections')
   ]);
@@ -920,7 +920,7 @@ begin
       wbInteger('Granularity', itU16),
       wbInteger('Number of Points', itU16)
     ], cpNormal, True),
-    wbString(NAME, 'ID'),
+    wbString(NAME, 'Location ID', 0, cpIgnore), //PGRD cannot have a unique ID. It just takes its ID from the cell or region it is in.
     wbArray(PGRP, 'Grid Points',
       wbStruct('Grid Point', [
         wbStruct('Position', [
@@ -960,10 +960,10 @@ begin
         end);
 
   wbRecord(REFR, 'Placed Object', @wbKnownSubRecordSignaturesREFR, [
-    wbStruct(CNDT, 'Former Cell Grid Owner', [
+    wbStruct(CNDT, 'Previous Cell Grid Position', [
       wbInteger('X', itS32),
       wbInteger('Y', itS32)
-    ], cpNormal, True),
+    ]),
     wbInteger(FRMR, 'Object Index', itU32, wbFRMRToString, nil, cpIgnore, True).IncludeFlag(dfInternalEditOnly),
     wbString(NAME, 'Base Object'), //[ACTI, ALCH, APPA, ARMO, BODY, BOOK, CLOT, CONT, CREA, DOOR, INGR, LEVC, LOCK, MISC, NPC_, PROB, REPA, STAT, WEAP]
     wbInteger(UNAM, 'Reference Blocked', itU8, wbEnum(['Blocked'],[])).SetDefaultNativeValue(0),
@@ -999,8 +999,8 @@ begin
       wbString(TNAM, 'Trap') //[ENCH]
     ], [], cpNormal, False, nil, True),
     wbInteger(DELE, 'Deleted', itU32, wbEnum([],[
-      $00482C64, 'Deleted (Temporary Ref)',
-      $11842014, 'Deleted (Persistent Ref)'
+      $00482C64, 'Deleted (Non-Door Reference)',
+      $11842014, 'Deleted (Door Reference)'
     ])).SetDefaultNativeValue(4729956),
     wbStruct(DATA, 'Reference Data', [
       wbStruct('Position', [
@@ -1027,8 +1027,8 @@ begin
   wbRecord(CLAS, 'Class', [
     wbString(NAME, 'Editor ID'),
     wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
-    wbString(FNAM, 'Full Name'),
-    wbStruct(CLDT, 'Class Data', [
+    wbString(FNAM, 'Name'),
+    wbStruct(CLDT, 'Data', [
       wbArray('Primary Attributes',
         wbInteger('Primary Attribute', itS32, wbAttributeEnum),
       2),
@@ -1040,7 +1040,7 @@ begin
         ]),
       5),
       wbInteger('Playable', itU32, wbBoolEnum),
-      wbInteger('Auto Calculate Buy/Sell Flags', itU32, wbServiceFlags)
+      wbInteger('Service Flags', itU32, wbServiceFlags)
     ], cpNormal, True),
     wbString(DESC, 'Description')
   ]).SetFormIDBase($18);
@@ -1049,8 +1049,8 @@ begin
     wbString(NAME, 'Editor ID'),
     wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(MODL, 'Model Filename'),
-    wbString(FNAM, 'Full Name'),
-    wbStruct(CTDT, 'Clothing Data', [
+    wbString(FNAM, 'Name'),
+    wbStruct(CTDT, 'Data', [
       wbInteger('Type', itU32, wbEnum([
         {0} 'Pants',
         {1} 'Shoes',
@@ -1077,9 +1077,9 @@ begin
     wbString(NAME, 'Editor ID'),
     wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(MODL, 'Model Filename'),
-    wbString(FNAM, 'Full Name'),
+    wbString(FNAM, 'Name'),
     wbFloat(CNDT, 'Weight', cpNormal, True),
-    wbInteger(FLAG, 'Container Flags', itU32, wbFlags([
+    wbInteger(FLAG, 'Flags', itU32, wbFlags([
       {0x00000001} 'Organic',
       {0x00000002} 'Respawns',
       {0x00000004} '',
@@ -1098,9 +1098,9 @@ begin
     wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(MODL, 'Model Filename'),
     wbString(CNAM, 'Sound Generator Creature'), //[CREA]
-    wbString(FNAM, 'Full Name'),
+    wbString(FNAM, 'Name'),
     wbString(SCRI, 'Script'), //[SCPT]
-    wbStruct(NPDT, 'Creature Data', [
+    wbStruct(NPDT, 'Data', [
       wbInteger('Type', itU32, wbEnum([
         {0} 'Creature',
         {1} 'Daedra',
@@ -1135,7 +1135,7 @@ begin
       3),
       wbInteger('Barter Gold', itU32)
     ], cpNormal, True),
-    wbInteger(FLAG, 'Creature Flags', itU32, wbFlags([
+    wbInteger(FLAG, 'Flags', itU32, wbFlags([
         {0x00000001} 'Biped',
         {0x00000002} 'Respawn',
         {0x00000004} 'Weapon & Shield',
@@ -1169,7 +1169,7 @@ begin
           ]),
           wbInteger('Reset', itU32, wbEnum([],[
             $00000001, 'Reset',
-            $00000101, 'Reset'
+            $00000101, 'Reset '
           ]))
         ], cpNormal, True),
         wbStruct(AI_W, 'AI Wander', [
@@ -1231,19 +1231,14 @@ begin
   ]).SetFormIDBase($80);
 
   wbRecord(INFO, 'Dialog Response', @wbKnownSubRecordSignaturesINFO, [
-    wbString(INAM, 'Dialog Response ID'),
-    wbString(PNAM, 'Previous Dialog Response ID'),
-    wbString(NNAM, 'Next Dialog Response ID'),
-    wbStruct(DATA, 'Dialog Response Data', [
+    wbString(INAM, 'Response ID'),
+    wbString(PNAM, 'Previous Response ID'),
+    wbString(NNAM, 'Next Response ID'),
+    wbStruct(DATA, 'Data', [
       wbInteger('Dialog Type', itU32, wbDialogTypeEnum),
       wbInteger('Disposition/Index', itU32),
       wbInteger('Speaker Faction Rank', itS8),
-      wbInteger('Gender', itS8, wbEnum([
-        {0} 'Male',
-        {1} 'Female'
-      ], [
-        -1, 'None'
-      ])),
+      wbInteger('Gender', itS8, wbSexEnum),
       wbInteger('Player Faction Rank', itS8),
       wbByteArray('Unused Byte', 1, cpIgnore)
     ], cpNormal, True),
@@ -1256,11 +1251,11 @@ begin
     wbString(SNAM, 'Sound Filename'),
     wbString(NAME, 'Response'),
     wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])),
-    wbRUnion('Quest Data', [
+    wbRStruct('Quest Data', [
       wbInteger(QSTN, 'Quest Name', itU8, wbEnum([], [1, 'Quest Name'])).SetDefaultNativeValue(1),
       wbInteger(QSTF, 'Quest Finished', itU8, wbEnum([], [1, 'Quest Finished'])).SetDefaultNativeValue(1),
       wbInteger(QSTR, 'Quest Restarted', itU8, wbEnum([], [1, 'Quest Restarted'])).SetDefaultNativeValue(1)
-    ],[]),
+    ], []),
     wbRArray('Conditions',
       wbRStructSK([], 'Condition', [
         wbStruct(SCVR, 'Condition Union', [
@@ -1381,7 +1376,7 @@ begin
     wbString(NAME, 'Editor ID'),
     wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(MODL, 'Model Filename'),
-    wbString(FNAM, 'Full Name'),
+    wbString(FNAM, 'Name'),
     wbString(SCRI, 'Script'), //[SCPT]
     wbString(SNAM, 'Open Sound'), //[SOUN]
     wbString(ANAM, 'Close Sound') //[SOUN]
@@ -1390,7 +1385,7 @@ begin
   wbRecord(ENCH, 'Enchantment', [
     wbString(NAME, 'Editor ID'),
     wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
-    wbStruct(ENDT, 'Enchantment Data', [
+    wbStruct(ENDT, 'Data', [
       wbInteger('Cast Type', itU32, wbEnum([
         {0} 'Cast Once',
         {1} 'Cast Strikes',
@@ -1411,7 +1406,7 @@ begin
   wbRecord(FACT, 'Faction', [
     wbString(NAME, 'Editor ID'),
     wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
-    wbString(FNAM, 'Full Name'),
+    wbString(FNAM, 'Name'),
     wbRArray('Ranks',
       wbStringForward(RNAM, 'Rank', 32)),
     wbStruct(FADT, 'Faction Data', [
@@ -1471,8 +1466,8 @@ begin
     wbString(NAME, 'Editor ID'),
     wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(MODL, 'Model Filename'),
-    wbString(FNAM, 'Full Name'),
-    wbStruct(IRDT, 'Ingredient Data', [
+    wbString(FNAM, 'Name'),
+    wbStruct(IRDT, 'Data', [
       wbFloat('Weight'),
       wbInteger('Value', itS32),
       wbStruct('Effects', [
@@ -1521,9 +1516,9 @@ begin
     wbString(NAME, 'Editor ID'),
     wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(MODL, 'Model Filename'),
-    wbString(FNAM, 'Full Name'),
+    wbString(FNAM, 'Name'),
     wbString(ITEX, 'Icon Filename'),
-    wbStruct(LHDT, 'Light Data', [
+    wbStruct(LHDT, 'Data', [
       wbFloat('Weight'),
       wbInteger('Value', itS32),
       wbInteger('Time', itS32),
@@ -1554,7 +1549,7 @@ begin
     wbString(NAME, 'Editor ID'),
     wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(MODL, 'Model Filename'),
-    wbString(FNAM, 'Full Name'),
+    wbString(FNAM, 'Name'),
     wbStruct(LKDT, 'Lockpick Data', [
       wbFloat('Weight'),
       wbInteger('Value', itS32),
@@ -1572,9 +1567,9 @@ begin
     wbString(DATA, 'Texture Filename')
   ]).SetFormIDBase($60);
 
-  wbRecord(MGEF, 'Magic Effect', @wbKnownSubRecordSignaturesDESC, [
-    wbInteger(INDX, 'Magic Effect ID', itU32, wbMagicEffectEnum),
-    wbStruct(MEDT, 'Magic Effect Data', [
+  wbRecord(MGEF, 'Magic Effect', @wbKnownSubRecordSignaturesINDX, [
+    wbInteger(INDX, 'Index', itU32, wbMagicEffectEnum),
+    wbStruct(MEDT, 'Data', [
       wbInteger('School', itU32, wbEnum([
         {0} 'Alteration',
         {1} 'Conjuration',
@@ -1633,10 +1628,11 @@ begin
     wbString(NAME, 'Editor ID'),
     wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(MODL, 'Model Filename'),
-    wbString(FNAM, 'Full Name'),
+    wbString(FNAM, 'Name'),
     wbStruct(MCDT,'Miscellaneous Item Data', [
       wbFloat('Weight'),
       wbInteger('Value', itS32),
+      //This flag is only set if the object is used as the key for a locked object.
       wbInteger('Is Key', itU32, wbBoolEnum)
     ], cpNormal, True),
     wbString(SCRI, 'Script'), //[SCPT]
@@ -1654,9 +1650,9 @@ begin
     wbString(BNAM, 'Head Body Part'), //[BODY]
     wbString(KNAM, 'Hair Body Part'), //[BODY]
     wbString(SCRI, 'Script'), //[SCPT]
-    wbStruct(NPDT, 'Non-Player Character Data', [
-      wbUnion('Data', wbNPCDataDecider, [
-        wbStruct('Non-Auto Calculated Data', [
+    wbStruct(NPDT, 'Data', [
+      wbUnion('Data Format', wbNPCDataDecider, [
+        wbStruct('Non-Auto Calculated', [
           wbInteger('Level', itS16),
           wbStruct('Attributes', [
             wbInteger('Strength', itU8),
@@ -1707,7 +1703,7 @@ begin
           wbByteArray('Unused Byte 2', 1, cpIgnore),
           wbInteger('Gold', itU32)
         ]),
-        wbStruct('Auto Calculated Data', [
+        wbStruct('Auto Calculated', [
           wbInteger('Level', itU16),
           wbInteger('Disposition', itU8),
           wbInteger('Reputation', itU8),
@@ -1717,7 +1713,7 @@ begin
         ])
       ])
     ], cpNormal, True),
-    wbInteger(FLAG, 'Non-Player Character Flags', itU32, wbFlags([
+    wbInteger(FLAG, 'Flags', itU32, wbFlags([
       {0x000001} 'Female',
       {0x000002} 'Essential',
       {0x000004} 'Respawn',
@@ -1750,7 +1746,7 @@ begin
           ]),
           wbInteger('Reset', itU32, wbEnum([],[
             $00000001, 'Reset',
-            $00000101, 'Reset'
+            $00000101, 'Reset '
           ]))
         ], cpNormal, True),
         wbStruct(AI_W, 'AI Wander', [
@@ -1807,8 +1803,8 @@ begin
     wbString(NAME, 'Editor ID'),
     wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(MODL, 'Model Filename'),
-    wbString(FNAM, 'Full Name'),
-    wbStruct(PBDT, 'Probe Data', [
+    wbString(FNAM, 'Name'),
+    wbStruct(PBDT, 'Data', [
       wbFloat('Weight'),
       wbInteger('Value', itS32),
       wbFloat('Quality'),
@@ -1821,8 +1817,8 @@ begin
   wbRecord(RACE, 'Race', [
     wbString(NAME, 'Editor ID'),
     wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
-    wbString(FNAM, 'Full Name'),
-    wbStruct(RADT, 'Race Data', [
+    wbString(FNAM, 'Name'),
+    wbStruct(RADT, 'Data', [
       wbArray('Skill Bonuses',
         wbStruct('Skill Bonus', [
           wbInteger('Skill', itS32, wbSkillEnum),
@@ -1884,10 +1880,10 @@ begin
   wbRecord(REGN, 'Region', [
     wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(NAME, 'Editor ID'),
-    wbString(FNAM, 'Full Name'),
+    wbString(FNAM, 'Name'),
     wbStruct(WEAT, 'Weather Chances', [
-      wbUnion('Format', wbREGNDataDecider, [
-        wbStruct('Weather Chances (Old Format)', [
+      wbUnion('Data Format', wbREGNDataDecider, [
+        wbStruct('Weather Chances (Pre 1.3 Format)', [
           wbInteger('Clear', itU8),
           wbInteger('Cloudy', itU8),
           wbInteger('Foggy', itU8),
@@ -1930,8 +1926,8 @@ begin
     wbString(NAME, 'Editor ID'),
     wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(MODL, 'Model Filename'),
-    wbString(FNAM, 'Full Name'),
-    wbStruct(RIDT, 'Repair Item Data', [
+    wbString(FNAM, 'Name'),
+    wbStruct(RIDT, 'Data', [
       wbFloat('Weight'),
       wbInteger('Value', itS32),
       wbInteger('Uses', itS32),
@@ -1943,6 +1939,7 @@ begin
 
   wbRecord(SCPT, 'Script', @wbKnownSubRecordSignaturesSCPT, [
     wbStruct(SCHD, 'Script Header', [
+      //Name can be saved with 36 characters in the CS, but it collides with Number of Shorts.
       wbString('Name', 32),
       wbInteger('Number of Shorts', itU32),
       wbInteger('Number of Longs', itU32),
@@ -1964,9 +1961,9 @@ begin
     end);
 
   //Standardized
-  wbRecord(SKIL, 'Skill', @wbKnownSubRecordSignaturesDESC, [
-    wbInteger(INDX, 'Skill', itU32, wbSkillEnum),
-    wbStruct(SKDT, 'Skill Data', [
+  wbRecord(SKIL, 'Skill', @wbKnownSubRecordSignaturesINDX, [
+    wbInteger(INDX, 'Index', itU32, wbSkillEnum),
+    wbStruct(SKDT, 'Data', [
       wbInteger('Attribute', itS32, wbAttributeEnum),
       wbInteger('Type', itU32, wbEnum([
        {0}'Combat',
@@ -2168,7 +2165,7 @@ begin
     wbString(NAME, 'Editor ID'),
     wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(FNAM, 'Sound Filename'),
-    wbStruct(DATA, 'Sound Data', [
+    wbStruct(DATA, 'Data', [
       wbInteger('Volume', itU8),
       wbInteger('Minimum Range', itU8),
       wbInteger('Maximum Range', itU8)
@@ -2178,7 +2175,7 @@ begin
   wbRecord(SPEL, 'Spellmaking', [
     wbString(NAME, 'Editor ID'),
     wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
-    wbString(FNAM, 'Full Name'),
+    wbString(FNAM, 'Name'),
     wbStruct(SPDT, 'Spellmaking Data', [
       wbInteger('Type', itU32, wbEnum([
         {0} 'Spell',
@@ -2214,8 +2211,8 @@ begin
     wbString(NAME, 'Editor ID'),
     wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
     wbString(MODL, 'Model Filename'),
-    wbString(FNAM, 'Full Name'),
-    wbStruct(WPDT, 'Weapon Data', [
+    wbString(FNAM, 'Name'),
+    wbStruct(WPDT, 'Data', [
       wbFloat('Weight'),
       wbInteger('Value', itS32),
       wbInteger('Type', itU16, wbEnum([
