@@ -138,7 +138,8 @@ function wbPlacedAddInfo(const aMainRecord: IwbMainRecord): string;
 function wbROADAddInfo(const aMainRecord: IwbMainRecord): string;
 function wbSCENAddInfo(const aMainRecord: IwbMainRecord): string;
 
-{>>> After Load Callbacks <<<} //2
+{>>> After Load Callbacks <<<} //3
+procedure wbAVIFSkillAfterLoad(const aElement: IwbElement);
 procedure wbRPLDAfterLoad(const aElement: IwbElement);
 procedure wbWorldAfterLoad(const aElement: IwbElement);
 
@@ -566,7 +567,20 @@ begin
   end;
 end;
 
-{>>> After Load Callbacks <<<} //2
+{>>> After Load Callbacks <<<} //3
+
+procedure wbAVIFSkillAfterLoad(const aElement: IwbElement);
+begin
+  if not Assigned(aElement) then
+    Exit;
+
+  if wbBeginInternalEdit then try
+    if aElement.NativeValue > 3 then
+      aElement.NativeValue := 0;
+  finally
+    wbEndInternalEdit;
+  end;
+end;
 
 procedure wbRPLDAfterLoad(const aElement: IwbElement);
 var

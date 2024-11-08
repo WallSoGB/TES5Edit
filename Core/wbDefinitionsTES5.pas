@@ -7143,7 +7143,7 @@ begin
       'Combat',
       'Magic',
       'Stealth'
-    ])),
+    ])).SetAfterLoad(wbAVIFSkillAfterLoad),
     wbStruct(AVSK, 'Skill', [
       wbFloat('Skill Use Mult'),
       wbFloat('Skill Offset Mult'),
