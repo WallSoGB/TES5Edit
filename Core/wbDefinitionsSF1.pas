@@ -5784,36 +5784,6 @@ end;
         -1, 'None'
       ]);
 
-  var wbSkillEnum :=
-    wbEnum([
-      'Unknown 1',
-      'Unknown 2',
-      'Unknown 3',
-      'Unknown 4',
-      'Unknown 5',
-      'Unknown 6',
-      'One Handed',
-      'Two Handed',
-      'Archery',
-      'Block',
-      'Smithing',
-      'Heavy Armor',
-      'Light Armor',
-      'Pickpocket',
-      'Lockpicking',
-      'Sneak',
-      'Alchemy',
-      'Speech',
-      'Alteration',
-      'Conjuration',
-      'Destruction',
-      'Illusion',
-      'Restoration',
-      'Enchanting'
-    ], [
-    -1, 'None'
-    ]);
-
   var wbCastEnum := wbEnum([
     {0} 'Constant Effect',
     {1} 'Fire and Forget',
@@ -10208,9 +10178,8 @@ end;
         {9} 'Robot Mod', // used for Robot stations
        {10} 'Extractor',
        {11} 'Research'
-      ])),
-      wbInteger('Uses Skill', itS8, wbSkillEnum)
-    ], cpNormal, True, nil, 1),
+      ]))
+    ]).SetRequired,
     wbFormIDCk(NAM1, 'Associated Form', sigBaseObjects),
     wbFormIDCk(FTMP, 'Furniture Template', [FURN]),
     wbRArray('Marker Entry Points', wbStruct(FNPR, 'Marker', [

@@ -41,7 +41,6 @@ var
   wbObjectModProperties: IwbArrayDef;
   wbObjectTypeEnum: IwbEnumDef;
   wbPropTypeEnum: IwbEnumDef;
-  wbSkillEnum: IwbEnumDef;
   wbSoundLevelEnum: IwbEnumDef;
   wbTargetEnum: IwbEnumDef;
   wbVatsValueFunctionEnum: IwbEnumDef;
@@ -6182,36 +6181,6 @@ begin
         -1, 'None'
       ]);
 
-  wbSkillEnum :=
-    wbEnum([
-      'Unknown 1',
-      'Unknown 2',
-      'Unknown 3',
-      'Unknown 4',
-      'Unknown 5',
-      'Unknown 6',
-      'One Handed',
-      'Two Handed',
-      'Archery',
-      'Block',
-      'Smithing',
-      'Heavy Armor',
-      'Light Armor',
-      'Pickpocket',
-      'Lockpicking',
-      'Sneak',
-      'Alchemy',
-      'Speech',
-      'Alteration',
-      'Conjuration',
-      'Destruction',
-      'Illusion',
-      'Restoration',
-      'Enchanting'
-    ], [
-    -1, 'None'
-    ]);
-
   wbCastEnum := wbEnum([
     {0} 'Constant Effect',
     {1} 'Fire and Forget',
@@ -8438,7 +8407,7 @@ begin
         {8} 'Power Armor', // used for Power Armor stations
         {9} 'Robot Mod' // used for Robot stations
       ])),
-      wbInteger('Uses Skill', itS8, wbSkillEnum)
+      wbUnused(1)
     ], cpNormal, True, nil, 1),
     wbFormIDCk(NAM1, 'Associated Form', [ARMO, WEAP, PERK, SPEL, HAZD]),
     wbRArray('Markers', wbRStruct('Marker', [
