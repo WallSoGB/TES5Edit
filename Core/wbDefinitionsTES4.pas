@@ -19,7 +19,6 @@ var
   wbPKDTFlags: IwbFlagsDef;
   wbServiceFlags: IwbFlagsDef;
 
-  wbCrimeTypeEnum: IwbEnumDef;
   wbFormTypeEnum: IwbEnumDef;
   wbMagicSchoolEnum: IwbEnumDef;
   wbOBMEResolutionInfo: IwbEnumDef;
@@ -2441,18 +2440,6 @@ var  wbSoundTypeSoundsOld :=
       'Fixed'
     ]), cpNormal, True)
   ]);
-
-  wbCrimeTypeEnum :=
-    wbEnum([
-      'Steal',
-      'Pickpocket',
-      'Trespass',
-      'Attack',
-      'Murder',
-      'Steal Horse'
-    ], [
-      -1, 'None'
-    ]);
 
   wbFormTypeEnum :=
     wbEnum([], [

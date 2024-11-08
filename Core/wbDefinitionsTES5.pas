@@ -28,7 +28,6 @@ var
   wbBipedObjectEnum: IwbEnumDef;
   wbCastEnum: IwbEnumDef;
   wbCastingSourceEnum: IwbEnumDef;
-  wbCrimeTypeEnum: IwbEnumDef;
   wbCriticalStageEnum: IwbEnumDef;
   wbEmotionTypeEnum: IwbEnumDef;
   wbEntryPointsEnum: IwbEnumDef;
@@ -4534,19 +4533,6 @@ begin
     'Voice',
     'Instant'
   ]);
-
-  wbCrimeTypeEnum :=
-    wbEnum([
-      'Steal',
-      'Pickpocket',
-      'Trespass',
-      'Attack',
-      'Murder',
-      'Escape Jail',
-      'Werewolf Transformation'
-    ], [
-      -1, 'None'
-    ]);
 
   wbActorValue := wbInteger('Actor Value', itS32, wbActorValueEnum);
 

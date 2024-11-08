@@ -38,6 +38,7 @@ var
   wbBoolEnum: IwbEnumDef;
   wbConfidenceEnum: IwbEnumDef;
   wbCRCValuesEnum: IwbEnumDef;
+  wbCrimeTypeEnum: IwbEnumDef;
   wbCreatureTypeEnum: IwbEnumDef;
   wbMusicEnum: IwbEnumDef;
   wbQuadrantEnum: IwbEnumDef;
@@ -338,12 +339,14 @@ function wbIsFlag(aFlag: Integer; const aValue: IwbValueDef; aIsUnused: Boolean 
 function wbIsNotFlag(aFlag: Integer; const aSignature: TwbSignature; const aValue: IwbValueDef; aIsUnused: Boolean = True): IwbRecordMemberDef; overload;
 function wbIsNotFlag(aFlag: Integer; const aValue: IwbValueDef; aIsUnused: Boolean = True): IwbValueDef; overload;
 
-{>>> Game Mode IfThen Defs <<<} //13
+{>>> Game Mode IfThen Defs <<<} //15
 function IsTES4(const aDef1, aDef2: Integer): Integer; overload;
 function IsTES4(const aDef1, aDef2: IwbRecordMemberDef): IwbRecordMemberDef; overload;
 function IsTES4(const aDef1, aDef2: IwbValueDef): IwbValueDef; overload;
+function IsTES4(const aDef1, aDef2: String): string; overload;
 function IsFO3(const aDef1, aDef2: Integer): Integer; overload;
 function IsFO3(const aDef1, aDef2: IwbValueDef): IwbValueDef; overload;
+function IsFO3(const aDef1, aDef2: string): string; overload;
 function IsFNV(const aDef1, aDef2: string): string; overload;
 function IsFNV(const aDef1, aDef2: IwbRecordMemberDef): IwbRecordMemberDef; overload;
 function IsFNV(const aDef1, aDef2: IwbValueDef): IwbValueDef; overload;
@@ -3426,6 +3429,14 @@ begin
     Result := aDef2;
 end;
 
+function IsTES4(const aDef1, aDef2: String): String;
+begin
+  if wbIsOblivion then
+    Result := aDef1
+  else
+    Result := aDef2;
+end;
+
 function IsFO3(const aDef1, aDef2: Integer): Integer;
 begin
   if wbIsFallout3 then
@@ -3435,6 +3446,14 @@ begin
 end;
 
 function IsFO3(const aDef1, aDef2: IwbValueDef): IwbValueDef;
+begin
+  if wbIsFallout3 then
+    Result := aDef1
+  else
+    Result := aDef2;
+end;
+
+function IsFO3(const aDef1, aDef2: string): string;
 begin
   if wbIsFallout3 then
     Result := aDef1
@@ -4860,6 +4879,24 @@ begin
       Int64($C5B58C0B), 'PathingStreamSaveGame',
       Int64($6AF11190), 'QuestPathingRequest',
       Int64($FCD0CCC3), 'Water'
+    ]);
+
+  wbCrimeTypeEnum :=
+    wbEnum([], [
+     -1, 'None',
+      0, 'Steal',
+      1, 'Pickpocket',
+      2, 'Trespass',
+      3, 'Attack',
+      4, 'Murder',
+      5, IsTES4('Steal Horse',
+         IsFO3 ('',
+                'Escape Jail')),
+      6, IsTES5('Werewolf Transformation',
+         IsSF1 ('Piracy',
+                '')),
+      7, IsSF1 ('Smuggling',
+                '')
     ]);
 
   wbCreatureTypeEnum :=

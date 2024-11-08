@@ -21,7 +21,6 @@ var
   wbTemplateFlags: IwbFlagsDef;
 
   wbBodyPartIndexEnum: IwbEnumDef;
-  wbCrimeTypeEnum: IwbEnumDef;
   wbCriticalStageEnum: IwbEnumDef;
   wbEquipTypeEnum: IwbEnumDef;
   wbFormTypeEnum: IwbEnumDef;
@@ -3987,17 +3986,6 @@ begin
       'Speech',
       'Survival',
       'Unarmed'
-    ], [
-      -1, 'None'
-    ]);
-
-  wbCrimeTypeEnum :=
-    wbEnum([
-      'Steal',
-      'Pickpocket',
-      'Trespass',
-      'Attack',
-      'Murder'
     ], [
       -1, 'None'
     ]);

@@ -5835,20 +5835,6 @@ end;
     'Instant'
   ]);
 
-  var wbCrimeTypeEnum :=
-    wbEnum([
-      'Steal',
-      'Pickpocket',
-      'Trespass',
-      'Attack',
-      'Murder',
-      'Escape Jail',
-      'Werewolf Transformation',
-      'Smuggling'
-    ], [
-      -1, 'None'
-    ]);
-
   var wbKeywordTypeEnum :=
     wbEnum([
       {00} 'None',
