@@ -104,7 +104,6 @@ const
   ];
 
 var
-  wbPKDTSpecificFlagsUnused : Boolean;
   wbEDID: IwbSubRecordDef;
   wbDURL: IwbSubRecordDef;
   wbCOED: IwbSubRecordDef;
@@ -14469,8 +14468,6 @@ begin
     wbFormIDCk(CVT3, 'EWS Actor Cost Curve Table', [CURV]),
     wbFormIDCk(UNWP, 'Unarmed Weapon', [WEAP])
   ], False, nil, cpNormal, False, wbNPCAfterLoad, wbNPCAfterSet);
-
-  wbPKDTSpecificFlagsUnused := False;
 
   wbPKDTInterruptFlags := wbFlags([
     {0x0001} 'Hellos to player',

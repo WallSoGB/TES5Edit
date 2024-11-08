@@ -14789,8 +14789,6 @@ end;
     ])
   ]);
 
-  var wbPKDTSpecificFlagsUnused := False;
-
   var wbPKDTInterruptFlags := wbFlags([
     {0x0001} 'Hellos to player',
     {0x0002} 'Random conversations',

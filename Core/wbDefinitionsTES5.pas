@@ -67,7 +67,6 @@ type
   TVarRecs = array of TVarRec;
 
 var
-  wbPKDTSpecificFlagsUnused : Boolean;
   wbEDID: IwbSubRecordDef;
   wbCOED: IwbSubRecordDef;
   wbXLCM: IwbSubRecordDef;
@@ -9510,8 +9509,6 @@ begin
     'Actor Effects: Range Self',
     'Actors: Any'
   ]);
-
-  wbPKDTSpecificFlagsUnused := False;
 
   wbPKDTInterruptFlags := wbFlags([
     {0x0001}'Hellos to player',

@@ -90,7 +90,6 @@ const
   ];
 
 var
-  wbPKDTSpecificFlagsUnused : Boolean;
   wbEDID: IwbSubRecordDef;
   wbCOED: IwbSubRecordDef;
   wbXLCM: IwbSubRecordDef;
@@ -11969,8 +11968,6 @@ begin
     wbFloat(FMIN, 'Facial Morph Intensity'),
     wbATTX
   ], False, nil, cpNormal, False, wbNPCAfterLoad, wbNPCAfterSet);
-
-  wbPKDTSpecificFlagsUnused := False;
 
   wbPKDTInterruptFlags := wbFlags([
     {0x0001} 'Hellos to player',
