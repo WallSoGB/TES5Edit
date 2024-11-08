@@ -53,7 +53,6 @@ uses
   wbDefinitionsSignatures;
 
 var
-  wbPKDTSpecificFlagsUnused : Boolean;
   wbEDID: IwbSubRecordDef;
   wbEDIDReq: IwbSubRecordDef;
   wbEDIDReqKC: IwbSubRecordDef;
@@ -7676,9 +7675,6 @@ var  wbSoundTypeSoundsOld :=
           'Actors: Any'
         ]);
 
-
-  wbPKDTSpecificFlagsUnused := True;
-
   wbRecord(PACK, 'Package',
     wbFlags(wbFlagsList([
       27, 'Unknown 27'
@@ -7713,8 +7709,8 @@ var  wbSoundTypeSoundsOld :=
           {0x00000100}'Find - Allow Buying',
           {0x00000200}'Find - Allow Killing',
           {0x00000400}'Find - Allow Stealing'
-        ], wbPKDTSpecificFlagsUnused)),
-        wbInteger('Type Specific Flags - Follow', itU16, wbFlags([], wbPKDTSpecificFlagsUnused)),
+        ], True)),
+        wbInteger('Type Specific Flags - Follow', itU16, wbFlags([], True)),
         wbInteger('Type Specific Flags - Escort', itU16, wbFlags([
           {0x00000001}'',
           {0x00000002}'',
@@ -7727,7 +7723,7 @@ var  wbSoundTypeSoundsOld :=
           {0x00000100}'Escort - Allow Buying',
           {0x00000200}'Escort - Allow Killing',
           {0x00000400}'Escort - Allow Stealing'
-        ], wbPKDTSpecificFlagsUnused)),
+        ], True)),
         wbInteger('Type Specific Flags - Eat', itU16, wbFlags([
           {0x00000001}'',
           {0x00000002}'',
@@ -7740,8 +7736,8 @@ var  wbSoundTypeSoundsOld :=
           {0x00000100}'Eat - Allow Buying',
           {0x00000200}'Eat - Allow Killing',
           {0x00000400}'Eat - Allow Stealing'
-        ], wbPKDTSpecificFlagsUnused)),
-        wbInteger('Type Specific Flags - Sleep', itU16, wbFlags([], wbPKDTSpecificFlagsUnused)),
+        ], True)),
+        wbInteger('Type Specific Flags - Sleep', itU16, wbFlags([], True)),
         wbInteger('Type Specific Flags - Wander', itU16, wbFlags([
           {0x00000001}'Wander - No Eating',
           {0x00000002}'Wander - No Sleeping',
@@ -7749,9 +7745,9 @@ var  wbSoundTypeSoundsOld :=
           {0x00000008}'Wander - No Idle Markers',
           {0x00000010}'Wander - No Furniture',
           {0x00000020}'Wander - No Wandering'
-        ], wbPKDTSpecificFlagsUnused)),
-        wbInteger('Type Specific Flags - Travel', itU16, wbFlags([], wbPKDTSpecificFlagsUnused)),
-        wbInteger('Type Specific Flags - Accompany', itU16, wbFlags([], wbPKDTSpecificFlagsUnused)),
+        ], True)),
+        wbInteger('Type Specific Flags - Travel', itU16, wbFlags([], True)),
+        wbInteger('Type Specific Flags - Accompany', itU16, wbFlags([], True)),
         wbInteger('Type Specific Flags - Use Item At', itU16, wbFlags([
           {0x00000001}'',
           {0x00000002}'Use Item At - Sit Down',
@@ -7764,12 +7760,12 @@ var  wbSoundTypeSoundsOld :=
           {0x00000100}'Use Item At - Allow Buying',
           {0x00000200}'Use Item At - Allow Killing',
           {0x00000400}'Use Item At - Allow Stealing'
-        ], wbPKDTSpecificFlagsUnused)),
+        ], True)),
         wbInteger('Type Specific Flags - Ambush', itU16, wbFlags([
           {0x00000001}'Ambush - Hide While Ambushing'
-        ], wbPKDTSpecificFlagsUnused)),
-        wbInteger('Type Specific Flags - Flee Not Combat', itU16, wbFlags([], wbPKDTSpecificFlagsUnused)),
-        wbInteger('Type Specific Flags - ?', itU16, wbFlags([], wbPKDTSpecificFlagsUnused)),
+        ], True)),
+        wbInteger('Type Specific Flags - Flee Not Combat', itU16, wbFlags([], True)),
+        wbInteger('Type Specific Flags - ?', itU16, wbFlags([], True)),
         wbInteger('Type Specific Flags - Sandbox', itU16, wbFlags([
           {0x00000001}'Sandbox - No Eating',
           {0x00000002}'Sandbox - No Sleeping',
@@ -7777,15 +7773,15 @@ var  wbSoundTypeSoundsOld :=
           {0x00000008}'Sandbox - No Idle Markers',
           {0x00000010}'Sandbox - No Furniture',
           {0x00000020}'Sandbox - No Wandering'
-        ], wbPKDTSpecificFlagsUnused)),
-        wbInteger('Type Specific Flags - Patrol', itU16, wbFlags([], wbPKDTSpecificFlagsUnused)),
+        ], True)),
+        wbInteger('Type Specific Flags - Patrol', itU16, wbFlags([], True)),
         wbInteger('Type Specific Flags - Guard', itU16, wbFlags([
           {0x00000001}'',
           {0x00000002}'',
           {0x00000004}'Guard - Remain Near Reference to Guard'
-        ], wbPKDTSpecificFlagsUnused)),
-        wbInteger('Type Specific Flags - Dialogue', itU16, wbFlags([], wbPKDTSpecificFlagsUnused)),
-        wbInteger('Type Specific Flags - Use Weapon', itU16, wbFlags([], wbPKDTSpecificFlagsUnused))
+        ], True)),
+        wbInteger('Type Specific Flags - Dialogue', itU16, wbFlags([], True)),
+        wbInteger('Type Specific Flags - Use Weapon', itU16, wbFlags([], True))
       ]),
       wbUnused(2)
     ], cpNormal, True, nil, 2),
