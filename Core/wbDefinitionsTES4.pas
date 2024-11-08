@@ -16,7 +16,6 @@ uses
   wbInterface;
 
 var
-  wbPKDTFlags: IwbFlagsDef;
   wbServiceFlags: IwbFlagsDef;
 
   wbFormTypeEnum: IwbEnumDef;
@@ -3268,41 +3267,6 @@ var  wbSoundTypeSoundsOld :=
     wbByteArray(FNAM, 'Unknown', 0, cpBenign)
   ], True);
 
-  wbPKDTFlags := wbFlags([
-          {0x00000001} 'Offers services',
-          {0x00000002} 'Must reach location',
-          {0x00000004} 'Must complete',
-          {0x00000008} 'Lock doors at package start',
-          {0x00000010} 'Lock doors at package end',
-          {0x00000020} 'Lock doors at location',
-          {0x00000040} 'Unlock doors at package start',
-          {0x00000080} 'Unlock doors at package end',
-          {0x00000100} 'Unlock doors at location',
-          {0x00000200} 'Continue if PC near',
-          {0x00000400} 'Once per day',
-          {0x00000800} 'Unused',
-          {0x00001000} 'Skip fallout behavior',
-          {0x00002000} 'Always run',
-          {0x00004000} '',
-          {0x00008000} '',
-          {0x00010000} '',
-          {0x00020000} 'Always sneak',
-          {0x00040000} 'Allow swimming',
-          {0x00080000} 'Allow falls',
-          {0x00100000} 'Armor unequipped',
-          {0x00200000} 'Weapons unequipped',
-          {0x00400000} 'Defensive combat',
-          {0x00800000} 'Use horse',
-          {0x01000000} 'No idle anims',
-          {0x02000000} '',
-          {0x04000000} '',
-          {0x08000000} '',
-          {0x10000000} '',
-          {0x20000000} '',
-          {0x40000000} '',
-          {0x80000000} ''
-        ]);
-
   wbRecord(PACK, 'AI Package',
     wbFlags(wbFlagsList([
       14, 'Unknown 14',
@@ -3311,12 +3275,12 @@ var  wbSoundTypeSoundsOld :=
     wbEDID,
     wbUnion(PKDT, 'General', wbPACKPKDTDecider, [
       wbStruct('', [
-        wbInteger('Flags', itU16, wbPKDTFlags),
+        wbInteger('Flags', itU16, wbPackageFlags),
         wbInteger('Type', itU8, wbPackageTypeEnum),
         wbUnused(1)
       ]).SetSummaryKey([1]).IncludeFlag(dfSummaryMembersNoName),
       wbStruct('', [
-        wbInteger('Flags', itU32, wbPKDTFlags),
+        wbInteger('Flags', itU32, wbPackageFlags),
         wbInteger('Type', itU8, wbPackageTypeEnum),
         wbUnused(3)
       ]).SetSummaryKey([1]).IncludeFlag(dfSummaryMembersNoName)

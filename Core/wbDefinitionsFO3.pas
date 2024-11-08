@@ -16,7 +16,6 @@ uses
   wbInterface;
 
 var
-  wbPKDTFlags: IwbFlagsDef;
   wbServiceFlags: IwbFlagsDef;
   wbTemplateFlags: IwbFlagsDef;
 
@@ -7064,41 +7063,6 @@ var  wbSoundTypeSoundsOld :=
     wbFloat(NAM7, 'Weight', cpNormal, True, 1, -1, wbActorTemplateUseTraits)
   ], True, nil, cpNormal, False, wbNPCAfterLoad);
 
-  wbPKDTFlags := wbFlags([
-          {0x00000001} 'Offers Services',
-          {0x00000002} 'Must reach location',
-          {0x00000004} 'Must complete',
-          {0x00000008} 'Lock doors at package start',
-          {0x00000010} 'Lock doors at package end',
-          {0x00000020} 'Lock doors at location',
-          {0x00000040} 'Unlock doors at package start',
-          {0x00000080} 'Unlock doors at package end',
-          {0x00000100} 'Unlock doors at location',
-          {0x00000200} 'Continue if PC near',
-          {0x00000400} 'Once per day',
-          {0x00000800} '',
-          {0x00001000} 'Skip fallout behavior',
-          {0x00002000} 'Always run',
-          {0x00004000} '',
-          {0x00008000} '',
-          {0x00010000} '',
-          {0x00020000} 'Always sneak',
-          {0x00040000} 'Allow swimming',
-          {0x00080000} 'Allow falls',
-          {0x00100000} 'Head-Tracking off',
-          {0x00200000} 'Weapons unequipped',
-          {0x00400000} 'Defensive combat',
-          {0x00800000} 'Weapon Drawn',
-          {0x01000000} 'No idle anims',
-          {0x02000000} 'Pretend In Combat',
-          {0x04000000} 'Continue During Combat',
-          {0x08000000} 'No Combat Alert',
-          {0x10000000} 'No Warn/Attack Behaviour',
-          {0x20000000} '',
-          {0x40000000} '',
-          {0x80000000} ''
-        ]);
-
   wbObjectTypeEnum := wbEnum([
           ' NONE',
           'Activators',
@@ -7141,7 +7105,7 @@ var  wbSoundTypeSoundsOld :=
     ])), [
     wbEDIDReq,
     wbStruct(PKDT, 'General', [
-      wbInteger('General Flags', itU32, wbPKDTFlags),
+      wbInteger('General Flags', itU32, wbPackageFlags),
       wbInteger('Type', itU8, wbPackageTypeEnum),
       wbUnused(1),
       wbInteger('Fallout Behavior Flags', itU16, wbFlags([

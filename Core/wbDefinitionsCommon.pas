@@ -50,6 +50,8 @@ var
   wbZoomOverlayEnum: IwbEnumDef;
   wbZTestFuncEnum: IwbEnumDef;
 
+  wbPackageFlags: IwbFlagsDef;
+
   wbActionFlag: IwbRecordMemberDef;
   wbActorSounds: IwbRecordMemberDef;
   wbCellGrid: IwbRecordMemberDef;
@@ -340,11 +342,12 @@ function wbIsFlag(aFlag: Integer; const aValue: IwbValueDef; aIsUnused: Boolean 
 function wbIsNotFlag(aFlag: Integer; const aSignature: TwbSignature; const aValue: IwbValueDef; aIsUnused: Boolean = True): IwbRecordMemberDef; overload;
 function wbIsNotFlag(aFlag: Integer; const aValue: IwbValueDef; aIsUnused: Boolean = True): IwbValueDef; overload;
 
-{>>> Game Mode IfThen Defs <<<} //15
+{>>> Game Mode IfThen Defs <<<} //23
 function IsTES4(const aDef1, aDef2: Integer): Integer; overload;
 function IsTES4(const aDef1, aDef2: IwbRecordMemberDef): IwbRecordMemberDef; overload;
 function IsTES4(const aDef1, aDef2: IwbValueDef): IwbValueDef; overload;
 function IsTES4(const aDef1, aDef2: String): string; overload;
+function IsTES4FO3(const aDef1, aDef2: String): string; overload;
 function IsFO3(const aDef1, aDef2: Integer): Integer; overload;
 function IsFO3(const aDef1, aDef2: IwbValueDef): IwbValueDef; overload;
 function IsFO3(const aDef1, aDef2: string): string; overload;
@@ -3404,7 +3407,7 @@ begin
       ]).IncludeFlag(dfMustBeUnion);
 end;
 
-{>>> wbGameMode IfThen Defs <<<} //13
+{>>> wbGameMode IfThen Defs <<<} //23
 
 function IsTES4(const aDef1, aDef2: Integer): Integer;
 begin
@@ -3433,6 +3436,14 @@ end;
 function IsTES4(const aDef1, aDef2: String): String;
 begin
   if wbIsOblivion then
+    Result := aDef1
+  else
+    Result := aDef2;
+end;
+
+function IsTES4FO3(const aDef1, aDef2: String): String;
+begin
+  if wbIsOblivion or wbIsFallout3 then
     Result := aDef1
   else
     Result := aDef2;
@@ -5067,6 +5078,53 @@ begin
       7, 'Greater Than or Equal To',
       8, 'Always Show'
     ]);
+
+  wbPackageFlags :=
+    wbFlags(wbSparseFlags([
+      0,           'Offers Services',
+      1, IsTES4FO3('Must Reach Location', ''),
+      2,           'Must Complete',
+      3, IsTES4FO3('Lock Doors At Package Start',
+                   'Maintain Speed At Goal'),
+      4, IsTES4FO3('Lock Doors At Package End',
+         IsTES5   ('', 'Treat As Player Follower')),
+      5, IsTES4FO3('Lock Doors At Location',
+         IsSF1    ('After Combat Reset', '')),
+      6,           'Unlock Doors At Package Start',
+      7,           'Unlock Doors At Package End',
+      8, IsTES4FO3('Unlock Doors At Location',
+         IsTES5   ('', 'Request Block Idles')),
+      9,           'Continue If PC Near',
+     10,           'Once Per Day',
+     11, IsSF1    ('Low Priority', ''),
+     12, IsTES4FO3('Skip Fallout Behavior',
+         IsTES5   ('',
+                   'Skip Load Into Furniture')),
+     13, IsTES4FO3('Always Run',
+                   'Preferred Speed'),
+     16, IsSF1    ('Disable Headtracking', ''),
+     17,           'Always Sneak',
+     18,           'Allow Swimming',
+     19, IsTES4FO3('Allow Falls',
+         IsSF1    ('Disable Advanced Traversals', '')),
+     20, IsTES4   ('Armor Unequipped',
+         IsFO3    ('Head-Tracking Off',
+                   'Ignore Combat')),
+     21,           'Weapons Unequipped',
+     22, IsTES4FO3('Defensive Combat', ''),
+     23, IsTES4   ('Use Horse',
+                   'Weapon Drawn'),
+     24, IsTES4FO3('No Idle Anims', ''),
+     25, IsFO3    ('Pretend In Combat', ''),
+     26, IsFO3    ('Continue During Combat', ''),
+     27, IsTES4   ('', 'No Combat Alert'),
+     28, IsFO3    ('No Warn/Attack Behavior', ''),
+     29, IsTES4FO3('',
+         IsSF1    ('Weapon Drawn: Ready',
+                   'Wear Sleep Outfit')),
+     30, IsSF1    ('Group Package', ''),
+     31, IsSF1    ('Weapon Drawr: Alert', '')
+    ]));
 
   wbEnchantment :=
     wbRStruct('Enchantment', [

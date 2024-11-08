@@ -14791,41 +14791,6 @@ end;
 
   var wbPKDTSpecificFlagsUnused := False;
 
-  var wbPKDTFlags := wbFlags([
-    {0x00000001} 'Offers Services',
-    {0x00000002} 'Unknown 2',
-    {0x00000004} 'Must complete',
-    {0x00000008} 'Maintain Speed at Goal',
-    {0x00000010} 'Treat As Player Follower',
-    {0x00000020} 'After Combat Reset',
-    {0x00000040} 'Unlock doors at package start',
-    {0x00000080} 'Unlock doors at package end',
-    {0x00000100} 'Request Block Idles',
-    {0x00000200} 'Continue if PC Near',
-    {0x00000400} 'Once per day',
-    {0x00000800} 'Low Priority',
-    {0x00001000} 'Skip Load Into Furniture',
-    {0x00002000} 'Preferred Speed',
-    {0x00004000} 'Unknown 15',
-    {0x00008000} 'Unknown 16',
-    {0x00010000} 'Disable Headtracking',
-    {0x00020000} 'Always Sneak',
-    {0x00040000} 'Allow Swimming',
-    {0x00080000} 'Disable Advanced Traversals',
-    {0x00100000} 'Ignore Combat',
-    {0x00200000} 'Weapons Unequipped',
-    {0x00400000} 'Unknown 23',
-    {0x00800000} 'Weapon Drawn',
-    {0x01000000} 'Unknown 25',
-    {0x02000000} 'Unknown 26',
-    {0x04000000} 'Unknown 27',
-    {0x08000000} 'No Combat Alert',
-    {0x10000000} 'Unknown 29',
-    {0x20000000} 'Weapon Drawn: Ready',
-    {0x40000000} 'Group Package',
-    {0x80000000} 'Weapon Drawn: Alert'
-  ]); // CK has no facility to set or view these flags [2, 15, 16, 23, 25, 26, 27, 29] may want to ignore
-
   var wbPKDTInterruptFlags := wbFlags([
     {0x0001} 'Hellos to player',
     {0x0002} 'Random conversations',
@@ -14982,7 +14947,7 @@ end;
     wbVMADFragmentedPACK,
 
     wbStruct(PKDT, 'Pack Data', [
-      wbInteger('General Flags', itU32, wbPKDTFlags).IncludeFlag(dfCollapsed, wbCollapseFlags),
+      wbInteger('General Flags', itU32, wbPackageFlags).IncludeFlag(dfCollapsed, wbCollapseFlags),
       wbInteger('Type', itU8, wbEnum ([], [
         18, 'Package',
         19, 'Package Template'
@@ -15167,8 +15132,8 @@ end;
         {>>> PFO2 should be single, there is only 1 PACK [00095F46] <PatrolAndHunt> in Skyrim.esm with 2xPFO2 <<<}
         wbRArray('Flags Override',
           wbStruct(PFO2, 'Data', [
-            wbInteger('Set General Flags', itU32, wbPKDTFlags).IncludeFlag(dfCollapsed, wbCollapseFlags),
-            wbInteger('Clear General Flags', itU32, wbPKDTFlags).IncludeFlag(dfCollapsed, wbCollapseFlags),
+            wbInteger('Set General Flags', itU32, wbPackageFlags).IncludeFlag(dfCollapsed, wbCollapseFlags),
+            wbInteger('Clear General Flags', itU32, wbPackageFlags).IncludeFlag(dfCollapsed, wbCollapseFlags),
             wbInteger('Set Interrupt Flags', itU16, wbPKDTInterruptFlags).IncludeFlag(dfCollapsed, wbCollapseFlags),
             wbInteger('Clear Interrupt Flags', itU16, wbPKDTInterruptFlags).IncludeFlag(dfCollapsed, wbCollapseFlags),
             wbInteger('Preferred Speed Override', itU8, wbEnum([

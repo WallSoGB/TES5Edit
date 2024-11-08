@@ -19,7 +19,6 @@ var
   wbBipedObjectFlags: IwbFlagsDef;
   wbEquipType: IwbFlagsDef;
   wbFurnitureEntryTypeFlags: IwbFlagsDef;
-  wbPKDTFlags: IwbFlagsDef;
   wbPKDTInterruptFlags: IwbFlagsDef;
   wbXALGFlags: IwbFlagsDef;
   wbPHSTFlags: IwbFlagsDef;
@@ -14473,41 +14472,6 @@ begin
 
   wbPKDTSpecificFlagsUnused := False;
 
-  wbPKDTFlags := wbFlags([
-    {0x00000001} 'Offers Services',
-    {0x00000002} 'Unknown 1',
-    {0x00000004} 'Must complete',
-    {0x00000008} 'Maintain Speed at Goal',
-    {0x00000010} 'Treat As Player Follower',
-    {0x00000020} 'Unknown 5',
-    {0x00000040} 'Unlock doors at package start',
-    {0x00000080} 'Unlock doors at package end',
-    {0x00000100} 'Request Block Idles',
-    {0x00000200} 'Continue if PC Near',
-    {0x00000400} 'Once per day',
-    {0x00000800} 'Unknown 11',
-    {0x00001000} 'Skip Load Into Furniture',
-    {0x00002000} 'Preferred Speed',
-    {0x00004000} 'Unknown 14',
-    {0x00008000} 'Unknown 15',
-    {0x00010000} 'Unknown 16',
-    {0x00020000} 'Always Sneak',
-    {0x00040000} 'Allow Swimming',
-    {0x00080000} 'Unknown 19',
-    {0x00100000} 'Ignore Combat',
-    {0x00200000} 'Weapons Unequipped',
-    {0x00400000} 'Unknown 22',
-    {0x00800000} 'Weapon Drawn',
-    {0x01000000} 'Unknown 24',
-    {0x02000000} 'Unknown 25',
-    {0x04000000} 'Unknown 26',
-    {0x08000000} 'No Combat Alert',
-    {0x10000000} 'Unknown 28',
-    {0x20000000} 'Wear Sleep Outfit',
-    {0x40000000} 'Unknown 30',
-    {0x80000000} 'Unknown 31'
-  ], [29]);
-
   wbPKDTInterruptFlags := wbFlags([
     {0x0001} 'Hellos to player',
     {0x0002} 'Random conversations',
@@ -14695,7 +14659,7 @@ begin
     wbVMADFragmentedPACK,
 
     wbStruct(PKDT, 'Pack Data', [
-      wbInteger('General Flags', itU32, wbPKDTFlags),
+      wbInteger('General Flags', itU32, wbPackageFlags),
       wbInteger('Type', itU8, wbEnum ([], [
          1, 'Follow',
          6, 'Travel',
@@ -14835,8 +14799,8 @@ begin
         {>>> PFO2 should be single, there is only 1 PACK [00095F46] <PatrolAndHunt> in Skyrim.esm with 2xPFO2 <<<}
         wbRArray('Flags Override',
           wbStruct(PFO2, 'Data', [
-            wbInteger('Set General Flags', itU32, wbPKDTFlags),
-            wbInteger('Clear General Flags', itU32, wbPKDTFlags),
+            wbInteger('Set General Flags', itU32, wbPackageFlags),
+            wbInteger('Clear General Flags', itU32, wbPackageFlags),
             wbInteger('Set Interrupt Flags', itU16, wbPKDTInterruptFlags),
             wbInteger('Clear Interrupt Flags', itU16, wbPKDTInterruptFlags),
             wbInteger('Preferred Speed Override', itU8, wbEnum([
@@ -14850,8 +14814,8 @@ begin
         ),
         wbRArray('Flags Override',
           wbStruct(PFOR, 'Data', [
-            wbInteger('Set General Flags', itU32, wbPKDTFlags),
-            wbInteger('Clear General Flags', itU32, wbPKDTFlags),
+            wbInteger('Set General Flags', itU32, wbPackageFlags),
+            wbInteger('Clear General Flags', itU32, wbPackageFlags),
             wbInteger('Set Interrupt Flags', itU16, wbPKDTInterruptFlags),
             wbInteger('Clear Interrupt Flags', itU16, wbPKDTInterruptFlags)
           ])
