@@ -4347,7 +4347,7 @@ begin
   wbChangePackageStruct := wbStruct('Data', [
       wbStruct('General', [
         wbInteger('Flags', itU32),
-        wbInteger('Type', itU8, wbPKDTType),
+        wbInteger('Type', itU8, wbPackageTypeEnum),
         wbByteArray('Unused', 1),
         wbInteger('Fallout Behavior Flags', itU16),
         wbIntegerT('Specific Type Flags', itU32)

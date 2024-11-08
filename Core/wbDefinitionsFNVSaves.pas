@@ -4863,7 +4863,7 @@ begin
   wbChangePackageStruct := wbStruct('Data', [
       wbStruct('General', [
         wbInteger('Flags', itU32),
-        wbInteger('Type', itU8, wbPKDTType),
+        wbInteger('Type', itU8, wbPackageTypeEnum),
         wbByteArray('Unused', 1),
         wbInteger('Fallout Behavior Flags', itU16),
         wbIntegerT('Specific Type Flags', itU32)
@@ -5200,7 +5200,7 @@ begin
       wbIntegerT('Count?', itS32)
     ]),
     wbStruct('Package Data', [
-      wbIntegerT('Package Data Type', itU8, wbPKDTType),
+      wbIntegerT('Package Data Type', itU8, wbPackageTypeEnum),
       wbActorPackageData
     ]),
     wbArrayPT('Say TopicInfo once a day', wbStruct('Data', [       // 032
@@ -5517,7 +5517,7 @@ begin
       wbStruct('Package Data', [
         wbUnion('Created Package', ChangeFormBaseProcessCreatedPackageDecider, [ wbNull,
           wbStruct('Created Package Struct', [
-            wbIntegerT('Type', itS8, wbPKDTType),
+            wbIntegerT('Type', itS8, wbPackageTypeEnum),
             wbUnion('Created Package', ChangeFormCreatedPackageDecider, [
               wbChangePackageStruct,
               wbNull,
