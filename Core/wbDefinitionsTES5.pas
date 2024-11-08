@@ -9324,21 +9324,8 @@ begin
       wbInteger('Calc max level', itU16, nil, cpNormal, True, nil{wbActorTemplateUseStats}),
       wbInteger('Speed Multiplier', itU16, nil, cpNormal, True, nil{wbActorTemplateUseStats}),
       wbInteger('Disposition Base (unused)', itS16, nil, cpIgnore, True, nil{wbActorTemplateUseTraits}),
-      wbInteger('Template Flags', itU16, wbFlags([
-        {0x0001} 'Use Traits',
-        {0x0002} 'Use Stats',
-        {0x0004} 'Use Factions',
-        {0x0008} 'Use Spell List',
-        {0x0010} 'Use AI Data',
-        {0x0020} 'Use AI Packages',
-        {0x0040} 'Use Model/Animation?',
-        {0x0080} 'Use Base Data',
-        {0x0100} 'Use Inventory',
-        {0x0200} 'Use Script',
-        {0x0400} 'Use Def Pack List',
-        {0x0800} 'Use Attack Data',
-        {0x1000} 'Use Keywords'
-      ])),
+      wbInteger('Template Flags', itU16, wbTemplateFlags)
+        .IncludeFlag(dfCollapsed,  wbCollapseFlags),
       wbInteger('Health Offset', itS16, nil, cpNormal, True, nil{wbActorTemplateUseStats}),
       wbInteger('Bleedout Override', itU16, nil, cpNormal, True, nil{wbActorTemplateUseStats})
     ], cpNormal, True),

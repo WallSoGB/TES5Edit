@@ -16,8 +16,6 @@ uses
   wbInterface;
 
 var
-  wbTemplateFlags: IwbFlagsDef;
-
   wbBodyPartIndexEnum: IwbEnumDef;
   wbCriticalStageEnum: IwbEnumDef;
   wbEquipTypeEnum: IwbEnumDef;
@@ -4442,19 +4440,6 @@ var  wbSoundTypeSoundsOld :=
      {0F} wbInteger('Aggro Radius Behavior', itU8, wbBoolEnum),
      {10} wbInteger('Aggro Radius', itS32)
     ], cpNormal, True, wbActorTemplateUseAIData);
-
-  wbTemplateFlags := wbFlags([
-    'Use Traits',
-    'Use Stats',
-    'Use Factions',
-    'Use Actor Effect List',
-    'Use AI Data',
-    'Use AI Packages',
-    'Use Model/Animation',
-    'Use Base Data',
-    'Use Inventory',
-    'Use Script'
-  ]);
 
   wbRecord(CREA, 'Creature',
     wbFlags(wbFlagsList([

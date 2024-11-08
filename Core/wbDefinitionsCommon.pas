@@ -52,6 +52,7 @@ var
 
   wbPackageFlags: IwbFlagsDef;
   wbServiceFlags: IwbFlagsDef;
+  wbTemplateFlags: IwbFlagsDef;
 
   wbActionFlag: IwbRecordMemberDef;
   wbActorSounds: IwbRecordMemberDef;
@@ -5177,6 +5178,27 @@ begin
      17, IsTES3('Repair Items',
                 'Repair')
     ], False, 18));
+
+  wbTemplateFlags :=
+    wbFlags(wbSparseFlags([
+      0,        'Traits',
+      1,        'Stats',
+      2,        'Factions',
+      3, IsFO3( 'Actor Effect List',
+                'Spell List'),
+      4,        'AI Data',
+      5,        'AI Packages',
+      6,        'Model/Animation',
+      7,        'Base Data',
+      8,        'Inventory',
+      9,        'Script',
+     10, IsFO3 ('', 'Def Pack List'),
+     11, IsFO3 ('', 'Attack Data'),
+     12, IsFO3 ('', 'Keywords'),
+     13, IsFO76('Gender',
+         IsSF1 ('Reaction Radius', '')),
+     14, IsSF1 ('Combat Style', '')
+    ]));
 
   wbEnchantment :=
     wbRStruct('Enchantment', [

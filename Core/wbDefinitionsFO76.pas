@@ -3872,7 +3872,7 @@ begin
 
   if not Assigned(MainRecord) then
     Exit;
-  Result := (Cardinal(MainRecord.ElementNativeValues['ACBS\Use Template Actors']) shr 0 and 1) = 0;
+  Result := (Cardinal(MainRecord.ElementNativeValues['ACBS\Template Flags']) shr 0 and 1) = 0;
 end;
 
 function wbActorTemplatesUseTemplate1(const aElement: IwbElement): Boolean;
@@ -3884,7 +3884,7 @@ begin
 
   if not Assigned(MainRecord) then
     Exit;
-  Result := (Cardinal(MainRecord.ElementNativeValues['ACBS\Use Template Actors']) shr 1 and 1) = 0;
+  Result := (Cardinal(MainRecord.ElementNativeValues['ACBS\Template Flags']) shr 1 and 1) = 0;
 end;
 
 function wbActorTemplatesUseTemplate2(const aElement: IwbElement): Boolean;
@@ -3896,7 +3896,7 @@ begin
 
   if not Assigned(MainRecord) then
     Exit;
-  Result := (Cardinal(MainRecord.ElementNativeValues['ACBS\Use Template Actors']) shr 2 and 1) = 0;
+  Result := (Cardinal(MainRecord.ElementNativeValues['ACBS\Template Flags']) shr 2 and 1) = 0;
 end;
 
 function wbActorTemplatesUseTemplate3(const aElement: IwbElement): Boolean;
@@ -3908,7 +3908,7 @@ begin
 
   if not Assigned(MainRecord) then
     Exit;
-  Result := (Cardinal(MainRecord.ElementNativeValues['ACBS\Use Template Actors']) shr 3 and 1) = 0;
+  Result := (Cardinal(MainRecord.ElementNativeValues['ACBS\Template Flags']) shr 3 and 1) = 0;
 end;
 
 function wbActorTemplatesUseTemplate4(const aElement: IwbElement): Boolean;
@@ -3920,7 +3920,7 @@ begin
 
   if not Assigned(MainRecord) then
     Exit;
-  Result := (Cardinal(MainRecord.ElementNativeValues['ACBS\Use Template Actors']) shr 4 and 1) = 0;
+  Result := (Cardinal(MainRecord.ElementNativeValues['ACBS\Template Flags']) shr 4 and 1) = 0;
 end;
 
 function wbActorTemplatesUseTemplate5(const aElement: IwbElement): Boolean;
@@ -3932,7 +3932,7 @@ begin
 
   if not Assigned(MainRecord) then
     Exit;
-  Result := (Cardinal(MainRecord.ElementNativeValues['ACBS\Use Template Actors']) shr 5 and 1) = 0;
+  Result := (Cardinal(MainRecord.ElementNativeValues['ACBS\Template Flags']) shr 5 and 1) = 0;
 end;
 
 function wbActorTemplatesUseTemplate6(const aElement: IwbElement): Boolean;
@@ -3944,7 +3944,7 @@ begin
 
   if not Assigned(MainRecord) then
     Exit;
-  Result := (Cardinal(MainRecord.ElementNativeValues['ACBS\Use Template Actors']) shr 6 and 1) = 0;
+  Result := (Cardinal(MainRecord.ElementNativeValues['ACBS\Template Flags']) shr 6 and 1) = 0;
 end;
 
 function wbActorTemplatesUseTemplate7(const aElement: IwbElement): Boolean;
@@ -3956,7 +3956,7 @@ begin
 
   if not Assigned(MainRecord) then
     Exit;
-  Result := (Cardinal(MainRecord.ElementNativeValues['ACBS\Use Template Actors']) shr 7 and 1) = 0;
+  Result := (Cardinal(MainRecord.ElementNativeValues['ACBS\Template Flags']) shr 7 and 1) = 0;
 end;
 
 function wbActorTemplatesUseTemplate8(const aElement: IwbElement): Boolean;
@@ -3968,7 +3968,7 @@ begin
 
   if not Assigned(MainRecord) then
     Exit;
-  Result := (Cardinal(MainRecord.ElementNativeValues['ACBS\Use Template Actors']) shr 8 and 1) = 0;
+  Result := (Cardinal(MainRecord.ElementNativeValues['ACBS\Template Flags']) shr 8 and 1) = 0;
 end;
 
 function wbActorTemplatesUseTemplate9(const aElement: IwbElement): Boolean;
@@ -3980,7 +3980,7 @@ begin
 
   if not Assigned(MainRecord) then
     Exit;
-  Result := (Cardinal(MainRecord.ElementNativeValues['ACBS\Use Template Actors']) shr 9 and 1) = 0;
+  Result := (Cardinal(MainRecord.ElementNativeValues['ACBS\Template Flags']) shr 9 and 1) = 0;
 end;
 
 function wbActorTemplatesUseTemplate10(const aElement: IwbElement): Boolean;
@@ -3992,7 +3992,7 @@ begin
 
   if not Assigned(MainRecord) then
     Exit;
-  Result := (Cardinal(MainRecord.ElementNativeValues['ACBS\Use Template Actors']) shr 10 and 1) = 0;
+  Result := (Cardinal(MainRecord.ElementNativeValues['ACBS\Template Flags']) shr 10 and 1) = 0;
 end;
 
 function wbActorTemplatesUseTemplate11(const aElement: IwbElement): Boolean;
@@ -4004,7 +4004,7 @@ begin
 
   if not Assigned(MainRecord) then
     Exit;
-  Result := (Cardinal(MainRecord.ElementNativeValues['ACBS\Use Template Actors']) shr 11 and 1) = 0;
+  Result := (Cardinal(MainRecord.ElementNativeValues['ACBS\Template Flags']) shr 11 and 1) = 0;
 end;
 
 function wbActorTemplatesUseTemplate12(const aElement: IwbElement): Boolean;
@@ -4016,7 +4016,7 @@ begin
 
   if not Assigned(MainRecord) then
     Exit;
-  Result := (Cardinal(MainRecord.ElementNativeValues['ACBS\Use Template Actors']) shr 12 and 1) = 0;
+  Result := (Cardinal(MainRecord.ElementNativeValues['ACBS\Template Flags']) shr 12 and 1) = 0;
 end;
 
 function wbActorTemplatesUseTemplate13(const aElement: IwbElement): Boolean;
@@ -4027,7 +4027,7 @@ begin
   MainRecord := aElement.ContainingMainRecord;
   if not Assigned(MainRecord) then
     Exit;
-  Result := (Cardinal(MainRecord.ElementNativeValues['ACBS\Use Template Actors']) shr 13 and 1) = 0;
+  Result := (Cardinal(MainRecord.ElementNativeValues['ACBS\Template Flags']) shr 13 and 1) = 0;
 end;
 
 function wbActorTemplatesUseTemplateAny(const aElement: IwbElement): Boolean;
@@ -4039,7 +4039,7 @@ begin
 
   if not Assigned(MainRecord) then
     Exit;
-  Result := Cardinal(MainRecord.ElementNativeValues['ACBS\Use Template Actors']) = 0;
+  Result := Cardinal(MainRecord.ElementNativeValues['ACBS\Template Flags']) = 0;
 end;
 
 procedure wbReplaceBODTwithBOD2(const aElement: IwbElement);
@@ -14256,22 +14256,8 @@ begin
       wbInteger('Calc min level', itU16, nil, cpNormal, True, nil{wbActorTemplateUseStats}),
       wbInteger('Calc max level', itU16, nil, cpNormal, True, nil{wbActorTemplateUseStats}),
       wbInteger('Disposition Base', itS16),
-      wbInteger('Use Template Actors', itU16, wbFlags([
-        {0x0001} 'Traits',
-        {0x0002} 'Stats',
-        {0x0004} 'Factions',
-        {0x0008} 'Actor Effects',
-        {0x0010} 'AI Data',
-        {0x0020} 'AI Packages',
-        {0x0040} 'Model/Animation',
-        {0x0080} 'Base Data',
-        {0x0100} 'Inventory',
-        {0x0200} 'Script',
-        {0x0400} 'Def Pack List',
-        {0x0800} 'Attack Data',
-        {0x1000} 'Keywords',
-        {0x2000} 'Gender'
-      ])),
+      wbInteger('Template Flags', itU16, wbTemplateFlags)
+        .IncludeFlag(dfCollapsed, wbCollapseFlags),
       wbInteger('Bleedout Override', itU16),
       wbByteArray('Unknown', 2)
     ], cpNormal, True),
