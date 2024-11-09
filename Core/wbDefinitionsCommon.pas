@@ -5177,7 +5177,7 @@ begin
                 'Recharge'),
      17, IsTES3('Repair Items',
                 'Repair')
-    ], False, 18));
+    ], False, 18), True);
 
   wbTemplateFlags :=
     wbFlags(wbSparseFlags([
