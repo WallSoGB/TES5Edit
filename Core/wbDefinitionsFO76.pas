@@ -29,7 +29,6 @@ var
   wbStaggerEnum: IwbEnumDef;
   wbArmorPropertyEnum: IwbEnumDef;
   wbBipedObjectEnum: IwbEnumDef;
-  wbBodyPartIndexEnum: IwbEnumDef;
   wbCastEnum: IwbEnumDef;
   wbCastingSourceEnum: IwbEnumDef;
   wbCriticalStageEnum: IwbEnumDef;
@@ -15203,10 +15202,6 @@ begin
     wbUnknown(QMDE)
   ]);
 
-  wbBodyPartIndexEnum := wbEnum([
-    'Body Texture'
-  ]);
-
   wbPhonemeTargets := wbStruct(PHWT, 'Phoneme Target Weight', [
     wbFloat('Aah / LipBigAah'),
     wbFloat('BigAah / LipDST'),
@@ -15302,7 +15297,7 @@ begin
   var wbBodyParts :=
     wbRArrayS('Parts',
       wbRStructSK([0], 'Part', [
-        wbInteger(INDX, 'Index', itU32, wbBodyPartIndexEnum),
+        wbUnused(INDX, 0),
         wbGenericModel
       ])
       .SetSummaryKey([0, 1])

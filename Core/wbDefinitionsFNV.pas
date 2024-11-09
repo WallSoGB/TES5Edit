@@ -16,7 +16,6 @@ uses
   wbInterface;
 
 var
-  wbBodyPartIndexEnum: IwbEnumDef;
   wbCriticalStageEnum: IwbEnumDef;
   wbEquipTypeEnum: IwbEnumDef;
   wbFormTypeEnum: IwbEnumDef;
@@ -8015,13 +8014,6 @@ var  wbSoundTypeSoundsOld :=
     'Tongue',
     'Left Eye',
     'Right Eye'
-  ]);
-
-  wbBodyPartIndexEnum := wbEnum([
-    'Upper Body',
-    'Left Hand',
-    'Right Hand',
-    'Upper Body Texture'
   ]);
 
   var wbHeadParts :=

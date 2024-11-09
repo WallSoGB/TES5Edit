@@ -3418,19 +3418,10 @@ var  wbSoundTypeSoundsOld :=
       'Eye (Right)'
     ]);
 
-  var wbBodyDataIndexEnum :=
-    wbEnum([
-      'Upper Body',
-      'Lower Body',
-      'Hand',
-      'Foot',
-      'Tail'
-    ]);
-
   var wbBodyParts :=
     wbRArrayS('Parts',
       wbRStructSK([0], 'Part', [
-        wbInteger(INDX, 'Index', itU32, wbBodyDataIndexEnum),
+        wbInteger(INDX, 'Index', itU32, wbBodyPartIndexEnum),
         wbICON
       ])
       .SetSummaryKey([0, 1])

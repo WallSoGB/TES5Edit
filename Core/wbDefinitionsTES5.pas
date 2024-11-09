@@ -9950,10 +9950,6 @@ begin
     ]))
   ]);
 
-  var wbBodyPartIndexEnum := wbEnum([
-    'Body Texture'
-  ]);
-
   wbNoseMorphFlags := wbInteger('Nose Morph Flags', itU32, wbFlags([
     {0x00000001}'NoseType0',
     {0x00000002}'NoseType1',
@@ -10282,7 +10278,7 @@ begin
   var wbBodyParts :=
     wbRArrayS('Parts',
       wbRStructSK([0], 'Part', [
-        wbInteger(INDX, 'Index', itU32, wbBodyPartIndexEnum),
+        wbUnused(INDX, 0),
         wbGenericModel
       ])
       .SetSummaryKey([0, 1])

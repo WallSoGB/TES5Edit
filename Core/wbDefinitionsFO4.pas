@@ -12442,14 +12442,10 @@ begin
     .IncludeFlag(dfSummaryMembersNoName)
     .IncludeFlag(dfCollapsed, wbCollapseEquipSlots);
 
-  var wbBodyPartIndexEnum := wbEnum([
-    'Body Texture'
-  ]);
-
   var wbBodyParts :=
     wbRArrayS('Parts',
       wbRStructSK([0], 'Part', [
-        wbInteger(INDX, 'Index', itU32, wbBodyPartIndexEnum),
+        wbUnused(INDX, 0),
         wbGenericModel
       ])
       .SetSummaryKey([0, 1])

@@ -35,6 +35,7 @@ var
   wbBlendModeEnum: IwbEnumDef;
   wbBlendOpEnum: IwbEnumDef;
   wbBodyLocationEnum: IwbEnumDef;
+  wbBodyPartIndexEnum: IwbEnumDef;
   wbBoolEnum: IwbEnumDef;
   wbConfidenceEnum: IwbEnumDef;
   wbCRCValuesEnum: IwbEnumDef;
@@ -4692,6 +4693,18 @@ begin
      12, 'Right Leg 3',
      13, 'Brain',
      14, 'Weapon'
+    ]);
+
+  wbBodyPartIndexEnum :=
+    wbEnum([], [
+      0,        'Upper Body',
+      1, IsTES4('Lower Body',
+                'Left Hand'),
+      2, IsTES4('Hand',
+                'Right Hand'),
+      3, IsTES4('Foot',
+                'Upper Body Texture'),
+      4, IsTES4('Tail', '')
     ]);
 
   wbBoolEnum :=
