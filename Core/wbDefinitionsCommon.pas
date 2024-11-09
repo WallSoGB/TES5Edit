@@ -366,6 +366,8 @@ function IsTES5(const aDef1, aDef2: IwbValueDef): IwbValueDef; overload;
 function IsSSE(const aDef1, aDef2: string): string; overload;
 function IsSSE(const aDef1, aDef2: IwbRecordMemberDef): IwbRecordMemberDef; overload;
 function IsSSE(const aDef1, aDef2: IwbValueDef): IwbValueDef; overload;
+function IsFO4Plus(const aDef1, aDef2: IwbRecordMemberDef): IwbRecordMemberDef; overload;
+function IsFO4Plus(const aDef1, aDef2: IwbValueDef): IwbValueDef; overload;
 function IsFO4Plus(const aDef1, aDef2: string): string; overload;
 function IsFO76(const aDef1, aDef2: IwbValueDef): IwbValueDef; overload;
 function IsFO76(const aDef1, aDef2: string): string; overload;
@@ -3573,6 +3575,22 @@ begin
     Result := aDef2;
 end;
 
+function IsFO4Plus(const aDef1, aDef2: IwbRecordMemberDef): IwbRecordMemberDef;
+begin
+  if wbIsFallout4 or wbIsFallout76 or wbIsStarfield then
+    Result := aDef1
+  else
+    Result := aDef2;
+end;
+
+function IsFO4Plus(const aDef1, aDef2: IwbValueDef): IwbValueDef;
+begin
+  if wbIsFallout4 or wbIsFallout76 or wbIsStarfield then
+    Result := aDef1
+  else
+    Result := aDef2;
+end;
+
 function IsFO4Plus(const aDef1, aDef2: string): string;
 begin
   if wbIsFallout4 or wbIsFallout76 or wbIsStarfield then
@@ -4191,7 +4209,7 @@ function wbOwnership(aSkipSigs: TwbSignatures = nil): IwbRecordMemberDef;
 begin
   Result :=
     wbRStruct('Ownership', [
-      IfThen(wbIsFallout4 or wbIsFallout76 or wbIsStarfield,
+      IsFO4Plus(
         wbStruct(XOWN, 'Owner', [
           wbFormIDCkNoReach('Owner', [FACT, NPC_]),
           wbUnused(4),
@@ -4449,18 +4467,18 @@ begin
 	    wbByteColors('Night').IncludeFlag(dfSummaryNoName),
 	    IsFNV(
         wbByteColors('High Noon').IncludeFlag(dfSummaryNoName),
-        IfThen(wbGameMode in [gmFO4,gmFO4VR,gmFO76,gmSF1],
+        IsFO4Plus(
           wbFromVersion(111, wbByteColors('Early Sunrise').IncludeFlag(dfSummaryNoName)),
           nil)),
 	    IsFNV(
         wbByteColors('Midnight').IncludeFlag(dfSummaryNoName),
-        IfThen(wbGameMode in [gmFO4,gmFO4VR,gmFO76,gmSF1],
+        IsFO4Plus(
           wbFromVersion(111, wbByteColors('Late Sunrise').IncludeFlag(dfSummaryNoName)),
           nil)),
-	    IfThen(wbGameMode in [gmFO4,gmFO4VR,gmFO76,gmSF1],
+	    IsFO4Plus(
         wbFromVersion(111, wbByteColors('Early Sunset').IncludeFlag(dfSummaryNoName)),
         nil),
-	    IfThen(wbGameMode in [gmFO4,gmFO4VR,gmFO76,gmSF1],
+	    IsFO4Plus(
         wbFromVersion(111, wbByteColors('Late Sunset').IncludeFlag(dfSummaryNoName)),
         nil)
 	  ], cpNormal, True, nil, 4)
@@ -5322,23 +5340,15 @@ begin
     .IncludeFlag(dfCollapsed);
 
   var wbLandFlags :=
-    wbFlags([
-      'Hide - Quad 1',
-      'Hide - Quad 2',
-      'Hide - Quad 3',
-      'Hide - Quad 4'
-    ], True);
-  if wbGameMode in [gmFO4, gmFO76, gmSF1] then
-    wbLandFlags :=
       wbFlags([
         'Hide - Quad 1',
         'Hide - Quad 2',
         'Hide - Quad 3',
         'Hide - Quad 4',
-        'No Collision - Quad 1',
-        'No Collision - Quad 2',
-        'No Collision - Quad 3',
-        'No Collision - Quad 4'
+        IsFO4Plus('No Collision - Quad 1', ''),
+        IsFO4Plus('No Collision - Quad 2', ''),
+        IsFO4Plus('No Collision - Quad 3', ''),
+        IsFO4Plus('No Collision - Quad 4', '')
       ], True);
 
   wbCellGrid :=
@@ -5381,7 +5391,7 @@ begin
     wbStructSK(SNAM, [0], 'Faction', [
       wbFormIDCk('Faction', [FACT]),
       wbInteger('Rank', itS8),
-      IfThen(wbGameMode in [gmFO4, gmFO76, gmSF1], nil, wbUnused(3))
+      IsFO4Plus(nil, wbUnused(3))
     ])
     .SetSummaryKeyOnValue([0, 1])
     .SetSummaryPrefixSuffixOnValue(1, '{Rank: ', '}')
@@ -5792,22 +5802,22 @@ Can't properly represent that with current record definition methods.
         wbFloat('Night')
           .SetDefaultNativeValue(1.0)
           .IncludeFlag(dfSummaryNoName),
-        IfThen(wbGameMode in [gmFO4,gmFO4VR,gmFO76,gmSF1],
+        IsFO4Plus(
           wbFromVersion(111, wbFloat('Early Sunrise')
             .SetDefaultNativeValue(1.0)
             .IncludeFlag(dfSummaryNoName)),
           nil),
-        IfThen(wbGameMode in [gmFO4,gmFO4VR,gmFO76,gmSF1],
+        IsFO4Plus(
           wbFromVersion(111, wbFloat('Late Sunrise')
             .SetDefaultNativeValue(1.0)
             .IncludeFlag(dfSummaryNoName)),
           nil),
-        IfThen(wbGameMode in [gmFO4,gmFO4VR,gmFO76,gmSF1],
+        IsFO4Plus(
           wbFromVersion(111, wbFloat('Early Sunset')
             .SetDefaultNativeValue(1.0)
             .IncludeFlag(dfSummaryNoName)),
           nil),
-        IfThen(wbGameMode in [gmFO4,gmFO4VR,gmFO76,gmSF1],
+        IsFO4Plus(
           wbFromVersion(111, wbFloat('Early Sunrise')
             .SetDefaultNativeValue(1.0)
             .IncludeFlag(dfSummaryNoName)),
@@ -5859,10 +5869,10 @@ Can't properly represent that with current record definition methods.
       IfThen(wbGameMode > gmFNV,
         wbFromVersion(37, wbWeatherTimeOfDay('Moon Glare')),
         nil),
-      IfThen(wbGameMode in [gmFO4,gmFO4VR,gmFO76,gmSF1],
+      IsFO4Plus(
         wbFromVersion(119, wbWeatherTimeOfDay('Fog Near High')),
         nil),
-      IfThen(wbGameMode in [gmFO4,gmFO4VR,gmFO76,gmSF1],
+      IsFO4Plus(
         wbFromVersion(119, wbWeatherTimeOfDay('Fog Far High')),
         nil)
     ]).SetRequired;
@@ -5890,38 +5900,38 @@ Can't properly represent that with current record definition methods.
         wbFloat('Night - Max')
           .SetDefaultNativeValue(1),
         nil),
-      IfThen(wbGameMode in [gmFO4,gmFO4VR,gmFO76,gmSF1],
+      IsFO4Plus(
         wbFromVersion(119, wbFloat('Day - Near Height Mid')),
         nil),
-      IfThen(wbGameMode in [gmFO4,gmFO4VR,gmFO76,gmSF1],
+      IsFO4Plus(
         wbFromVersion(119, wbFloat('Day - Near Height Range')
           .SetDefaultNativeValue(10000)),
         nil),
-      IfThen(wbGameMode in [gmFO4,gmFO4VR,gmFO76,gmSF1],
+      IsFO4Plus(
         wbFromVersion(119, wbFloat('Night - Near Height Mid')),
         nil),
-      IfThen(wbGameMode in [gmFO4,gmFO4VR,gmFO76,gmSF1],
+      IsFO4Plus(
         wbFromVersion(119, wbFloat('Night - Near Height Range')
           .SetDefaultNativeValue(10000)),
         nil),
-      IfThen(wbGameMode in [gmFO4,gmFO4VR,gmFO76,gmSF1],
+      IsFO4Plus(
         wbFromVersion(119, wbFloat('Day - High Density Scale')
           .SetDefaultNativeValue(1)),
         nil),
-      IfThen(wbGameMode in [gmFO4,gmFO4VR,gmFO76,gmSF1],
+      IsFO4Plus(
         wbFromVersion(119, wbFloat('Night - High Density Scale')
           .SetDefaultNativeValue(1)),
         nil),
-      IfThen(wbGameMode in [gmFO4,gmFO4VR,gmFO76,gmSF1],
+      IsFO4Plus(
         wbFromVersion(120, wbFloat('Day - Far Height Mid')),
         nil),
-      IfThen(wbGameMode in [gmFO4,gmFO4VR,gmFO76,gmSF1],
+      IsFO4Plus(
         wbFromVersion(120, wbFloat('Day - Far Height Range')),
         nil),
-      IfThen(wbGameMode in [gmFO4,gmFO4VR,gmFO76,gmSF1],
+      IsFO4Plus(
         wbFromVersion(120, wbFloat('Night - Far Height Mid')),
         nil),
-      IfThen(wbGameMode in [gmFO4,gmFO4VR,gmFO76,gmSF1],
+      IsFO4Plus(
         wbFromVersion(120, wbFloat('Night - Far Height Range')),
         nil)
     ]).SetRequired;
@@ -5976,19 +5986,19 @@ Can't properly represent that with current record definition methods.
         .SetDefaultNativeValue(359),
       wbFormIDCK('Night', [IMGS, NULL])
         .SetDefaultNativeValue(359),
-      IfThen(wbGameMode in [gmFO4,gmFO4VR,gmFO76,gmSF1],
+      IsFO4Plus(
         wbFromVersion(111, wbFormIDCK('Early Sunrise', [IMGS, NULL])
           .SetDefaultNativeValue(359)),
         nil),
-      IfThen(wbGameMode in [gmFO4,gmFO4VR,gmFO76,gmSF1],
+      IsFO4Plus(
         wbFromVersion(111, wbFormIDCK('Late Sunrise', [IMGS, NULL])
           .SetDefaultNativeValue(359)),
         nil),
-      IfThen(wbGameMode in [gmFO4,gmFO4VR,gmFO76,gmSF1],
+      IsFO4Plus(
         wbFromVersion(111, wbFormIDCK('Early Sunset', [IMGS, NULL])
           .SetDefaultNativeValue(359)),
         nil),
-      IfThen(wbGameMode in [gmFO4,gmFO4VR,gmFO76,gmSF1],
+      IsFO4Plus(
         wbFromVersion(111, wbFormIDCK('Late Sunset', [IMGS, NULL])
           .SetDefaultNativeValue(359)),
         nil)
@@ -6014,16 +6024,16 @@ Can't properly represent that with current record definition methods.
       wbFormIDCK('Day', [VOLI, NULL]),
       wbFormIDCK('Sunset', [VOLI, NULL]),
       wbFormIDCK('Night', [VOLI, NULL]),
-      IfThen(wbGameMode in [gmFO76,gmSF1],
+      IsFO4Plus(
         wbFormIDCK('Early Sunrise', [VOLI, NULL]),
         nil),
-      IfThen(wbGameMode in [gmFO76,gmSF1],
+      IsFO4Plus(
         wbFormIDCK('Late Sunrise', [VOLI, NULL]),
         nil),
-      IfThen(wbGameMode in [gmFO76,gmSF1],
+      IsFO4Plus(
         wbFormIDCK('Early Sunset', [VOLI, NULL]),
         nil),
-      IfThen(wbGameMode in [gmFO76,gmSF1],
+      IsFO4Plus(
         wbFormIDCK('Late Sunset', [VOLI, NULL]),
         nil)
     ]);
@@ -6038,19 +6048,19 @@ Can't properly represent that with current record definition methods.
         .SetRequired,
       wbAmbientColors(DALC, 'Night')
         .SetRequired,
-      IfThen(wbGameMode in [gmFO4,gmFO4VR,gmFO76,gmSF1],
+      IsFO4Plus(
         wbFromVersion(111, DALC, wbAmbientColors('Early Sunrise'))
           .SetRequired,
         nil),
-      IfThen(wbGameMode in [gmFO4,gmFO4VR,gmFO76,gmSF1],
+      IsFO4Plus(
         wbFromVersion(111, DALC, wbAmbientColors('Late Sunrise'))
           .SetRequired,
         nil),
-      IfThen(wbGameMode in [gmFO4,gmFO4VR,gmFO76,gmSF1],
+      IsFO4Plus(
         wbFromVersion(111, DALC, wbAmbientColors('Early Sunset'))
           .SetRequired,
         nil),
-      IfThen(wbGameMode in [gmFO4,gmFO4VR,gmFO76,gmSF1],
+      IsFO4Plus(
         wbFromVersion(111, DALC, wbAmbientColors('Late Sunset'))
           .SetRequired,
         nil)
