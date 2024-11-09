@@ -31,7 +31,6 @@ var
   wbBipedObjectEnum: IwbEnumDef;
   wbCastEnum: IwbEnumDef;
   wbCastingSourceEnum: IwbEnumDef;
-  wbCriticalStageEnum: IwbEnumDef;
   wbEmotionTypeEnum: IwbEnumDef;
   wbEntryPointsEnum: IwbEnumDef;
   wbEventFunctionEnum: IwbEnumDef;
@@ -7909,15 +7908,6 @@ begin
     'Lockpick Success',
     'Lockpick Broken'
   ]);
-
-  wbCriticalStageEnum :=
-    wbEnum([
-      'None',
-      'Goo Start',
-      'Goo End',
-      'Disintegrate Start',
-      'Disintegrate End'
-    ]);
 
   wbStaggerEnum := wbEnum([
     'None',

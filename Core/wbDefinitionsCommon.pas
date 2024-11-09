@@ -39,6 +39,7 @@ var
   wbBoolEnum: IwbEnumDef;
   wbConfidenceEnum: IwbEnumDef;
   wbCRCValuesEnum: IwbEnumDef;
+  wbCriticalStageEnum: IwbEnumDef;
   wbCrimeTypeEnum: IwbEnumDef;
   wbCreatureTypeEnum: IwbEnumDef;
   wbMusicEnum: IwbEnumDef;
@@ -346,7 +347,7 @@ function wbIsFlag(aFlag: Integer; const aValue: IwbValueDef; aIsUnused: Boolean 
 function wbIsNotFlag(aFlag: Integer; const aSignature: TwbSignature; const aValue: IwbValueDef; aIsUnused: Boolean = True): IwbRecordMemberDef; overload;
 function wbIsNotFlag(aFlag: Integer; const aValue: IwbValueDef; aIsUnused: Boolean = True): IwbValueDef; overload;
 
-{>>> Game Mode IfThen Defs <<<} //24
+{>>> Game Mode IfThen Defs <<<} //25
 function IsTES3(const aDef1, aDef2: String): string; overload;
 function IsTES4(const aDef1, aDef2: Integer): Integer; overload;
 function IsTES4(const aDef1, aDef2: IwbRecordMemberDef): IwbRecordMemberDef; overload;
@@ -365,6 +366,7 @@ function IsTES5(const aDef1, aDef2: IwbValueDef): IwbValueDef; overload;
 function IsSSE(const aDef1, aDef2: string): string; overload;
 function IsSSE(const aDef1, aDef2: IwbRecordMemberDef): IwbRecordMemberDef; overload;
 function IsSSE(const aDef1, aDef2: IwbValueDef): IwbValueDef; overload;
+function IsFO4Plus(const aDef1, aDef2: string): string; overload;
 function IsFO76(const aDef1, aDef2: IwbValueDef): IwbValueDef; overload;
 function IsFO76(const aDef1, aDef2: string): string; overload;
 function IsSF1(const aDef1, aDef2: Integer): Integer; overload;
@@ -3425,7 +3427,7 @@ begin
       ]).IncludeFlag(dfMustBeUnion);
 end;
 
-{>>> wbGameMode IfThen Defs <<<} //24
+{>>> wbGameMode IfThen Defs <<<} //25
 
 function IsTES3(const aDef1, aDef2: string): string;
 begin
@@ -3566,6 +3568,14 @@ end;
 function IsSSE(const aDef1, aDef2: IwbValueDef): IwbValueDef;
 begin
   if wbIsSkyrimSE then
+    Result := aDef1
+  else
+    Result := aDef2;
+end;
+
+function IsFO4Plus(const aDef1, aDef2: string): string;
+begin
+  if wbIsFallout4 or wbIsFallout76 or wbIsStarfield then
     Result := aDef1
   else
     Result := aDef2;
@@ -4929,6 +4939,17 @@ begin
       Int64($C5B58C0B), 'PathingStreamSaveGame',
       Int64($6AF11190), 'QuestPathingRequest',
       Int64($FCD0CCC3), 'Water'
+    ]);
+
+  wbCriticalStageEnum :=
+    wbEnum([], [
+      0,           'None',
+      1,           'Goo Start',
+      2,           'Goo End',
+      3,           'Disintegrate Start',
+      4,           'Disintegrate End',
+      5, IsFO4Plus('Freeze Start', ''),
+      6, IsFO4Plus('Freeze End', '')
     ]);
 
   wbCrimeTypeEnum :=

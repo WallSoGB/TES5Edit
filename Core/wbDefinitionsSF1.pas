@@ -6298,15 +6298,6 @@ end;
     'Lockpick Broken'
   ]);
 
-  var wbCriticalStageEnum :=
-    wbEnum([
-      'None',
-      'Goo Start',
-      'Goo End',
-      'Disintegrate Start',
-      'Disintegrate End'
-    ]);
-
   var wbStaggerEnum := wbEnum([
     'None',
     'Small',

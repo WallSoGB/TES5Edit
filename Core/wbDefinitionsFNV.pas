@@ -16,7 +16,6 @@ uses
   wbInterface;
 
 var
-  wbCriticalStageEnum: IwbEnumDef;
   wbEquipTypeEnum: IwbEnumDef;
   wbFormTypeEnum: IwbEnumDef;
   wbHeadPartIndexEnum: IwbEnumDef;
@@ -4200,15 +4199,6 @@ begin
       'Roulette Games Played',
       'Blackjack Games Played',
       'Slots Games Played'
-    ]);
-
-  wbCriticalStageEnum :=
-    wbEnum([
-      'None',
-      'Goo Start',
-      'Goo End',
-      'Disintegrate Start',
-      'Disintegrate End'
     ]);
 
   wbPlayerActionEnum :=

@@ -16,7 +16,6 @@ uses
   wbInterface;
 
 var
-  wbCriticalStageEnum: IwbEnumDef;
   wbEquipTypeEnum: IwbEnumDef;
   wbFormTypeEnum: IwbEnumDef;
   wbHeadPartIndexEnum: IwbEnumDef;
@@ -3837,15 +3836,6 @@ begin
       'Contracts Completed',
       'Corpses Eaten',
       'Mysterious Stranger Visits'
-    ]);
-
-  wbCriticalStageEnum :=
-    wbEnum([
-      'None',
-      'Goo Start',
-      'Goo End',
-      'Disintegrate Start',
-      'Disintegrate End'
     ]);
 
   wbPlayerActionEnum :=
