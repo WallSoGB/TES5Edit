@@ -16,7 +16,6 @@ uses
   wbInterface;
 
 var
-  wbEquipTypeEnum: IwbEnumDef;
   wbFormTypeEnum: IwbEnumDef;
   wbHeadPartIndexEnum: IwbEnumDef;
   wbMenuModeEnum: IwbEnumDef;
@@ -3655,27 +3654,6 @@ begin
     ]);
 
   wbActorValue := wbInteger('Actor Value', itS32, wbActorValueEnum);
-
-  wbEquipTypeEnum :=
-    wbEnum([
-        {00} 'Big Guns',
-        {01} 'Energy Weapons',
-        {02} 'Small Guns',
-        {03} 'Melee Weapons',
-        {04} 'Unarmed Weapon',
-        {05} 'Thrown Weapons',
-        {06} 'Mine',
-        {07} 'Body Wear',
-        {08} 'Head Wear',
-        {09} 'Hand Wear',
-        {10} 'Chems',
-        {11} 'Stimpak',
-        {12} 'Food',
-        {13} 'Alcohol'
-      ], [
-        -1, 'None'
-      ]);
-
   wbETYP := wbInteger(ETYP, 'Equipment Type', itS32, wbEquipTypeEnum);
   wbETYPReq := wbInteger(ETYP, 'Equipment Type', itS32, wbEquipTypeEnum, cpNormal, True);
 

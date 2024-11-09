@@ -42,6 +42,7 @@ var
   wbCriticalStageEnum: IwbEnumDef;
   wbCrimeTypeEnum: IwbEnumDef;
   wbCreatureTypeEnum: IwbEnumDef;
+  wbEquipTypeEnum: IwbEnumDef;
   wbMusicEnum: IwbEnumDef;
   wbPackageTypeEnum: IwbEnumDef;
   wbQuadrantEnum: IwbEnumDef;
@@ -4998,6 +4999,25 @@ begin
       5, 'Feral Ghoul',
       6, 'Robot',
       7, 'Giant'
+    ]);
+
+  wbEquipTypeEnum :=
+    wbEnum([], [
+     -1, 'None',
+      0, 'Big Guns',
+      1, 'Energy Weapons',
+      2, 'Small Guns',
+      3, 'Melee Weapons',
+      4, 'Unarmed Weapon',
+      5, 'Thrown Weapons',
+      6, 'Mine',
+      7, 'Body Wear',
+      8, 'Head Wear',
+      9, 'Hand Wear',
+     10, 'Chems',
+     11, 'Stimpak',
+     12, 'Food',
+     13, 'Alcohol'
     ]);
 
   wbMusicEnum :=
