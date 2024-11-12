@@ -839,32 +839,6 @@ begin
     Container.RemoveElement('FormIDs');
 end;
 
-procedure wbCtdaTypeAfterSet(const aElement: IwbElement; const aOldValue, aNewValue: Variant);
-var
-  OldValue, NewValue: Integer;
-  Container: IwbContainerElementRef;
-begin
-  if VarSameValue(aOldValue, aNewValue) then
-    Exit;
-
-  if not Supports(aElement, IwbContainerElementRef, Container) then
-    Exit;
-
-  // reset value if "use global" has changed
-  OldValue := aOldValue and $04;
-  NewValue := aNewValue and $04;
-
-  if OldValue <> NewValue then
-    Container.ElementNativeValues['..\Comparison Value'] := 0;
-
-  {>>> "run on target", no such flag in Skyrim <<<}
-//  if aNewValue and $02 then begin
-//    Container.ElementNativeValues['..\Run On'] := 1;
-//    if Integer(Container.ElementNativeValues['..\Run On']) = 1 then
-//      aElement.NativeValue := Byte(aNewValue) and not $02;
-//  end;
-end;
-
 procedure wbAfterSet(const aElement: IwbElement; const aOldValue, aNewValue: Variant);
 begin
   Exit;
@@ -4620,7 +4594,7 @@ begin
   wbCTDA :=
     wbRStructSK([0], 'Condition', [
       wbStructSK(CTDA, [3, 5, 6], '', [
-     {0}wbInteger('Type', itU8, wbConditionTypeToStr, wbConditionTypeToInt, cpNormal, False, nil, wbCtdaTypeAfterSet),
+     {0}wbInteger('Type', itU8, wbConditionTypeToStr, wbConditionTypeToInt).SetAfterSet(wbConditionTypeAfterSet),
      {1}wbUnused(3),
      {2}wbUnion('Comparison Value', wbCTDACompValueDecider, [
           wbFloat('Comparison Value - Float'),

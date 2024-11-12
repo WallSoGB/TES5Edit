@@ -12,6 +12,7 @@ unit wbDefinitionsCommon;
 
 interface
 uses
+  Variants,
   wbInterface,
   wbDefinitionsSignatures;
 
@@ -151,12 +152,13 @@ procedure wbAVIFSkillAfterLoad(const aElement: IwbElement);
 procedure wbRPLDAfterLoad(const aElement: IwbElement);
 procedure wbWorldAfterLoad(const aElement: IwbElement);
 
-{>>> After Set Callbacks <<<} //29
+{>>> After Set Callbacks <<<} //30
 procedure wbATANsAfterSet(const aElement: IwbElement; const aOldValue, aNewValue: Variant);
 procedure wbBODCsAfterSet(const aElement: IwbElement; const aOldValue, aNewValue: Variant);
 procedure wbBODSsAfterSet(const aElement: IwbElement; const aOldValue, aNewValue: Variant);
 procedure wbCNTOsAfterSet(const aElement: IwbElement; const aOldValue, aNewValue: Variant);
 procedure wbConditionsAfterSet(const aElement: IwbElement; const aOldValue, aNewValue: Variant);
+procedure wbConditionTypeAfterSet(const aElement: IwbElement; const aOldValue, aNewValue: Variant);
 procedure wbContainerAfterSet(const aElement: IwbElement; const aOldValue, aNewValue: Variant);
 procedure wbCounterEffectsAfterSet(const aElement: IwbElement; const aOldValue, aNewValue: Variant);
 procedure wbCTDAsAfterSet(const aElement: IwbElement; const aOldValue, aNewValue: Variant);
@@ -684,7 +686,7 @@ begin
   end;
 end;
 
-{>>> After Set Callbacks <<<} //29
+{>>> After Set Callbacks <<<} //30
 
 procedure wbATANsAfterSet(const aElement: IwbElement; const aOldValue, aNewValue: Variant);
 begin
@@ -710,6 +712,32 @@ procedure wbConditionsAfterSet(const aElement: IwbElement; const aOldValue, aNew
 begin
   wbCounterContainerAfterSet('CITC - Condition Count', 'Conditions', aElement);
 end;
+
+procedure wbConditionTypeAfterSet(const aElement: IwbElement; const aOldValue, aNewValue: Variant);
+var
+  OldValue, NewValue: Integer;
+  Container: IwbContainerElementRef;
+begin
+  if VarSameValue(aOldValue, aNewValue) then
+    Exit;
+
+  if not Supports(aElement, IwbContainerElementRef, Container) then
+    Exit;
+
+  // reset value if "use global" has changed
+  OldValue := aOldValue and $04;
+  NewValue := aNewValue and $04;
+
+  if OldValue <> NewValue then
+    Container.ElementNativeValues['..\Comparison Value'] := 0;
+
+  if (aNewValue and $02) and wbIsFallout3 then begin
+    Container.ElementNativeValues['..\Run On'] := 1;
+    if Integer(Container.ElementNativeValues['..\Run On']) = 1 then
+      aElement.NativeValue := Byte(aNewValue) and not $02;
+  end;
+end;
+
 
 procedure wbContainerAfterSet(const aElement: IwbElement; const aOldValue, aNewValue: Variant);
 begin
