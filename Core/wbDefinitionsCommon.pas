@@ -257,8 +257,9 @@ function wbTryGetContainingMainRecord(const aElement: IwbElement; out aMainRecor
 function wbTryGetMainRecord(const aElement: IwbElement; out aMainRecord: IwbMainRecord; aSignature: string = ''): Boolean;
 function wbTrySetContainer(const aElement: IwbElement; aType: TwbCallbackType; out aContainer: IwbContainerElementRef): Boolean;
 
-{>>> To Integer Callbacks <<<} //15
+{>>> To Integer Callbacks <<<} //16
 function Sig2Int(aSignature: TwbSignature): Cardinal; inline;
+function wbConditionTypeToInt(const aString: string; const aElement: IwbElement): Int64;
 function wbCTDAParam2QuestObjectiveToInt(const aString: string; const aElement: IwbElement): Int64;
 function wbCTDAParam2QuestStageToInt(const aString: string; const aElement: IwbElement): Int64;
 function wbEdgeToInt(aEdge: Integer; const aString: string; const aElement: IwbElement): Int64;
@@ -1814,11 +1815,62 @@ begin
   Result := (aType = ctToSummary) and Supports(aElement, IwbContainerElementRef, aContainer);
 end;
 
-{>>> To Integer Callbacks <<<} //15
+{>>> To Integer Callbacks <<<} //16
 
 function Sig2Int(aSignature: TwbSignature): Cardinal; inline;
 begin
   Result := PCardinal(@aSignature)^;
+end;
+
+function wbConditionTypeToInt(const aString: string; const aElement: IwbElement): Int64;
+var
+  s: string;
+begin
+  s := aString + '00000000';
+  if s[1] = '1' then begin
+    if s[2] = '1' then begin
+      if s[3] = '1' then begin
+        Result := $00;
+      end else begin
+        Result := $60;
+      end;
+    end else begin
+      if s[3] = '1' then begin
+        Result := $A0;
+      end else begin
+        Result := $00;
+      end;
+    end;
+  end else begin
+    if s[2] = '1' then begin
+      if s[3] = '1' then begin
+        Result := $20;
+      end else begin
+        Result := $40;
+      end;
+    end else begin
+      if s[3] = '1' then begin
+        Result := $80;
+      end else begin
+        Result := $20;
+      end;
+    end;
+  end;
+  // Or
+  if s[4] = '1' then
+    Result := Result or $01;
+  // Run On Target or Use Aliases
+  if s[5] = '1' then
+    Result := Result or $02;
+  // Use global
+  if s[6] = '1' then
+    Result := Result or $04;
+  // Use Packdata
+  if s[7] = '1' then
+    Result := Result or $08;
+  // Swap Subject and Target
+  if s[8] = '1' then
+    Result := Result or $16;
 end;
 
 function wbCTDAParam2QuestObjectiveToInt(const aString: string; const aElement: IwbElement): Int64;

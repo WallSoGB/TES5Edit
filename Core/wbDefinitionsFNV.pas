@@ -669,51 +669,6 @@ begin
   Result := StrToIntDef(aString, 0);
 end;
 
-function wbCtdaTypeToInt(const aString: string; const aElement: IwbElement): Int64;
-var
-  s: string;
-begin
-  s := aString + '00000000';
-  if s[1] = '1' then begin
-    if s[2] = '1' then begin
-      if s[3] = '1' then begin
-        Result := $00;
-      end else begin
-        Result := $60;
-      end;
-    end else begin
-      if s[3] = '1' then begin
-        Result := $A0;
-      end else begin
-        Result := $00;
-      end;
-    end;
-  end else begin
-    if s[2] = '1' then begin
-      if s[3] = '1' then begin
-        Result := $20;
-      end else begin
-        Result := $40;
-      end;
-    end else begin
-      if s[3] = '1' then begin
-        Result := $80;
-      end else begin
-        Result := $20;
-      end;
-    end;
-  end;
-  // Or
-  if s[4] = '1' then
-    Result := Result or $01;
-  // Use aliases
-  if s[6] = '1' then
-    Result := Result or $02;
-  // Use global
-  if s[5] = '1' then
-    Result := Result or $04;
-end;
-
 procedure wbHeadPartsAfterSet(const aElement: IwbElement; const aOldValue, aNewValue: Variant);
 var
   Container : IwbContainerElementRef;
@@ -4087,7 +4042,7 @@ begin
 
   wbCTDA :=
     wbStructSK(CTDA, [3, 5, 6], 'Condition', [
-   {0}wbInteger('Type', itU8, wbConditionTypeToStr, wbCtdaTypeToInt, cpNormal, False, nil, wbCtdaTypeAfterSet),
+   {0}wbInteger('Type', itU8, wbConditionTypeToStr, wbConditionTypeToInt, cpNormal, False, nil, wbCtdaTypeAfterSet),
    {1}wbUnused(3),
    {2}wbUnion('Comparison Value', wbCTDACompValueDecider, [
         wbFloat('Comparison Value - Float'),

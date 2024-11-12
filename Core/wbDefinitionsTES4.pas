@@ -2429,7 +2429,7 @@ var  wbSoundTypeSoundsOld :=
   wbCTDA :=
     wbRUnion('Condition', [
       wbStructSK(CTDA, [3, 5, 6], 'Condition', [
-     {0}wbInteger('Type', itU8, wbConditionTypeToStr),
+     {0}wbInteger('Type', itU8, wbConditionTypeToStr, wbConditionTypeToInt),
      {1}wbUnused(3),
      {2}wbUnion('Comparison Value', wbCTDACompValueDecider, [
           wbFloat('Comparison Value - Float'),
@@ -2505,7 +2505,7 @@ var  wbSoundTypeSoundsOld :=
       ], cpNormal, False, nil, 7).SetToStr(wbConditionToStr).IncludeFlag(dfCollapsed, wbCollapseConditions),
 
       wbStructSK(CTDT, [3, 4], 'Condition (old format)', [
-     {0}wbInteger('Type', itU8, wbConditionTypeToStr),
+     {0}wbInteger('Type', itU8, wbConditionTypeToStr, wbConditionTypeToInt),
      {1}wbUnused(3),
      {2}wbUnion('Comparison Value', wbCTDACompValueDecider, [
           wbFloat('Comparison Value - Float'),
