@@ -5470,12 +5470,7 @@ begin
      {00} wbInteger('Aggression', itU8, wbAggressionEnum),
      {01} wbInteger('Confidence', itU8, wbConfidenceEnum),
      {02} wbInteger('Energy Level', itU8),
-     {03} wbInteger('Responsibility', itU8, wbEnum([
-            'Any crime',
-            'Violence against enemies',
-            'Property crime only',
-            'No crime'
-          ])),
+     {03} wbInteger('Morality', itU8, wbMoralityEnum),
      {04} wbInteger('Mood', itU8, wbMoodEnum),
           wbInteger('Assistance', itU8, wbAssistanceEnum),
           wbStruct('Aggro', [

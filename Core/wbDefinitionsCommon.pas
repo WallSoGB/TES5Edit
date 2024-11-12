@@ -45,6 +45,7 @@ var
   wbEquipTypeEnum: IwbEnumDef;
   wbMenuModeEnum: IwbEnumDef;
   wbMoodEnum: IwbEnumDef;
+  wbMoralityEnum: IwbEnumDef;
   wbMusicEnum: IwbEnumDef;
   wbPackageTypeEnum: IwbEnumDef;
   wbQuadrantEnum: IwbEnumDef;
@@ -5064,6 +5065,14 @@ begin
       5, IsFO3('Pleasant', 'Surprised'),
       6, IsFO3('Angry',    'Puzzled'),
       7, IsFO3('Sad',      'Disgusted')
+    ]);
+
+  wbMoralityEnum :=
+    wbEnum([], [
+      0, 'Any Crime',
+      1, 'Violence Against Enemies',
+      2, 'Property Crime Only',
+      3, 'No Crime'
     ]);
 
   wbMusicEnum :=
