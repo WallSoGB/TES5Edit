@@ -313,8 +313,9 @@ function wbVertexToStr2(aInt: Int64; const aElement: IwbElement; aType: TwbCallb
 function wbVTXTPosition(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
 function wbWeatherCloudSpeedToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
 
-{>>> Union Deciders <<<} //20
+{>>> Union Deciders <<<} //21
 function wbCOEDOwnerDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+function wbConditionCompValueDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
 function wbCTDAParam3Decider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
 function wbCTDAReferenceDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
 function wbFlagDecider(aFlag: Byte): TwbUnionDecider;
@@ -725,16 +726,16 @@ begin
     Exit;
 
   // reset value if "use global" has changed
-  OldValue := aOldValue and $04;
-  NewValue := aNewValue and $04;
+  OldValue := aOldValue and 4;
+  NewValue := aNewValue and 4;
 
   if OldValue <> NewValue then
     Container.ElementNativeValues['..\Comparison Value'] := 0;
 
-  if (aNewValue and $02) and wbIsFallout3 then begin
+  if (aNewValue and 2) and wbIsFallout3 then begin
     Container.ElementNativeValues['..\Run On'] := 1;
     if Integer(Container.ElementNativeValues['..\Run On']) = 1 then
-      aElement.NativeValue := Byte(aNewValue) and not $02;
+      aElement.NativeValue := Byte(aNewValue) and not 2;
   end;
 end;
 
@@ -1858,47 +1859,47 @@ begin
   if s[1] = '1' then begin
     if s[2] = '1' then begin
       if s[3] = '1' then begin
-        Result := $00;
+        Result := 0;
       end else begin
-        Result := $60;
+        Result := 96;
       end;
     end else begin
       if s[3] = '1' then begin
-        Result := $A0;
+        Result := 160;
       end else begin
-        Result := $00;
+        Result := 0;
       end;
     end;
   end else begin
     if s[2] = '1' then begin
       if s[3] = '1' then begin
-        Result := $20;
+        Result := 32;
       end else begin
-        Result := $40;
+        Result := 64;
       end;
     end else begin
       if s[3] = '1' then begin
-        Result := $80;
+        Result := 128;
       end else begin
-        Result := $20;
+        Result := 32;
       end;
     end;
   end;
   // Or
   if s[4] = '1' then
-    Result := Result or $01;
+    Result := Result or 1;
   // Run On Target or Use Aliases
   if s[5] = '1' then
-    Result := Result or $02;
+    Result := Result or 2;
   // Use global
   if s[6] = '1' then
-    Result := Result or $04;
+    Result := Result or 4;
   // Use Packdata
   if s[7] = '1' then
-    Result := Result or $08;
+    Result := Result or 8;
   // Swap Subject and Target
   if s[8] = '1' then
-    Result := Result or $16;
+    Result := Result or 16;
 end;
 
 function wbCTDAParam2QuestObjectiveToInt(const aString: string; const aElement: IwbElement): Int64;
@@ -2223,14 +2224,14 @@ begin
     ctToEditValue: begin
       Result := '00000000';
       case aInt and 224 of
-        $00 :   Result[1] := '1';
-        $40 :   Result[2] := '1';
-        $60 : begin
+        0   :   Result[1] := '1';
+        64  :   Result[2] := '1';
+        96  : begin
                 Result[1] := '1';
                 Result[2] := '1';
               end;
-        $80 :   Result[3] := '1';
-        $A0 : begin
+        128 :   Result[3] := '1';
+        160 : begin
                 Result[1] := '1';
                 Result[3] := '1';
               end;
@@ -3033,7 +3034,7 @@ begin
   end;
 end;
 
-{>>> Union Deciders <<<} //20
+{>>> Union Deciders <<<} //21
 
 function wbCOEDOwnerDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
 var
@@ -3053,6 +3054,19 @@ begin
     Result := 1
   else if MainRecord.Signature = 'FACT' then
     Result := 2;
+end;
+
+function wbConditionCompValueDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+var
+  Container: IwbContainer;
+begin
+  Result := 0;
+  if not wbTryGetContainerFromUnion(aElement, Container) then
+    Exit;
+
+  // "use global" flag
+  if Integer(Container.ElementByName['Type'].NativeValue) and 4 <> 0 then
+    Result := 1;
 end;
 
 function wbCTDAParam3Decider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;

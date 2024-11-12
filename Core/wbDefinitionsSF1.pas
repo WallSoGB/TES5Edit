@@ -2513,19 +2513,6 @@ begin
   end;
 end;
 
-function wbCTDACompValueDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
-var
-  Container: IwbContainer;
-begin
-  Result := 0;
-  if not wbTryGetContainerFromUnion(aElement, Container) then
-    Exit;
-
-  // "use global" flag
-  if Integer(Container.ElementByName['Type'].NativeValue) and $04 <> 0 then
-    Result := 1;
-end;
-
 function wbCTDAParam1Decider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
 var
   Desc: PCTDAFunction;
@@ -6268,7 +6255,7 @@ end;
       wbStructSK(CTDA, [3, 5, 6], '', [
      {0}wbInteger('Type', itU8, wbConditionTypeToStr, wbConditionTypeToInt).SetAfterSet(wbConditionTypeAfterSet),
      {1}wbUnused(3),
-     {2}wbUnion('Comparison Value', wbCTDACompValueDecider, [
+     {2}wbUnion('Comparison Value', wbConditionCompValueDecider, [
           wbFloat('Comparison Value - Float'),
           wbFormIDCk('Comparison Value - Global', [GLOB])
         ]),
