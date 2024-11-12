@@ -9359,16 +9359,7 @@ end;
             'Property crime only',
             'No crime'
           ])),
-     {04} wbInteger('Mood', itU8, wbEnum([
-            'Neutral',
-            'Angry',
-            'Fear',
-            'Happy',
-            'Sad',
-            'Surprised',
-            'Puzzled',
-            'Disgusted'
-          ])),
+     {04} wbInteger('Mood', itU8, wbMoodEnum),
           wbInteger('Assistance', itU8, wbAssistanceEnum),
           wbInteger('Has Reaction Radius Behavior', itU8, wbBoolEnum)
     ], cpNormal, True);

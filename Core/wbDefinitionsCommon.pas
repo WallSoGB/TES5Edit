@@ -44,6 +44,7 @@ var
   wbCreatureTypeEnum: IwbEnumDef;
   wbEquipTypeEnum: IwbEnumDef;
   wbMenuModeEnum: IwbEnumDef;
+  wbMoodEnum: IwbEnumDef;
   wbMusicEnum: IwbEnumDef;
   wbPackageTypeEnum: IwbEnumDef;
   wbQuadrantEnum: IwbEnumDef;
@@ -5051,6 +5052,18 @@ begin
       1058, 'Specific: Vendor Repair',
       1059, 'Specific: Tutorial',
       1060, 'Specific: You''re SPECIAL book'
+    ]);
+
+  wbMoodEnum :=
+    wbEnum([], [
+      0,       'Neutral',
+      1, IsFO3('Afraid',   'Angry'),
+      2, IsFO3('Annoyed',  'Fear'),
+      3, IsFO3('Cocky',    'Happy'),
+      4, IsFO3('Drugged',  'Sad'),
+      5, IsFO3('Pleasant', 'Surprised'),
+      6, IsFO3('Angry',    'Puzzled'),
+      7, IsFO3('Sad',      'Disgusted')
     ]);
 
   wbMusicEnum :=

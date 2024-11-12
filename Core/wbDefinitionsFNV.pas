@@ -20,7 +20,6 @@ var
   wbHeadPartIndexEnum: IwbEnumDef;
   wbMiscStatEnum: IwbEnumDef;
   wbModEffectEnum: IwbEnumDef;
-  wbMoodEnum: IwbEnumDef;
   wbObjectTypeEnum: IwbEnumDef;
   wbPlayerActionEnum: IwbEnumDef;
   wbReloadAnimEnum: IwbEnumDef;
@@ -4791,17 +4790,6 @@ var  wbSoundTypeSoundsOld :=
   ]);
 
   wbCSDTs := wbRArrayS('Sound Types', wbCSDT, cpNormal, False, nil, nil, wbActorTemplateUseModelAnimation);
-
-  wbMoodEnum := wbEnum([
-    'Neutral',
-    'Afraid',
-    'Annoyed',
-    'Cocky',
-    'Drugged',
-    'Pleasant',
-    'Angry',
-    'Sad'
-  ]);
 
   wbAIDT :=
     wbStruct(AIDT, 'AI Data', [
