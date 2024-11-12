@@ -1460,103 +1460,6 @@ begin
   end;
 end;
 
-var
-  wbCtdaTypeFlags : IwbFlagsDef;
-
-function wbCtdaTypeToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
-var
-  s: string;
-begin
-  Result := '';
-
-  if not Assigned(wbCtdaTypeFlags) then
-    wbCtdaTypeFlags := wbFlags([
-      {0x01} 'Or',
-      {0x02} 'Use aliases',
-      {0x04} 'Use global',
-      {0x08} 'Use packdata',
-      {0x10} 'Swap Subject and Target'
-    ]);
-{
-    Compare operator (upper 3 bits)
-    LGE
-    000    0=Equal to
-    001    1=Not equal to
-    010    2=Greater than
-    011    3=Greater than or equal to
-    100    4=Less than
-    101    5=Less than or equal to
-
-    Flags (lower 5 bits)
-        0x01=OR (default is to AND conditions together)
-        0x02=Parameters (use aliases) : Force function parameters to use quest alias data (exclusive with "use pack data")
-        0x04=Use global
-        0x08=Use Pack Data : Force function parameters to use pack data (exclusive with "use aliases")
-        0x10=Swap Subject and Target
-}
-  case aType of
-    ctEditType:
-      Result := 'CheckComboBox';
-    ctEditInfo:
-      Result := 'Equal,Greater,Lesser,Or,"Use Aliases","Use Global","Use Packdata","Swap Subject and Target"';
-    ctToEditValue: begin
-      Result := '00000000';
-      case aInt and $E0 of
-        $00 : Result[1] := '1';
-        $40 : Result[2] := '1';
-        $60 : begin
-                Result[1] := '1';
-                Result[2] := '1';
-              end;
-        $80 : Result[3] := '1';
-        $A0 : begin
-                Result[1] := '1';
-                Result[3] := '1';
-              end;
-      end;
-      if (aInt and $01) <> 0 then // Or
-        Result[4] := '1';
-      if (aInt and $02) <> 0 then // Use aliases
-        Result[5] := '1';
-      if (aInt and $04) <> 0 then // Use global
-        Result[6] := '1';
-      if (aInt and $08) <> 0 then // Use packdata
-        Result[7] := '1';
-      if (aInt and $10) <> 0 then // Swap Subject and Target
-        Result[8] := '1';
-    end;
-    ctToStr, ctToSummary: begin
-      case aInt and $E0 of
-        $00 : Result := 'Equal to';
-        $20 : Result := 'Not equal to';
-        $40 : Result := 'Greater than';
-        $60 : Result := 'Greater than or equal to';
-        $80 : Result := 'Less than';
-        $A0 : Result := 'Less than or equal to';
-      else
-        Result := '<Unknown Compare operator>'
-      end;
-      s := wbCtdaTypeFlags.ToString(aInt and $1F, aElement, aType = ctToSummary);
-      if s <> '' then
-        Result := Result + ' / ' + s;
-    end;
-    ctToSortKey: begin
-      Result := IntToHex64(aInt, 2);
-      Exit;
-    end;
-    ctCheck: begin
-      case aInt and $E0 of
-        $00, $20, $40, $60, $80, $A0 : Result := '';
-      else
-        Result := '<Unknown Compare operator>'
-      end;
-      s := wbCtdaTypeFlags.Check(aInt and $1F, aElement);
-      if s <> '' then
-        Result := Result + ' / ' + s;
-    end;
-  end;
-end;
-
 function wbCtdaTypeToInt(const aString: string; const aElement: IwbElement): Int64;
 var
   s: string;
@@ -7930,7 +7833,7 @@ begin
 
   wbCTDA := wbRStructSK([0], 'Condition', [
     wbStructSK(CTDA, [3, 5, 6], '', [
-   {0}wbInteger('Type', itU8, wbCtdaTypeToStr, wbCtdaTypeToInt, cpNormal, False, nil, wbCtdaTypeAfterSet),
+   {0}wbInteger('Type', itU8, wbConditionTypeToStr, wbCtdaTypeToInt, cpNormal, False, nil, wbCtdaTypeAfterSet),
    {1}wbUnused(3),
    {2}wbUnion('Comparison Value', wbCTDACompValueDecider, [
         wbFloat('Comparison Value - Float'),

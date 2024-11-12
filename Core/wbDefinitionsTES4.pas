@@ -70,65 +70,6 @@ var
   wbSCIT: IwbSubRecordStructDef;
   wbSCITOBME: IwbSubRecordStructDef;
 
-var
-  wbCtdaTypeFlags : IwbFlagsDef;
-
-function wbCtdaType(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
-var
-  s: string;
-begin
-  Result := '';
-  case aType of
-    ctToStr, ctToSummary: begin
-      case aInt and $F0 of
-        $00 : Result := 'Equal to';
-        $20 : Result := 'Not equal to';
-        $40 : Result := 'Greater than';
-        $60 : Result := 'Greater than or equal to';
-        $80 : Result := 'Less than';
-        $A0 : Result := 'Less than or equal to';
-      else
-        Result := '<Unknown Compare operator>'
-      end;
-
-      if not Assigned(wbCtdaTypeFlags) then
-        wbCtdaTypeFlags := wbFlags([
-          {0x01} 'Or',
-          {0x02} 'Run on target',
-          {0x04} 'Use global'
-        ]);
-
-      s := wbCtdaTypeFlags.ToString(aInt and $0F, aElement, aType = ctToSummary);
-
-      if s <> '' then
-        Result := Result + ' / ' + s;
-    end;
-    ctToSortKey: begin
-      Result := IntToHex64(aInt, 2);
-      Exit;
-    end;
-    ctCheck: begin
-      case aInt and $F0 of
-        $00, $20, $40, $60, $80, $A0 : Result := '';
-      else
-        Result := '<Unknown Compare operator>'
-      end;
-
-      if not Assigned(wbCtdaTypeFlags) then
-        wbCtdaTypeFlags := wbFlags([
-          {0x01} 'Or',
-          {0x02} 'Run on target',
-          {0x04} 'Use global'
-        ]);
-
-      s := wbCtdaTypeFlags.Check(aInt and $0F, aElement);
-
-      if s <> '' then
-        Result := Result + ' / ' + s;
-    end;
-  end;
-end;
-
 function wbIdleAnam(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
 begin
   Result := '';
@@ -2488,7 +2429,7 @@ var  wbSoundTypeSoundsOld :=
   wbCTDA :=
     wbRUnion('Condition', [
       wbStructSK(CTDA, [3, 5, 6], 'Condition', [
-     {0}wbInteger('Type', itU8, wbCtdaType),
+     {0}wbInteger('Type', itU8, wbConditionTypeToStr),
      {1}wbUnused(3),
      {2}wbUnion('Comparison Value', wbCTDACompValueDecider, [
           wbFloat('Comparison Value - Float'),
@@ -2564,7 +2505,7 @@ var  wbSoundTypeSoundsOld :=
       ], cpNormal, False, nil, 7).SetToStr(wbConditionToStr).IncludeFlag(dfCollapsed, wbCollapseConditions),
 
       wbStructSK(CTDT, [3, 4], 'Condition (old format)', [
-     {0}wbInteger('Type', itU8, wbCtdaType),
+     {0}wbInteger('Type', itU8, wbConditionTypeToStr),
      {1}wbUnused(3),
      {2}wbUnion('Comparison Value', wbCTDACompValueDecider, [
           wbFloat('Comparison Value - Float'),

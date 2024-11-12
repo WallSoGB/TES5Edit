@@ -669,92 +669,6 @@ begin
   Result := StrToIntDef(aString, 0);
 end;
 
-
-var
-  wbCtdaTypeFlags : IwbFlagsDef;
-
-function wbCtdaTypeToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
-var
-  s: string;
-begin
-  Result := '';
-  case aType of
-    ctEditType:
-      Result := 'CheckComboBox';
-    ctEditInfo:
-      Result := 'Equal,Greater,Lesser,Or,"Use Global","Run on Target"';
-    ctToEditValue: begin
-      Result := '00000000';
-      case aInt and $F0 of
-        $00 : Result[1] := '1';
-        $40 : Result[2] := '1';
-        $60 : begin
-                Result[1] := '1';
-                Result[2] := '1';
-              end;
-        $80 : Result[3] := '1';
-        $A0 : begin
-                Result[1] := '1';
-                Result[3] := '1';
-              end;
-      end;
-      if (aInt and $01) <> 0 then
-        Result[4] := '1';
-      if (aInt and $02) <> 0 then
-        Result[6] := '1';
-      if (aInt and $04) <> 0 then
-        Result[5] := '1';
-    end;
-    ctToStr, ctToSummary: begin
-      case aInt and $F0 of
-        $00 : Result := 'Equal to';
-        $20 : Result := 'Not equal to';
-        $40 : Result := 'Greater than';
-        $60 : Result := 'Greater than or equal to';
-        $80 : Result := 'Less than';
-        $A0 : Result := 'Less than or equal to';
-      else
-        Result := '<Unknown Compare operator>'
-      end;
-
-      if not Assigned(wbCtdaTypeFlags) then
-        wbCtdaTypeFlags := wbFlags([
-          {0x01} 'Or',
-          {0x02} 'Run on target',
-          {0x04} 'Use global'
-        ]);
-
-      s := wbCtdaTypeFlags.ToString(aInt and $0F, aElement, aType = ctToSummary);
-
-      if s <> '' then
-        Result := Result + ' / ' + s;
-    end;
-    ctToSortKey: begin
-      Result := IntToHex64(aInt, 2);
-      Exit;
-    end;
-    ctCheck: begin
-      case aInt and $F0 of
-        $00, $20, $40, $60, $80, $A0 : Result := '';
-      else
-        Result := '<Unknown Compare operator>'
-      end;
-
-      if not Assigned(wbCtdaTypeFlags) then
-        wbCtdaTypeFlags := wbFlags([
-          {0x01} 'Or',
-          {0x02} 'Run on target',
-          {0x04} 'Use global'
-        ]);
-
-      s := wbCtdaTypeFlags.Check(aInt and $0F, aElement);
-
-      if s <> '' then
-        Result := Result + ' / ' + s;
-    end;
-  end;
-end;
-
 function wbCtdaTypeToInt(const aString: string; const aElement: IwbElement): Int64;
 var
   s: string;
@@ -4173,7 +4087,7 @@ begin
 
   wbCTDA :=
     wbStructSK(CTDA, [3, 5, 6], 'Condition', [
-   {0}wbInteger('Type', itU8, wbCtdaTypeToStr, wbCtdaTypeToInt, cpNormal, False, nil, wbCtdaTypeAfterSet),
+   {0}wbInteger('Type', itU8, wbConditionTypeToStr, wbCtdaTypeToInt, cpNormal, False, nil, wbCtdaTypeAfterSet),
    {1}wbUnused(3),
    {2}wbUnion('Comparison Value', wbCTDACompValueDecider, [
         wbFloat('Comparison Value - Float'),

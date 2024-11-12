@@ -274,12 +274,13 @@ function wbVertexToInt1(const aString: string; const aElement: IwbElement): Int6
 function wbVertexToInt2(const aString: string; const aElement: IwbElement): Int64;
 function wbWeatherCloudSpeedToInt(const aString: string; const aElement: IwbElement): Int64;
 
-{>>> To String Callbacks <<<} //33
+{>>> To String Callbacks <<<} //34
 procedure wbABGRToStr(var aValue: string; aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement; aType: TwbCallbackType);
 procedure wbBGRAToStr(var aValue: string; aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement; aType: TwbCallbackType);
 function wbClmtMoonsPhaseLength(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
 function wbClmtTime(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
 procedure wbConditionToStr(var aValue: string; aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement; aType: TwbCallbackType);
+function wbConditionTypeToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
 procedure wbCrowdPropertyToStr(var aValue: string; aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement; aType: TwbCallbackType);
 function wbEdgeToStr(aEdge: Integer; aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
 function wbEdgeToStr0(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
@@ -1939,7 +1940,7 @@ begin
   Result := Min(Round(f), 254);
 end;
 
-{>>> To String Callbacks <<<} //33
+{>>> To String Callbacks <<<} //34
 
 procedure wbABGRToStr(var aValue: string; aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement; aType: TwbCallbackType);
 var
@@ -2112,6 +2113,93 @@ begin
     aValue := aValue + ' AND'
   else
     aValue := aValue + ' OR';
+end;
+
+function wbConditionTypeToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
+var
+  Flags : IwbFlagsDef;
+  S     : string;
+begin
+  Result := '';
+
+  Flags := wbFlags([
+    'Or',
+    IsTES4FO3('Run On Target', 'Use Aliases'),
+    'Use Global',
+    IsTES4FO3('', 'Use Packdata'),
+    IsTES4FO3('', 'Swap Subject and Target')
+  ]);
+
+  case aType of
+    ctEditType:
+      Result := 'CheckComboBox';
+
+    ctEditInfo:
+      Result :=
+        IsTES4FO3(
+        '"Equal To", "Greater Than", "Less Than", "Or", "Run On Target", "Use Global"',
+        '"Equal To", "Greater Than", "Less Than", "Or", "Use Aliases", "Use Global", "Use Packdata", "Swap Subject and Target"');
+
+    ctToEditValue: begin
+      Result := '00000000';
+      case aInt and 224 of
+        $00 :   Result[1] := '1';
+        $40 :   Result[2] := '1';
+        $60 : begin
+                Result[1] := '1';
+                Result[2] := '1';
+              end;
+        $80 :   Result[3] := '1';
+        $A0 : begin
+                Result[1] := '1';
+                Result[3] := '1';
+              end;
+      end;
+      if (aInt and  1) <> 0 then
+        Result[4] := '1';
+      if (aInt and  2) <> 0 then
+        Result[5] := '1';
+      if (aInt and  4) <> 0 then
+        Result[6] := '1';
+      if (aInt and  8) <> 0then
+        Result[7] := '1';
+      if (aInt and 16) <> 0 then
+        Result[8] := '1';
+    end;
+
+    ctToSortKey: begin
+      Result := IntToHex64(aInt, 2);
+    end;
+
+    ctCheck: begin
+      case aInt and 224 of
+        0, 32, 64, 96, 128, 160 : Result := '';
+      else
+        Result := '<Unknown Compare Operator>';
+      end;
+
+      S := Flags.Check(aInt and 31, aElement);
+      if S <> '' then
+        Result := Result + ' / ' + S;
+    end;
+
+    ctToStr, ctToSummary: begin
+      case aInt and 224 of
+        0   : Result := 'Equal To';
+        32  : Result := 'Not Equal To';
+        64  : Result := 'Greater Than';
+        96  : Result := 'Greater Than Or Equal To';
+        128 : Result := 'Less Than';
+        160 : Result := 'Less Than Or Equal To';
+      else
+        Result := '<Unknown Compare Operator>';
+      end;
+
+      S := Flags.ToString(aInt and 31, aElement, aType = ctToSummary);
+      if S <> '' then
+        Result := Result + ' / ' + S;
+    end;
+  end;
 end;
 
 procedure wbCrowdPropertyToStr(var aValue: string; aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement; aType: TwbCallbackType);
