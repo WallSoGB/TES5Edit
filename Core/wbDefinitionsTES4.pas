@@ -37,6 +37,7 @@ var
   wbFormTypeEnum: IwbEnumDef;
   wbHeadPartIndexEnum: IwbEnumDef;
   wbMagicSchoolEnum: IwbEnumDef;
+  wbMajorSkillEnum: IwbEnumDef;
   wbOBMEResolutionInfo: IwbEnumDef;
   wbSkillEnum: IwbEnumDef;
   wbSpecializationEnum: IwbEnumDef;
@@ -1432,6 +1433,31 @@ begin
       'Restoration'
     ]);
 
+  wbMajorSkillEnum :=
+    wbEnum([], [
+      12, 'Armoer',
+      13, 'Athletics',
+      14, 'Blade',
+      15, 'Block',
+      16, 'Blunt',
+      17, 'Hand To Hand',
+      18, 'Heavy Armor',
+      19, 'Alchemy',
+      20, 'Alteration',
+      21, 'Conjuration',
+      22, 'Destruction',
+      23, 'Illusion',
+      24, 'Mysticism',
+      25, 'Restoration',
+      26, 'Acrobatics',
+      27, 'Light Armor',
+      28, 'Marksman',
+      29, 'Mercantile',
+      30, 'Security',
+      31, 'Sneak',
+      32, 'Speechcraft'
+    ]);
+
   wbSkillEnum :=
     wbEnum([
       'Armorer',
@@ -2151,7 +2177,7 @@ begin
     wbStruct(DATA, '', [
       wbArrayS('Primary Attributes', wbInteger('Primary Attribute', itS32, wbAttributeEnum), 2),
       wbInteger('Specialization', itU32, wbSpecializationEnum),
-      wbArrayS('Major Skills', wbInteger('Major Skill', itS32, wbActorValueEnum), 7),
+      wbArrayS('Major Skills', wbInteger('Major Skill', itS32, wbMajorSkillEnum), 7),
       wbInteger('Flags', itU32, wbFlags(['Playable', 'Guard'])),
       wbInteger('Buys/Sells and Services', itU32, wbServiceFlags),
       wbInteger('Teaches', itS8, wbSkillEnum),
