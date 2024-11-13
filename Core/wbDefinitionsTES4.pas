@@ -39,6 +39,7 @@ var
   wbMagicSchoolEnum: IwbEnumDef;
   wbMajorSkillEnum: IwbEnumDef;
   wbOBMEResolutionInfo: IwbEnumDef;
+  wbResistEnum: IwbEnumDef;
   wbSkillEnum: IwbEnumDef;
   wbSpecializationEnum: IwbEnumDef;
 
@@ -1456,6 +1457,19 @@ begin
       30, 'Security',
       31, 'Sneak',
       32, 'Speechcraft'
+    ]);
+
+  wbResistEnum :=
+    wbEnum([], [
+      -1, 'None',
+      61, 'Resist Fire',
+      62, 'Resist Frost',
+      63, 'Resist Disease',
+      64, 'Resist Magic',
+      65, 'Resist Normal Weapons',
+      66, 'Resist Paralysis',
+      67, 'Resist Poison',
+      68, 'Resist Shock'
     ]);
 
   wbSkillEnum :=
