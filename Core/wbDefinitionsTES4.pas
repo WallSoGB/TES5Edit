@@ -49,9 +49,8 @@ var
   wbFULLReq: IwbSubRecordDef;
   wbDESC: IwbSubRecordDef;
   wbXSCL: IwbSubRecordDef;
-  wbCTDA: IwbSubRecordUnionDef;
   wbSCHR: IwbSubRecordUnionDef;
-  wbCTDAs: IwbSubRecordArrayDef;
+  wbConditions: IwbSubRecordArrayDef;
   wbSCROs: IwbRecordMemberDef;
   wbPGRP: IwbSubRecordDef;
   wbResultScript: IwbRecordMemberDef;
@@ -163,33 +162,34 @@ type
   TCTDAFunctionParamType = (
     ptNone,
     ptInteger,
-    ptVariableName,  //Integer
-    ptSex,           //Enum: Male, Female
-    ptActorValue,    //Enum: wbActorValue
-    ptCrimeType,     //?? Enum
-    ptAxis,          //?? Char
-    ptFormType,      //?? Enum
     ptQuestStage,
+    ptVariableName,
 
-    ptObjectReference,    //REFR, ACHR, ACRE, PGRE
-    ptInventoryObject,    //ARMO, BOOK, MISC, WEAP, AMMO, KEYM, ALCH, NOTE, ARMA
-    ptActor,              //ACHR, ACRE
-    ptQuest,              //QUST
-    ptFaction,            //FACT
+    ptActorValue,    //wbActorValue
+    ptAxis,          //wbAxisEnum
+    ptCrimeType,     //wbCrimeTypeEnum
+    ptFormType,      //wbFormTypeEnum
+    ptSex,           //wbSexEnum
+
+    ptActor,              //ACHR, ACRE, PLYR, TRGT
+    ptActorBase,          //CREA, NPC_
+    ptBaseObject,         //ACTI, ALCH, AMMO, APPA, ARMO, BOOK, CLOT, CONT, CREA, DOOR, FLOR, FURN, GRAS, INGR, KEYM, LIGH, LVLC, MISC, NPC_, SBSP, SGST, SLGM, SOUN, STAT, TREE, WEAP
+    ptBirthsign,          //BSGN
     ptCell,               //CELL
     ptClass,              //CLAS
-    ptRace,               //RACE
-    ptActorBase,          //NPC_, CREA
-    ptGlobal,             //GLOB
-    ptWeather,            //WTHR
-    ptPackage,            //PACK
-    ptOwnerOpt,           //FACT, NPC_
-    ptBirthsign,          //BSGN
+    ptFaction,            //FACT
     ptFurniture,          //FURN
-    ptMagicItem,          //SPEL
+    ptGlobal,             //GLOB
+    ptInventoryObject,    //ALCH, AMMO, APPA, ARMO, BOOK, CLOT, INGR, KEYM, LIGH, MISC, SGST, SLGM, WEAP
     ptMagicEffect,        //MGEF
-    ptWorldspace,         //WRLD
-    ptReferencableObject
+    ptOwner,              //FACT, NPC_
+    ptPackage,            //PACK
+    ptQuest,              //QUST
+    ptRace,               //RACE
+    ptReference,          //ACHR, ACRE, PLYR, REFR, TRGT
+    ptSpell,              //SPEL
+    ptWeather,            //WTHR
+    ptWorldspace          //WRLD
   );
 
   PCTDAFunction = ^TCTDAFunction;
@@ -202,7 +202,7 @@ type
 
 const
   wbCTDAFunctions : array[0..199] of TCTDAFunction = (
-    (Index:   1; Name: 'GetDistance'; ParamType1: ptObjectReference),
+    (Index:   1; Name: 'GetDistance'; ParamType1: ptReference),
     (Index:   5; Name: 'GetLocked'),
     (Index:   6; Name: 'GetPos'; ParamType1: ptAxis),
     (Index:   8; Name: 'GetAngle'; ParamType1: ptAxis),
@@ -212,8 +212,8 @@ const
     (Index:  14; Name: 'GetActorValue'; ParamType1: ptActorValue),
     (Index:  18; Name: 'GetCurrentTime'),
     (Index:  24; Name: 'GetScale'),
-    (Index:  27; Name: 'GetLineOfSight'; ParamType1: ptObjectReference),
-    (Index:  32; Name: 'GetInSameCell'; ParamType1: ptObjectReference),
+    (Index:  27; Name: 'GetLineOfSight'; ParamType1: ptReference),
+    (Index:  32; Name: 'GetInSameCell'; ParamType1: ptReference),
     (Index:  35; Name: 'GetDisabled'),
     (Index:  36; Name: 'MenuMode'; ParamType1: ptInteger),
     (Index:  39; Name: 'GetDisease'),
@@ -228,7 +228,7 @@ const
     (Index:  48; Name: 'GetGold'),
     (Index:  49; Name: 'GetSleeping'),
     (Index:  50; Name: 'GetTalkedToPC'),
-    (Index:  53; Name: 'GetScriptVariable'; ParamType1: ptObjectReference; ParamType2: ptVariableName),
+    (Index:  53; Name: 'GetScriptVariable'; ParamType1: ptReference; ParamType2: ptVariableName),
     (Index:  56; Name: 'GetQuestRunning'; ParamType1: ptQuest),
     (Index:  58; Name: 'GetStage'; ParamType1: ptQuest),
     (Index:  59; Name: 'GetStageDone'; ParamType1: ptQuest; ParamType2: ptQuestStage),
@@ -244,7 +244,7 @@ const
     (Index:  69; Name: 'GetIsRace'; ParamType1: ptRace),
     (Index:  70; Name: 'GetIsSex'; ParamType1: ptSex),
     (Index:  71; Name: 'GetInFaction'; ParamType1: ptFaction),
-    (Index:  72; Name: 'GetIsID'; ParamType1: ptReferencableObject),
+    (Index:  72; Name: 'GetIsID'; ParamType1: ptBaseObject),
     (Index:  73; Name: 'GetFactionRank'; ParamType1: ptFaction),
     (Index:  74; Name: 'GetGlobalValue'; ParamType1: ptGlobal),
     (Index:  75; Name: 'IsSnowing'),
@@ -256,7 +256,7 @@ const
     (Index:  84; Name: 'GetDeadCount'; ParamType1: ptActorBase),
     (Index:  91; Name: 'GetIsAlerted'),
     (Index:  98; Name: 'GetPlayerControlsDisabled'),
-    (Index:  99; Name: 'GetHeadingAngle'; ParamType1: ptObjectReference),
+    (Index:  99; Name: 'GetHeadingAngle'; ParamType1: ptReference),
     (Index: 101; Name: 'IsWeaponOut'),
     (Index: 102; Name: 'IsTorchOut'),
     (Index: 103; Name: 'IsShieldOut'),
@@ -280,7 +280,7 @@ const
     (Index: 133; Name: 'SameFactionAsPC'),
     (Index: 134; Name: 'SameRaceAsPC'),
     (Index: 135; Name: 'SameSexAsPC'),
-    (Index: 136; Name: 'GetIsReference'; ParamType1: ptObjectReference),
+    (Index: 136; Name: 'GetIsReference'; ParamType1: ptReference),
     (Index: 141; Name: 'IsTalking'),
     (Index: 142; Name: 'GetWalkSpeed'),
     (Index: 143; Name: 'GetCurrentAIProcedure'),
@@ -297,7 +297,7 @@ const
     (Index: 159; Name: 'GetSitting'),
     (Index: 160; Name: 'GetFurnitureMarkerID'),
     (Index: 161; Name: 'GetIsCurrentPackage'; ParamType1: ptPackage),
-    (Index: 162; Name: 'IsCurrentFurnitureRef'; ParamType1: ptObjectReference),
+    (Index: 162; Name: 'IsCurrentFurnitureRef'; ParamType1: ptReference),
     (Index: 163; Name: 'IsCurrentFurnitureObj'; ParamType1: ptFurniture),
     (Index: 170; Name: 'GetDayOfWeek'),
     (Index: 171; Name: 'IsPlayerInJail'),
@@ -316,17 +316,17 @@ const
     (Index: 203; Name: 'GetDestroyed'),
     (Index: 214; Name: 'HasMagicEffect'; ParamType1: ptMagicEffect),
     (Index: 215; Name: 'GetDoorDefaultOpen'),
-    (Index: 223; Name: 'IsSpellTarget'; ParamType1: ptMagicItem),
+    (Index: 223; Name: 'IsSpellTarget'; ParamType1: ptSpell),
     (Index: 224; Name: 'GetIsPlayerBirthsign'; ParamType1: ptBirthsign),
     (Index: 225; Name: 'GetPersuasionNumber'),
     (Index: 227; Name: 'HasVampireFed'),
     (Index: 228; Name: 'GetIsClassDefault'; ParamType1: ptClass),
     (Index: 229; Name: 'GetClassDefaultMatch'),
-    (Index: 230; Name: 'GetInCellParam'; ParamType1: ptCell; ParamType2: ptObjectReference),
+    (Index: 230; Name: 'GetInCellParam'; ParamType1: ptCell; ParamType2: ptReference),
     (Index: 237; Name: 'GetIsGhost'),
     (Index: 242; Name: 'GetUnconscious'),
     (Index: 244; Name: 'GetRestrained'),
-    (Index: 246; Name: 'GetIsUsedItem'; ParamType1: ptReferencableObject),
+    (Index: 246; Name: 'GetIsUsedItem'; ParamType1: ptBaseObject),
     (Index: 247; Name: 'GetIsUsedItemType'; ParamType1: ptFormType),
     (Index: 249; Name: 'GetPCFame'),
     (Index: 251; Name: 'GetPCInfamy'),
@@ -340,8 +340,8 @@ const
     (Index: 267; Name: 'IsCloudy'),
     (Index: 274; Name: 'GetArmorRatingUpperBody'),
     (Index: 277; Name: 'GetBaseActorValue'; ParamType1: ptActorValue),
-    (Index: 278; Name: 'IsOwner'; ParamType1: ptOwnerOpt),
-    (Index: 280; Name: 'IsCellOwner'; ParamType1: ptCell; ParamType2: ptOwnerOpt),
+    (Index: 278; Name: 'IsOwner'; ParamType1: ptOwner),
+    (Index: 280; Name: 'IsCellOwner'; ParamType1: ptCell; ParamType2: ptOwner),
     (Index: 282; Name: 'IsHorseStolen'),
     (Index: 285; Name: 'IsLeftUp'),
     (Index: 286; Name: 'IsSneaking'),
@@ -374,7 +374,7 @@ const
 
     // Added by (x)OBSE:
     (Index: 1107; Name: 'IsAmmo'; ParamType1: ptInteger),
-    (Index: 1122; Name: 'HasSpell'; ParamType1: ptMagicItem),
+    (Index: 1122; Name: 'HasSpell'; ParamType1: ptSpell),
     (Index: 1124; Name: 'IsClassSkill'; ParamType1: ptActorValue; ParamType2: ptClass),
     (Index: 1254; Name: 'GetActorLightAmount'),
     (Index: 1884; Name: 'GetPCTrainingSessionsUsed'; ParamType1: ptPackage),
@@ -2414,162 +2414,63 @@ var  wbSoundTypeSoundsOld :=
       $43, 'Effect Shader'
   ]);
 
-  wbCTDA :=
-    wbRUnion('Condition', [
-      wbStructSK(CTDA, [3, 5, 6], 'Condition', [
-     {0}wbInteger('Type', itU8, wbConditionTypeToStr, wbConditionTypeToInt).SetAfterSet(wbConditionTypeAfterSet),
-     {1}wbUnused(3),
-     {2}wbUnion('Comparison Value', wbConditionCompValueDecider, [
-          wbFloat('Comparison Value - Float'),
-          wbFormIDCk('Comparison Value - Global', [GLOB])
-        ]),
-     {3}wbInteger('Function', itU16, wbCTDAFunctionToStr, wbCTDAFunctionToInt),   // Limited to itu16
-     {4}wbUnused(2),
-     {5}wbUnion('Parameter #1', wbCTDAParam1Decider, [
-          {00} wbByteArray('Unknown', 4),
-          {01} wbByteArray('None', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
-          {02} wbInteger('Integer', itS32),
-          {03} wbInteger('Variable Name (INVALID)', itS32).IncludeFlag(dfZeroSortKey),
-          {04} wbInteger('Sex', itU32, wbSexEnum),
-          {05} wbFormIDCk('Actor Value', [ACVA]),
-//          {05} wbInteger('Actor Value', itS32, wbActorValueEnum),
-          {06} wbInteger('Crime Type', itU32, wbCrimeTypeEnum),
-          {07} wbInteger('Axis', itU32, wbAxisEnum),
-          {08} wbInteger('Form Type', itU32, wbFormTypeEnum),
-          {09} wbInteger('Quest Stage (INVALID)', itS32).IncludeFlag(dfZeroSortKey),
-          {10} wbFormIDCkNoReach('Object Reference', [PLYR, REFR, ACHR, ACRE, TRGT]),
-          {12} wbFormIDCkNoReach('Inventory Object', [ARMO, AMMO, MISC, WEAP, INGR, SLGM, SGST, BOOK, KEYM, CLOT, ALCH, APPA, LIGH]),
-          {13} wbFormIDCkNoReach('Actor', [PLYR, ACHR, ACRE, TRGT]),
-          {14} wbFormIDCkNoReach('Quest', [QUST]),
-          {15} wbFormIDCkNoReach('Faction', [FACT]),
-          {16} wbFormIDCkNoReach('Cell', [CELL]),
-          {17} wbFormIDCkNoReach('Class', [CLAS]),
-          {18} wbFormIDCkNoReach('Race', [RACE]),
-          {19} wbFormIDCkNoReach('Actor Base', [NPC_, CREA, ACTI]),
-          {20} wbFormIDCkNoReach('Global', [GLOB]),
-          {21} wbFormIDCkNoReach('Weather', [WTHR]),
-          {22} wbFormIDCkNoReach('Package', [PACK]),
-          {23} wbFormIDCkNoReach('Owner', [FACT, NPC_]),
-          {24} wbFormIDCkNoReach('Birthsign', [BSGN]),
-          {25} wbFormIDCkNoReach('Furniture', [FURN]),
-          {26} wbFormIDCkNoReach('Magic Item', [SPEL]),
-          {27} wbFormIDCkNoReach('Magic Effect', [MGEF]),
-          {28} wbFormIDCkNoReach('Worldspace', [WRLD]),
-          {29} wbFormIDCkNoReach('Referenceable Object', [CREA, NPC_, TREE, SBSP, LVLC, SOUN, ACTI, DOOR, FLOR, STAT, FURN, CONT, ARMO, AMMO, MISC, WEAP, INGR, SLGM, SGST, BOOK, KEYM, CLOT, ALCH, APPA, LIGH, GRAS])
-        ]),
-     {6}wbUnion('Parameter #2', wbCTDAParam2Decider, [
-          {00} wbByteArray('Unknown', 4),
-          {01} wbByteArray('None', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
-          {02} wbInteger('Integer', itS32),
-          {03} wbInteger('Variable Name', itS32, wbCTDAParam2VariableNameToStr, wbCTDAParam2VariableNameToInt),
-          {04} wbInteger('Sex', itU32, wbSexEnum),
-          {05} wbFormIDCk('Actor Value', [ACVA]),
-//          {05} wbInteger('Actor Value', itS32, wbActorValueEnum),
-          {06} wbInteger('Crime Type', itU32, wbCrimeTypeEnum),
-          {07} wbInteger('Axis', itU32, wbAxisEnum),
-          {08} wbInteger('Form Type', itU32, wbFormTypeEnum),
-          {09} wbInteger('Quest Stage', itS32, wbCTDAParam2QuestStageToStr, wbCTDAParam2QuestStageToInt),
-          {10} wbFormIDCkNoReach('Object Reference', [PLYR, REFR, ACHR, ACRE, TRGT]),
-          {12} wbFormIDCkNoReach('Inventory Object', [ARMO, AMMO, MISC, WEAP, INGR, SLGM, SGST, BOOK, KEYM, CLOT, ALCH, APPA, LIGH]),
-          {13} wbFormIDCkNoReach('Actor', [PLYR, ACHR, ACRE, TRGT]),
-          {14} wbFormIDCkNoReach('Quest', [QUST]),
-          {15} wbFormIDCkNoReach('Faction', [FACT]),
-          {16} wbFormIDCkNoReach('Cell', [CELL]),
-          {17} wbFormIDCkNoReach('Class', [CLAS]),
-          {18} wbFormIDCkNoReach('Race', [RACE]),
-          {19} wbFormIDCkNoReach('Actor Base', [NPC_, CREA, ACTI]),
-          {20} wbFormIDCkNoReach('Global', [GLOB]),
-          {21} wbFormIDCkNoReach('Weather', [WTHR]),
-          {22} wbFormIDCkNoReach('Package', [PACK]),
-          {23} wbFormIDCkNoReach('Owner', [FACT, NPC_]),
-          {24} wbFormIDCkNoReach('Birthsign', [BSGN]),
-          {25} wbFormIDCkNoReach('Furniture', [FURN]),
-          {26} wbFormIDCkNoReach('Magic Item', [SPEL]),
-          {27} wbFormIDCkNoReach('Magic Effect', [MGEF]),
-          {28} wbFormIDCkNoReach('Worldspace', [WRLD]),
-          {29} wbFormIDCkNoReach('Referenceable Object', [CREA, NPC_, TREE, SBSP, LVLC, SOUN, ACTI, DOOR, FLOR, STAT, FURN, CONT, ARMO, AMMO, MISC, WEAP, INGR, SLGM, SGST, BOOK, KEYM, CLOT, ALCH, APPA, LIGH, GRAS])
-        ]),
-     {7}wbInteger('Unused', itU32, nil, cpIgnore)
-      ], cpNormal, False, nil, 7).SetToStr(wbConditionToStr).IncludeFlag(dfCollapsed, wbCollapseConditions),
+  var wbConditionParameters := [
+    wbUnknown(4),
+    wbByteArray('None', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
+    wbInteger('Integer', itS32),
+    wbInteger('Quest Stage', itS32, wbCTDAParam2QuestStageToStr, wbCTDAParam2QuestStageToInt),
+    wbInteger('Variable Name', itS32, wbCTDAParam2VariableNameToStr, wbCTDAParam2VariableNameToInt),
 
-      wbStructSK(CTDT, [3, 4], 'Condition (old format)', [
-     {0}wbInteger('Type', itU8, wbConditionTypeToStr, wbConditionTypeToInt),
-     {1}wbUnused(3),
-     {2}wbUnion('Comparison Value', wbConditionCompValueDecider, [
-          wbFloat('Comparison Value - Float'),
-          wbFormIDCk('Comparison Value - Global', [GLOB])
-        ]),
-     {3}wbInteger('Function', itU16, wbCTDAFunctionToStr, wbCTDAFunctionToInt),   // Limited to itu16
-     {4}wbUnused(2),
-     {5}wbUnion('Parameter #1', wbCTDAParam1Decider, [
-          {00} wbByteArray('Unknown', 4),
-          {01} wbByteArray('None', 4, cpIgnore),
-          {02} wbInteger('Integer', itS32),
-          {03} wbInteger('Variable Name (INVALID)', itS32),
-          {04} wbInteger('Sex', itU32, wbSexEnum),
-          {05} wbFormIDCk('Actor Value', [ACVA]),
-//          {05} wbInteger('Actor Value', itS32, wbActorValueEnum),
-          {06} wbInteger('Crime Type', itU32, wbCrimeTypeEnum),
-          {07} wbInteger('Axis', itU32, wbAxisEnum),
-          {08} wbInteger('Form Type', itU32, wbFormTypeEnum),
-          {09} wbInteger('Quest Stage (INVALID)', itS32),
-          {10} wbFormIDCkNoReach('Object Reference', [PLYR, REFR, ACHR, ACRE, TRGT]),
-          {12} wbFormIDCkNoReach('Inventory Object', [ARMO, AMMO, MISC, WEAP, INGR, SLGM, SGST, BOOK, KEYM, CLOT, ALCH, APPA, LIGH]),
-          {13} wbFormIDCkNoReach('Actor', [PLYR, ACHR, ACRE, TRGT]),
-          {14} wbFormIDCkNoReach('Quest', [QUST]),
-          {15} wbFormIDCkNoReach('Faction', [FACT]),
-          {16} wbFormIDCkNoReach('Cell', [CELL]),
-          {17} wbFormIDCkNoReach('Class', [CLAS]),
-          {18} wbFormIDCkNoReach('Race', [RACE]),
-          {19} wbFormIDCkNoReach('Actor Base', [NPC_, CREA, ACTI]),
-          {20} wbFormIDCkNoReach('Global', [GLOB]),
-          {21} wbFormIDCkNoReach('Weather', [WTHR]),
-          {22} wbFormIDCkNoReach('Package', [PACK]),
-          {23} wbFormIDCkNoReach('Owner', [FACT, NPC_]),
-          {24} wbFormIDCkNoReach('Birthsign', [BSGN]),
-          {25} wbFormIDCkNoReach('Furniture', [FURN]),
-          {26} wbFormIDCkNoReach('Magic Item', [SPEL]),
-          {27} wbFormIDCkNoReach('Magic Effect', [MGEF]),
-          {28} wbFormIDCkNoReach('Worldspace', [WRLD]),
-          {29} wbFormIDCkNoReach('Referenceable Object', [CREA, NPC_, TREE, SBSP, LVLC, SOUN, ACTI, DOOR, FLOR, STAT, FURN, CONT, ARMO, AMMO, MISC, WEAP, INGR, SLGM, SGST, BOOK, KEYM, CLOT, ALCH, APPA, LIGH, GRAS])
-        ]),
-     {6}wbUnion('Parameter #2', wbCTDAParam2Decider, [
-          {00} wbByteArray('Unknown', 4),
-          {01} wbByteArray('None', 4, cpIgnore),
-          {02} wbInteger('Integer', itS32),
-          {03} wbInteger('Variable Name', itS32, wbCTDAParam2VariableNameToStr, wbCTDAParam2VariableNameToInt),
-          {04} wbInteger('Sex', itU32, wbSexEnum),
-          {05} wbFormIDCk('Actor Value', [ACVA]),
-//          {05} wbInteger('Actor Value', itS32, wbActorValueEnum),
-          {06} wbInteger('Crime Type', itU32, wbCrimeTypeEnum),
-          {07} wbInteger('Axis', itU32, wbAxisEnum),
-          {08} wbInteger('Form Type', itU32, wbFormTypeEnum),
-          {09} wbInteger('Quest Stage', itS32, wbCTDAParam2QuestStageToStr, wbCTDAParam2QuestStageToInt),
-          {10} wbFormIDCkNoReach('Object Reference', [PLYR, REFR, ACHR, ACRE, TRGT]),
-          {12} wbFormIDCkNoReach('Inventory Object', [ARMO, AMMO, MISC, WEAP, INGR, SLGM, SGST, BOOK, KEYM, CLOT, ALCH, APPA, LIGH]),
-          {13} wbFormIDCkNoReach('Actor', [PLYR, ACHR, ACRE, TRGT]),
-          {14} wbFormIDCkNoReach('Quest', [QUST]),
-          {15} wbFormIDCkNoReach('Faction', [FACT]),
-          {16} wbFormIDCkNoReach('Cell', [CELL]),
-          {17} wbFormIDCkNoReach('Class', [CLAS]),
-          {18} wbFormIDCkNoReach('Race', [RACE]),
-          {19} wbFormIDCkNoReach('Actor Base', [NPC_, CREA, ACTI]),
-          {20} wbFormIDCkNoReach('Global', [GLOB]),
-          {21} wbFormIDCkNoReach('Weather', [WTHR]),
-          {22} wbFormIDCkNoReach('Package', [PACK]),
-          {23} wbFormIDCkNoReach('Owner', [FACT, NPC_]),
-          {24} wbFormIDCkNoReach('Birthsign', [BSGN]),
-          {25} wbFormIDCkNoReach('Furniture', [FURN]),
-          {26} wbFormIDCkNoReach('Magic Item', [SPEL]),
-          {27} wbFormIDCkNoReach('Magic Effect', [MGEF]),
-          {28} wbFormIDCkNoReach('Worldspace', [WRLD]),
-          {29} wbFormIDCkNoReach('Referenceable Object', [CREA, NPC_, TREE, SBSP, LVLC, SOUN, ACTI, DOOR, FLOR, STAT, FURN, CONT, ARMO, AMMO, MISC, WEAP, INGR, SLGM, SGST, BOOK, KEYM, CLOT, ALCH, APPA, LIGH, GRAS])
-        ]),
-     {7}wbEmpty('Unused', cpIgnore)
+	  wbFormIDCk('Actor Value', [ACVA]),
+	  wbInteger('Axis', itU32, wbAxisEnum),
+   	wbInteger('Crime Type', itU32, wbCrimeTypeEnum),
+  	wbInteger('Sex', itU32, wbSexEnum),
+    wbInteger('Form Type', itU32, wbFormTypeEnum),
+
+   	wbFormIDCkNoReach('Actor', [ACHR, ACRE, PLYR, TRGT]),
+    wbFormIDCkNoReach('Actor Base', [CREA, NPC_]),
+    wbFormIDCkNoReach('Base Object', [ACTI, ALCH, AMMO, APPA, ARMO, BOOK, CLOT, CONT, CREA, DOOR, FLOR, FURN, GRAS, INGR, KEYM, LIGH, LVLC, MISC, NPC_, SBSP, SGST, SLGM, SOUN, STAT, TREE, WEAP]),
+    wbFormIDCkNoReach('Birthsign', [BSGN]),
+    wbFormIDCkNoReach('Cell', [CELL]),
+    wbFormIDCkNoReach('Class', [CLAS]),
+    wbFormIDCkNoReach('Faction', [FACT]),
+    wbFormIDCkNoReach('Furniture', [FURN]),
+    wbFormIDCkNoReach('Global', [GLOB]),
+    wbFormIDCkNoReach('Inventory Object', [ALCH, AMMO, APPA, ARMO, BOOK, CLOT, INGR, KEYM, LIGH, MISC, SGST, SLGM, WEAP]),
+    wbFormIDCkNoReach('Magic Effect', [MGEF]),
+    wbFormIDCkNoReach('Owner', [FACT, NPC_]),
+    wbFormIDCkNoReach('Package', [PACK]),
+    wbFormIDCkNoReach('Quest', [QUST]),
+    wbFormIDCkNoReach('Race', [RACE]),
+    wbFormIDCkNoReach('Reference', [ACHR, ACRE, PLYR, REFR, TRGT]),
+    wbFormIDCkNoReach('Spell', [SPEL]),
+    wbFormIDCkNoReach('Weather', [WTHR]),
+    wbFormIDCkNoReach('Worldspace', [WRLD])
+  ];
+
+  var wbConditionMembers := [
+    wbInteger('Type', itU8, wbConditionTypeToStr, wbConditionTypeToInt).SetAfterSet(wbConditionTypeAfterSet),
+    wbUnused(3),
+    wbUnion('Comparison Value', wbConditionCompValueDecider, [
+      wbFloat('Comparison Value - Float'),
+      wbFormIDCk('Comparison Value - Global', [GLOB])
+    ]),
+    wbInteger('Function', itU16, wbCTDAFunctionToStr, wbCTDAFunctionToInt),
+    wbUnused(2),
+    wbUnion('Parameter #1', wbCTDAParam1Decider, wbConditionParameters),
+    wbUnion('Parameter #2', wbCTDAParam2Decider, wbConditionParameters),
+    wbUnused(0)
+  ];
+
+  wbConditions :=
+    wbRArray('Conditions',
+      wbRUnion('Condition', [
+        wbStructSK(CTDA, [3, 5, 6], 'Condition', wbConditionMembers, cpNormal, False, nil, 7)
+          .SetToStr(wbConditionToStr).IncludeFlag(dfCollapsed, wbCollapseConditions),
+        wbStructSK(CTDT, [3, 5, 6], 'Condition', wbConditionMembers, cpNormal, False, nil, 7)
+          .SetToStr(wbConditionToStr).IncludeFlag(dfCollapsed, wbCollapseConditions)
       ])
-    ]);
-
-  wbCTDAs := wbRArray('Conditions', wbCTDA);
+    );
 
   wbSCHR :=
     wbRUnion('Basic Script Data', [
@@ -2637,7 +2538,7 @@ var  wbSoundTypeSoundsOld :=
   wbRecord(IDLE, 'Idle Animation', [
     wbEDID,
     wbTexturedModel('Model', [MODL, MODB, MODT], []),
-    wbCTDAs,
+    wbConditions,
     wbInteger(ANAM, 'Animation Group Section', itU8, wbIdleAnam, nil, cpNormal, True),
     wbArray(DATA, 'Related Idle Animations', wbFormIDCk('Related Idle Animation', [IDLE, NULL]), ['Parent', 'Previous Sibling'], cpNormal, True)
   ]).SetSummaryKey([1]);
@@ -2689,7 +2590,7 @@ var  wbSoundTypeSoundsOld :=
         wbString(NAM2, 'Actor notes', 0, cpTranslate)
       ])
     ),
-    wbCTDAs,
+    wbConditions,
     wbRArray('Choices', wbFormIDCk(TCLT, 'Choice', [DIAL])),
     wbRArray('Link From', wbFormIDCk(TCLF, 'Topic', [DIAL])),
     wbResultScript
@@ -3252,7 +3153,7 @@ var  wbSoundTypeSoundsOld :=
       .SetSummaryKeyOnValue([0, 1])
       .IncludeFlagOnValue(dfSummaryMembersNoName)
       .IncludeFlag(dfSummaryMembersNoName),
-    wbCTDAs
+    wbConditions
   ])
     .SetSummaryKey([1, 2, 4, 5])
     .SetSummaryMemberPrefixSuffix(5, 'if ', '')
@@ -3313,14 +3214,14 @@ var  wbSoundTypeSoundsOld :=
       ])),
       wbInteger('Priority', itU8)
     ], cpNormal, True),
-    wbCTDAs,
+    wbConditions,
     wbRArrayS('Stages', wbRStructSK([0], 'Stage', [
       wbInteger(INDX, 'Stage index', itS16),
       wbRArray('Log Entries', wbRStruct('Log Entry', [
         wbInteger(QSDT, 'Stage Flags', itU8, wbFlags([
           {0x01} 'Complete quest'
         ])),
-        wbCTDAs,
+        wbConditions,
         wbStringKC(CNAM, 'Log Entry', 0, cpTranslate),
         wbResultScript
       ]).SetSummaryKey([2, 1]))
@@ -3333,7 +3234,7 @@ var  wbSoundTypeSoundsOld :=
         ])),
         wbUnused(3)
       ]),
-      wbCTDAs
+      wbConditions
     ]).SetSummaryKey([0, 1]))
   ]);
 
