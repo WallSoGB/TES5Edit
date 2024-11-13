@@ -1385,26 +1385,26 @@ begin
     ]);
 
   wbHeadPartIndexEnum :=
-    wbEnum([
-      'Head',
-      'Ear (Male)',
-      'Ear (Female)',
-      'Mouth',
-      'Teeth (Lower)',
-      'Teeth (Upper)',
-      'Tongue',
-      'Eye (Left)',
-      'Eye (Right)'
+    wbEnum([], [
+      0, 'Head',
+      1, 'Ear (Male)',
+      2, 'Ear (Female)',
+      3, 'Mouth',
+      4, 'Teeth (Lower)',
+      5, 'Teeth (Upper)',
+      6, 'Tongue',
+      7, 'Eye (Left)',
+      8, 'Eye (Right)'
     ]);
 
   wbMagicSchoolEnum :=
-    wbEnum([
-      'Alteration',
-      'Conjuration',
-      'Destruction',
-      'Illusion',
-      'Mysticism',
-      'Restoration'
+    wbEnum([], [
+      0, 'Alteration',
+      1, 'Conjuration',
+      2, 'Destruction',
+      3, 'Illusion',
+      4, 'Mysticism',
+      5, 'Restoration'
     ]);
 
   wbMajorSkillEnum :=
