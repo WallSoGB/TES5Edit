@@ -1446,37 +1446,36 @@ begin
     ]);
 
   wbSkillEnum :=
-    wbEnum([
-      'Armorer',
-      'Athletics',
-      'Blade',
-      'Block',
-      'Blunt',
-      'Hand To Hand',
-      'Heavy Armor',
-      'Alchemy',
-      'Alteration',
-      'Conjuration',
-      'Destruction',
-      'Illusion',
-      'Mysticism',
-      'Restoration',
-      'Acrobatics',
-      'Light Armor',
-      'Marksman',
-      'Mercantile',
-      'Security',
-      'Sneak',
-      'Speechcraft'
-    ], [
-      -1, 'None'
+    wbEnum([], [
+      -1, 'None',
+      0,  'Armorer',
+      1,  'Athletics',
+      2,  'Blade',
+      3,  'Block',
+      4,  'Blunt',
+      5,  'Hand To Hand',
+      6,  'Heavy Armor',
+      7,  'Alchemy',
+      8,  'Alteration',
+      9,  'Conjuration',
+      10, 'Destruction',
+      11, 'Illusion',
+      12, 'Mysticism',
+      13, 'Restoration',
+      14, 'Acrobatics',
+      15, 'Light Armor',
+      16, 'Marksman',
+      17, 'Mercantile',
+      18, 'Security',
+      19, 'Sneak',
+      20, 'Speechcraft'
     ]);
 
   wbSpecializationEnum :=
-    wbEnum([
-      'Combat',
-      'Magic',
-      'Stealth'
+    wbEnum([], [
+      0, 'Combat',
+      1, 'Magic',
+      2, 'Stealth'
     ]);
 
 {>>> Simple Defs <<<}
