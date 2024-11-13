@@ -30,8 +30,8 @@ uses
   wbDefinitionsSignatures;
 
 var
-  wbConditionParameters: array of IwbValueDef;
   wbConditionMembers: array of IwbValueDef;
+  wbConditionParameters: array of IwbValueDef;
 
   wbFormTypeEnum: IwbEnumDef;
   wbHeadPartIndexEnum: IwbEnumDef;
@@ -43,10 +43,8 @@ var
   wbOBMEVersion: IwbStructDef;
 
   wbBodyParts: IwbRecordMemberDef;
-  wbCNTO: IwbRecordMemberDef;
   wbCNTOs: IwbRecordMemberDef;
   wbConditions: IwbRecordMemberDef;
-  wbCSDT: IwbRecordMemberDef;
   wbCSDTs: IwbRecordMemberDef;
   wbDESC: IwbRecordMemberDef;
   wbEDID: IwbRecordMemberDef;
@@ -1412,6 +1410,16 @@ begin
       'Eye (Right)'
     ]);
 
+  wbMagicSchoolEnum :=
+    wbEnum([
+      'Alteration',
+      'Conjuration',
+      'Destruction',
+      'Illusion',
+      'Mysticism',
+      'Restoration'
+    ]);
+
   wbSkillEnum :=
     wbEnum([
       'Armorer',
@@ -1439,16 +1447,6 @@ begin
       -1, 'None'
     ]);
 
-  wbMagicSchoolEnum :=
-    wbEnum([
-      'Alteration',
-      'Conjuration',
-      'Destruction',
-      'Illusion',
-      'Mysticism',
-      'Restoration'
-    ]);
-
   wbSpecializationEnum :=
     wbEnum([
       'Combat',
@@ -1457,9 +1455,6 @@ begin
     ]);
 
 {>>> Simple Defs <<<}
-
-  wbCNTOs := wbRArrayS('Items', wbCNTO);
-  wbCSDTs := wbRArrayS('Sound Types', wbCSDT);
   wbDESC := wbStringKC(DESC, 'Description', 0, cpTranslate);
   wbEDID := wbString(EDID, 'Editor ID', 0, cpNormal); // not cpBenign according to Arthmoor
   wbEFID := wbInteger(EFID, 'Magic effect name', itU32, wbChar4, cpNormal, True);
@@ -1490,11 +1485,13 @@ begin
       .IncludeFlag(dfCollapsed, wbCollapseBodyParts)
     );
 
-  wbCNTO :=
-    wbStructSK(CNTO, [0], 'Item', [
-      wbFormIDCk('Item', [ARMO, AMMO, MISC, WEAP, INGR, SLGM, SGST, BOOK, LVLI, KEYM, CLOT, ALCH, APPA, LIGH]),
-      wbInteger('Count', itS32).SetDefaultNativeValue(1)
-    ]).SetToStr(wbItemToStr).IncludeFlag(dfCollapsed, wbCollapseItems);
+  wbCNTOS :=
+    wbRArrayS('Items',
+      wbStructSK(CNTO, [0], 'Item', [
+        wbFormIDCk('Item', [ARMO, AMMO, MISC, WEAP, INGR, SLGM, SGST, BOOK, LVLI, KEYM, CLOT, ALCH, APPA, LIGH]),
+        wbInteger('Count', itS32).SetDefaultNativeValue(1)
+      ]).SetToStr(wbItemToStr).IncludeFlag(dfCollapsed, wbCollapseItems)
+    );
 
   wbConditionParameters := [
     wbUnknown(4),
@@ -1554,21 +1551,24 @@ begin
       ])
     );
 
-  wbCSDT := wbRStructSK([0], 'Sound Type', [
-    wbInteger(CSDT, 'Type', itU32,wbEnum([
-      {0x00} 'Left Foot',
-      {0x01} 'Right Foot',
-      {0x02} 'Left Back Foot',
-      {0x03} 'Right Back Foot',
-      {0x04} 'Idle',
-      {0x05} 'Aware',
-      {0x06} 'Attack',
-      {0x07} 'Hit',
-      {0x08} 'Death',
-      {0x09} 'Weapon'
-    ])),
-    wbSoundTypeSoundsOld
-  ]);
+  wbCSDTs :=
+    wbRArrayS('Sound Types',
+      wbRStructSK([0], 'Sound Type', [
+        wbInteger(CSDT, 'Type', itU32,wbEnum([
+          {0x00} 'Left Foot',
+          {0x01} 'Right Foot',
+          {0x02} 'Left Back Foot',
+          {0x03} 'Right Back Foot',
+          {0x04} 'Idle',
+          {0x05} 'Aware',
+          {0x06} 'Attack',
+          {0x07} 'Hit',
+          {0x08} 'Death',
+          {0x09} 'Weapon'
+        ])),
+        wbSoundTypeSoundsOld
+      ])
+    );
 
   wbEffect :=
     wbRStruct('Effect', [
@@ -2765,7 +2765,6 @@ begin
     wbArray(VTEX, 'Landscape Textures',
       wbFormIDCk('Texture', [LTEX, NULL]))
   ], False, wbLANDAddInfo);
-
 
   wbRecord(LIGH, 'Light',
     wbFlags(wbFlagsList([
