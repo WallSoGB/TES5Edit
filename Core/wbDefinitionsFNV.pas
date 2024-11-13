@@ -4546,7 +4546,7 @@ begin
     wbRStructExSK([0], [1], 'Item', [
       wbStructExSK(CNTO, [0], [1], 'Item', [
         wbFormIDCk('Item', [ARMO, AMMO, MISC, WEAP, BOOK, LVLI, KEYM, ALCH, NOTE, IMOD, CMNY, CCRD, LIGH, CHIP{, MSTT{?}{, STAT{?}]),
-        wbInteger('Count', itS32)
+        wbInteger('Count', itS32).SetDefaultNativeValue(1)
       ]),
       wbCOED
     ]).SetToStr(wbItemToStr).IncludeFlag(dfCollapsed, wbCollapseItems);
@@ -6968,7 +6968,7 @@ var  wbSoundTypeSoundsOld :=
         wbInteger('Level', itS16),
         wbUnused(2),
         wbFormIDCk('Reference', [CREA, LVLC]),
-        wbInteger('Count', itS16),
+        wbInteger('Count', itS16).SetDefaultNativeValue(1),
         wbUnused(2)
       ])
       .SetSummaryKeyOnValue([0, 3, 2])
@@ -6988,7 +6988,7 @@ var  wbSoundTypeSoundsOld :=
         wbInteger('Level', itS16),
         wbUnused(2),
         wbFormIDCk('Reference', [ARMO, AMMO, MISC, WEAP, BOOK, LVLI, KEYM, ALCH, NOTE, IMOD, CMNY, CCRD, CHIP]),
-        wbInteger('Count', itS16),
+        wbInteger('Count', itS16).SetDefaultNativeValue(1),
         wbUnused(2)
       ])
       .SetSummaryKeyOnValue([0, 3, 2])
@@ -7008,7 +7008,7 @@ var  wbSoundTypeSoundsOld :=
         wbInteger('Level', itS16),
         wbUnused(2),
         wbFormIDCk('Reference', [NPC_, LVLN]),
-        wbInteger('Count', itS16),
+        wbInteger('Count', itS16).SetDefaultNativeValue(1),
         wbUnused(2)
       ])
       .SetSummaryKeyOnValue([0, 3, 2])

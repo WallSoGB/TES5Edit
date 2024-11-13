@@ -3008,7 +3008,7 @@ begin
     wbRStructExSK([0], [1], 'Item', [
       wbStructExSK(CNTO, [0], [1], 'Item', [
         wbFormIDCk('Item', [ARMO, AMMO, APPA, MISC, WEAP, BOOK, LVLI, KEYM, ALCH, INGR, LIGH, SLGM, SCRL]),
-        wbInteger('Count', itS32)
+        wbInteger('Count', itS32).SetDefaultNativeValue(1)
       ]),
       wbCOED
     ]).SetToStr(wbItemToStr).IncludeFlag(dfCollapsed, wbCollapseItems);
@@ -3019,7 +3019,7 @@ begin
     wbRStructExSK([0], [1], 'Item', [
       wbStructExSK(CNTO, [0], [1], 'Item', [
         wbFormIDCkNoReach('Item', [ARMO, AMMO, APPA, MISC, WEAP, BOOK, LVLI, KEYM, ALCH, INGR, LIGH, SLGM, SCRL]),
-        wbInteger('Count', itS32)
+        wbInteger('Count', itS32).SetDefaultNativeValue(1)
       ]),
       wbCOED
     ]).SetToStr(wbItemToStr).IncludeFlag(dfCollapsed, wbCollapseItems);
@@ -8747,7 +8747,7 @@ begin
         wbInteger('Level', itU16),
         wbByteArray('Unknown', 2, cpIgnore, false, wbNeverShow),
         wbFormIDCk('Reference', [ARMO, AMMO, APPA, MISC, WEAP, BOOK, LVLI, KEYM, ALCH, LIGH, INGR, SLGM, SCRL]),
-        wbInteger('Count', itU16),
+        wbInteger('Count', itU16).SetDefaultNativeValue(1),
         wbByteArray('Unknown', 2, cpIgnore, false, wbNeverShow)
       ])
       .SetSummaryKeyOnValue([0, 3, 2])
@@ -8767,7 +8767,7 @@ begin
         wbInteger('Level', itS16),
         wbByteArray('Unknown', 2, cpIgnore, false, wbNeverShow),
         wbFormIDCk('Reference', [NPC_, LVLN]),
-        wbInteger('Count', itS16),
+        wbInteger('Count', itS16).SetDefaultNativeValue(1),
         wbByteArray('Unknown', 2, cpIgnore, false, wbNeverShow)
       ])
       .SetSummaryKeyOnValue([0, 3, 2])
@@ -8787,7 +8787,7 @@ begin
         wbInteger('Level', itU16),
         wbByteArray('Unknown', 2, cpIgnore, false, wbNeverShow),
         wbFormIDCk('Reference', [SPEL, LVSP]),
-        wbInteger('Count', itU16),
+        wbInteger('Count', itU16).SetDefaultNativeValue(1),
         wbByteArray('Unknown', 2, cpIgnore, false, wbNeverShow)
       ])
       .SetSummaryKeyOnValue([0, 3, 2])

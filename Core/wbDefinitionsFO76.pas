@@ -5428,7 +5428,7 @@ begin
     wbRStructExSK([0], [1], 'Item', [
       wbStructExSK(CNTO, [0], [1], 'Item', [
         wbFormIDCk('Item', sigBaseObjects),
-        wbInteger('Count', itS32)
+        wbInteger('Count', itS32).SetDefaultNativeValue(1)
       ]),
       wbCOED
     ]).SetToStr(wbItemToStr).IncludeFlag(dfCollapsed, wbCollapseItems);
@@ -13449,7 +13449,7 @@ begin
             wbInteger('Level', itU16),
             wbUnused(2),
             wbFormIDCk('Reference', sigBaseObjects),
-            wbInteger('Count', itU16),
+            wbInteger('Count', itU16).SetDefaultNativeValue(1),
             wbEmpty('Chance None'),
             wbUnused(2)
           ])
@@ -13462,7 +13462,7 @@ begin
             wbInteger('Level', itU16),
             wbUnused(2),
             wbFormIDCk('Reference', sigBaseObjects),
-            wbInteger('Count', itU16),
+            wbInteger('Count', itU16).SetDefaultNativeValue(1),
             wbInteger('Chance None', itU8),
             wbUnused(1)
           ])
@@ -13497,7 +13497,7 @@ begin
           wbInteger('Level', itU16),
           wbUnused(2),
           wbFormIDCk('Reference', [NPC_, LVLN]),
-          wbInteger('Count', itS16),
+          wbInteger('Count', itS16).SetDefaultNativeValue(1),
           wbInteger('Chance None', itU8),
           wbUnused(1)
         ])
