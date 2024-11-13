@@ -15,13 +15,6 @@ interface
 uses
   wbInterface;
 
-var
-  wbFormTypeEnum: IwbEnumDef;
-  wbMagicSchoolEnum: IwbEnumDef;
-  wbOBMEResolutionInfo: IwbEnumDef;
-  wbSkillEnum: IwbEnumDef;
-  wbSpecializationEnum: IwbEnumDef;
-
 procedure DefineTES4;
 
 implementation
@@ -37,42 +30,55 @@ uses
   wbDefinitionsSignatures;
 
 var
-  wbEDID: IwbSubRecordDef;
-  wbSLSD: IwbRecordMemberDef;
-  wbSPLO: IwbSubRecordDef;
-  wbSPLOs: IwbSubRecordArrayDef;
-  wbCNTO: IwbRecordMemberDef;
-  wbCNTOs: IwbSubRecordArrayDef;
-  wbCSDT: IwbSubRecordStructDef;
-  wbCSDTs: IwbSubRecordArrayDef;
-  wbFULL: IwbSubRecordDef;
-  wbFULLReq: IwbSubRecordDef;
-  wbDESC: IwbSubRecordDef;
-  wbXSCL: IwbSubRecordDef;
-  wbSCHR: IwbSubRecordUnionDef;
-  wbConditions: IwbSubRecordArrayDef;
-  wbSCROs: IwbRecordMemberDef;
-  wbPGRP: IwbSubRecordDef;
-  wbResultScript: IwbRecordMemberDef;
-  wbSCRI: IwbSubRecordDef;
-  wbFaceGen: IwbSubRecordStructDef;
-  wbENAM: IwbSubRecordDef;
-  wbXESP: IwbSubRecordDef;
-  wbICON: IwbSubRecordDef;
-  wbEFID: IwbSubRecordDef;
-  wbEFIDOBME: IwbSubRecordDef;
-  wbEFIT: IwbSubRecordDef;
-  wbEFITOBME: IwbSubRecordDef;
-  wbEFIX: IwbSubRecordDef;
-  wbSCIT: IwbSubRecordStructDef;
-  wbSCITOBME: IwbSubRecordStructDef;
+  wbConditionParameters: array of IwbValueDef;
+  wbConditionMembers: array of IwbValueDef;
 
+  wbFormTypeEnum: IwbEnumDef;
+  wbHeadPartIndexEnum: IwbEnumDef;
+  wbMagicSchoolEnum: IwbEnumDef;
+  wbOBMEResolutionInfo: IwbEnumDef;
+  wbSkillEnum: IwbEnumDef;
+  wbSpecializationEnum: IwbEnumDef;
+
+  wbOBMEVersion: IwbStructDef;
+
+  wbBodyParts: IwbRecordMemberDef;
+  wbCNTO: IwbRecordMemberDef;
+  wbCNTOs: IwbRecordMemberDef;
+  wbConditions: IwbRecordMemberDef;
+  wbCSDT: IwbRecordMemberDef;
+  wbCSDTs: IwbRecordMemberDef;
+  wbDESC: IwbRecordMemberDef;
+  wbEDID: IwbRecordMemberDef;
   wbEffect: IwbRecordMemberDef;
-  wbFactionRank: IwbRecordMemberDef;
   wbEffects: IwbRecordMemberDef;
+  wbEFID: IwbRecordMemberDef;
+  wbEFIDOBME: IwbRecordMemberDef;
+  wbEFIT: IwbRecordMemberDef;
+  wbEFITOBME: IwbRecordMemberDef;
+  wbEFIX: IwbRecordMemberDef;
+  wbENAM: IwbRecordMemberDef;
+  wbFaceGen: IwbRecordMemberDef;
+  wbFactionRank: IwbRecordMemberDef;
+  wbFULL: IwbRecordMemberDef;
+  wbFULLReq: IwbRecordMemberDef;
+  wbICON: IwbRecordMemberDef;
   wbLeveledListEntryCreature: IwbRecordMemberDef;
   wbLeveledListEntryItem: IwbRecordMemberDef;
   wbLeveledListEntrySpell: IwbRecordMemberDef;
+  wbPGRP: IwbRecordMemberDef;
+  wbResultScript: IwbRecordMemberDef;
+  wbSCHR: IwbRecordMemberDef;
+  wbSCIT: IwbRecordMemberDef;
+  wbSCITOBME: IwbRecordMemberDef;
+  wbSCRI: IwbRecordMemberDef;
+  wbSCROs: IwbRecordMemberDef;
+  wbSLSD: IwbRecordMemberDef;
+  wbSoundTypeSoundsOld: IwbRecordMemberDef;
+  wbSPLO: IwbRecordMemberDef;
+  wbSPLOs: IwbRecordMemberDef;
+  wbXESP: IwbRecordMemberDef;
+  wbXSCL: IwbRecordMemberDef;
 
 type
   TCTDAFunctionParamType = (
@@ -1246,73 +1252,7 @@ begin
 
   wbIgnoreRecords.Add(XXXX);
 
-  wbEDID := wbString(EDID, 'Editor ID', 0, cpNormal); // not cpBenign according to Arthmoor
-  wbFULL := wbStringKC(FULL, 'Name', 0, cpTranslate);
-  wbFULLReq := wbStringKC(FULL, 'Name', 0, cpTranslate, True);
-  wbDESC := wbStringKC(DESC, 'Description', 0, cpTranslate);
-  wbXSCL := wbFloat(XSCL, 'Scale');
-
-  wbSCRI := wbFormIDCk(SCRI, 'Script', [SCPT]);
-  wbENAM := wbFormIDCk(ENAM, 'Enchantment', [ENCH]);
-
-  wbXESP := wbStruct(XESP, 'Enable Parent', [
-    wbFormIDCk('Reference', [PLYR, REFR, ACRE, ACHR]),
-    wbInteger('Flags', itU8, wbFlags([
-      'Set Enable State to Opposite of Parent'
-    ])),
-    wbUnused(3)
-  ]);
-
-  wbRefRecord(ACHR, 'Placed NPC',
-    wbFlags(wbFlagsList([
-      10, 'Persistent',
-      11, 'Initially Disabled',
-      15, 'Visible When Distant'
-    ])), [
-    wbEDID,
-    wbFormIDCk(NAME, 'Base', [NPC_], False, cpNormal, True),
-    wbRStruct('Unused', [
-      wbFormIDCk(XPCI, 'Unused', [CELL]),
-      wbString(FULL, 'Unused')
-    ]),
-    wbXLOD,
-    wbXESP,
-    wbFormIDCk(XMRC, 'Merchant container', [REFR], True),
-    wbFormIDCk(XHRS, 'Horse', [ACRE], True),
-    wbRagdoll,
-    wbXSCL,
-    wbDATAPosRot
-  ], True, wbPlacedAddInfo, cpNormal, False, wbREFRAfterLoad);
-
-  wbRefRecord(ACRE, 'Placed Creature',
-    wbFlags(wbFlagsList([
-      10, 'Persistent',
-      11, 'Initially Disabled',
-      15, 'Visible When Distant'
-    ])), [
-    wbEDID,
-    wbFormIDCk(NAME, 'Base', [CREA], False, cpNormal, True),
-    wbOwnership,
-    wbRagdoll,
-    wbXLOD,
-    wbXESP,
-    wbXSCL,
-    wbDATAPosRot
-  ], True, wbPlacedAddInfo);
-
-  wbRecord(ACTI, 'Activator',
-    wbFlags(wbFlagsList([
-      10, 'Quest Item',
-      17, 'Dangerous'
-    ])), [
-    wbEDID,
-    wbFULL,
-    wbTexturedModel('Model', [MODL, MODB, MODT], []),
-    wbSCRI,
-    wbFormIDCk(SNAM, 'Sound', [SOUN])
-  ]);
-
-  wbICON := wbString(ICON, 'Icon FileName');
+{>>> Enums <<<}
 
   wbActorValueEnum :=
     wbEnum([
@@ -1392,6 +1332,86 @@ begin
       -1, 'None'
     ]);
 
+  wbFormTypeEnum :=
+    wbEnum([], [
+      $03, 'Game Setting',
+      $04, 'Global',
+      $05, 'Class',
+      $06, 'Faction',
+      $07, 'Hair',
+      $08, 'Eyes',
+      $09, 'Race',
+      $0A, 'Sound',
+      $0B, 'Skill',
+      $0C, 'Magic Effect',
+      $0D, 'Script',
+      $0E, 'Land Texture',
+      $0F, 'Enchantment',
+      $10, 'Spell',
+      $11, 'BirthSign',
+      $12, 'Activator',
+      $13, 'Apparatus',
+      $14, 'Armor',
+      $15, 'Book',
+      $16, 'Clothing',
+      $17, 'Container',
+      $18, 'Door',
+      $19, 'Ingredient',
+      $1A, 'Light',
+      $1B, 'Misc',
+      $1C, 'Static',
+      $1D, 'Grass',
+      $1E, 'Tree',
+      $1F, 'Flora',
+      $20, 'Furniture',
+      $21, 'Weapon',
+      $22, 'Ammi',
+      $23, 'NPC',
+      $24, 'Creature',
+      $25, 'Leveled Creature',
+      $26, 'Soul Gem',
+      $27, 'Key',
+      $28, 'Alchemy',
+      $29, 'SubSpace',
+      $2A, 'Sigil Stone',
+      $2B, 'Leveled Item',
+      $2D, 'Weather',
+      $2E, 'Climate',
+      $2F, 'Region',
+      $30, 'Cell',
+      $31, 'Placed Object',
+      $32, 'Placed NPC',
+      $33, 'Placed Creature',
+      $34, 'Path Grid',
+      $35, 'Worldspace',
+      $36, 'Landscape',
+      $38, 'Road',
+      $39, 'Dialog Topic',
+      $3A, 'Dialog Response',
+      $3B, 'Quest',
+      $3C, 'Idle Animation',
+      $3D, 'Package',
+      $3E, 'Combat Style',
+      $3F, 'Load Screen',
+      $40, 'Leveled Spell',
+      $41, 'Animated Object',
+      $42, 'Water',
+      $43, 'Effect Shader'
+  ]);
+
+  wbHeadPartIndexEnum :=
+    wbEnum([
+      'Head',
+      'Ear (Male)',
+      'Ear (Female)',
+      'Mouth',
+      'Teeth (Lower)',
+      'Teeth (Upper)',
+      'Tongue',
+      'Eye (Left)',
+      'Eye (Right)'
+    ]);
+
   wbSkillEnum :=
     wbEnum([
       'Armorer',
@@ -1419,50 +1439,6 @@ begin
       -1, 'None'
     ]);
 
-
-  wbEFID := wbInteger(EFID, 'Magic effect name', itU32, wbChar4, cpNormal, True);
-
-  wbEFIDOBME := wbStringMgefCode(EFID, 'Magic Effect Code', 4, cpNormal, True);
-
-  wbEFIT :=
-    wbStructSK(EFIT, [4, 5], '', [
-      wbInteger('Magic effect name', itU32, wbChar4),
-      wbInteger('Magnitude', itU32),
-      wbInteger('Area', itU32),
-      wbInteger('Duration', itU32),
-      wbInteger('Type', itU32, wbEnum(['Self', 'Touch', 'Target'])),
-      wbInteger('Actor Value', itS32, wbActorValueEnum)
-    ], cpNormal, True, nil, -1, wbEFITAfterLoad);
-
-  wbEFITOBME :=
-    wbStructSK(EFIT, [4, 5], '', [
-      wbStringMgefCode('Magic Effect Code', 4),
-      wbInteger('Magnitude', itU32),
-      wbInteger('Area', itU32),
-      wbInteger('Duration', itU32),
-      wbInteger('Type', itU32, wbEnum(['Self', 'Touch', 'Target'])),
-      wbUnion('Param #1', wbEFITOBMEParamDecider, [
-        wbByteArray('Param #1 - Unknown Type', 4),
-        wbFormID('Param #1 - FormID'),
-        wbStringMgefCode('Param #1 - Magic Effect Code', 4),
-        wbFormIDCk('Param #1 - Actor Value', [ACVA])
-      ])
-    ], cpNormal, True, nil, -1{, wbEFITAfterLoad});
-
-  wbEFIX :=
-    wbStructSK(EFIX, [3], '', [
-      wbInteger('Override Mask', itU32, wbFlags([])),
-      wbInteger('Flags', itU32, wbFlags([])),
-      wbFloat('Base Cost'),
-      wbUnion('Param #2', wbEFIXParamDecider, [
-        wbByteArray('Param #2 - Unknown Type', 4),
-        wbFormID('Param #2 - FormID'),
-        wbStringMgefCode('Param #2 - Magic Effect Code', 4),
-        wbFormIDCk('Param #2 - Actor Value', [ACVA])
-      ]),
-      wbUnknown
-    ], cpNormal, True, nil, -1, wbEFITAfterLoad);
-
   wbMagicSchoolEnum :=
     wbEnum([
       'Alteration',
@@ -1473,39 +1449,126 @@ begin
       'Restoration'
     ]);
 
-  wbSCIT :=
-    wbRStructSK([0], 'Script effect', [
-      wbStructSK(SCIT, [0], 'Script effect data', [
-        wbFormIDCk('Script effect', [NULL, SCPT]),
-        wbInteger('Magic school', itU32, wbMagicSchoolEnum),
-        wbInteger('Visual effect name', itU32, wbChar4),
-        wbInteger('Flags', itU8, wbFlags(['Hostile'])),
-        wbUnused(3)
-      ], cpNormal, True, nil, 1),
-      wbFULLReq
+  wbSpecializationEnum :=
+    wbEnum([
+      'Combat',
+      'Magic',
+      'Stealth'
     ]);
 
-  wbSCITOBME :=
-    wbRStructSK([0], 'Script effect', [
-      wbStructSK(SCIT, [0], 'Script effect data', [
-        wbFormIDCk('Script effect', [NULL, SCPT]),
-        wbInteger('Magic school', itU32, wbMagicSchoolEnum),
-        wbStringMgefCode('Visual Effect Code', 4),
-        wbInteger('Flags', itU8, wbFlags(['Hostile'])),
-        wbUnused(3)
-      ], cpNormal, True, nil, 1),
-      wbFULLReq
-    ]);
+{>>> Simple Defs <<<}
 
+  wbCNTOs := wbRArrayS('Items', wbCNTO);
+  wbCSDTs := wbRArrayS('Sound Types', wbCSDT);
+  wbDESC := wbStringKC(DESC, 'Description', 0, cpTranslate);
+  wbEDID := wbString(EDID, 'Editor ID', 0, cpNormal); // not cpBenign according to Arthmoor
+  wbEFID := wbInteger(EFID, 'Magic effect name', itU32, wbChar4, cpNormal, True);
+  wbEFIDOBME := wbStringMgefCode(EFID, 'Magic Effect Code', 4, cpNormal, True);
+  wbENAM := wbFormIDCk(ENAM, 'Enchantment', [ENCH]);
+  wbFULL := wbStringKC(FULL, 'Name', 0, cpTranslate);
+  wbFULLReq := wbStringKC(FULL, 'Name', 0, cpTranslate, True);
+  wbICON := wbString(ICON, 'Icon FileName');
+  wbSCRI := wbFormIDCk(SCRI, 'Script', [SCPT]);
+  wbSPLO := wbFormIDCkST(SPLO, 'Spell', [SPEL, LVSP]);
+  wbSPLOs := wbRArrayS('Spells', wbSPLO);
+  wbXSCL := wbFloat(XSCL, 'Scale');
 
-  wbOBMEResolutionInfo := wbEnum(['None', 'FormID', 'Magic Effect Code', 'Actor Value']);
+{>>> Common Structs <<<}
 
-  var wbOBMEVersion :=
-    wbStruct('OBME Version', [
-      wbInteger('Beta', itU8),
-      wbInteger('Minor', itU8),
-      wbInteger('Major', itU8)
-    ]);
+  wbBodyParts :=
+    wbRArrayS('Parts',
+      wbRStructSK([0], 'Part', [
+        wbInteger(INDX, 'Index', itU32, wbBodyPartIndexEnum),
+        wbICON
+      ])
+      .SetSummaryKey([0, 1])
+      .SetSummaryMemberPrefixSuffix(0, '[', ']')
+      .SetSummaryMemberPrefixSuffix(1, 'ICON: ', '')
+      .SetSummaryDelimiter(' ')
+      .IncludeFlag(dfSummaryMembersNoName)
+      .IncludeFlag(dfSummaryNoSortKey)
+      .IncludeFlag(dfCollapsed, wbCollapseBodyParts)
+    );
+
+  wbCNTO :=
+    wbStructSK(CNTO, [0], 'Item', [
+      wbFormIDCk('Item', [ARMO, AMMO, MISC, WEAP, INGR, SLGM, SGST, BOOK, LVLI, KEYM, CLOT, ALCH, APPA, LIGH]),
+      wbInteger('Count', itS32).SetDefaultNativeValue(1)
+    ]).SetToStr(wbItemToStr).IncludeFlag(dfCollapsed, wbCollapseItems);
+
+  wbConditionParameters := [
+    wbUnknown(4),
+    wbByteArray('None', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
+    wbInteger('Integer', itS32),
+    wbInteger('Quest Stage', itS32, wbCTDAParam2QuestStageToStr, wbCTDAParam2QuestStageToInt),
+    wbInteger('Variable Name', itS32, wbCTDAParam2VariableNameToStr, wbCTDAParam2VariableNameToInt),
+
+	  wbFormIDCk('Actor Value', [ACVA]),
+	  wbInteger('Axis', itU32, wbAxisEnum),
+   	wbInteger('Crime Type', itU32, wbCrimeTypeEnum),
+  	wbInteger('Sex', itU32, wbSexEnum),
+    wbInteger('Form Type', itU32, wbFormTypeEnum),
+
+   	wbFormIDCkNoReach('Actor', [ACHR, ACRE, PLYR, TRGT]),
+    wbFormIDCkNoReach('Actor Base', [CREA, NPC_]),
+    wbFormIDCkNoReach('Base Object', [ACTI, ALCH, AMMO, APPA, ARMO, BOOK, CLOT, CONT, CREA, DOOR, FLOR, FURN, GRAS, INGR, KEYM, LIGH, LVLC, MISC, NPC_, SBSP, SGST, SLGM, SOUN, STAT, TREE, WEAP]),
+    wbFormIDCkNoReach('Birthsign', [BSGN]),
+    wbFormIDCkNoReach('Cell', [CELL]),
+    wbFormIDCkNoReach('Class', [CLAS]),
+    wbFormIDCkNoReach('Faction', [FACT]),
+    wbFormIDCkNoReach('Furniture', [FURN]),
+    wbFormIDCkNoReach('Global', [GLOB]),
+    wbFormIDCkNoReach('Inventory Object', [ALCH, AMMO, APPA, ARMO, BOOK, CLOT, INGR, KEYM, LIGH, MISC, SGST, SLGM, WEAP]),
+    wbFormIDCkNoReach('Magic Effect', [MGEF]),
+    wbFormIDCkNoReach('Owner', [FACT, NPC_]),
+    wbFormIDCkNoReach('Package', [PACK]),
+    wbFormIDCkNoReach('Quest', [QUST]),
+    wbFormIDCkNoReach('Race', [RACE]),
+    wbFormIDCkNoReach('Reference', [ACHR, ACRE, PLYR, REFR, TRGT]),
+    wbFormIDCkNoReach('Spell', [SPEL]),
+    wbFormIDCkNoReach('Weather', [WTHR]),
+    wbFormIDCkNoReach('Worldspace', [WRLD])
+  ];
+
+  wbConditionMembers := [
+    wbInteger('Type', itU8, wbConditionTypeToStr, wbConditionTypeToInt).SetAfterSet(wbConditionTypeAfterSet),
+    wbUnused(3),
+    wbUnion('Comparison Value', wbConditionCompValueDecider, [
+      wbFloat('Comparison Value - Float'),
+      wbFormIDCk('Comparison Value - Global', [GLOB])
+    ]),
+    wbInteger('Function', itU16, wbCTDAFunctionToStr, wbCTDAFunctionToInt),
+    wbUnused(2),
+    wbUnion('Parameter #1', wbCTDAParam1Decider, wbConditionParameters),
+    wbUnion('Parameter #2', wbCTDAParam2Decider, wbConditionParameters),
+    wbUnused(0)
+  ];
+
+  wbConditions :=
+    wbRArray('Conditions',
+      wbRUnion('Condition', [
+        wbStructSK(CTDA, [3, 5, 6], 'Condition', wbConditionMembers, cpNormal, False, nil, 7)
+          .SetToStr(wbConditionToStr).IncludeFlag(dfCollapsed, wbCollapseConditions),
+        wbStructSK(CTDT, [3, 5, 6], 'Condition', wbConditionMembers, cpNormal, False, nil, 7)
+          .SetToStr(wbConditionToStr).IncludeFlag(dfCollapsed, wbCollapseConditions)
+      ])
+    );
+
+  wbCSDT := wbRStructSK([0], 'Sound Type', [
+    wbInteger(CSDT, 'Type', itU32,wbEnum([
+      {0x00} 'Left Foot',
+      {0x01} 'Right Foot',
+      {0x02} 'Left Back Foot',
+      {0x03} 'Right Back Foot',
+      {0x04} 'Idle',
+      {0x05} 'Aware',
+      {0x06} 'Attack',
+      {0x07} 'Hit',
+      {0x08} 'Death',
+      {0x09} 'Weapon'
+    ])),
+    wbSoundTypeSoundsOld
+  ]);
 
   wbEffect :=
     wbRStruct('Effect', [
@@ -1566,6 +1629,319 @@ begin
 //        wbFULLReq
 //      ])
 //    ]);
+
+  wbEFIT :=
+    wbStructSK(EFIT, [4, 5], '', [
+      wbInteger('Magic effect name', itU32, wbChar4),
+      wbInteger('Magnitude', itU32),
+      wbInteger('Area', itU32),
+      wbInteger('Duration', itU32),
+      wbInteger('Type', itU32, wbEnum(['Self', 'Touch', 'Target'])),
+      wbInteger('Actor Value', itS32, wbActorValueEnum)
+    ], cpNormal, True, nil, -1, wbEFITAfterLoad);
+
+  wbEFITOBME :=
+    wbStructSK(EFIT, [4, 5], '', [
+      wbStringMgefCode('Magic Effect Code', 4),
+      wbInteger('Magnitude', itU32),
+      wbInteger('Area', itU32),
+      wbInteger('Duration', itU32),
+      wbInteger('Type', itU32, wbEnum(['Self', 'Touch', 'Target'])),
+      wbUnion('Param #1', wbEFITOBMEParamDecider, [
+        wbByteArray('Param #1 - Unknown Type', 4),
+        wbFormID('Param #1 - FormID'),
+        wbStringMgefCode('Param #1 - Magic Effect Code', 4),
+        wbFormIDCk('Param #1 - Actor Value', [ACVA])
+      ])
+    ], cpNormal, True, nil, -1{, wbEFITAfterLoad});
+
+  wbEFIX :=
+    wbStructSK(EFIX, [3], '', [
+      wbInteger('Override Mask', itU32, wbFlags([])),
+      wbInteger('Flags', itU32, wbFlags([])),
+      wbFloat('Base Cost'),
+      wbUnion('Param #2', wbEFIXParamDecider, [
+        wbByteArray('Param #2 - Unknown Type', 4),
+        wbFormID('Param #2 - FormID'),
+        wbStringMgefCode('Param #2 - Magic Effect Code', 4),
+        wbFormIDCk('Param #2 - Actor Value', [ACVA])
+      ]),
+      wbUnknown
+    ], cpNormal, True, nil, -1, wbEFITAfterLoad);
+
+  wbFaceGen := wbRStruct('FaceGen Data', [
+    wbByteArray(FGGS, 'FaceGen Geometry-Symmetric', 0, cpNormal, True),
+    wbByteArray(FGGA, 'FaceGen Geometry-Asymmetric', 0, cpNormal, True),
+    wbByteArray(FGTS, 'FaceGen Texture-Symmetric', 0, cpNormal, True)
+  ], [], cpNormal, True);
+
+  wbFactionRank :=
+    wbRStructSK([0], 'Rank', [
+      wbInteger(RNAM, 'Rank#', itS32),
+      wbString(MNAM, 'Male', 0, cpTranslate),
+      wbString(FNAM, 'Female', 0, cpTranslate),
+      wbString(INAM, 'Insignia')
+    ]);
+
+  wbLeveledListEntryCreature :=
+    wbStructExSK(LVLO, [0, 2], [3], 'Leveled List Entry', [
+      wbInteger('Level', itS16),
+      wbUnused(2),
+      wbFormIDCk('Reference', [NPC_, CREA, LVLC]),
+      wbInteger('Count', itS16).SetDefaultNativeValue(1),
+      wbUnused(2)
+    ], cpNormal, False, nil, 3)
+    .SetSummaryKeyOnValue([0, 3, 2])
+    .SetSummaryPrefixSuffixOnValue(0, '[Lv', ']')
+    .SetSummaryPrefixSuffixOnValue(3, '', 'x')
+    .SetSummaryDelimiterOnValue(' ')
+    .IncludeFlagOnValue(dfSummaryMembersNoName)
+    .IncludeFlagOnValue(dfSummaryNoSortKey)
+    .IncludeFlag(dfCollapsed, wbCollapseLeveledItems);
+
+  wbLeveledListEntryItem :=
+    wbStructExSK(LVLO, [0, 2], [3], 'Leveled List Entry', [
+      wbInteger('Level', itS16),
+      wbUnused(2),
+      wbFormIDCk('Reference', [ARMO, AMMO, MISC, WEAP, INGR, SLGM, SGST, BOOK, LVLI, KEYM, CLOT, ALCH, APPA, LIGH]),
+      wbInteger('Count', itS16).SetDefaultNativeValue(1),
+      wbUnused(2)
+    ], cpNormal, False, nil, 3)
+    .SetSummaryKeyOnValue([0, 3, 2])
+    .SetSummaryPrefixSuffixOnValue(0, '[Lv', ']')
+    .SetSummaryPrefixSuffixOnValue(3, '', 'x')
+    .SetSummaryDelimiterOnValue(' ')
+    .IncludeFlagOnValue(dfSummaryMembersNoName)
+    .IncludeFlagOnValue(dfSummaryNoSortKey)
+    .IncludeFlag(dfCollapsed, wbCollapseLeveledItems);
+
+  wbLeveledListEntrySpell :=
+    wbStructExSK(LVLO, [0, 2], [3], 'Leveled List Entry', [
+      wbInteger('Level', itS16),
+      wbUnused(2),
+      wbFormIDCk('Reference', [SPEL, LVSP]),
+      wbInteger('Count', itS16).SetDefaultNativeValue(1),
+      wbUnused(2)
+    ], cpNormal, False, nil, 3)
+    .SetSummaryKeyOnValue([0, 3, 2])
+    .SetSummaryPrefixSuffixOnValue(0, '[Lv', ']')
+    .SetSummaryPrefixSuffixOnValue(3, '', 'x')
+    .SetSummaryDelimiterOnValue(' ')
+    .IncludeFlagOnValue(dfSummaryMembersNoName)
+    .IncludeFlagOnValue(dfSummaryNoSortKey)
+    .IncludeFlag(dfCollapsed, wbCollapseLeveledItems);
+
+  wbOBMEResolutionInfo :=
+    wbEnum([
+      'None',
+      'FormID',
+      'Magic Effect Code',
+      'Actor Value'
+    ]);
+
+  wbOBMEVersion :=
+    wbStruct('OBME Version', [
+      wbInteger('Beta', itU8),
+      wbInteger('Minor', itU8),
+      wbInteger('Major', itU8)
+    ]);
+
+  wbPGRP :=
+    wbArray(PGRP, 'Points', wbStruct('Point', [
+      wbFloat('X'),
+      wbFloat('Y'),
+      wbFloat('Z (Even = Red/Orange, Odd = Blue)'),
+      wbInteger('Connections', itU8{, wbPGRPConnectionsCallback}),
+      wbUnused(3)
+    ]), 0, nil, nil, cpNormal, True);
+
+      {The Connection Count in the PGRP record specifies how many entries in this
+       array belong to each point. If the first 4 points in the PGRP array have
+       Connection Counts 2, 5, 2, 4 then the first 2 entries are the connections
+       of point 0, then next 5 are the connections of point 1, the next 2 of point 2,
+       the next 4 of point 3 and so on..., this can currently not be represented
+       declaratively }
+
+  wbResultScript := wbRStruct('Result Script', [
+    wbSCHR,
+    wbByteArray(SCDA, 'Compiled result script'),
+    wbStringScript(SCTX, 'Result script source'),
+    wbSCROs
+  ]).SetToStr(wbScriptToStr);
+
+  wbSCHR :=
+    wbRUnion('Basic Script Data', [
+      wbStruct(SCHR, 'Basic Script Data', [
+        wbUnused(4),
+        wbInteger('RefCount', itU32),
+        wbInteger('CompiledSize', itU32),
+        wbInteger('VariableCount', itU32),
+        wbInteger('Type', itU32, wbEnum([
+          'Object',
+          'Quest'
+        ], [
+          $100, 'Magic Effect'
+        ]))
+      ])
+      .SetSummaryKeyOnValue([4, 2, 1, 3])
+      .SetSummaryPrefixSuffixOnValue(4, '', '')
+      .SetSummaryPrefixSuffixOnValue(2, '{CompiledSize = ', ',')
+      .SetSummaryPrefixSuffixOnValue(1, 'RefCount = ', ',')
+      .SetSummaryPrefixSuffixOnValue(3, 'VariableCount = ', '}')
+      .IncludeFlagOnValue(dfSummaryMembersNoName)
+      .IncludeFlag(dfCollapsed, wbCollapseScriptData),
+      wbStruct(SCHD, 'Basic Script Data', [
+        wbUnused(4),
+        wbInteger('RefCount', itU32),
+        wbInteger('CompiledSize', itU32),
+        wbInteger('VariableCount', itU32),
+        wbInteger('Type', itU32, wbEnum([
+          'Object',
+          'Quest'
+        ], [
+          $100, 'Magic Effect'
+        ])),
+        wbByteArray('Unknown')
+      ])
+      .SetSummaryKeyOnValue([4, 2, 1, 3])
+      .SetSummaryPrefixSuffixOnValue(4, '', '')
+      .SetSummaryPrefixSuffixOnValue(2, '{CompiledSize = ', ', ')
+      .SetSummaryPrefixSuffixOnValue(1, 'RefCount = ', ', ')
+      .SetSummaryPrefixSuffixOnValue(3, 'VariableCount = ', '}')
+      .IncludeFlagOnValue(dfSummaryMembersNoName)
+      .IncludeFlag(dfCollapsed, wbCollapseScriptData)
+    ]);
+
+  wbSCIT :=
+    wbRStructSK([0], 'Script effect', [
+      wbStructSK(SCIT, [0], 'Script effect data', [
+        wbFormIDCk('Script effect', [NULL, SCPT]),
+        wbInteger('Magic school', itU32, wbMagicSchoolEnum),
+        wbInteger('Visual effect name', itU32, wbChar4),
+        wbInteger('Flags', itU8, wbFlags(['Hostile'])),
+        wbUnused(3)
+      ], cpNormal, True, nil, 1),
+      wbFULLReq
+    ]);
+
+  wbSCITOBME :=
+    wbRStructSK([0], 'Script effect', [
+      wbStructSK(SCIT, [0], 'Script effect data', [
+        wbFormIDCk('Script effect', [NULL, SCPT]),
+        wbInteger('Magic school', itU32, wbMagicSchoolEnum),
+        wbStringMgefCode('Visual Effect Code', 4),
+        wbInteger('Flags', itU8, wbFlags(['Hostile'])),
+        wbUnused(3)
+      ], cpNormal, True, nil, 1),
+      wbFULLReq
+    ]);
+
+  wbSCROs :=
+    wbRArray('References',
+      wbRUnion('', [
+        wbFormID(SCRO, 'Global Reference'),
+//        wbFormIDCk(SCRO, 'Global Reference',
+//          [ACTI, DOOR, FLOR, STAT, FURN, CREA, SPEL, NPC_, CONT, ARMO, AMMO, MISC, WEAP,
+//           INGR, SLGM, SGST, BOOK, KEYM, CLOT, ALCH, APPA, LIGH, QUST, PLYR, PACK, LVLI,
+//           FACT, ACHR, REFR, ACRE, GLOB, DIAL, CELL, SOUN, MGEF, WTHR, CLAS, EFSH, RACE,
+//           LVLC, CSTY, WATR, WRLD, SCPT, BSGN, TREE, ENCH, NULL]),
+        wbInteger(SCRV, 'Local Variable', itU32)
+      ])
+    ).IncludeFlag(dfNotAlignable);
+
+  wbSLSD := wbStructSK(SLSD, [0], 'Local Variable Data', [
+    wbInteger('Index', itU32),
+    wbUnused(12),
+    wbInteger('Flags', itU8, wbFlags(['IsLongOrShort']), cpCritical),
+    wbByteArray('Unused')
+  ]).IncludeFlag(dfSummaryMembersNoName);
+
+  wbSoundTypeSoundsOld :=
+    wbRArrayS('Sounds',
+      wbRStructSK([0], 'Sound', [
+        wbFormIDCk(CSDI, 'Sound', [SOUN, NULL], False, cpNormal, True),
+        wbInteger(CSDC, 'Sound Chance', itU8, nil, cpNormal, True)
+      ])
+      .SetSummaryKey([0, 1])
+      .SetSummaryMemberPrefixSuffix(1, '{Chance: ', '}')
+      .IncludeFlag(dfSummaryMembersNoName)
+      .IncludeFlag(dfSummaryNoSortKey)
+      .IncludeFlag(dfCollapsed)
+    , cpNormal, True);
+
+  wbXESP := wbStruct(XESP, 'Enable Parent', [
+    wbFormIDCk('Reference', [PLYR, REFR, ACRE, ACHR]),
+    wbInteger('Flags', itU8, wbFlags([
+      'Set Enable State to Opposite of Parent'
+    ])),
+    wbUnused(3)
+  ]);
+
+{>>> Record Defs <<<}
+
+  wbRecord(TES4, 'Main File Header',
+    wbFlags(wbFlagsList([
+      0, 'ESM'
+    ])), [
+    wbHEDR,
+    wbByteArray(OFST, 'Unknown', 0, cpIgnore),
+    wbByteArray(DELE, 'Unknown', 0, cpIgnore),
+    wbString(CNAM, 'Author', 0, cpTranslate, True),
+    wbString(SNAM, 'Description', 0, cpTranslate),
+    wbRArray('Master Files', wbRStruct('Master File', [
+      wbStringForward(MAST, 'FileName', 0, cpNormal, True),
+      wbUnused(DATA, 8, True)
+    ])).IncludeFlag(dfInternalEditOnly, not wbAllowMasterFilesEdit)
+  ], False, nil, cpNormal, True);
+
+  wbRecord(ACTI, 'Activator',
+    wbFlags(wbFlagsList([
+      10, 'Quest Item',
+      17, 'Dangerous'
+    ])), [
+    wbEDID,
+    wbFULL,
+    wbTexturedModel('Model', [MODL, MODB, MODT], []),
+    wbSCRI,
+    wbFormIDCk(SNAM, 'Sound', [SOUN])
+  ]);
+
+  wbRefRecord(ACHR, 'Placed NPC',
+    wbFlags(wbFlagsList([
+      10, 'Persistent',
+      11, 'Initially Disabled',
+      15, 'Visible When Distant'
+    ])), [
+    wbEDID,
+    wbFormIDCk(NAME, 'Base', [NPC_], False, cpNormal, True),
+    wbRStruct('Unused', [
+      wbFormIDCk(XPCI, 'Unused', [CELL]),
+      wbString(FULL, 'Unused')
+    ]),
+    wbXLOD,
+    wbXESP,
+    wbFormIDCk(XMRC, 'Merchant container', [REFR], True),
+    wbFormIDCk(XHRS, 'Horse', [ACRE], True),
+    wbRagdoll,
+    wbXSCL,
+    wbDATAPosRot
+  ], True, wbPlacedAddInfo, cpNormal, False, wbREFRAfterLoad);
+
+  wbRefRecord(ACRE, 'Placed Creature',
+    wbFlags(wbFlagsList([
+      10, 'Persistent',
+      11, 'Initially Disabled',
+      15, 'Visible When Distant'
+    ])), [
+    wbEDID,
+    wbFormIDCk(NAME, 'Base', [CREA], False, cpNormal, True),
+    wbOwnership,
+    wbRagdoll,
+    wbXLOD,
+    wbXESP,
+    wbXSCL,
+    wbDATAPosRot
+  ], True, wbPlacedAddInfo);
 
   wbRecord(ALCH, 'Potion',
     wbFlags(wbFlagsList([
@@ -1704,9 +2080,6 @@ begin
     ], cpNormal, True)
   ], True);
 
-  wbSPLO := wbFormIDCkST(SPLO, 'Spell', [SPEL, LVSP]);
-  wbSPLOs := wbRArrayS('Spells', wbSPLO);
-
   wbRecord(BSGN, 'Birthsign', [
     wbEDID,
     wbFULL,
@@ -1757,8 +2130,6 @@ begin
     ]).SetDontShow(wbCellGridDontShow)
       .SetIsRemovable(wbCellGridIsRemovable)
   ], True, wbCellAddInfo, cpNormal, False, wbCELLAfterLoad);
-
-  wbSpecializationEnum := wbEnum(['Combat', 'Magic', 'Stealth']);
 
   wbRecord(CLAS, 'Class', [
     wbEDID,
@@ -1841,14 +2212,6 @@ begin
     ], cpNormal, True)
   ]);
 
-  wbCNTO :=
-    wbStructSK(CNTO, [0], 'Item', [
-      wbFormIDCk('Item', [ARMO, AMMO, MISC, WEAP, INGR, SLGM, SGST, BOOK, LVLI, KEYM, CLOT, ALCH, APPA, LIGH]),
-      wbInteger('Count', itS32).SetDefaultNativeValue(1)
-    ]).SetToStr(wbItemToStr).IncludeFlag(dfCollapsed, wbCollapseItems);
-
-  wbCNTOs := wbRArrayS('Items', wbCNTO);
-
   wbRecord(CONT, 'Container',
     wbFlags(wbFlagsList([
       10, 'Quest Item'
@@ -1865,37 +2228,6 @@ begin
     wbFormIDCk(SNAM, 'Open sound', [SOUN]),
     wbFormIDCk(QNAM, 'Close sound', [SOUN])
   ]);
-
-var  wbSoundTypeSoundsOld :=
-    wbRArrayS('Sounds',
-      wbRStructSK([0], 'Sound', [
-        wbFormIDCk(CSDI, 'Sound', [SOUN, NULL], False, cpNormal, True),
-        wbInteger(CSDC, 'Sound Chance', itU8, nil, cpNormal, True)
-      ])
-      .SetSummaryKey([0, 1])
-      .SetSummaryMemberPrefixSuffix(1, '{Chance: ', '}')
-      .IncludeFlag(dfSummaryMembersNoName)
-      .IncludeFlag(dfSummaryNoSortKey)
-      .IncludeFlag(dfCollapsed)
-    , cpNormal, True);
-
-  wbCSDT := wbRStructSK([0], 'Sound Type', [
-    wbInteger(CSDT, 'Type', itU32,wbEnum([
-      {0x00} 'Left Foot',
-      {0x01} 'Right Foot',
-      {0x02} 'Left Back Foot',
-      {0x03} 'Right Back Foot',
-      {0x04} 'Idle',
-      {0x05} 'Aware',
-      {0x06} 'Attack',
-      {0x07} 'Hit',
-      {0x08} 'Death',
-      {0x09} 'Weapon'
-    ])),
-    wbSoundTypeSoundsOld
-  ]);
-
-  wbCSDTs := wbRArrayS('Sound Types', wbCSDT);
 
   wbRecord(CREA, 'Creature',
     wbFlags(wbFlagsList([
@@ -2215,14 +2547,6 @@ var  wbSoundTypeSoundsOld :=
     wbInteger(DATA, 'Flags', itU8, wbFlags(['Playable']), cpNormal, True)
   ]);
 
-  wbFactionRank :=
-    wbRStructSK([0], 'Rank', [
-      wbInteger(RNAM, 'Rank#', itS32),
-      wbString(MNAM, 'Male', 0, cpTranslate),
-      wbString(FNAM, 'Female', 0, cpTranslate),
-      wbString(INAM, 'Insignia')
-    ]);
-
   wbRecord(FACT, 'Faction', [
     wbEDID,
     wbFULL,
@@ -2317,194 +2641,6 @@ var  wbSoundTypeSoundsOld :=
       'Fixed'
     ]), cpNormal, True)
   ]);
-
-  wbFormTypeEnum :=
-    wbEnum([], [
-      $03, 'Game Setting',
-      $04, 'Global',
-      $05, 'Class',
-      $06, 'Faction',
-      $07, 'Hair',
-      $08, 'Eyes',
-      $09, 'Race',
-      $0A, 'Sound',
-      $0B, 'Skill',
-      $0C, 'Magic Effect',
-      $0D, 'Script',
-      $0E, 'Land Texture',
-      $0F, 'Enchantment',
-      $10, 'Spell',
-      $11, 'BirthSign',
-      $12, 'Activator',
-      $13, 'Apparatus',
-      $14, 'Armor',
-      $15, 'Book',
-      $16, 'Clothing',
-      $17, 'Container',
-      $18, 'Door',
-      $19, 'Ingredient',
-      $1A, 'Light',
-      $1B, 'Misc',
-      $1C, 'Static',
-      $1D, 'Grass',
-      $1E, 'Tree',
-      $1F, 'Flora',
-      $20, 'Furniture',
-      $21, 'Weapon',
-      $22, 'Ammi',
-      $23, 'NPC',
-      $24, 'Creature',
-      $25, 'Leveled Creature',
-      $26, 'Soul Gem',
-      $27, 'Key',
-      $28, 'Alchemy',
-      $29, 'SubSpace',
-      $2A, 'Sigil Stone',
-      $2B, 'Leveled Item',
-      $2D, 'Weather',
-      $2E, 'Climate',
-      $2F, 'Region',
-      $30, 'Cell',
-      $31, 'Placed Object',
-      $32, 'Placed NPC',
-      $33, 'Placed Creature',
-      $34, 'Path Grid',
-      $35, 'Worldspace',
-      $36, 'Landscape',
-      $38, 'Road',
-      $39, 'Dialog Topic',
-      $3A, 'Dialog Response',
-      $3B, 'Quest',
-      $3C, 'Idle Animation',
-      $3D, 'Package',
-      $3E, 'Combat Style',
-      $3F, 'Load Screen',
-      $40, 'Leveled Spell',
-      $41, 'Animated Object',
-      $42, 'Water',
-      $43, 'Effect Shader'
-  ]);
-
-  var wbConditionParameters := [
-    wbUnknown(4),
-    wbByteArray('None', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
-    wbInteger('Integer', itS32),
-    wbInteger('Quest Stage', itS32, wbCTDAParam2QuestStageToStr, wbCTDAParam2QuestStageToInt),
-    wbInteger('Variable Name', itS32, wbCTDAParam2VariableNameToStr, wbCTDAParam2VariableNameToInt),
-
-	  wbFormIDCk('Actor Value', [ACVA]),
-	  wbInteger('Axis', itU32, wbAxisEnum),
-   	wbInteger('Crime Type', itU32, wbCrimeTypeEnum),
-  	wbInteger('Sex', itU32, wbSexEnum),
-    wbInteger('Form Type', itU32, wbFormTypeEnum),
-
-   	wbFormIDCkNoReach('Actor', [ACHR, ACRE, PLYR, TRGT]),
-    wbFormIDCkNoReach('Actor Base', [CREA, NPC_]),
-    wbFormIDCkNoReach('Base Object', [ACTI, ALCH, AMMO, APPA, ARMO, BOOK, CLOT, CONT, CREA, DOOR, FLOR, FURN, GRAS, INGR, KEYM, LIGH, LVLC, MISC, NPC_, SBSP, SGST, SLGM, SOUN, STAT, TREE, WEAP]),
-    wbFormIDCkNoReach('Birthsign', [BSGN]),
-    wbFormIDCkNoReach('Cell', [CELL]),
-    wbFormIDCkNoReach('Class', [CLAS]),
-    wbFormIDCkNoReach('Faction', [FACT]),
-    wbFormIDCkNoReach('Furniture', [FURN]),
-    wbFormIDCkNoReach('Global', [GLOB]),
-    wbFormIDCkNoReach('Inventory Object', [ALCH, AMMO, APPA, ARMO, BOOK, CLOT, INGR, KEYM, LIGH, MISC, SGST, SLGM, WEAP]),
-    wbFormIDCkNoReach('Magic Effect', [MGEF]),
-    wbFormIDCkNoReach('Owner', [FACT, NPC_]),
-    wbFormIDCkNoReach('Package', [PACK]),
-    wbFormIDCkNoReach('Quest', [QUST]),
-    wbFormIDCkNoReach('Race', [RACE]),
-    wbFormIDCkNoReach('Reference', [ACHR, ACRE, PLYR, REFR, TRGT]),
-    wbFormIDCkNoReach('Spell', [SPEL]),
-    wbFormIDCkNoReach('Weather', [WTHR]),
-    wbFormIDCkNoReach('Worldspace', [WRLD])
-  ];
-
-  var wbConditionMembers := [
-    wbInteger('Type', itU8, wbConditionTypeToStr, wbConditionTypeToInt).SetAfterSet(wbConditionTypeAfterSet),
-    wbUnused(3),
-    wbUnion('Comparison Value', wbConditionCompValueDecider, [
-      wbFloat('Comparison Value - Float'),
-      wbFormIDCk('Comparison Value - Global', [GLOB])
-    ]),
-    wbInteger('Function', itU16, wbCTDAFunctionToStr, wbCTDAFunctionToInt),
-    wbUnused(2),
-    wbUnion('Parameter #1', wbCTDAParam1Decider, wbConditionParameters),
-    wbUnion('Parameter #2', wbCTDAParam2Decider, wbConditionParameters),
-    wbUnused(0)
-  ];
-
-  wbConditions :=
-    wbRArray('Conditions',
-      wbRUnion('Condition', [
-        wbStructSK(CTDA, [3, 5, 6], 'Condition', wbConditionMembers, cpNormal, False, nil, 7)
-          .SetToStr(wbConditionToStr).IncludeFlag(dfCollapsed, wbCollapseConditions),
-        wbStructSK(CTDT, [3, 5, 6], 'Condition', wbConditionMembers, cpNormal, False, nil, 7)
-          .SetToStr(wbConditionToStr).IncludeFlag(dfCollapsed, wbCollapseConditions)
-      ])
-    );
-
-  wbSCHR :=
-    wbRUnion('Basic Script Data', [
-      wbStruct(SCHR, 'Basic Script Data', [
-        wbUnused(4),
-        wbInteger('RefCount', itU32),
-        wbInteger('CompiledSize', itU32),
-        wbInteger('VariableCount', itU32),
-        wbInteger('Type', itU32, wbEnum([
-          'Object',
-          'Quest'
-        ], [
-          $100, 'Magic Effect'
-        ]))
-      ])
-      .SetSummaryKeyOnValue([4, 2, 1, 3])
-      .SetSummaryPrefixSuffixOnValue(4, '', '')
-      .SetSummaryPrefixSuffixOnValue(2, '{CompiledSize = ', ',')
-      .SetSummaryPrefixSuffixOnValue(1, 'RefCount = ', ',')
-      .SetSummaryPrefixSuffixOnValue(3, 'VariableCount = ', '}')
-      .IncludeFlagOnValue(dfSummaryMembersNoName)
-      .IncludeFlag(dfCollapsed, wbCollapseScriptData),
-      wbStruct(SCHD, 'Basic Script Data', [
-        wbUnused(4),
-        wbInteger('RefCount', itU32),
-        wbInteger('CompiledSize', itU32),
-        wbInteger('VariableCount', itU32),
-        wbInteger('Type', itU32, wbEnum([
-          'Object',
-          'Quest'
-        ], [
-          $100, 'Magic Effect'
-        ])),
-        wbByteArray('Unknown')
-      ])
-      .SetSummaryKeyOnValue([4, 2, 1, 3])
-      .SetSummaryPrefixSuffixOnValue(4, '', '')
-      .SetSummaryPrefixSuffixOnValue(2, '{CompiledSize = ', ', ')
-      .SetSummaryPrefixSuffixOnValue(1, 'RefCount = ', ', ')
-      .SetSummaryPrefixSuffixOnValue(3, 'VariableCount = ', '}')
-      .IncludeFlagOnValue(dfSummaryMembersNoName)
-      .IncludeFlag(dfCollapsed, wbCollapseScriptData)
-    ]);
-
-  wbSCROs :=
-    wbRArray('References',
-      wbRUnion('', [
-        wbFormID(SCRO, 'Global Reference'),
-//        wbFormIDCk(SCRO, 'Global Reference',
-//          [ACTI, DOOR, FLOR, STAT, FURN, CREA, SPEL, NPC_, CONT, ARMO, AMMO, MISC, WEAP,
-//           INGR, SLGM, SGST, BOOK, KEYM, CLOT, ALCH, APPA, LIGH, QUST, PLYR, PACK, LVLI,
-//           FACT, ACHR, REFR, ACRE, GLOB, DIAL, CELL, SOUN, MGEF, WTHR, CLAS, EFSH, RACE,
-//           LVLC, CSTY, WATR, WRLD, SCPT, BSGN, TREE, ENCH, NULL]),
-        wbInteger(SCRV, 'Local Variable', itU32)
-      ])
-    ).IncludeFlag(dfNotAlignable);
-
-  wbResultScript := wbRStruct('Result Script', [
-    wbSCHR,
-    wbByteArray(SCDA, 'Compiled result script'),
-    wbStringScript(SCTX, 'Result script source'),
-    wbSCROs
-  ]).SetToStr(wbScriptToStr);
 
   wbRecord(IDLE, 'Idle Animation', [
     wbEDID,
@@ -2714,54 +2850,6 @@ var  wbSoundTypeSoundsOld :=
     wbRArrayS('Grasses', wbFormIDCk(GNAM, 'Grass', [GRAS]))
   ]).SetSummaryKey([1]);
 
-  wbLeveledListEntryCreature :=
-    wbStructExSK(LVLO, [0, 2], [3], 'Leveled List Entry', [
-      wbInteger('Level', itS16),
-      wbUnused(2),
-      wbFormIDCk('Reference', [NPC_, CREA, LVLC]),
-      wbInteger('Count', itS16).SetDefaultNativeValue(1),
-      wbUnused(2)
-    ], cpNormal, False, nil, 3)
-    .SetSummaryKeyOnValue([0, 3, 2])
-    .SetSummaryPrefixSuffixOnValue(0, '[Lv', ']')
-    .SetSummaryPrefixSuffixOnValue(3, '', 'x')
-    .SetSummaryDelimiterOnValue(' ')
-    .IncludeFlagOnValue(dfSummaryMembersNoName)
-    .IncludeFlagOnValue(dfSummaryNoSortKey)
-    .IncludeFlag(dfCollapsed, wbCollapseLeveledItems);
-
-  wbLeveledListEntryItem :=
-    wbStructExSK(LVLO, [0, 2], [3], 'Leveled List Entry', [
-      wbInteger('Level', itS16),
-      wbUnused(2),
-      wbFormIDCk('Reference', [ARMO, AMMO, MISC, WEAP, INGR, SLGM, SGST, BOOK, LVLI, KEYM, CLOT, ALCH, APPA, LIGH]),
-      wbInteger('Count', itS16).SetDefaultNativeValue(1),
-      wbUnused(2)
-    ], cpNormal, False, nil, 3)
-    .SetSummaryKeyOnValue([0, 3, 2])
-    .SetSummaryPrefixSuffixOnValue(0, '[Lv', ']')
-    .SetSummaryPrefixSuffixOnValue(3, '', 'x')
-    .SetSummaryDelimiterOnValue(' ')
-    .IncludeFlagOnValue(dfSummaryMembersNoName)
-    .IncludeFlagOnValue(dfSummaryNoSortKey)
-    .IncludeFlag(dfCollapsed, wbCollapseLeveledItems);
-
-  wbLeveledListEntrySpell :=
-    wbStructExSK(LVLO, [0, 2], [3], 'Leveled List Entry', [
-      wbInteger('Level', itS16),
-      wbUnused(2),
-      wbFormIDCk('Reference', [SPEL, LVSP]),
-      wbInteger('Count', itS16).SetDefaultNativeValue(1),
-      wbUnused(2)
-    ], cpNormal, False, nil, 3)
-    .SetSummaryKeyOnValue([0, 3, 2])
-    .SetSummaryPrefixSuffixOnValue(0, '[Lv', ']')
-    .SetSummaryPrefixSuffixOnValue(3, '', 'x')
-    .SetSummaryDelimiterOnValue(' ')
-    .IncludeFlagOnValue(dfSummaryMembersNoName)
-    .IncludeFlagOnValue(dfSummaryNoSortKey)
-    .IncludeFlag(dfCollapsed, wbCollapseLeveledItems);
-
   wbRecord(LVLC, 'Leveled Creature', [
     wbEDID,
     wbInteger(LVLD, 'Chance none', itU8, nil, cpNormal, True),
@@ -2939,12 +3027,6 @@ var  wbSoundTypeSoundsOld :=
       ])
     ], cpNormal, True)
   ]);
-
-  wbFaceGen := wbRStruct('FaceGen Data', [
-    wbByteArray(FGGS, 'FaceGen Geometry-Symmetric', 0, cpNormal, True),
-    wbByteArray(FGGA, 'FaceGen Geometry-Asymmetric', 0, cpNormal, True),
-    wbByteArray(FGTS, 'FaceGen Texture-Symmetric', 0, cpNormal, True)
-  ], [], cpNormal, True);
 
   wbRecord(NPC_, 'Non-Player Character',
     wbFlags(wbFlagsList([
@@ -3130,22 +3212,6 @@ var  wbSoundTypeSoundsOld :=
     .SetSummaryMemberPrefixSuffix(5, 'if ', '')
     .IncludeFlag(dfSummaryMembersNoName);
 
-  wbPGRP :=
-    wbArray(PGRP, 'Points', wbStruct('Point', [
-      wbFloat('X'),
-      wbFloat('Y'),
-      wbFloat('Z (Even = Red/Orange, Odd = Blue)'),
-      wbInteger('Connections', itU8{, wbPGRPConnectionsCallback}),
-      wbUnused(3)
-    ]), 0, nil, nil, cpNormal, True);
-
-      {The Connection Count in the PGRP record specifies how many entries in this
-       array belong to each point. If the first 4 points in the PGRP array have
-       Connection Counts 2, 5, 2, 4 then the first 2 entries are the connections
-       of point 0, then next 5 are the connections of point 1, the next 2 of point 2,
-       the next 4 of point 3 and so on..., this can currently not be represented
-       declaratively }
-
   wbRecord(PGRD, 'Path Grid',
     wbFlags(wbFlagsList([
       18, 'Compressed'
@@ -3170,6 +3236,11 @@ var  wbSoundTypeSoundsOld :=
       ])
     )
   ], False, wbPGRDAddInfo, cpNormal, False, wbPGRDAfterLoad);
+
+  wbRecord(PLYR, 'Player Reference', [
+    wbEDID,
+    wbFormID(PLYR, 'Player', cpNormal, True).SetDefaultNativeValue($7)
+  ]).IncludeFlag(dfInternalEditOnly);
 
   wbRecord(QUST, 'Quest', [
     wbEDID,
@@ -3208,34 +3279,6 @@ var  wbSoundTypeSoundsOld :=
       wbConditions
     ]).SetSummaryKey([0, 1]))
   ]);
-
-  var wbHeadPartIndexEnum :=
-    wbEnum([
-      'Head',
-      'Ear (Male)',
-      'Ear (Female)',
-      'Mouth',
-      'Teeth (Lower)',
-      'Teeth (Upper)',
-      'Tongue',
-      'Eye (Left)',
-      'Eye (Right)'
-    ]);
-
-  var wbBodyParts :=
-    wbRArrayS('Parts',
-      wbRStructSK([0], 'Part', [
-        wbInteger(INDX, 'Index', itU32, wbBodyPartIndexEnum),
-        wbICON
-      ])
-      .SetSummaryKey([0, 1])
-      .SetSummaryMemberPrefixSuffix(0, '[', ']')
-      .SetSummaryMemberPrefixSuffix(1, 'ICON: ', '')
-      .SetSummaryDelimiter(' ')
-      .IncludeFlag(dfSummaryMembersNoName)
-      .IncludeFlag(dfSummaryNoSortKey)
-      .IncludeFlag(dfCollapsed, wbCollapseBodyParts)
-    );
 
   wbRecord(RACE, 'Race', [
     wbEDID,
@@ -3507,13 +3550,6 @@ var  wbSoundTypeSoundsOld :=
     wbVec3(DNAM, '').SetRequired
   ]).SetSummaryKey([1]);
 
-  wbSLSD := wbStructSK(SLSD, [0], 'Local Variable Data', [
-    wbInteger('Index', itU32),
-    wbUnused(12),
-    wbInteger('Flags', itU8, wbFlags(['IsLongOrShort']), cpCritical),
-    wbByteArray('Unused')
-  ]).IncludeFlag(dfSummaryMembersNoName);
-
   wbRecord(SCPT, 'Script', [
     wbEDID,
     wbByteArray(SCHD, 'Unknown (Script Header?)'),
@@ -3674,26 +3710,6 @@ var  wbSoundTypeSoundsOld :=
     wbEDID,
     wbTexturedModel('Model', [MODL, MODB, MODT], [])
   ]).SetSummaryKey([1]);
-
-  wbRecord(TES4, 'Main File Header',
-    wbFlags(wbFlagsList([
-      0, 'ESM'
-    ])), [
-    wbHEDR,
-    wbByteArray(OFST, 'Unknown', 0, cpIgnore),
-    wbByteArray(DELE, 'Unknown', 0, cpIgnore),
-    wbString(CNAM, 'Author', 0, cpTranslate, True),
-    wbString(SNAM, 'Description', 0, cpTranslate),
-    wbRArray('Master Files', wbRStruct('Master File', [
-      wbStringForward(MAST, 'FileName', 0, cpNormal, True),
-      wbUnused(DATA, 8, True)
-    ])).IncludeFlag(dfInternalEditOnly, not wbAllowMasterFilesEdit)
-  ], False, nil, cpNormal, True);
-
-  wbRecord(PLYR, 'Player Reference', [
-    wbEDID,
-    wbFormID(PLYR, 'Player', cpNormal, True).SetDefaultNativeValue($7)
-  ]).IncludeFlag(dfInternalEditOnly);
 
   wbRecord(TREE, 'Tree', [
     wbEDID,
