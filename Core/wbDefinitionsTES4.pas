@@ -54,11 +54,9 @@ var
   wbSCROs: IwbRecordMemberDef;
   wbPGRP: IwbSubRecordDef;
   wbResultScript: IwbRecordMemberDef;
-//  wbResultScriptOld: IwbSubRecordStructDef;
   wbSCRI: IwbSubRecordDef;
   wbFaceGen: IwbSubRecordStructDef;
   wbENAM: IwbSubRecordDef;
-//  wbFGGS: IwbSubRecordDef;
   wbXESP: IwbSubRecordDef;
   wbICON: IwbSubRecordDef;
   wbEFID: IwbSubRecordDef;
@@ -69,94 +67,12 @@ var
   wbSCIT: IwbSubRecordStructDef;
   wbSCITOBME: IwbSubRecordStructDef;
 
-function wbIdleAnam(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
-begin
-  Result := '';
-  case aType of
-    ctToStr, ctToSummary: begin
-      case aInt and not $80 of
-        0: Result := 'Lower Body';
-        1: Result := 'Left Arm';
-        2: Result := 'Left Hand';
-        3: Result := 'Right Arm';
-        4: Result := 'Special Idle';
-        5: Result := 'Whole Body';
-        6: Result := 'Upper Body';
-      else
-        Result := '<Unknown: '+IntToStr(aInt and not $80)+'>';
-      end;
-
-      if (aInt and $80) = 0 then
-        Result := Result + ', Must return a file';
-    end;
-    ctToSortKey: begin
-      Result := IntToHex64(aInt, 2);
-    end;
-    ctCheck: begin
-      case aInt and not $80 of
-        0..6: Result := '';
-      else
-        Result := '<Unknown: '+IntToStr(aInt and not $80)+'>';
-      end;
-    end;
-  end;
-end;
-
-function wbMISCActorValueDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
-var
-  MainRecord : IwbMainRecord;
-begin
-  Result := 0;
-
-  if not wbTryGetContainingMainRecord(aElement, MainRecord) then
-    Exit;
-
-  if (MainRecord.Flags._Flags and $000000C0) = $000000C0 then
-    Result := 1;
-end;
-
-function wbXLOCFillerDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
-var
-  Container : IwbContainer;
-  SubRecord : IwbSubRecord;
-begin
-  Result := 0;
-  if not wbTryGetContainerFromUnion(aElement, Container) then
-    Exit;
-
-  if Supports(Container, IwbSubRecord, SubRecord) then
-    if SubRecord.SubRecordHeaderSize = 16 then
-      Result := 1;
-end;
-
-function wbPACKPKDTDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
-var
-  Container : IwbContainer;
-  SubRecord : IwbSubRecord;
-begin
-  Result := 1;
-  if not wbTryGetContainerFromUnion(aElement, Container) then
-    Exit;
-
-  if Supports(Container, IwbSubRecord, SubRecord) then
-    if SubRecord.SubRecordHeaderSize = 4 then
-      Result := 0;
-end;
-
-function wbREFRXSEDDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
-var
-  Container : IwbContainer;
-  SubRecord : IwbSubRecord;
-begin
-  Result := 0;
-  if not wbTryGetContainerFromUnion(aElement, Container) then
-    Exit;
-
-  if Supports(Container, IwbSubRecord, SubRecord) then
-    if SubRecord.SubRecordHeaderSize = 4 then
-      Result := 1;
-end;
-
+  wbEffect: IwbRecordMemberDef;
+  wbFactionRank: IwbRecordMemberDef;
+  wbEffects: IwbRecordMemberDef;
+  wbLeveledListEntryCreature: IwbRecordMemberDef;
+  wbLeveledListEntryItem: IwbRecordMemberDef;
+  wbLeveledListEntrySpell: IwbRecordMemberDef;
 
 type
   TCTDAFunctionParamType = (
@@ -406,9 +322,6 @@ const
     (Index: 2578; Name: 'IsDiseased')
   );
 
-var
-  wbCTDAFunctionEditInfo : string;
-
 function wbCTDAParamDescFromIndex(aIndex: Integer): PCTDAFunction;
 var
   L, H, I, C: Integer;
@@ -432,92 +345,11 @@ begin
   end;
 end;
 
-function wbEFITOBMEParamDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
-var
-  ParamInfo: Variant;
-  Container: IwbContainer;
-begin
-  Result := 0;
-  if not wbTryGetContainerFromUnion(aElement, Container) then
-    Exit;
-
-  ParamInfo := Container.ElementNativeValues['..\EFME\EFIT Param Info'];
-  if VarIsNull(ParamInfo) or VarIsEmpty(ParamInfo) then
-  else
-    Result := ParamInfo;
-end;
-
-function wbEFIXParamDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
-var
-  ParamInfo: Variant;
-  Container: IwbContainer;
-begin
-  Result := 0;
-  if not wbTryGetContainerFromUnion(aElement, Container) then
-    Exit;
-
-  ParamInfo := Container.ElementNativeValues['..\EFME\EFIX Param Info'];
-  if VarIsNull(ParamInfo) or VarIsEmpty(ParamInfo) then
-  else
-    Result := ParamInfo;
-end;
-
-function wbCTDAParam1Decider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
-var
-  Desc: PCTDAFunction;
-  Container: IwbContainer;
-begin
-  Result := 0;
-  if not wbTryGetContainerFromUnion(aElement, Container) then
-    Exit;
-
-  Desc := wbCTDAParamDescFromIndex(Container.ElementByName['Function'].NativeValue);
-  if Assigned(Desc) then
-    Result := Succ(Integer(Desc.ParamType1));
-end;
-
-function wbCTDAParam2Decider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
-var
-  Desc: PCTDAFunction;
-  Container: IwbContainer;
-begin
-  Result := 0;
-  if not wbTryGetContainerFromUnion(aElement, Container) then
-    Exit;
-
-  Desc := wbCTDAParamDescFromIndex(Container.ElementByName['Function'].NativeValue);
-  if Assigned(Desc) then
-    Result := Succ(Integer(Desc.ParamType2));
-end;
-{
-function wbCTDAFunction(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
-var
-  Desc: PCTDAFunction;
-begin
-  Result := '';
-  case aType of
-    ctToStr, ctToSummary: begin
-      Desc := wbCTDAParamDescFromIndex(aInt);
-      if Assigned(Desc) then
-        Result := Desc.Name
-      else
-        Result := '<Unknown: '+aInt.ToString+'>';
-    end;
-    ctToSortKey: Result := IntToHex(aInt, 8);
-    ctCheck: begin
-      Desc := wbCTDAParamDescFromIndex(aInt);
-      if Assigned(Desc) then
-        Result := ''
-      else
-        Result := '<Unknown: '+aInt.ToString+'>';
-    end;
-  end;
-end;
-}
 function wbCTDAFunctionToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
 var
-  Desc : PCTDAFunction;
-  i    : Integer;
+  wbCTDAFunctionEditInfo : string;
+  Desc                   : PCTDAFunction;
+  i                      : Integer;
 begin
   Result := '';
   case aType of
@@ -568,6 +400,136 @@ begin
         Exit;
       end;
   Result := StrToInt64(aString);
+end;
+
+function wbCTDAParam1Decider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+var
+  Desc: PCTDAFunction;
+  Container: IwbContainer;
+begin
+  Result := 0;
+  if not wbTryGetContainerFromUnion(aElement, Container) then
+    Exit;
+
+  Desc := wbCTDAParamDescFromIndex(Container.ElementByName['Function'].NativeValue);
+  if Assigned(Desc) then
+    Result := Succ(Integer(Desc.ParamType1));
+end;
+
+function wbCTDAParam2Decider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+var
+  Desc: PCTDAFunction;
+  Container: IwbContainer;
+begin
+  Result := 0;
+  if not wbTryGetContainerFromUnion(aElement, Container) then
+    Exit;
+
+  Desc := wbCTDAParamDescFromIndex(Container.ElementByName['Function'].NativeValue);
+  if Assigned(Desc) then
+    Result := Succ(Integer(Desc.ParamType2));
+end;
+
+function wbCTDAParam2QuestStageToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
+var
+  Container  : IwbContainerElementRef;
+  Param1     : IwbElement;
+  MainRecord : IwbMainRecord;
+  EditInfos  : TStringList;
+  Stages     : IwbContainerElementRef;
+  Stage      : IwbContainerElementRef;
+  i, j       : Integer;
+  s, t       : string;
+begin
+  case aType of
+    ctToStr, ctToSummary: begin
+      Result := aInt.ToString;
+      if aType = ctToStr then
+        Result := Result + ' <Warning: Could not resolve Parameter 1>';
+    end;
+    ctToEditValue: Result := aInt.ToString;
+    ctToSortKey: begin
+      Result := IntToHex64(aInt, 8);
+      Exit;
+    end;
+    ctCheck: Result := '<Warning: Could not resolve Parameter 1>';
+    ctEditType: Result := '';
+    ctEditInfo: Result := '';
+  end;
+
+  if not wbTryGetContainerRefFromUnionOrValue(aElement, Container) then
+    Exit;
+
+  Param1 := Container.ElementByName['Parameter #1'];
+  if not wbTryGetMainRecord(Param1, MainRecord) then
+    Exit;
+
+  MainRecord := MainRecord.WinningOverride;
+
+  if MainRecord.Signature <> QUST then begin
+    case aType of
+      ctToStr, ctToSummary: begin
+        Result := aInt.ToString;
+        if aType = ctToStr then
+          Result := Result + ' <Warning: "'+MainRecord.ShortName+'" is not a Quest record>';
+      end;
+      ctCheck: Result := '<Warning: "'+MainRecord.ShortName+'" is not a Quest record>';
+    end;
+    Exit;
+  end;
+
+  case aType of
+    ctEditType: begin
+      Result := 'ComboBox';
+      Exit;
+    end;
+    ctEditInfo:
+      EditInfos := TStringList.Create;
+  else
+    EditInfos := nil;
+  end;
+  try
+    if Supports(MainRecord.ElementByName['Stages'], IwbContainerElementRef, Stages) then begin
+      for i := 0 to Pred(Stages.ElementCount) do
+        if Supports(Stages.Elements[i], IwbContainerElementRef, Stage) then begin
+          j := Stage.ElementNativeValues['INDX'];
+          if aType = ctToSummary then
+            s := Stage.ElementSummaries['Log Entries\Log Entry\CNAM']
+          else
+            s := Stage.ElementValues['Log Entries\Log Entry\CNAM'];
+          s := s.Trim;
+          t := IntToStr(j);
+          while Length(t) < 3 do
+            t := '0' + t;
+          if s <> '' then
+            t := t + ' ' + s;
+          if Assigned(EditInfos) then
+            EditInfos.AddObject(t, TObject(j))
+          else if j = aInt then begin
+            case aType of
+              ctToStr, ctToSummary, ctToEditValue: Result := t;
+              ctCheck: Result := '';
+            end;
+            Exit;
+          end;
+        end;
+    end;
+
+    case aType of
+      ctToStr, ctToSummary: begin
+        Result := aInt.ToString;
+        if aType = ctToStr then
+          Result := Result + ' <Warning: Quest Stage not found in "' + MainRecord.Name + '">';
+      end;
+      ctCheck: Result := '<Warning: Quest Stage not found in "' + MainRecord.Name + '">';
+      ctEditInfo: begin
+        EditInfos.Sort;
+        Result := EditInfos.CommaText;
+      end;
+    end;
+  finally
+    FreeAndNil(EditInfos);
+  end;
 end;
 
 function wbCTDAParam2VariableNameToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
@@ -752,106 +714,28 @@ begin
   raise Exception.Create('Variable "'+aString+'" was not found in "'+MainRecord.ShortName+'"');
 end;
 
-function wbCTDAParam2QuestStageToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
+function wbCalcPGRRSize(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Cardinal;
 var
-  Container  : IwbContainerElementRef;
-  Param1     : IwbElement;
-  MainRecord : IwbMainRecord;
-  EditInfos  : TStringList;
-  Stages     : IwbContainerElementRef;
-  Stage      : IwbContainerElementRef;
-  i, j       : Integer;
-  s, t       : string;
+  Index: Integer;
+
+  function ExtractCountFromLabel(const aElement: IwbElement; aCount: Integer): Integer;
+  var
+    i: Integer;
+  begin
+    i := Pos('#', aElement.Name);
+    if i = 0 then
+      Result := aCount
+    else try
+      Result := StrToInt(Trim(Copy(aElement.Name, i+1, Length(aElement.Name))))+1;
+    except
+      Result := aCount;
+    end;
+
+  end;
+
 begin
-  case aType of
-    ctToStr, ctToSummary: begin
-      Result := aInt.ToString;
-      if aType = ctToStr then
-        Result := Result + ' <Warning: Could not resolve Parameter 1>';
-    end;
-    ctToEditValue: Result := aInt.ToString;
-    ctToSortKey: begin
-      Result := IntToHex64(aInt, 8);
-      Exit;
-    end;
-    ctCheck: Result := '<Warning: Could not resolve Parameter 1>';
-    ctEditType: Result := '';
-    ctEditInfo: Result := '';
-  end;
-
-  if not wbTryGetContainerRefFromUnionOrValue(aElement, Container) then
-    Exit;
-
-  Param1 := Container.ElementByName['Parameter #1'];
-  if not wbTryGetMainRecord(Param1, MainRecord) then
-    Exit;
-
-  MainRecord := MainRecord.WinningOverride;
-
-  if MainRecord.Signature <> QUST then begin
-    case aType of
-      ctToStr, ctToSummary: begin
-        Result := aInt.ToString;
-        if aType = ctToStr then
-          Result := Result + ' <Warning: "'+MainRecord.ShortName+'" is not a Quest record>';
-      end;
-      ctCheck: Result := '<Warning: "'+MainRecord.ShortName+'" is not a Quest record>';
-    end;
-    Exit;
-  end;
-
-  case aType of
-    ctEditType: begin
-      Result := 'ComboBox';
-      Exit;
-    end;
-    ctEditInfo:
-      EditInfos := TStringList.Create;
-  else
-    EditInfos := nil;
-  end;
-  try
-    if Supports(MainRecord.ElementByName['Stages'], IwbContainerElementRef, Stages) then begin
-      for i := 0 to Pred(Stages.ElementCount) do
-        if Supports(Stages.Elements[i], IwbContainerElementRef, Stage) then begin
-          j := Stage.ElementNativeValues['INDX'];
-          if aType = ctToSummary then
-            s := Stage.ElementSummaries['Log Entries\Log Entry\CNAM']
-          else
-            s := Stage.ElementValues['Log Entries\Log Entry\CNAM'];
-          s := s.Trim;
-          t := IntToStr(j);
-          while Length(t) < 3 do
-            t := '0' + t;
-          if s <> '' then
-            t := t + ' ' + s;
-          if Assigned(EditInfos) then
-            EditInfos.AddObject(t, TObject(j))
-          else if j = aInt then begin
-            case aType of
-              ctToStr, ctToSummary, ctToEditValue: Result := t;
-              ctCheck: Result := '';
-            end;
-            Exit;
-          end;
-        end;
-    end;
-
-    case aType of
-      ctToStr, ctToSummary: begin
-        Result := aInt.ToString;
-        if aType = ctToStr then
-          Result := Result + ' <Warning: Quest Stage not found in "' + MainRecord.Name + '">';
-      end;
-      ctCheck: Result := '<Warning: Quest Stage not found in "' + MainRecord.Name + '">';
-      ctEditInfo: begin
-        EditInfos.Sort;
-        Result := EditInfos.CommaText;
-      end;
-    end;
-  finally
-    FreeAndNil(EditInfos);
-  end;
+  Index := ExtractCountFromLabel(aElement, aElement.Container.ElementCount);
+  Result := ((aElement.Container.Container as IwbMainRecord).RecordBySignature['PGRP'].Elements[Pred(Index)] as IwbContainer).Elements[3].NativeValue;
 end;
 
 procedure wbCELLAfterLoad(const aElement: IwbElement);
@@ -902,6 +786,134 @@ begin
   end;
 end;
 
+function wbEDDXDontShow(const aElement: IwbElement): Boolean;
+var
+  MainRecord : IwbMainRecord;
+begin
+  Result := True;
+
+  if Supports(aElement.Container, IwbMainRecord, MainRecord) then
+    Result := not Assigned(MainRecord.ElementBySignature[OBME]);
+end;
+
+procedure wbEFITAfterLoad(const aElement: IwbElement);
+var
+  Container : IwbContainerElementRef;
+  Element   : IwbElement;
+  ActorValue: Variant;
+  MainRecord: IwbMainRecord;
+begin
+  if wbBeginInternalEdit then try
+    if not Supports(aElement, IwbContainerElementRef, Container) then
+      Exit;
+
+    if Container.ElementCount < 1 then
+      Exit;
+
+    Element := Container.ElementByName['Magic effect name'];
+    if not wbTryGetMainRecord(Element, MainRecord, 'MGEF') then
+      Exit;
+
+    if (MainRecord.ElementNativeValues['DATA - Data\Flags'] and $01000000) = 0 then
+      Exit;
+
+    ActorValue := MainRecord.ElementNativeValues['DATA - Data\Assoc. Item'];
+    if VarIsNull(ActorValue) or VarIsClear(ActorValue) then
+      Exit;
+
+    if VarCompareValue(ActorValue, Container.ElementNativeValues['Actor Value']) <> vrEqual then
+      Container.ElementNativeValues['Actor Value'] := ActorValue;
+  finally
+    wbEndInternalEdit;
+  end;
+end;
+
+function wbEFITOBMEParamDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+var
+  ParamInfo: Variant;
+  Container: IwbContainer;
+begin
+  Result := 0;
+  if not wbTryGetContainerFromUnion(aElement, Container) then
+    Exit;
+
+  ParamInfo := Container.ElementNativeValues['..\EFME\EFIT Param Info'];
+  if VarIsNull(ParamInfo) or VarIsEmpty(ParamInfo) then
+  else
+    Result := ParamInfo;
+end;
+
+function wbEFIXParamDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+var
+  ParamInfo: Variant;
+  Container: IwbContainer;
+begin
+  Result := 0;
+  if not wbTryGetContainerFromUnion(aElement, Container) then
+    Exit;
+
+  ParamInfo := Container.ElementNativeValues['..\EFME\EFIX Param Info'];
+  if VarIsNull(ParamInfo) or VarIsEmpty(ParamInfo) then
+  else
+    Result := ParamInfo;
+end;
+
+function wbIdleAnam(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
+begin
+  Result := '';
+  case aType of
+    ctToStr, ctToSummary: begin
+      case aInt and not $80 of
+        0: Result := 'Lower Body';
+        1: Result := 'Left Arm';
+        2: Result := 'Left Hand';
+        3: Result := 'Right Arm';
+        4: Result := 'Special Idle';
+        5: Result := 'Whole Body';
+        6: Result := 'Upper Body';
+      else
+        Result := '<Unknown: '+IntToStr(aInt and not $80)+'>';
+      end;
+
+      if (aInt and $80) = 0 then
+        Result := Result + ', Must return a file';
+    end;
+    ctToSortKey: begin
+      Result := IntToHex64(aInt, 2);
+    end;
+    ctCheck: begin
+      case aInt and not $80 of
+        0..6: Result := '';
+      else
+        Result := '<Unknown: '+IntToStr(aInt and not $80)+'>';
+      end;
+    end;
+  end;
+end;
+
+procedure wbLVLAfterLoad(const aElement: IwbElement);
+var
+  Container  : IwbContainerElementRef;
+  MainRecord : IwbMainRecord;
+  Chance     : Integer;
+begin
+  if wbBeginInternalEdit then try
+    if not wbTryGetContainerWithValidMainRecord(aElement, Container, MainRecord) then
+      Exit;
+
+    Container.RemoveElement('DATA');
+
+    Chance := Container.ElementNativeValues['LVLD'];
+    if (Chance and $80) <> 0 then begin
+      Chance := Chance and not $80;
+      Container.ElementNativeValues['LVLD'] := Chance;
+      Container.ElementNativeValues['LVLF'] := Container.ElementNativeValues['LVLF'] or $01;
+    end;
+  finally
+    wbEndInternalEdit;
+  end;
+end;
+
 procedure wbMGEFAfterLoad(const aElement: IwbElement);
 var
   Container    : IwbContainerElementRef;
@@ -942,75 +954,67 @@ begin
   end;
 end;
 
-procedure wbEFITAfterLoad(const aElement: IwbElement);
+function wbMGEFFAssocItemDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
 var
-  Container : IwbContainerElementRef;
-  Element   : IwbElement;
-  ActorValue: Variant;
-  MainRecord: IwbMainRecord;
+  s: string;
+  Container: IwbContainer;
 begin
-  if wbBeginInternalEdit then try
-    if not Supports(aElement, IwbContainerElementRef, Container) then
-      Exit;
+  Result := 0;
+  if not wbTryGetContainerFromUnion(aElement, Container) then
+    Exit;
 
-    if Container.ElementCount < 1 then
-      Exit;
-
-    Element := Container.ElementByName['Magic effect name'];
-    if not wbTryGetMainRecord(Element, MainRecord, 'MGEF') then
-      Exit;
-
-    if (MainRecord.ElementNativeValues['DATA - Data\Flags'] and $01000000) = 0 then
-      Exit;
-
-    ActorValue := MainRecord.ElementNativeValues['DATA - Data\Assoc. Item'];
-    if VarIsNull(ActorValue) or VarIsClear(ActorValue) then
-      Exit;
-
-    if VarCompareValue(ActorValue, Container.ElementNativeValues['Actor Value']) <> vrEqual then
-      Container.ElementNativeValues['Actor Value'] := ActorValue;
-  finally
-    wbEndInternalEdit;
-  end;
+  s := Container.ElementByName['Flags'].SortKey[False];
+  if s[17] = '1' then
+    Result := 1
+  else if s[18] = '1' then
+    Result := 2
+  else if s[19] = '1' then
+    Result := 3
+  else if s[25] = '1' then
+    Result := 4;
 end;
 
-procedure wbREFRAfterLoad(const aElement: IwbElement);
+function wbMISCActorValueDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
 var
-  Container: IwbContainerElementRef;
-begin
-  if wbBeginInternalEdit then try
-    if not Supports(aElement, IwbContainerElementRef, Container) then
-      Exit;
-    if Container.ElementCount < 1 then
-      Exit;
-
-    Container.RemoveElement('XPCI');
-  finally
-    wbEndInternalEdit;
-  end;
-end;
-
-procedure wbLVLAfterLoad(const aElement: IwbElement);
-var
-  Container  : IwbContainerElementRef;
   MainRecord : IwbMainRecord;
-  Chance     : Integer;
 begin
-  if wbBeginInternalEdit then try
-    if not wbTryGetContainerWithValidMainRecord(aElement, Container, MainRecord) then
-      Exit;
+  Result := 0;
 
-    Container.RemoveElement('DATA');
+  if not wbTryGetContainingMainRecord(aElement, MainRecord) then
+    Exit;
 
-    Chance := Container.ElementNativeValues['LVLD'];
-    if (Chance and $80) <> 0 then begin
-      Chance := Chance and not $80;
-      Container.ElementNativeValues['LVLD'] := Chance;
-      Container.ElementNativeValues['LVLF'] := Container.ElementNativeValues['LVLF'] or $01;
-    end;
-  finally
-    wbEndInternalEdit;
+  if (MainRecord.Flags._Flags and $000000C0) = $000000C0 then
+    Result := 1;
+end;
+
+function wbOBMEDontShow(const aElement: IwbElement): Boolean;
+var
+  _File: IwbFile;
+begin
+  if not Assigned(aElement) then begin
+    Result := True;
+    Exit;
   end;
+
+  Result := False;
+
+  _File := aElement._File;
+  if Assigned(_File) and SameText(_File.FileName, 'Oblivion.esm') then
+    Result := True;
+end;
+
+function wbPACKPKDTDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+var
+  Container : IwbContainer;
+  SubRecord : IwbSubRecord;
+begin
+  Result := 1;
+  if not wbTryGetContainerFromUnion(aElement, Container) then
+    Exit;
+
+  if Supports(Container, IwbSubRecord, SubRecord) then
+    if SubRecord.SubRecordHeaderSize = 4 then
+      Result := 0;
 end;
 
 procedure wbPGRDAfterLoad(const aElement: IwbElement);
@@ -1069,28 +1073,6 @@ begin
 
     end;
 
-  finally
-    wbEndInternalEdit;
-  end;
-end;
-
-procedure wbPGRRPointAfterLoad(const aElement: IwbElement);
-var
-  Connections : IwbContainerElementRef;
-  i           : Integer;
-//  Index       : Integer;
-begin
-  if wbBeginInternalEdit then try
-    if not Supports(aElement, IwbContainerElementRef, Connections) then
-      Exit;
-    for i := Pred(Connections.ElementCount) downto 0 do
-      if Connections.Elements[i].NativeValue = 65535 then begin
-        Connections.RemoveElement(i);
-      end;
-{    if Removed then begin
-      Index := aElement.Container.ElementCount;
-      (aElement.ContainingMainRecord.RecordBySignature['PGRP'].Elements[Index] as IwbContainer).Elements[3].NativeValue := Connections.ElementCount;
-    end;}
   finally
     wbEndInternalEdit;
   end;
@@ -1177,84 +1159,73 @@ begin
 end;
 }
 
-function wbCalcPGRRSize(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Cardinal;
+procedure wbPGRRPointAfterLoad(const aElement: IwbElement);
 var
-  Index: Integer;
-
-  function ExtractCountFromLabel(const aElement: IwbElement; aCount: Integer): Integer;
-  var
-    i: Integer;
-  begin
-    i := Pos('#', aElement.Name);
-    if i = 0 then
-      Result := aCount
-    else try
-      Result := StrToInt(Trim(Copy(aElement.Name, i+1, Length(aElement.Name))))+1;
-    except
-      Result := aCount;
-    end;
-
-  end;
-
+  Connections : IwbContainerElementRef;
+  i           : Integer;
+//  Index       : Integer;
 begin
-  Index := ExtractCountFromLabel(aElement, aElement.Container.ElementCount);
-  Result := ((aElement.Container.Container as IwbMainRecord).RecordBySignature['PGRP'].Elements[Pred(Index)] as IwbContainer).Elements[3].NativeValue;
+  if wbBeginInternalEdit then try
+    if not Supports(aElement, IwbContainerElementRef, Connections) then
+      Exit;
+    for i := Pred(Connections.ElementCount) downto 0 do
+      if Connections.Elements[i].NativeValue = 65535 then begin
+        Connections.RemoveElement(i);
+      end;
+{    if Removed then begin
+      Index := aElement.Container.ElementCount;
+      (aElement.ContainingMainRecord.RecordBySignature['PGRP'].Elements[Index] as IwbContainer).Elements[3].NativeValue := Connections.ElementCount;
+    end;}
+  finally
+    wbEndInternalEdit;
+  end;
 end;
 
-function wbMGEFFAssocItemDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+procedure wbREFRAfterLoad(const aElement: IwbElement);
 var
-  s: string;
-  Container: IwbContainer;
+  Container: IwbContainerElementRef;
+begin
+  if wbBeginInternalEdit then try
+    if not Supports(aElement, IwbContainerElementRef, Container) then
+      Exit;
+    if Container.ElementCount < 1 then
+      Exit;
+
+    Container.RemoveElement('XPCI');
+  finally
+    wbEndInternalEdit;
+  end;
+end;
+
+function wbREFRXSEDDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+var
+  Container : IwbContainer;
+  SubRecord : IwbSubRecord;
 begin
   Result := 0;
   if not wbTryGetContainerFromUnion(aElement, Container) then
     Exit;
 
-  s := Container.ElementByName['Flags'].SortKey[False];
-  if s[17] = '1' then
-    Result := 1
-  else if s[18] = '1' then
-    Result := 2
-  else if s[19] = '1' then
-    Result := 3
-  else if s[25] = '1' then
-    Result := 4;
+  if Supports(Container, IwbSubRecord, SubRecord) then
+    if SubRecord.SubRecordHeaderSize = 4 then
+      Result := 1;
 end;
 
-function wbEDDXDontShow(const aElement: IwbElement): Boolean;
+function wbXLOCFillerDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
 var
-  MainRecord : IwbMainRecord;
+  Container : IwbContainer;
+  SubRecord : IwbSubRecord;
 begin
-  Result := True;
-
-  if Supports(aElement.Container, IwbMainRecord, MainRecord) then
-    Result := not Assigned(MainRecord.ElementBySignature[OBME]);
-end;
-
-function wbOBMEDontShow(const aElement: IwbElement): Boolean;
-var
-  _File: IwbFile;
-begin
-  if not Assigned(aElement) then begin
-    Result := True;
+  Result := 0;
+  if not wbTryGetContainerFromUnion(aElement, Container) then
     Exit;
-  end;
 
-  Result := False;
-
-  _File := aElement._File;
-  if Assigned(_File) and SameText(_File.FileName, 'Oblivion.esm') then
-    Result := True;
+  if Supports(Container, IwbSubRecord, SubRecord) then
+    if SubRecord.SubRecordHeaderSize = 16 then
+      Result := 1;
 end;
 
 procedure DefineTES4;
-var
-  wbEffect: IwbRecordMemberDef;
-  wbFactionRank: IwbRecordMemberDef;
-  wbEffects: IwbRecordMemberDef;
-  wbLeveledListEntryCreature: IwbRecordMemberDef;
-  wbLeveledListEntryItem: IwbRecordMemberDef;
-  wbLeveledListEntrySpell: IwbRecordMemberDef;
 begin
   DefineCommon;
 
