@@ -33,6 +33,7 @@ var
   wbConditionMembers: array of IwbValueDef;
   wbConditionParameters: array of IwbValueDef;
 
+  wbAttributeEnum: IwbEnumDef;
   wbFormTypeEnum: IwbEnumDef;
   wbHeadPartIndexEnum: IwbEnumDef;
   wbMagicSchoolEnum: IwbEnumDef;
@@ -1329,6 +1330,18 @@ begin
       71, 'Resist Water Damage'
     ]);
 
+  wbAttributeEnum :=
+    wbEnum([], [
+      0,  'Strength',
+      1,  'Intelligence',
+      2,  'Willpower',
+      3,  'Agility',
+      4,  'Speed',
+      5,  'Endurance',
+      6,  'Personality',
+      7,  'Luck'
+    ]);
+
   wbFormTypeEnum :=
     wbEnum([], [
       $03, 'Game Setting',
@@ -2136,7 +2149,7 @@ begin
     wbDESC,
     wbICON,
     wbStruct(DATA, '', [
-      wbArrayS('Primary Attributes', wbInteger('Primary Attribute', itS32, wbActorValueEnum), 2),
+      wbArrayS('Primary Attributes', wbInteger('Primary Attribute', itS32, wbAttributeEnum), 2),
       wbInteger('Specialization', itU32, wbSpecializationEnum),
       wbArrayS('Major Skills', wbInteger('Major Skill', itS32, wbActorValueEnum), 7),
       wbInteger('Flags', itU32, wbFlags(['Playable', 'Guard'])),
