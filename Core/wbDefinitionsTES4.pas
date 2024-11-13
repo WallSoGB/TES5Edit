@@ -1689,7 +1689,7 @@ begin
       wbInteger('Area', itU32),
       wbInteger('Duration', itU32),
       wbInteger('Type', itU32, wbEnum(['Self', 'Touch', 'Target'])),
-      wbInteger('Actor Value', itS32, wbActorValueEnum)
+      wbInteger('Actor Value', itS32, wbAttributeEnum)
     ], cpNormal, True, nil, -1, wbEFITAfterLoad);
 
   wbEFITOBME :=
@@ -3029,7 +3029,7 @@ begin
         wbInteger('Assoc. Actor Value', itS32, wbActorValueEnum)
       ]),
       wbInteger('Magic School', itS32, wbMagicSchoolEnum),
-      wbInteger('Resist value', itS32, wbActorValueEnum),
+      wbInteger('Resist value', itS32, wbResistEnum),
       wbInteger('Counter Effect Count', itU16), //!!! must be updated automatically when ESCE length changes!
       wbUnused(2),
       wbFormIDCk('Light', [LIGH, NULL]),
@@ -3339,7 +3339,7 @@ begin
     wbFactionRelations,
     wbStruct(DATA, '', [
       wbArrayS('Skill Boosts', wbStructSK([0], 'Skill Boost', [
-        wbInteger('Skill', itS8, wbActorValueEnum),
+        wbInteger('Skill', itS8, wbMajorSkillEnum),
         wbInteger('Boost', itS8)
       ])
       .SetSummaryKey([1, 0])
@@ -3635,12 +3635,12 @@ begin
 
   wbRecord(SKIL, 'Skill', [
     wbEDID,
-    wbInteger(INDX, 'Skill', itS32, wbActorValueEnum, cpNormal, True),
+    wbInteger(INDX, 'Skill', itS32, wbMajorSkillEnum, cpNormal, True),
     wbDESC,
     wbICON,
     wbStruct(DATA, 'Skill Data', [
-      wbInteger('Action', itS32, wbActorValueEnum),
-      wbInteger('Attribute', itS32, wbActorValueEnum),
+      wbInteger('Action', itS32, wbMajorSkillEnum),
+      wbInteger('Attribute', itS32, wbAttributeEnum),
       wbInteger('Specialization', itU32, wbSpecializationEnum),
       wbArray('Use Values', wbFloat('Use Value'), 2)
     ], cpNormal, True),
