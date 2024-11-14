@@ -9336,12 +9336,10 @@ begin
       wbFloat('Fog High Far Scale'),
       wbFloat('Far Height Mid'),
       wbFloat('Far Height Range'),
-      wbFloat('Unknown'),
-      wbFloat('Unknown'),
-      wbFloat('Unknown'),
-      wbFloat('Unknown'),
-      wbFloat('Unknown'),
-      wbFloat('Unknown')
+      wbStruct('Skybox Bounds', [
+        wbVec3('Center'),
+        wbVec3('Radius')
+      ])
     ], cpNormal, False, nil, 11)
       .SetDontShow(wbCellLightingDontShow)
       .SetIsRemovable(wbCellLightingIsRemovable),
@@ -12104,7 +12102,10 @@ begin
       wbFloat('Fog High Far Scale'),
       wbFloat('Far Height Mid'),
       wbFloat('Far Height Range'),
-      wbUnknown
+      wbStruct('Skybox Bounds', [
+        wbVec3('Center'),
+        wbVec3('Radius')
+      ])
     ], cpNormal, True, nil, 15),
     wbAmbientColors(DALC),
     wbFormIDCk(WGDR, 'God Rays', [GDRY])
