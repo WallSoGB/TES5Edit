@@ -1488,7 +1488,7 @@ begin
   wbFULLReq := wbStringKC(FULL, 'Name', 0, cpTranslate, True);
   wbICON := wbString(ICON, 'Icon FileName');
   wbSCRI := wbFormIDCk(SCRI, 'Script', [SCPT]);
-  wbSPLO := wbFormIDCkST(SPLO, 'Spell', [SPEL, LVSP]);
+  wbSPLO := wbFormIDCkST(SPLO, 'Spell', [LVSP, SPEL]);
   wbSPLOs := wbRArrayS('Spells', wbSPLO);
   wbXSCL := wbFloat(XSCL, 'Scale');
 
@@ -1512,7 +1512,7 @@ begin
   wbCNTOS :=
     wbRArrayS('Items',
       wbStructSK(CNTO, [0], 'Item', [
-        wbFormIDCk('Item', [ARMO, AMMO, MISC, WEAP, INGR, SLGM, SGST, BOOK, LVLI, KEYM, CLOT, ALCH, APPA, LIGH]),
+        wbFormIDCk('Item', [ALCH, AMMO, APPA, ARMO, BOOK, CLOT, INGR, KEYM, LIGH, LVLI, MISC, SGST, SLGM, WEAP]),
         wbInteger('Count', itS32).SetDefaultNativeValue(1)
       ]).SetToStr(wbItemToStr).IncludeFlag(dfCollapsed, wbCollapseItems)
     );
@@ -1711,7 +1711,7 @@ begin
     wbStructExSK(LVLO, [0, 2], [3], 'Leveled List Entry', [
       wbInteger('Level', itS16),
       wbUnused(2),
-      wbFormIDCk('Reference', [NPC_, CREA, LVLC]),
+      wbFormIDCk('Reference', [CREA, LVLC, NPC_]),
       wbInteger('Count', itS16).SetDefaultNativeValue(1),
       wbUnused(2)
     ], cpNormal, False, nil, 3)
@@ -1727,7 +1727,7 @@ begin
     wbStructExSK(LVLO, [0, 2], [3], 'Leveled List Entry', [
       wbInteger('Level', itS16),
       wbUnused(2),
-      wbFormIDCk('Reference', [ARMO, AMMO, MISC, WEAP, INGR, SLGM, SGST, BOOK, LVLI, KEYM, CLOT, ALCH, APPA, LIGH]),
+      wbFormIDCk('Reference', [ALCH, AMMO, APPA, ARMO, BOOK, CLOT, INGR, KEYM, LIGH, LVLI, MISC, SGST, SLGM, WEAP]),
       wbInteger('Count', itS16).SetDefaultNativeValue(1),
       wbUnused(2)
     ], cpNormal, False, nil, 3)
@@ -1743,7 +1743,7 @@ begin
     wbStructExSK(LVLO, [0, 2], [3], 'Leveled List Entry', [
       wbInteger('Level', itS16),
       wbUnused(2),
-      wbFormIDCk('Reference', [SPEL, LVSP]),
+      wbFormIDCk('Reference', [LVSP, SPEL]),
       wbInteger('Count', itS16).SetDefaultNativeValue(1),
       wbUnused(2)
     ], cpNormal, False, nil, 3)
@@ -1839,7 +1839,7 @@ begin
   wbSCIT :=
     wbRStructSK([0], 'Script effect', [
       wbStructSK(SCIT, [0], 'Script effect data', [
-        wbFormIDCk('Script effect', [NULL, SCPT]),
+        wbFormIDCk('Script effect', [SCPT, NULL]),
         wbInteger('Magic school', itU32, wbMagicSchoolEnum),
         wbInteger('Visual effect name', itU32, wbChar4),
         wbInteger('Flags', itU8, wbFlags(['Hostile'])),
@@ -1851,7 +1851,7 @@ begin
   wbSCITOBME :=
     wbRStructSK([0], 'Script effect', [
       wbStructSK(SCIT, [0], 'Script effect data', [
-        wbFormIDCk('Script effect', [NULL, SCPT]),
+        wbFormIDCk('Script effect', [SCPT, NULL]),
         wbInteger('Magic school', itU32, wbMagicSchoolEnum),
         wbStringMgefCode('Visual Effect Code', 4),
         wbInteger('Flags', itU8, wbFlags(['Hostile'])),
@@ -1894,7 +1894,7 @@ begin
     , cpNormal, True);
 
   wbXESP := wbStruct(XESP, 'Enable Parent', [
-    wbFormIDCk('Reference', [PLYR, REFR, ACRE, ACHR]),
+    wbFormIDCk('Reference', [ACHR, ACRE, PLYR, REFR]),
     wbInteger('Flags', itU8, wbFlags([
       'Set Enable State to Opposite of Parent'
     ])),
@@ -2836,7 +2836,7 @@ begin
     wbRArrayS('Locations', wbStructSK(LNAM, [0, 1], 'Location', [
       wbFormIDCkNoReach('Direct', [CELL, WRLD, NULL]),
       wbStructSK([0, 1], 'Indirect', [
-        wbFormIDCkNoReach('World', [NULL, WRLD]),
+        wbFormIDCkNoReach('World', [WRLD, NULL]),
         wbStructSK([0,1], 'Grid', [
           wbInteger('Y', itS16),
           wbInteger('X', itS16)
@@ -2882,7 +2882,7 @@ begin
     ]), cpNormal, True),
     wbRArrayS('Leveled List Entries', wbLeveledListEntryCreature, cpNormal, True),
     wbSCRI,
-    wbFormIDCk(TNAM, 'Creature template', [NPC_, CREA])
+    wbFormIDCk(TNAM, 'Creature template', [CREA, NPC_])
   ], True, nil, cpNormal, False, wbLVLAfterLoad).SetSummaryKey([3]);
 
   wbRecord(LVLI, 'Leveled Item', [
@@ -3008,10 +3008,10 @@ begin
       wbFloat('Projectile speed'),
       wbFormIDCk('Effect Shader', [EFSH, NULL]),
       wbFormIDCk('Enchant effect', [EFSH, NULL]),
-      wbFormIDCk('Casting sound', [NULL, SOUN]),
-      wbFormIDCk('Bolt sound', [NULL, SOUN]),
-      wbFormIDCk('Hit sound', [NULL, SOUN]),
-      wbFormIDCk('Area sound', [NULL, SOUN]),
+      wbFormIDCk('Casting sound', [SOUN, NULL]),
+      wbFormIDCk('Bolt sound', [SOUN, NULL]),
+      wbFormIDCk('Hit sound', [SOUN, NULL]),
+      wbFormIDCk('Area sound', [SOUN, NULL]),
       wbFloat('Constant Effect enchantment factor'),
       wbFloat('Constant Effect barter factor')
     ], cpNormal, True, nil, 10),
@@ -3180,11 +3180,11 @@ begin
         {5} 'Object type', 'at any object type'
       ])),
       wbUnion('Location', wbPxDTLocationDecider, [
-        wbFormIDCkNoReach('Reference', [REFR, ACHR, ACRE, PLYR], True),
+        wbFormIDCkNoReach('Reference', [ACHR, ACRE, PLYR, REFR], True),
         wbFormIDCkNoReach('Cell', [CELL]),
         wbFormIDCk('Unused', [NULL]),
         wbFormIDCk('Unused', [NULL]),
-        wbFormIDCkNoReach('Object ID', [ACTI, DOOR, FLOR, STAT, FURN, CREA, SPEL, NPC_, CONT, ARMO, AMMO, MISC, WEAP, INGR, SLGM, SGST, BOOK, KEYM, CLOT, ALCH, APPA, LIGH]),
+        wbFormIDCkNoReach('Object ID', [ACTI, ALCH, AMMO, APPA, ARMO, BOOK, CLOT, CONT, CREA, DOOR, FLOR, FURN, INGR, KEYM, LIGH, MISC, NPC_, SGST, SLGM, SPEL, STAT, WEAP]),
         wbInteger('Object type', itU32)
       ]),
       wbInteger('Radius', itS32)
@@ -3221,7 +3221,7 @@ begin
       ])),
       wbUnion('Target', wbPxDTLocationDecider, [
         wbFormIDCkNoReach('Reference', [ACHR, ACRE, REFR, PLYR], True),
-        wbFormIDCkNoReach('Object ID', [ACTI, DOOR, FLOR, STAT, FURN, CREA, SPEL, NPC_, CONT, ARMO, AMMO, MISC, WEAP, INGR, SLGM, SGST, BOOK, KEYM, CLOT, ALCH, APPA, LIGH]),
+        wbFormIDCkNoReach('Object ID', [ACTI, ALCH, AMMO, APPA, ARMO, BOOK, CLOT, CONT, CREA, DOOR, FLOR, FURN, INGR, KEYM, LIGH, MISC, NPC_, SGST, SLGM, SPEL, STAT, WEAP]),
         wbInteger('Object type', itU32)
       ]),
       wbInteger('Count', itS32)
@@ -3293,7 +3293,7 @@ begin
     ]).SetSummaryKey([1])),
     wbRArray('Targets', wbRStruct('Target', [
       wbStructSK(QSTA, [0], 'Target', [
-        wbFormIDCkNoReach('Target', [REFR, ACRE, ACHR], True),
+        wbFormIDCkNoReach('Target', [ACHR, ACRE, REFR], True),
         wbInteger('Flags', itU8, wbFlags([
           {0x01} 'Compass marker ignores locks'
         ])),
@@ -3392,7 +3392,7 @@ begin
       15, 'Visible When Distant'
     ])), [
     wbEDID,
-    wbFormIDCk(NAME, 'Base', [TREE, SBSP, LVLC, SOUN, ACTI, DOOR, FLOR, STAT, FURN, CONT, ARMO, AMMO, MISC, WEAP, INGR, SLGM, SGST, BOOK, KEYM, CLOT, ALCH, APPA, LIGH, GRAS], False, cpNormal, True),
+    wbFormIDCk(NAME, 'Base', [ACTI, ALCH, AMMO, APPA, ARMO, BOOK, CLOT, CONT, DOOR, FLOR, FURN, GRAS, INGR, KEYM, LIGH, LVLC, MISC, SBSP, SGST, SLGM, SOUN, STAT, TREE, WEAP], False, cpNormal, True),
     wbStruct(XTEL, 'Teleport Destination', [
       wbFormIDCk('Door', [REFR], True),
       wbPosRot
@@ -3410,7 +3410,7 @@ begin
     ]),
     wbOwnership([XLOC]),
     wbXESP,
-    wbFormIDCk(XTRG, 'Target', [REFR, ACHR, ACRE], True),
+    wbFormIDCk(XTRG, 'Target', [ACHR, ACRE, REFR], True),
     wbStruct(XSED, 'SpeedTree', [
       wbInteger('Seed', itU8),
       wbUnion('Unused', wbREFRXSEDDecider, [
@@ -3501,7 +3501,7 @@ begin
 
       {--- Objects ---}
       wbArray(RDOT, 'Objects', wbStruct('Object', [
-        wbFormIDCk('Object', [TREE, FLOR, STAT, LTEX]),
+        wbFormIDCk('Object', [FLOR, LTEX, STAT, TREE]),
         wbInteger('Parent Index', itU16, wbHideFFFF),
         wbUnused(2),
         wbFloat('Density'),
