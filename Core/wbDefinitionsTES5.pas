@@ -2032,22 +2032,6 @@ begin
     Result := True;
 end;
 
-procedure wbRemoveRNAM(const aElement: IwbElement);
-var
-  MainRecord: IwbMainRecord;
-begin
-  if not wbRemoveOffsetData then
-    Exit;
-  if not Supports(aElement, IwbMainRecord, MainRecord) then
-    Exit;
-  if wbBeginInternalEdit then try
-    if MainRecord._File.LoadOrder = 0 then
-	  MainRecord.RemoveElement('Large References');
-  finally
-    wbEndInternalEdit;
-  end;
-end;
-
 procedure wbDOBJObjectsAfterLoad(const aElement: IwbElement);
 var
   ObjectsContainer : IwbContainerElementRef;
