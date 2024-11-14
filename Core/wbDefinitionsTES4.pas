@@ -1409,6 +1409,7 @@ begin
 
   wbMajorSkillEnum :=
     wbEnum([], [
+      -1, 'None',
       12, 'Armoer',
       13, 'Athletics',
       14, 'Blade',
@@ -1527,8 +1528,8 @@ begin
 	  wbFormIDCk('Actor Value', [ACVA]),
 	  wbInteger('Axis', itU32, wbAxisEnum),
    	wbInteger('Crime Type', itU32, wbCrimeTypeEnum),
-  	wbInteger('Sex', itU32, wbSexEnum),
     wbInteger('Form Type', itU32, wbFormTypeEnum),
+    wbInteger('Sex', itU32, wbSexEnum),
 
    	wbFormIDCkNoReach('Actor', [ACHR, ACRE, PLYR, TRGT]),
     wbFormIDCkNoReach('Actor Base', [CREA, NPC_]),
@@ -1575,85 +1576,6 @@ begin
       ])
     );
 
-  wbCSDTs :=
-    wbRArrayS('Sound Types',
-      wbRStructSK([0], 'Sound Type', [
-        wbInteger(CSDT, 'Type', itU32,wbEnum([
-          {0x00} 'Left Foot',
-          {0x01} 'Right Foot',
-          {0x02} 'Left Back Foot',
-          {0x03} 'Right Back Foot',
-          {0x04} 'Idle',
-          {0x05} 'Aware',
-          {0x06} 'Attack',
-          {0x07} 'Hit',
-          {0x08} 'Death',
-          {0x09} 'Weapon'
-        ])),
-        wbSoundTypeSoundsOld
-      ])
-    );
-
-  wbEffect :=
-    wbRStruct('Effect', [
-      wbStruct(EFME, 'Oblivion Magic Extender', [
-        wbInteger('Record Version', itU8),
-        wbOBMEVersion,
-        wbInteger('EFIT Param Info', itU8, wbOBMEResolutionInfo),
-        wbInteger('EFIX Param Info', itU8, wbOBMEResolutionInfo),
-        wbUnused($0A)
-      ]),
-      wbEFIDOBME,
-      wbEFITOBME,
-      wbSCITOBME,
-      wbString(EFII, 'Icon'),
-      wbEFIX
-    ]);
-
-  wbEffects := wbRArray('Effects',
-    wbRUnion('Effects', [
-      wbRStructSK([0, 1], 'Effect', [
-        wbEFID,
-        wbEFIT,
-        wbSCIT
-      ]),
-      wbRStruct('Effects', [
-        wbRArray('Effects', wbEffect),
-        wbEmpty(EFXX, 'Effects End Marker', cpNormal, True),
-        wbFULLReq
-      ])
-    ])
-  );
-
-//  wbEffects :=
-//    wbRUnion('Effects', [
-//      wbRStruct('Effects', [
-//        wbRStructs('Effects','Effect', [
-//          wbEFID,
-//          wbEFIT,
-//          wbSCIT
-//        ])
-//      ]),
-//      wbRStruct('Effects', [
-//        wbRStructs('Effects','Effect', [
-//          wbStruct(EFME, 'Oblivion Magic Extender', [
-//            wbInteger('Record Version', itU8),
-//            wbOBMEVersion,
-//            wbInteger('EFIT Param Info', itU8, wbOBMEResolutionInfo),
-//            wbInteger('EFIX Param Info', itU8, wbOBMEResolutionInfo),
-//            wbUnused($0A)
-//          ]),
-//          wbEFIDOBME,
-//          wbEFITOBME,
-//          wbSCITOBME,
-//          wbString(EFII, 'Icon'),
-//          wbEFIX
-//        ]),
-//        wbEmpty(EFXX, 'Effects End Marker', cpNormal, True),
-//        wbFULLReq
-//      ])
-//    ]);
-
   wbEFIT :=
     wbStructSK(EFIT, [4, 5], '', [
       wbInteger('Magic effect name', itU32, wbChar4),
@@ -1661,7 +1583,7 @@ begin
       wbInteger('Area', itU32),
       wbInteger('Duration', itU32),
       wbInteger('Type', itU32, wbEnum(['Self', 'Touch', 'Target'])),
-      wbInteger('Actor Value', itS32, wbAttributeEnum)
+      wbInteger('Actor Value', itS32, wbActorValueEnum)
     ], cpNormal, True, nil, -1, wbEFITAfterLoad);
 
   wbEFITOBME :=
@@ -1786,13 +1708,6 @@ begin
        the next 4 of point 3 and so on..., this can currently not be represented
        declaratively }
 
-  wbResultScript := wbRStruct('Result Script', [
-    wbSCHR,
-    wbByteArray(SCDA, 'Compiled result script'),
-    wbStringScript(SCTX, 'Result script source'),
-    wbSCROs
-  ]).SetToStr(wbScriptToStr);
-
   wbSCHR :=
     wbRUnion('Basic Script Data', [
       wbStruct(SCHR, 'Basic Script Data', [
@@ -1860,6 +1775,66 @@ begin
       wbFULLReq
     ]);
 
+  wbEffect :=
+    wbRStruct('Effect', [
+      wbStruct(EFME, 'Oblivion Magic Extender', [
+        wbInteger('Record Version', itU8),
+        wbOBMEVersion,
+        wbInteger('EFIT Param Info', itU8, wbOBMEResolutionInfo),
+        wbInteger('EFIX Param Info', itU8, wbOBMEResolutionInfo),
+        wbUnused($0A)
+      ]),
+      wbEFIDOBME,
+      wbEFITOBME,
+      wbSCITOBME,
+      wbString(EFII, 'Icon'),
+      wbEFIX
+    ]);
+
+  wbEffects := wbRArray('Effects',
+    wbRUnion('Effects', [
+      wbRStructSK([0, 1], 'Effect', [
+        wbEFID,
+        wbEFIT,
+        wbSCIT
+      ]),
+      wbRStruct('Effects', [
+        wbRArray('Effects', wbEffect),
+        wbEmpty(EFXX, 'Effects End Marker', cpNormal, True),
+        wbFULLReq
+      ])
+    ])
+  );
+
+//  wbEffects :=
+//    wbRUnion('Effects', [
+//      wbRStruct('Effects', [
+//        wbRStructs('Effects','Effect', [
+//          wbEFID,
+//          wbEFIT,
+//          wbSCIT
+//        ])
+//      ]),
+//      wbRStruct('Effects', [
+//        wbRStructs('Effects','Effect', [
+//          wbStruct(EFME, 'Oblivion Magic Extender', [
+//            wbInteger('Record Version', itU8),
+//            wbOBMEVersion,
+//            wbInteger('EFIT Param Info', itU8, wbOBMEResolutionInfo),
+//            wbInteger('EFIX Param Info', itU8, wbOBMEResolutionInfo),
+//            wbUnused($0A)
+//          ]),
+//          wbEFIDOBME,
+//          wbEFITOBME,
+//          wbSCITOBME,
+//          wbString(EFII, 'Icon'),
+//          wbEFIX
+//        ]),
+//        wbEmpty(EFXX, 'Effects End Marker', cpNormal, True),
+//        wbFULLReq
+//      ])
+//    ]);
+
   wbSCROs :=
     wbRArray('References',
       wbRUnion('', [
@@ -1872,6 +1847,13 @@ begin
         wbInteger(SCRV, 'Local Variable', itU32)
       ])
     ).IncludeFlag(dfNotAlignable);
+
+  wbResultScript := wbRStruct('Result Script', [
+    wbSCHR,
+    wbByteArray(SCDA, 'Compiled result script'),
+    wbStringScript(SCTX, 'Result script source'),
+    wbSCROs
+  ]).SetToStr(wbScriptToStr);
 
   wbSLSD := wbStructSK(SLSD, [0], 'Local Variable Data', [
     wbInteger('Index', itU32),
@@ -1892,6 +1874,25 @@ begin
       .IncludeFlag(dfSummaryNoSortKey)
       .IncludeFlag(dfCollapsed)
     , cpNormal, True);
+
+  wbCSDTs :=
+    wbRArrayS('Sound Types',
+      wbRStructSK([0], 'Sound Type', [
+        wbInteger(CSDT, 'Type', itU32,wbEnum([
+          {0x00} 'Left Foot',
+          {0x01} 'Right Foot',
+          {0x02} 'Left Back Foot',
+          {0x03} 'Right Back Foot',
+          {0x04} 'Idle',
+          {0x05} 'Aware',
+          {0x06} 'Attack',
+          {0x07} 'Hit',
+          {0x08} 'Death',
+          {0x09} 'Weapon'
+        ])),
+        wbSoundTypeSoundsOld
+      ])
+    );
 
   wbXESP := wbStruct(XESP, 'Enable Parent', [
     wbFormIDCk('Reference', [ACHR, ACRE, PLYR, REFR]),
@@ -2695,7 +2696,7 @@ begin
         {0x0020} 'Random End',
         {0x0040} 'Run for Rumors'
       ]))
-    ], cpNormal, True),
+    ], cpNormal, True, nil, 2),
     wbFormIDCkNoReach(QSTI, 'Quest', [QUST], False, cpNormal, True),
     wbFormIDCk(TPIC, 'Topic', [DIAL]),
     wbFormIDCkNoReach(PNAM, 'Previous INFO', [INFO, NULL]),
@@ -3704,13 +3705,14 @@ begin
         {5} 'Poison'
       ])),
       wbInteger('Cost', itU32),
-      wbInteger('Level', itU32, wbEnum([
+      wbInteger('Level', itU8, wbEnum([
         {0} 'Novice',
         {1} 'Apprentice',
         {2} 'Journeyman',
         {3} 'Expert',
         {4} 'Master'
       ])),
+      wbUnused(3),
       wbInteger('Flags', itU8, wbFlags([
         {0x00000001} 'Manual Spell Cost',
         {0x00000002} 'Immune to Silence 1',
@@ -3885,7 +3887,7 @@ begin
           1, 'Weather - Cloudy',
           2, 'Weather - Rainy',
           3, 'Weather - Snow'
-        ], False, 4))
+        ], False, 4), True)
       ).IncludeFlag(dfCollapsed, wbCollapseFlags),
       wbWeatherLightningColor
     ]).SetRequired,
