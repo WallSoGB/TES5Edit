@@ -12,22 +12,17 @@ unit wbDefinitionsTES4;
 
 interface
 
-uses
-  wbInterface;
-
 procedure DefineTES4;
 
 implementation
 
 uses
-  Types,
   Classes,
   SysUtils,
-  Math,
   Variants,
-  wbHelpers,
   wbDefinitionsCommon,
-  wbDefinitionsSignatures;
+  wbDefinitionsSignatures,
+  wbInterface;
 
 var
   wbConditionMembers: array of IwbValueDef;
