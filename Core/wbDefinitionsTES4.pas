@@ -75,7 +75,6 @@ var
   wbSCRI: IwbRecordMemberDef;
   wbSCROs: IwbRecordMemberDef;
   wbSLSD: IwbRecordMemberDef;
-  wbSoundTypeSoundsOld: IwbRecordMemberDef;
   wbSPLO: IwbRecordMemberDef;
   wbSPLOs: IwbRecordMemberDef;
   wbXESP: IwbRecordMemberDef;
@@ -1862,19 +1861,6 @@ begin
     wbByteArray('Unused')
   ]).IncludeFlag(dfSummaryMembersNoName);
 
-  wbSoundTypeSoundsOld :=
-    wbRArrayS('Sounds',
-      wbRStructSK([0], 'Sound', [
-        wbFormIDCk(CSDI, 'Sound', [SOUN, NULL], False, cpNormal, True),
-        wbInteger(CSDC, 'Sound Chance', itU8, nil, cpNormal, True)
-      ])
-      .SetSummaryKey([0, 1])
-      .SetSummaryMemberPrefixSuffix(1, '{Chance: ', '}')
-      .IncludeFlag(dfSummaryMembersNoName)
-      .IncludeFlag(dfSummaryNoSortKey)
-      .IncludeFlag(dfCollapsed)
-    , cpNormal, True);
-
   wbCSDTs :=
     wbRArrayS('Sound Types',
       wbRStructSK([0], 'Sound Type', [
@@ -1890,7 +1876,7 @@ begin
           {0x08} 'Death',
           {0x09} 'Weapon'
         ])),
-        wbSoundTypeSoundsOld
+        wbSoundTypeSounds
       ])
     );
 

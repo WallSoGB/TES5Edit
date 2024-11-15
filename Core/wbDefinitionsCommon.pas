@@ -371,6 +371,7 @@ function IsFNV(const aDef1, aDef2: IwbRecordMemberDef): IwbRecordMemberDef; over
 function IsFNV(const aDef1, aDef2: IwbValueDef): IwbValueDef; overload;
 function IsTES5(const aDef1, aDef2: String): string; overload;
 function IsTES5(const aDef1, aDef2: Integer): Integer; overload;
+function IsTES5(const aDef1, aDef2: IwbRecordMemberDef): IwbRecordMemberDef; overload;
 function IsTES5(const aDef1, aDef2: IwbValueDef): IwbValueDef; overload;
 function IsSSE(const aDef1, aDef2: string): string; overload;
 function IsSSE(const aDef1, aDef2: IwbRecordMemberDef): IwbRecordMemberDef; overload;
@@ -3729,6 +3730,14 @@ begin
     Result := aDef2;
 end;
 
+function IsTES5(const aDef1, aDef2: IwbRecordMemberDef): IwbRecordMemberDef;
+begin
+  if wbIsSkyrim then
+    Result := aDef1
+  else
+    Result := aDef2;
+end;
+
 function IsTES5(const aDef1, aDef2: IwbValueDef): IwbValueDef;
 begin
   if wbIsSkyrim then
@@ -5751,15 +5760,18 @@ begin
   wbSoundTypeSounds :=
     wbRArrayS('Sounds',
       wbRStructSK([0], 'Sound', [
-        wbFormIDCk(CSDI, 'Sound', [SNDR, NULL], False, cpNormal, True),
-        wbInteger(CSDC, 'Sound Chance', itU8, nil, cpNormal, True)
-      ])
-      .SetSummaryKey([0, 1])
-      .SetSummaryMemberPrefixSuffix(1, '{Chance: ', '}')
-      .IncludeFlag(dfSummaryMembersNoName)
-      .IncludeFlag(dfSummaryNoSortKey)
-      .IncludeFlag(dfCollapsed)
-    , cpNormal, True);
+        IsTES5(
+          wbFormIDCk(CSDI, 'Sound', [SOUN, NULL]),
+          wbFormIDCk(CSDI, 'Sound', [SNDR, NULL])
+        ).SetRequired,
+        wbInteger(CSDC, 'Sound Chance', itU8)
+          .SetRequired
+      ]).SetSummaryKey([0, 1])
+        .SetSummaryMemberPrefixSuffix(1, '{Chance: ', '}')
+        .IncludeFlag(dfSummaryMembersNoName)
+        .IncludeFlag(dfSummaryNoSortKey)
+        .IncludeFlag(dfCollapsed)
+    ).SetRequired;
 
   var lScaleFactor := 1/wbCellSizeFactor;
 
