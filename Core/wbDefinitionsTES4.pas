@@ -46,13 +46,7 @@ var
   wbCSDTs: IwbRecordMemberDef;
   wbDESC: IwbRecordMemberDef;
   wbEDID: IwbRecordMemberDef;
-  wbEffect: IwbRecordMemberDef;
   wbEffects: IwbRecordMemberDef;
-  wbEFID: IwbRecordMemberDef;
-  wbEFIDOBME: IwbRecordMemberDef;
-  wbEFIT: IwbRecordMemberDef;
-  wbEFITOBME: IwbRecordMemberDef;
-  wbEFIX: IwbRecordMemberDef;
   wbFaceGen: IwbRecordMemberDef;
   wbFactionRank: IwbRecordMemberDef;
   wbFULL: IwbRecordMemberDef;
@@ -64,8 +58,6 @@ var
   wbPGRP: IwbRecordMemberDef;
   wbResultScript: IwbRecordMemberDef;
   wbSCHR: IwbRecordMemberDef;
-  wbSCIT: IwbRecordMemberDef;
-  wbSCITOBME: IwbRecordMemberDef;
   wbSCRI: IwbRecordMemberDef;
   wbSCROs: IwbRecordMemberDef;
   wbSLSD: IwbRecordMemberDef;
@@ -1475,8 +1467,6 @@ begin
 {>>> Simple Defs <<<}
   wbDESC := wbStringKC(DESC, 'Description', 0, cpTranslate);
   wbEDID := wbString(EDID, 'Editor ID', 0, cpNormal); // not cpBenign according to Arthmoor
-  wbEFID := wbInteger(EFID, 'Magic effect name', itU32, wbChar4, cpNormal, True);
-  wbEFIDOBME := wbStringMgefCode(EFID, 'Magic Effect Code', 4, cpNormal, True);
   wbFULL := wbStringKC(FULL, 'Name', 0, cpTranslate);
   wbFULLReq := wbStringKC(FULL, 'Name', 0, cpTranslate, True);
   wbICON := wbString(ICON, 'Icon FileName');
@@ -1567,45 +1557,6 @@ begin
           .SetToStr(wbConditionToStr).IncludeFlag(dfCollapsed, wbCollapseConditions)
       ])
     );
-
-  wbEFIT :=
-    wbStructSK(EFIT, [4, 5], '', [
-      wbInteger('Magic effect name', itU32, wbChar4),
-      wbInteger('Magnitude', itU32),
-      wbInteger('Area', itU32),
-      wbInteger('Duration', itU32),
-      wbInteger('Type', itU32, wbEnum(['Self', 'Touch', 'Target'])),
-      wbInteger('Actor Value', itS32, wbActorValueEnum)
-    ], cpNormal, True, nil, -1, wbEFITAfterLoad);
-
-  wbEFITOBME :=
-    wbStructSK(EFIT, [4, 5], '', [
-      wbStringMgefCode('Magic Effect Code', 4),
-      wbInteger('Magnitude', itU32),
-      wbInteger('Area', itU32),
-      wbInteger('Duration', itU32),
-      wbInteger('Type', itU32, wbEnum(['Self', 'Touch', 'Target'])),
-      wbUnion('Param #1', wbEFITOBMEParamDecider, [
-        wbByteArray('Param #1 - Unknown Type', 4),
-        wbFormID('Param #1 - FormID'),
-        wbStringMgefCode('Param #1 - Magic Effect Code', 4),
-        wbFormIDCk('Param #1 - Actor Value', [ACVA])
-      ])
-    ], cpNormal, True, nil, -1{, wbEFITAfterLoad});
-
-  wbEFIX :=
-    wbStructSK(EFIX, [3], '', [
-      wbInteger('Override Mask', itU32, wbFlags([])),
-      wbInteger('Flags', itU32, wbFlags([])),
-      wbFloat('Base Cost'),
-      wbUnion('Param #2', wbEFIXParamDecider, [
-        wbByteArray('Param #2 - Unknown Type', 4),
-        wbFormID('Param #2 - FormID'),
-        wbStringMgefCode('Param #2 - Magic Effect Code', 4),
-        wbFormIDCk('Param #2 - Actor Value', [ACVA])
-      ]),
-      wbUnknown
-    ], cpNormal, True, nil, -1, wbEFITAfterLoad);
 
   wbFaceGen := wbRStruct('FaceGen Data', [
     wbByteArray(FGGS, 'FaceGen Geometry-Symmetric', 0, cpNormal, True),
@@ -1743,89 +1694,86 @@ begin
       .IncludeFlag(dfCollapsed, wbCollapseScriptData)
     ]);
 
-  wbSCIT :=
-    wbRStructSK([0], 'Script effect', [
-      wbStructSK(SCIT, [0], 'Script effect data', [
-        wbFormIDCk('Script effect', [SCPT, NULL]),
-        wbInteger('Magic school', itU32, wbMagicSchoolEnum),
-        wbInteger('Visual effect name', itU32, wbChar4),
-        wbInteger('Flags', itU8, wbFlags(['Hostile'])),
-        wbUnused(3)
-      ], cpNormal, True, nil, 1),
-      wbFULLReq
-    ]);
-
-  wbSCITOBME :=
-    wbRStructSK([0], 'Script effect', [
-      wbStructSK(SCIT, [0], 'Script effect data', [
-        wbFormIDCk('Script effect', [SCPT, NULL]),
-        wbInteger('Magic school', itU32, wbMagicSchoolEnum),
-        wbStringMgefCode('Visual Effect Code', 4),
-        wbInteger('Flags', itU8, wbFlags(['Hostile'])),
-        wbUnused(3)
-      ], cpNormal, True, nil, 1),
-      wbFULLReq
-    ]);
-
-  wbEffect :=
-    wbRStruct('Effect', [
-      wbStruct(EFME, 'Oblivion Magic Extender', [
-        wbInteger('Record Version', itU8),
-        wbOBMEVersion,
-        wbInteger('EFIT Param Info', itU8, wbOBMEResolutionInfo),
-        wbInteger('EFIX Param Info', itU8, wbOBMEResolutionInfo),
-        wbUnused($0A)
-      ]),
-      wbEFIDOBME,
-      wbEFITOBME,
-      wbSCITOBME,
-      wbString(EFII, 'Icon'),
-      wbEFIX
-    ]);
-
-  wbEffects := wbRArray('Effects',
-    wbRUnion('Effects', [
-      wbRStructSK([0, 1], 'Effect', [
-        wbEFID,
-        wbEFIT,
-        wbSCIT
-      ]),
-      wbRStruct('Effects', [
-        wbRArray('Effects', wbEffect),
-        wbEmpty(EFXX, 'Effects End Marker', cpNormal, True),
-        wbFULLReq
+wbEffects :=
+    wbRArray('Effects',
+      wbRUnion('Effects', [
+        wbRStructSK([0, 1], 'Effect', [
+          wbInteger(EFID, 'Magic Effect Name', itU32, wbChar4).SetRequired,
+          wbStructSK(EFIT, [4, 5], '', [
+            wbInteger('Magic Effect Name', itU32, wbChar4),
+            wbInteger('Magnitude', itU32),
+            wbInteger('Area', itU32),
+            wbInteger('Duration', itU32),
+            wbInteger('Type', itU32, wbEnum(['Self', 'Touch', 'Target'])),
+            wbInteger('Actor Value', itS32, wbActorValueEnum)
+          ]).SetAfterLoad(wbEFITAfterLoad)
+            .SetRequired,
+          wbRStructSK([0], 'Script Effect', [
+            wbStructSK(SCIT, [0], 'Script Effect Data', [
+              wbFormIDCk('Script effect', [SCPT, NULL]),
+              wbInteger('Magic school', itU32, wbMagicSchoolEnum),
+              wbInteger('Visual effect name', itU32, wbChar4),
+              wbInteger('Hostile', itU8, wbBoolEnum),
+              wbUnused(3)
+            ], cpNormal, True, nil, 1),
+            wbFULLReq
+          ])
+        ]),
+        wbRStruct('Effects', [
+          wbRArray('Effects',
+            wbRStruct('Effect', [
+              wbStruct(EFME, 'Oblivion Magic Extender', [
+                wbInteger('Record Version', itU8),
+                wbOBMEVersion,
+                wbInteger('EFIT Param Info', itU8, wbOBMEResolutionInfo),
+                wbInteger('EFIX Param Info', itU8, wbOBMEResolutionInfo),
+                wbUnused($0A)
+              ]),
+              wbStringMgefCode(EFID, 'Magic Effect Code', 4).SetRequired,
+              wbStructSK(EFIT, [4, 5], '', [
+                wbStringMgefCode('Magic Effect Code', 4),
+                wbInteger('Magnitude', itU32),
+                wbInteger('Area', itU32),
+                wbInteger('Duration', itU32),
+                wbInteger('Type', itU32, wbEnum(['Self', 'Touch', 'Target'])),
+                wbUnion('Param #1', wbEFITOBMEParamDecider, [
+                  wbByteArray('Param #1 - Unknown Type', 4),
+                  wbFormID('Param #1 - FormID'),
+                  wbStringMgefCode('Param #1 - Magic Effect Code', 4),
+                  wbFormIDCk('Param #1 - Actor Value', [ACVA])
+                ])
+              ]).SetRequired,
+              wbRStructSK([0], 'Script Effect', [
+                wbStructSK(SCIT, [0], 'Script Effect Data', [
+                  wbFormIDCk('Script effect', [SCPT, NULL]),
+                  wbInteger('Magic school', itU32, wbMagicSchoolEnum),
+                  wbStringMgefCode('Visual Effect Code', 4),
+                  wbInteger('Hostile', itU8, wbBoolEnum),
+                  wbUnused(3)
+                ], cpNormal, True, nil, 1),
+                wbFULLReq
+              ]),
+              wbString(EFII, 'Icon'),
+              wbStructSK(EFIX, [3], '', [
+                wbInteger('Override Mask', itU32, wbFlags([])),
+                wbInteger('Flags', itU32, wbFlags([])),
+                wbFloat('Base Cost'),
+                wbUnion('Param #2', wbEFIXParamDecider, [
+                  wbByteArray('Param #2 - Unknown Type', 4),
+                  wbFormID('Param #2 - FormID'),
+                  wbStringMgefCode('Param #2 - Magic Effect Code', 4),
+                  wbFormIDCk('Param #2 - Actor Value', [ACVA])
+                ]),
+                wbUnknown
+              ]).SetAfterLoad(wbEFITAfterLoad)
+                .SetRequired
+            ])
+          ),
+          wbEmpty(EFXX, 'Effects End Marker').SetRequired,
+          wbFULLReq
+        ])
       ])
-    ])
-  );
-
-//  wbEffects :=
-//    wbRUnion('Effects', [
-//      wbRStruct('Effects', [
-//        wbRStructs('Effects','Effect', [
-//          wbEFID,
-//          wbEFIT,
-//          wbSCIT
-//        ])
-//      ]),
-//      wbRStruct('Effects', [
-//        wbRStructs('Effects','Effect', [
-//          wbStruct(EFME, 'Oblivion Magic Extender', [
-//            wbInteger('Record Version', itU8),
-//            wbOBMEVersion,
-//            wbInteger('EFIT Param Info', itU8, wbOBMEResolutionInfo),
-//            wbInteger('EFIX Param Info', itU8, wbOBMEResolutionInfo),
-//            wbUnused($0A)
-//          ]),
-//          wbEFIDOBME,
-//          wbEFITOBME,
-//          wbSCITOBME,
-//          wbString(EFII, 'Icon'),
-//          wbEFIX
-//        ]),
-//        wbEmpty(EFXX, 'Effects End Marker', cpNormal, True),
-//        wbFULLReq
-//      ])
-//    ]);
+    );
 
   wbSCROs :=
     wbRArray('References',
