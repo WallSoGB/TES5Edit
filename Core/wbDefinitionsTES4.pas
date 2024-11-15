@@ -53,7 +53,6 @@ var
   wbEFIT: IwbRecordMemberDef;
   wbEFITOBME: IwbRecordMemberDef;
   wbEFIX: IwbRecordMemberDef;
-  wbENAM: IwbRecordMemberDef;
   wbFaceGen: IwbRecordMemberDef;
   wbFactionRank: IwbRecordMemberDef;
   wbFULL: IwbRecordMemberDef;
@@ -1478,7 +1477,6 @@ begin
   wbEDID := wbString(EDID, 'Editor ID', 0, cpNormal); // not cpBenign according to Arthmoor
   wbEFID := wbInteger(EFID, 'Magic effect name', itU32, wbChar4, cpNormal, True);
   wbEFIDOBME := wbStringMgefCode(EFID, 'Magic Effect Code', 4, cpNormal, True);
-  wbENAM := wbFormIDCk(ENAM, 'Enchantment', [ENCH]);
   wbFULL := wbStringKC(FULL, 'Name', 0, cpTranslate);
   wbFULLReq := wbStringKC(FULL, 'Name', 0, cpTranslate, True);
   wbICON := wbString(ICON, 'Icon FileName');
@@ -2019,8 +2017,7 @@ begin
     wbEDID,
     wbFULL,
     wbSCRI,
-    wbENAM,
-    wbInteger(ANAM, 'Enchantment Points', itU16),
+    wbEnchantment(True),
     wbStruct(BMDT, '', [
       wbInteger('Biped Flags', itU16, wbFlags([
         {0x00000001} 'Head',
@@ -2075,8 +2072,7 @@ begin
     wbTexturedModel('Model', [MODL, MODB, MODT], []),
     wbICON,
     wbSCRI,
-    wbENAM,
-    wbInteger(ANAM, 'Enchantment Points', itU16),
+    wbEnchantment(True),
     wbDESC,
     wbStruct(DATA, '', [
       wbInteger('Flags', itU8, wbFlags(['Scroll', 'Can''t be taken'])),
@@ -2173,8 +2169,7 @@ begin
     wbEDID,
     wbFULL,
     wbSCRI,
-    wbENAM,
-    wbInteger(ANAM, 'Enchantment Points', itU16),
+    wbEnchantment(True),
     wbStruct(BMDT, '', [
       wbInteger('Biped Flags', itU16, wbFlags([
         {0x00000001} 'Head',
@@ -3805,7 +3800,7 @@ begin
     wbTexturedModel('Model', [MODL, MODB, MODT], []),
     wbICON,
     wbSCRI,
-    wbEnchantment,
+    wbEnchantment(True),
     wbStruct(DATA, '', [
       wbInteger('Type', itU32, wbEnum([
         {0} 'Blade One Hand',

@@ -69,7 +69,6 @@ var
   wbDMDT: IwbRecordMemberDef;
   wbFaction: IwbRecordMemberDef;
   wbFactionRelations: IwbRecordMemberDef;
-  wbEnchantment : IwbRecordMemberDef;
   wbHEDR: IwbRecordMemberDef;
   wbINOA: IwbRecordMemberDef;
   wbINOM: IwbRecordMemberDef;
@@ -433,7 +432,8 @@ function wbFloatRGBA(const aName: string = 'Color'): IwbValueDef; overload;
 function wbModelInfo(aSignature: TwbSignature; aName: string = ''): IwbRecordMemberDef;
 function wbOBND(aRequired: Boolean = False): IwbRecordMemberDef;
 
-{>>> Multiple Record Defs <<<} //2
+{>>> Multiple Record Defs <<<} //3
+function wbEnchantment(aCapacity: Boolean = False): IwbRecordMemberDef;
 function wbOwnership(aSkipSigs: TwbSignatures = nil): IwbRecordMemberDef;
 function wbTexturedModel(aSubRecordName     : string;
                          aSignatures        : TwbSignatures;
@@ -4398,7 +4398,25 @@ begin
     .IncludeFlag(dfCollapsed, wbCollapseObjectBounds);
 end;
 
-{>>> Multiple Record Defs <<<} //2
+{>>> Multiple Record Defs <<<} //3
+
+function wbEnchantment(aCapacity: Boolean = False): IwbRecordMemberDef;
+begin
+  Result :=
+    wbRStruct('Enchantment', [
+      IsTES4(
+        wbFormIDCk(ENAM, 'Effect', [ENCH]),
+        wbFormIDCK(EITM, 'Effect', [ENCH])
+      ),
+      IfThen(aCapacity,
+        IsTES4(
+          wbInteger(ANAM, 'Capacity', itU16),
+          wbInteger(EAMT, 'Capacity', itU16)
+        ),
+        nil
+      )
+    ]).IncludeFlag(dfAllowAnyMember);
+end;
 
 function wbOwnership(aSkipSigs: TwbSignatures = nil): IwbRecordMemberDef;
 begin
@@ -5517,18 +5535,6 @@ begin
          IsSF1 ('Reaction Radius', '')),
      14, IsSF1 ('Combat Style', '')
     ]));
-
-  wbEnchantment :=
-    wbRStruct('Enchantment', [
-      IsTES4(
-        wbFormIDCk(ENAM, 'Effect', [ENCH]),
-        wbFormIDCK(EITM, 'Effect', [ENCH])
-      ),
-      IsTES4(
-        wbInteger(ANAM, 'Capacity', itU16),
-        wbInteger(EAMT, 'Capacity', itU16)
-      )
-    ]).IncludeFlag(dfAllowAnyMember);
 
   wbHEDR :=
     wbStruct(HEDR, 'Header', [
