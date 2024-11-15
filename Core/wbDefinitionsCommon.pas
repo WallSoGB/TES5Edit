@@ -20,8 +20,6 @@ uses
   TwbVarRecs = TArray<TVarRec>;
 
 var
-  wbMHDTCELLSize: Integer;
-
   _FlagDeciders : array of TwbUnionDecider;
   _FormVersionDeciders : array of TwbUnionDecider;
   _RecordSizeDeciders : array of TwbUnionDecider;
@@ -5379,7 +5377,10 @@ begin
     ]);
 
   wbSexEnum :=
-    wbEnum(['Male','Female']);
+    wbEnum([], [
+      0, 'Male',
+      1, 'Female'
+    ]);
 
   wbSoulGemEnum :=
     wbEnum([], [
@@ -5392,39 +5393,40 @@ begin
     ]);
 
   wbWorldImpactMaterialEnum :=
-    wbEnum([
-      'ConcSolid',
-      'ConcBroken',
-      'MetalSolid',
-      'MetalHollow',
-      'MetalSheet',
-      'Wood',
-      'Sand',
-      'Dirt',
-      'Grass',
-      'Water'
+    wbEnum([], [
+      0, 'ConcSolid',
+      1, 'ConcBroken',
+      2, 'MetalSolid',
+      3, 'MetalHollow',
+      4, 'MetalSheet',
+      5, 'Wood',
+      6, 'Sand',
+      7, 'Dirt',
+      8, 'Grass',
+      9, 'Water'
     ]);
 
   wbZoomOverlayEnum :=
     wbEnum([], [
-       0, 'Default',
-       1, 'Fine',
-       2, 'Duplex',
-       3, 'German',
-       4, 'Dot',
-       5, 'Mil-Dot',
-       6, 'Circle',
-       7, 'Old Rangefind',
-       8, 'Modern Rangefind',
-       9, 'SVD',
-      10, 'Hand Painted',
-      11, 'Binoculars',
-      12, 'Cross',
-      13, 'Double Zero',
-      14, 'Rangefinder 1',
-      15, 'Rangefinder 2',
-      16, 'Rectangle',
-      17, IsFO76('Camera', IsSF1('Standard Scope Circle', '')),
+       0,        'Default',
+       1,        'Fine',
+       2,        'Duplex',
+       3,        'German',
+       4,        'Dot',
+       5,        'Mil-Dot',
+       6,        'Circle',
+       7,        'Old Rangefind',
+       8,        'Modern Rangefind',
+       9,        'SVD',
+      10,        'Hand Painted',
+      11,        'Binoculars',
+      12,        'Cross',
+      13,        'Double Zero',
+      14,        'Rangefinder 1',
+      15,        'Rangefinder 2',
+      16,        'Rectangle',
+      17, IsFO76('Camera',
+          IsSF1 ('Standard Scope Circle', '')),
       18, IsFO76('Camera Medium Zoom', ''),
       19, IsFO76('Camera Long Zoom', ''),
       20, IsFO76('Camera Night Vision', ''),
@@ -5459,8 +5461,7 @@ begin
      10,           'Once Per Day',
      11, IsSF1    ('Low Priority', ''),
      12, IsTES4FO3('Skip Fallout Behavior',
-         IsTES5   ('',
-                   'Skip Load Into Furniture')),
+         IsTES5   ('', 'Skip Load Into Furniture')),
      13, IsTES4FO3('Always Run',
                    'Preferred Speed'),
      16, IsSF1    ('Disable Headtracking', ''),
@@ -5783,9 +5784,6 @@ begin
 
   wbXLOD := wbArray(XLOD, 'Distant LOD Data', wbFloat('Unknown'), 3);
 
-  wbMHDTCELLSize :=
-  IfThen(wbIsStarfield, 50, 32);
-
   wbMHDTCELL :=
     IfThen(wbSimpleRecords,
       wbByteArray(MHDT, 'Max Height Data'),
@@ -5794,8 +5792,8 @@ begin
         wbArray('Max Heights',
           wbArray('Row',
             wbInteger('Column', itU8),
-          wbMHDTCELLSize).IncludeFlag(dfCollapsed),
-        wbMHDTCELLSize).IncludeFlag(dfCollapsed)]));
+          IsSF1(50, 32)).IncludeFlag(dfCollapsed),
+        IsSF1(50, 32)).IncludeFlag(dfCollapsed)]));
 
   wbMODT := wbModelInfo(MODT);
   wbDMDT := wbModelInfo(DMDT);
@@ -5997,7 +5995,7 @@ Can't properly represent that with current record definition methods.
             .IncludeFlag(dfCollapsed)
             .IncludeFlag(dfStructFirstNotRequired)
             .SetRequired,
-        wbRStruct('Cloud Textures', [
+      wbRStruct('Cloud Textures', [
         wbString(_30_0TX, 'Layer #0'),
         wbString(_31_0TX, 'Layer #1'),
         wbString(_32_0TX, 'Layer #2'),
@@ -6093,7 +6091,7 @@ Can't properly represent that with current record definition methods.
             .IncludeFlag(dfSummaryNoName)),
           nil),
         IsFO4Plus(
-          wbFromVersion(111, wbFloat('Early Sunrise')
+          wbFromVersion(111, wbFloat('Late Sunset')
             .SetDefaultNativeValue(1.0)
             .IncludeFlag(dfSummaryNoName)),
           nil)
