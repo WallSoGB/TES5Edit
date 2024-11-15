@@ -5761,8 +5761,8 @@ begin
     wbRArrayS('Sounds',
       wbRStructSK([0], 'Sound', [
         IsTES5(
-          wbFormIDCk(CSDI, 'Sound', [SOUN, NULL]),
-          wbFormIDCk(CSDI, 'Sound', [SNDR, NULL])
+          wbFormIDCk(CSDI, 'Sound', [SNDR, NULL]),
+          wbFormIDCk(CSDI, 'Sound', [SOUN, NULL])
         ).SetRequired,
         wbInteger(CSDC, 'Sound Chance', itU8)
           .SetRequired
