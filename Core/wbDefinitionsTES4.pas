@@ -1898,18 +1898,6 @@ begin
     ])).IncludeFlag(dfInternalEditOnly, not wbAllowMasterFilesEdit)
   ], False, nil, cpNormal, True);
 
-  wbRecord(ACTI, 'Activator',
-    wbFlags(wbFlagsList([
-      10, 'Quest Item',
-      17, 'Dangerous'
-    ])), [
-    wbEDID,
-    wbFULL,
-    wbTexturedModel('Model', [MODL, MODB, MODT], []),
-    wbSCRI,
-    wbFormIDCk(SNAM, 'Sound', [SOUN])
-  ]);
-
   wbRefRecord(ACHR, 'Placed NPC',
     wbFlags(wbFlagsList([
       10, 'Persistent',
@@ -1946,6 +1934,18 @@ begin
     wbXSCL,
     wbDATAPosRot
   ], True, wbPlacedAddInfo);
+
+  wbRecord(ACTI, 'Activator',
+    wbFlags(wbFlagsList([
+      10, 'Quest Item',
+      17, 'Dangerous'
+    ])), [
+    wbEDID,
+    wbFULL,
+    wbTexturedModel('Model', [MODL, MODB, MODT], []),
+    wbSCRI,
+    wbFormIDCk(SNAM, 'Sound', [SOUN])
+  ]);
 
   wbRecord(ALCH, 'Potion',
     wbFlags(wbFlagsList([
