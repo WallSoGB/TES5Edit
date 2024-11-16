@@ -492,10 +492,15 @@ end;
 
 function wbDIALAddInfo(const aMainRecord: IwbMainRecord): string;
 begin
-  Result := aMainRecord.ElementEditValues['Quest'];
+  if wbIsSkyrim then
+    Result := aMainRecord.ElementNativeValues['QNAM']
+  else
+    Result := aMainRecord.ElementEditValues['Quest'];
+
   if Result <> '' then begin
     Result := ' in ' + Result;
   end;
+
 end;
 
 function wbDLBRAddInfo(const aMainRecord: IwbMainRecord): string;

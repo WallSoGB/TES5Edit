@@ -5609,7 +5609,7 @@ begin
     wbInteger(TIFC, 'Info Count', itU32, nil, cpIgnore),
     wbINOM,
     wbINOA
-  ]);
+  ], False, wbDIALAddInfo);
 
   wbRecord(DOOR, 'Door',
     wbFlags(wbFlagsList([
