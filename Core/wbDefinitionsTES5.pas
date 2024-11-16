@@ -162,9 +162,6 @@ var
   wbTVDT: IwbSubRecordDef;
   wbNVNM: IwbSubRecordDef;
   wbStaticPart: IwbRecordMemberDef;
-  wbLeveledListEntryItem: IwbRecordMemberDef;
-  wbLeveledListEntryNPC: IwbRecordMemberDef;
-  wbLeveledListEntrySpell: IwbRecordMemberDef;
   a, b, c : TVarRecs;
   s: string;
   wbMenuButton: IwbRecordMemberDef;
@@ -8725,65 +8722,6 @@ begin
     )
   ]);
 
-  wbLeveledListEntryItem :=
-    wbRStructExSK([0], [1], 'Leveled List Entry', [
-      wbStructExSK(LVLO, [0, 2], [3], 'Base Data', [
-        wbInteger('Level', itU16),
-        wbByteArray('Unknown', 2, cpIgnore, false, wbNeverShow),
-        wbFormIDCk('Reference', [ARMO, AMMO, APPA, MISC, WEAP, BOOK, LVLI, KEYM, ALCH, LIGH, INGR, SLGM, SCRL]),
-        wbInteger('Count', itU16).SetDefaultNativeValue(1),
-        wbByteArray('Unknown', 2, cpIgnore, false, wbNeverShow)
-      ])
-      .SetSummaryKeyOnValue([0, 3, 2])
-      .SetSummaryPrefixSuffixOnValue(0, '[Lv', ']')
-      .SetSummaryPrefixSuffixOnValue(3, '', 'x')
-      .SetSummaryDelimiterOnValue(' ')
-      .IncludeFlagOnValue(dfSummaryMembersNoName)
-      .IncludeFlagOnValue(dfSummaryNoSortKey)
-      , wbCOED
-    ])
-    .SetSummaryMemberMaxDepth(0, 1)
-    .IncludeFlag(dfCollapsed, wbCollapseLeveledItems);
-
-  wbLeveledListEntryNPC :=
-    wbRStructExSK([0], [1], 'Leveled List Entry', [
-      wbStructExSK(LVLO, [0, 2], [3], 'Base Data', [
-        wbInteger('Level', itS16),
-        wbByteArray('Unknown', 2, cpIgnore, false, wbNeverShow),
-        wbFormIDCk('Reference', [NPC_, LVLN]),
-        wbInteger('Count', itS16).SetDefaultNativeValue(1),
-        wbByteArray('Unknown', 2, cpIgnore, false, wbNeverShow)
-      ])
-      .SetSummaryKeyOnValue([0, 3, 2])
-      .SetSummaryPrefixSuffixOnValue(0, '[Lv', ']')
-      .SetSummaryPrefixSuffixOnValue(3, '', 'x')
-      .SetSummaryDelimiterOnValue(' ')
-      .IncludeFlagOnValue(dfSummaryMembersNoName)
-      .IncludeFlagOnValue(dfSummaryNoSortKey)
-      , wbCOED
-    ])
-    .SetSummaryMemberMaxDepth(0, 1)
-    .IncludeFlag(dfCollapsed, wbCollapseLeveledItems);
-
-  wbLeveledListEntrySpell :=
-    wbRStructSK([0], 'Leveled List Entry', [
-      wbStructExSK(LVLO, [0, 2], [3], 'Base Data', [
-        wbInteger('Level', itU16),
-        wbByteArray('Unknown', 2, cpIgnore, false, wbNeverShow),
-        wbFormIDCk('Reference', [SPEL, LVSP]),
-        wbInteger('Count', itU16).SetDefaultNativeValue(1),
-        wbByteArray('Unknown', 2, cpIgnore, false, wbNeverShow)
-      ])
-      .SetSummaryKeyOnValue([0, 3, 2])
-      .SetSummaryPrefixSuffixOnValue(0, '[Lv', ']')
-      .SetSummaryPrefixSuffixOnValue(3, '', 'x')
-      .SetSummaryDelimiterOnValue(' ')
-      .IncludeFlagOnValue(dfSummaryMembersNoName)
-      .IncludeFlagOnValue(dfSummaryNoSortKey)
-    ])
-    .SetSummaryMemberMaxDepth(0, 1)
-    .IncludeFlag(dfCollapsed, wbCollapseLeveledItems);
-
   wbRecord(LVLN, 'Leveled NPC', [
     wbEDID,
     wbOBND(True),
@@ -8794,9 +8732,15 @@ begin
     ]), cpNormal, True),
     wbFormIDCk(LVLG, 'Global', [GLOB]),
     wbLLCT,
-    wbRArrayS('Leveled List Entries', wbLeveledListEntryNPC, cpNormal, False, nil, wbLVLOsAfterSet),
+    wbRArrayS('Leveled List Entries',
+      wbRStructExSK([0], [1], 'Leveled List Entry', [
+        wbLeveledListEntry('NPC', [LVLN, NPC_]),
+        wbCOED
+      ]).SetSummaryMemberMaxDepth(0, 1)
+        .IncludeFlag(dfCollapsed, wbCollapseLeveledItems)
+    ).SetCountPath(LLCT),
     wbGenericModel
-  ], False, nil, cpNormal, False, nil, wbLLEAfterSet);
+  ]);
 
   wbRecord(LVLI, 'Leveled Item', [
     wbEDID,
@@ -8810,8 +8754,14 @@ begin
     ]), cpNormal, True),
     wbFormIDCk(LVLG, 'Global', [GLOB]),
     wbLLCT,
-    wbRArrayS('Leveled List Entries', wbLeveledListEntryItem, cpNormal, False, nil, wbLVLOsAfterSet)
-  ], False, nil, cpNormal, False, nil, wbLLEAfterSet);
+    wbRArrayS('Leveled List Entries',
+      wbRStructExSK([0], [1], 'Leveled List Entry', [
+        wbLeveledListEntry('Item', [ALCH, AMMO, APPA, ARMO, BOOK, INGR, KEYM, LIGH, LVLI, MISC, SCRL, SLGM, WEAP]),
+        wbCOED
+      ]).SetSummaryMemberMaxDepth(0, 1)
+        .IncludeFlag(dfCollapsed, wbCollapseLeveledItems)
+    ).SetCountPath(LLCT)
+  ]);
 
    wbRecord(LVSP, 'Leveled Spell', [
     wbEDID,
@@ -8823,8 +8773,13 @@ begin
       {0x04} 'Use All Spells'
     ]), cpNormal, True),
     wbLLCT,
-    wbRArrayS('Leveled List Entries', wbLeveledListEntrySpell, cpNormal, False, nil, wbLVLOsAfterSet)
-  ], False, nil, cpNormal, False, nil, wbLLEAfterSet);
+    wbRArrayS('Leveled List Entries',
+      wbRStructSK([0], 'Leveled List Entry', [
+        wbLeveledListEntry('Spell', [LVSP, SPEL])
+      ]).SetSummaryMemberMaxDepth(0, 1)
+        .IncludeFlag(dfCollapsed, wbCollapseLeveledItems)
+    ).SetCountPath(LLCT)
+  ]);
 
   wbMGEFType := wbInteger('Archtype', itU32, wbEnum([
     {00} 'Value Modifier',

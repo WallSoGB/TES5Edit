@@ -13113,95 +13113,6 @@ end;
     wbFloat(QNAM, 'Dirtiness', cpNormal, True, 1, -1, nil, wbFloatScale0to1).SetDefaultEditValue('1.0')
   ]).SetSummaryKey([1]);
 
-  var wbLeveledListEntryItem :=
-    wbRStructExSK([0], [1], 'Leveled List Entry', [
-      wbStructExSK(LVLO, [0, 2], [3], 'Base Data', [
-        wbInteger('Level', itU16),
-        wbUnused(2),
-        wbFormIDCk('Reference', sigBaseObjects),
-        wbInteger('Count', itU16).SetDefaultNativeValue(1),
-        wbInteger('Chance None', itU8),
-        wbUnused(1)
-      ])
-      .SetSummaryKeyOnValue([0, 3, 2, 4])
-      .SetSummaryPrefixSuffixOnValue(0, '[Lv', ']')
-      .SetSummaryPrefixSuffixOnValue(3, '', 'x')
-      .SetSummaryPrefixSuffixOnValue(4, '{Chance None:', '%}')
-      .SetSummaryDelimiterOnValue(' ')
-      .IncludeFlagOnValue(dfSummaryMembersNoName)
-      .IncludeFlagOnValue(dfSummaryNoSortKey),
-      wbCOED,
-      wbCTDAs
-    ])
-    .SetSummaryMemberMaxDepth(0, 1)
-    .IncludeFlag(dfCollapsed, wbCollapseLeveledItems);
-
-  var wbLeveledListEntryNPC :=
-    wbRStructExSK([0], [1], 'Leveled List Entry', [
-      wbStructExSK(LVLO, [0, 2], [3], 'Base Data', [
-        wbInteger('Level', itU16),
-        wbUnused(2),
-        wbFormIDCk('Reference', [NPC_, LVLN]),
-        wbInteger('Count', itS16).SetDefaultNativeValue(1),
-        wbInteger('Chance None', itU8),
-        wbUnused(1)
-      ])
-      .SetSummaryKeyOnValue([0, 3, 2, 4])
-      .SetSummaryPrefixSuffixOnValue(0, '[Lv', ']')
-      .SetSummaryPrefixSuffixOnValue(3, '', 'x')
-      .SetSummaryPrefixSuffixOnValue(4, '{Chance None:', '%}')
-      .SetSummaryDelimiterOnValue(' ')
-      .IncludeFlagOnValue(dfSummaryMembersNoName)
-      .IncludeFlagOnValue(dfSummaryNoSortKey),
-      wbCOED,
-      wbCTDAs
-    ])
-    .SetSummaryMemberMaxDepth(0, 1)
-    .IncludeFlag(dfCollapsed, wbCollapseLeveledItems);
-
-  var wbLeveledListEntryPackIn :=
-    wbRStructExSK([0], [1], 'Leveled List Entry', [
-      wbStructExSK(LVLO, [0, 2], [3], 'Base Data', [
-        wbInteger('Level', itU16),
-        wbUnused(2),
-        wbFormIDCk('Reference', [PKIN, LVLP]),
-        wbInteger('Count', itS16).SetDefaultNativeValue(1),
-        wbInteger('Chance None', itU8),
-        wbUnused(1)
-      ])
-      .SetSummaryKeyOnValue([0, 3, 2, 4])
-      .SetSummaryPrefixSuffixOnValue(0, '[Lv', ']')
-      .SetSummaryPrefixSuffixOnValue(3, '', 'x')
-      .SetSummaryPrefixSuffixOnValue(4, '{Chance None:', '%}')
-      .SetSummaryDelimiterOnValue(' ')
-      .IncludeFlagOnValue(dfSummaryMembersNoName)
-      .IncludeFlagOnValue(dfSummaryNoSortKey),
-      wbCTDAs.IncludeFlag(dfSummaryMembersNoName)
-    ])
-    .SetSummaryMemberMaxDepth(0, 1)
-    .IncludeFlag(dfCollapsed, wbCollapseLeveledItems);
-
-  var wbLeveledListEntrySpell :=
-    wbRStructSK([0], 'Leveled List Entry', [
-      wbStructExSK(LVLO, [0, 2], [3], 'Base Data', [
-        wbInteger('Level', itU16),
-        wbUnused(2),
-        wbFormIDCk('Reference', [SPEL, LVSP]),
-        wbInteger('Count', itU16).SetDefaultNativeValue(1),
-        wbInteger('Chance None', itU8),
-        wbUnused(1)
-      ])
-      .SetSummaryKeyOnValue([0, 3, 2, 4])
-      .SetSummaryPrefixSuffixOnValue(0, '[Lv', ']')
-      .SetSummaryPrefixSuffixOnValue(3, '', 'x')
-      .SetSummaryPrefixSuffixOnValue(4, '{Chance None:', '%}')
-      .SetSummaryDelimiterOnValue(' ')
-      .IncludeFlagOnValue(dfSummaryMembersNoName)
-      .IncludeFlagOnValue(dfSummaryNoSortKey)
-    ])
-    .SetSummaryMemberMaxDepth(0, 1)
-    .IncludeFlag(dfCollapsed, wbCollapseLeveledItems);
-
   var wbFilterKeywordChances :=
     wbArrayS(LLKC, 'Filter Keyword Chances',
       wbStructSK([0], 'Filter', [
@@ -13245,11 +13156,18 @@ end;
     wbCTDAs,
     wbFormIDCk(LVLG, 'Use Global', [GLOB]),
     wbLLCT,
-    wbRArrayS('Leveled List Entries', wbLeveledListEntryNPC, cpNormal, False, nil, wbLVLOsAfterSet),
+    wbRArrayS('Leveled List Entries',
+      wbRStructExSK([0], [1], 'Leveled List Entry', [
+        wbLeveledListEntry('NPC', [LVLN, NPC_]),
+        wbCOED,
+        wbCTDAs
+      ]).SetSummaryMemberMaxDepth(0, 1)
+        .IncludeFlag(dfCollapsed, wbCollapseLeveledItems)
+    ).SetCountPath(LLCT),
     wbFilterKeywordChances,
     wbLStringKC(ONAM, 'Override Name', 0, cpTranslate),
     wbGenericModel(True)
-  ], False, nil, cpNormal, False, nil, wbLLEAfterSet);
+  ]);
 
   {subrecords checked against Starfield.esm}
   wbRecord(LVLI, 'Leveled Item',
@@ -13281,7 +13199,14 @@ end;
     wbFormIDCk(LLRB, 'Required Biome', [BIOM]),
     wbFormIDCk(LLRV, 'Required Resource Vein', [IRES]),
     wbLLCT,
-    wbRArrayS('Leveled List Entries', wbLeveledListEntryItem, cpNormal, False, nil, wbLVLOsAfterSet),
+    wbRArrayS('Leveled List Entries',
+      wbRStructExSK([0], [1], 'Leveled List Entry', [
+        wbLeveledListEntry('Item', sigBaseObjects),
+        wbCOED,
+        wbCTDAs
+      ]).SetSummaryMemberMaxDepth(0, 1)
+        .IncludeFlag(dfCollapsed, wbCollapseLeveledItems)
+    ).SetCountPath(LLCT),
     wbFilterKeywordChances,
     wbFormIDCk(LVSG, 'Epic Loot Chance', [GLOB]),
     wbByteColors(LIMC, 'Marker Color'),
@@ -13289,7 +13214,7 @@ end;
     wbInteger(LVLL, 'Legendary Item Default List Rank', itU8),
     wbGenericModel(True),
     wbFTYP
-  ], False, nil, cpNormal, False, nil, wbLLEAfterSet);
+  ]);
 
   {subrecords checked against Starfield.esm}
   wbRecord(LVLP, 'Leveled Pack In',
@@ -13320,12 +13245,17 @@ end;
     wbCTDAs,
     wbFormIDCk(LVLG, 'Use Global', [GLOB]),
     wbLLCT,
-    wbRArrayS('Leveled List Entries', wbLeveledListEntryPackIn, cpNormal, False, nil, wbLVLOsAfterSet),
+    wbRArrayS('Leveled List Entries',
+      wbRStructExSK([0], [1], 'Leveled List Entry', [
+        wbLeveledListEntry('Pack In', [LVLP, PKIN])
+      ]).SetSummaryMemberMaxDepth(0, 1)
+        .IncludeFlag(dfCollapsed, wbCollapseLeveledItems)
+    ).SetCountPath(LLCT),
     //wbFilterKeywordChances,
     //wbLStringKC(ONAM, 'Override Name', 0, cpTranslate)
     wbGenericModel(True),
     wbFTYP
-  ], False, nil, cpNormal, False, nil, wbLLEAfterSet);
+  ]);
 
   (* still exists in game code, but not in Starfield.esm *)
   wbRecord(LVSP, 'Leveled Spell',
@@ -13353,7 +13283,12 @@ end;
       {0x0100} 'Do All Before Repeating'
     ]), cpNormal, True),
     wbLLCT,
-    wbRArrayS('Leveled List Entries', wbLeveledListEntrySpell, cpNormal, False, nil, wbLVLOsAfterSet)
+    wbRArrayS('Leveled List Entries',
+      wbRStructSK([0], 'Leveled List Entry', [
+        wbLeveledListEntry('Spell', [LVSP, SPEL])
+      ]).SetSummaryMemberMaxDepth(0, 1)
+        .IncludeFlag(dfCollapsed, wbCollapseLeveledItems)
+    ).SetCountPath(LLCT)
   ]);
   (**)
 
@@ -17788,30 +17723,6 @@ end;
   ]);
 
   {subrecords checked against Starfield.esm}
-  var wbLeveledListEntryBaseForm :=
-    wbRStructExSK([0], [1], 'Leveled List Entry', [
-      wbStructExSK(LVLO, [0, 2], [3], 'Base Data', [
-        wbInteger('Level', itU16),
-        wbUnused(2),
-        wbFormIDCk('Generic Base Form', [GBFM, LVLB]),
-        wbInteger('Count', itS16),
-        wbInteger('Chance None', itU8),
-        wbUnused(1)
-      ])
-      .SetSummaryKeyOnValue([0, 3, 2, 4])
-      .SetSummaryPrefixSuffixOnValue(0, '[Lv', ']')
-      .SetSummaryPrefixSuffixOnValue(3, '', 'x')
-      .SetSummaryPrefixSuffixOnValue(4, '{Chance None:', '%}')
-      .SetSummaryDelimiterOnValue(' ')
-      .IncludeFlagOnValue(dfSummaryMembersNoName)
-      .IncludeFlagOnValue(dfSummaryNoSortKey),
-      wbCOED,
-      wbCTDAs
-    ])
-    .SetSummaryMemberMaxDepth(0, 1)
-    .IncludeFlag(dfCollapsed, wbCollapseLeveledItems);
-
-  {subrecords checked against Starfield.esm}
   wbRecord(LVLB, 'Leveled Base Form',
     wbFlags(wbFlagsList([
       {0x00008000}  15, 'Calculate All (Still picks just one)'
@@ -17841,10 +17752,17 @@ end;
     wbCTDAs,
     wbFormIDCk(LVLG, 'Use Global', [GLOB]),
     wbLLCT.IncludeFlag(dfSkipImplicitEdit),
-    wbRArrayS('Leveled List Entries', wbLeveledListEntryBaseForm, cpNormal, False, nil, wbLVLOsAfterSet),
+    wbRArrayS('Leveled List Entries',
+      wbRStructExSK([0], [1], 'Leveled List Entry', [
+        wbLeveledListEntry('Base Form', [GBFM, LVLB]),
+        wbCOED,
+        wbCTDAs
+      ]).SetSummaryMemberMaxDepth(0, 1)
+        .IncludeFlag(dfCollapsed, wbCollapseLeveledItems)
+    ).SetCountPath(LLCT),
     wbFilterKeywordChances,
     wbGenericModel(True)
-  ], False, nil, cpNormal, False, nil, wbLLEAfterSet);
+  ]);
 
   {subrecords checked against Starfield.esm}
   wbRecord(MAAM, 'Melee Aim Assist Model', [
@@ -18398,29 +18316,6 @@ end;
   ]);
 
   {subrecords checked against Starfield.esm}
-  var wbLeveledListEntrySpaceCell :=
-    wbRStructExSK([0], [1], 'Leveled List Entry', [
-      wbStructExSK(LVLO, [0, 2], [3], 'Base Data', [
-        wbInteger('Level', itU16),
-        wbUnused(2),
-        wbFormIDCk('Space Cell', [CELL, LVSC]),
-        wbInteger('Count', itS16),
-        wbInteger('Chance None', itU8),
-        wbUnused(1)
-      ])
-      .SetSummaryKeyOnValue([0, 3, 2, 4])
-      .SetSummaryPrefixSuffixOnValue(0, '[Lv', ']')
-      .SetSummaryPrefixSuffixOnValue(3, '', 'x')
-      .SetSummaryPrefixSuffixOnValue(4, '{Chance None:', '%}')
-      .SetSummaryDelimiterOnValue(' ')
-      .IncludeFlagOnValue(dfSummaryMembersNoName)
-      .IncludeFlagOnValue(dfSummaryNoSortKey),
-      wbCTDAs
-    ])
-    .SetSummaryMemberMaxDepth(0, 1)
-    .IncludeFlag(dfCollapsed, wbCollapseLeveledItems);
-
-  {subrecords checked against Starfield.esm}
   wbRecord(LVSC, 'Leveled Space Cell', [
     wbEDID,
     wbLVLDReq,
@@ -18439,8 +18334,14 @@ end;
     wbCTDAs,
     wbFormIDCk(LVLG, 'Use Global', [GLOB]),
     wbLLCT,
-    wbRArrayS('Leveled List Entries', wbLeveledListEntrySpaceCell, cpNormal, False, nil, wbLVLOsAfterSet)
-  ], False, nil, cpNormal, False, nil, wbLLEAfterSet);
+    wbRArrayS('Leveled List Entries',
+      wbRStructExSK([0], [1], 'Leveled List Entry', [
+        wbLeveledListEntry('Space Cell', [CELL, LVSC]),
+        wbCTDAs
+      ]).SetSummaryMemberMaxDepth(0, 1)
+        .IncludeFlag(dfCollapsed, wbCollapseLeveledItems)
+    ).SetCountPath(LLCT)
+  ]);
 
   {subrecords checked against Starfield.esm}
   wbRecord(MRPH, 'Morphable Object', [

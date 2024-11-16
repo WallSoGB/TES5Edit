@@ -149,7 +149,7 @@ procedure wbAVIFSkillAfterLoad(const aElement: IwbElement);
 procedure wbRPLDAfterLoad(const aElement: IwbElement);
 procedure wbWorldAfterLoad(const aElement: IwbElement);
 
-{>>> After Set Callbacks <<<} //30
+{>>> After Set Callbacks <<<} //28
 procedure wbATANsAfterSet(const aElement: IwbElement; const aOldValue, aNewValue: Variant);
 procedure wbBODCsAfterSet(const aElement: IwbElement; const aOldValue, aNewValue: Variant);
 procedure wbBODSsAfterSet(const aElement: IwbElement; const aOldValue, aNewValue: Variant);
@@ -161,8 +161,6 @@ procedure wbCounterEffectsAfterSet(const aElement: IwbElement; const aOldValue, 
 procedure wbCTDAsAfterSet(const aElement: IwbElement; const aOldValue, aNewValue: Variant);
 procedure wbCTDARunOnAfterSet(const aElement: IwbElement; const aOldValue, aNewValue: Variant);
 procedure wbLENSAfterSet(const aElement: IwbElement; const aOldValue, aNewValue: Variant);
-procedure wbLLEAfterSet(const aElement: IwbElement; const aOldValue, aNewValue: Variant);
-procedure wbLVLOsAfterSet(const aElement: IwbElement; const aOldValue, aNewValue: Variant);
 procedure wbMGEFAfterSet(const aElement: IwbElement; const aOldValue, aNewValue: Variant);
 procedure wbModelInfoAfterSet(const aElement: IwbElement; const aOldValue, aNewValue: Variant);
 procedure wbMorphPresetsAfterSet(const aElement: IwbElement; const aOldValue, aNewValue: Variant);
@@ -432,6 +430,7 @@ function wbOBND(aRequired: Boolean = False): IwbRecordMemberDef;
 
 {>>> Multiple Record Defs <<<} //3
 function wbEnchantment(aCapacity: Boolean = False): IwbRecordMemberDef;
+function wbLeveledListEntry(aObjectName: string; aSigs: TwbSignatures): IwbRecordMemberDef;
 function wbOwnership(aSkipSigs: TwbSignatures = nil): IwbRecordMemberDef;
 function wbTexturedModel(aSubRecordName     : string;
                          aSignatures        : TwbSignatures;
@@ -686,7 +685,7 @@ begin
   end;
 end;
 
-{>>> After Set Callbacks <<<} //30
+{>>> After Set Callbacks <<<} //28
 
 procedure wbATANsAfterSet(const aElement: IwbElement; const aOldValue, aNewValue: Variant);
 begin
@@ -765,16 +764,6 @@ end;
 procedure wbLENSAfterSet(const aElement: IwbElement; const aOldValue, aNewValue: Variant);
 begin
   wbCounterAfterSet('LFSP - Count', aElement);
-end;
-
-procedure wbLLEAfterSet(const aElement: IwbElement; const aOldValue, aNewValue: Variant);
-begin
-  wbCounterContainerAfterSet('LLCT - Count', 'Leveled List Entries', aElement);
-end;
-
-procedure wbLVLOsAfterSet(const aElement: IwbElement; const aOldValue, aNewValue: Variant);
-begin
-  wbCounterAfterSet('LLCT - Count', aElement);
 end;
 
 procedure wbMGEFAfterSet(const aElement: IwbElement; const aOldValue, aNewValue: Variant);
@@ -4414,6 +4403,33 @@ begin
         nil
       )
     ]).IncludeFlag(dfAllowAnyMember);
+end;
+
+function wbLeveledListEntry(aObjectName: string; aSigs: TwbSignatures): IwbRecordMemberDef;
+begin
+  Result :=
+    wbStructExSK(LVLO, [0, 2], [3], IsTES4('Leveled List Entry', 'Base Data'), [
+      wbInteger('Level', itU16),
+      wbUnused(2),
+      wbFormIDCk(aObjectName, aSigs),
+      wbInteger('Count', itU16)
+        .SetDefaultNativeValue(1),
+      IsFO4Plus(
+        wbInteger('Chance None', itU8),
+        wbUnused(2)
+      ),
+      IsFO4Plus(
+        wbUnused(1),
+        nil
+      )
+    ], cpNormal, False, nil, 3)
+    .SetSummaryKeyOnValue([0, 3, 2])
+    .SetSummaryPrefixSuffixOnValue(0, '[Level: ', ']')
+    .SetSummaryPrefixSuffixOnValue(3, '', ' x')
+    .SetSummaryDelimiterOnValue(' ')
+    .IncludeFlagOnValue(dfSummaryMembersNoName)
+    .IncludeFlagOnValue(dfSummaryNoSortKey)
+    .IncludeFlag(dfCollapsed, wbCollapseLeveledItems);
 end;
 
 function wbOwnership(aSkipSigs: TwbSignatures = nil): IwbRecordMemberDef;

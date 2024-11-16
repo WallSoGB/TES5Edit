@@ -52,9 +52,6 @@ var
   wbFULL: IwbRecordMemberDef;
   wbFULLReq: IwbRecordMemberDef;
   wbICON: IwbRecordMemberDef;
-  wbLeveledListEntryCreature: IwbRecordMemberDef;
-  wbLeveledListEntryItem: IwbRecordMemberDef;
-  wbLeveledListEntrySpell: IwbRecordMemberDef;
   wbPGRP: IwbRecordMemberDef;
   wbResultScript: IwbRecordMemberDef;
   wbSCHR: IwbRecordMemberDef;
@@ -1572,53 +1569,6 @@ begin
       wbString(INAM, 'Insignia')
     ]);
 
-  wbLeveledListEntryCreature :=
-    wbStructExSK(LVLO, [0, 2], [3], 'Leveled List Entry', [
-      wbInteger('Level', itS16),
-      wbUnused(2),
-      wbFormIDCk('Reference', [CREA, LVLC, NPC_]),
-      wbInteger('Count', itS16).SetDefaultNativeValue(1),
-      wbUnused(2)
-    ], cpNormal, False, nil, 3)
-    .SetSummaryKeyOnValue([0, 3, 2])
-    .SetSummaryPrefixSuffixOnValue(0, '[Lv', ']')
-    .SetSummaryPrefixSuffixOnValue(3, '', 'x')
-    .SetSummaryDelimiterOnValue(' ')
-    .IncludeFlagOnValue(dfSummaryMembersNoName)
-    .IncludeFlagOnValue(dfSummaryNoSortKey)
-    .IncludeFlag(dfCollapsed, wbCollapseLeveledItems);
-
-  wbLeveledListEntryItem :=
-    wbStructExSK(LVLO, [0, 2], [3], 'Leveled List Entry', [
-      wbInteger('Level', itS16),
-      wbUnused(2),
-      wbFormIDCk('Reference', [ALCH, AMMO, APPA, ARMO, BOOK, CLOT, INGR, KEYM, LIGH, LVLI, MISC, SGST, SLGM, WEAP]),
-      wbInteger('Count', itS16).SetDefaultNativeValue(1),
-      wbUnused(2)
-    ], cpNormal, False, nil, 3)
-    .SetSummaryKeyOnValue([0, 3, 2])
-    .SetSummaryPrefixSuffixOnValue(0, '[Lv', ']')
-    .SetSummaryPrefixSuffixOnValue(3, '', 'x')
-    .SetSummaryDelimiterOnValue(' ')
-    .IncludeFlagOnValue(dfSummaryMembersNoName)
-    .IncludeFlagOnValue(dfSummaryNoSortKey)
-    .IncludeFlag(dfCollapsed, wbCollapseLeveledItems);
-
-  wbLeveledListEntrySpell :=
-    wbStructExSK(LVLO, [0, 2], [3], 'Leveled List Entry', [
-      wbInteger('Level', itS16),
-      wbUnused(2),
-      wbFormIDCk('Reference', [LVSP, SPEL]),
-      wbInteger('Count', itS16).SetDefaultNativeValue(1),
-      wbUnused(2)
-    ], cpNormal, False, nil, 3)
-    .SetSummaryKeyOnValue([0, 3, 2])
-    .SetSummaryPrefixSuffixOnValue(0, '[Lv', ']')
-    .SetSummaryPrefixSuffixOnValue(3, '', 'x')
-    .SetSummaryDelimiterOnValue(' ')
-    .IncludeFlagOnValue(dfSummaryMembersNoName)
-    .IncludeFlagOnValue(dfSummaryNoSortKey)
-    .IncludeFlag(dfCollapsed, wbCollapseLeveledItems);
 
   wbOBMEResolutionInfo :=
     wbEnum([
@@ -2805,7 +2755,9 @@ wbEffects :=
       {0x01} 'Calculate from all levels <= player''s level',
       {0x02} 'Calculate for each item in count'
     ]), cpNormal, True),
-    wbRArrayS('Leveled List Entries', wbLeveledListEntryCreature, cpNormal, True),
+    wbRArrayS('Leveled List Entries',
+      wbLeveledListEntry('Creature', [CREA, LVLC])
+    ).SetRequired,
     wbSCRI,
     wbFormIDCk(TNAM, 'Creature template', [CREA, NPC_])
   ], True, nil, cpNormal, False, wbLVLAfterLoad).SetSummaryKey([3]);
@@ -2817,7 +2769,9 @@ wbEffects :=
       {0x01} 'Calculate from all levels <= player''s level',
       {0x02} 'Calculate for each item in count'
     ]), cpNormal, True),
-    wbRArrayS('Leveled List Entries', wbLeveledListEntryItem, cpNormal, True),
+    wbRArrayS('Leveled List Entries',
+      wbLeveledListEntry('Item', [ALCH, AMMO, APPA, ARMO, BOOK, CLOT, INGR, KEYM, LIGH, LVLI, MISC, SGST, SLGM, WEAP])
+    ).SetRequired,
     wbUnused(DATA, 1)
   ], False, nil, cpNormal, False, wbLVLAfterLoad).SetSummaryKey([3]);
 
@@ -2829,7 +2783,9 @@ wbEffects :=
       {0x02} 'Calculate for each item in count',
       {0x04} 'Use all spells'
     ]), cpNormal, True),
-    wbRArrayS('Leveled List Entries', wbLeveledListEntrySpell, cpNormal, True)
+    wbRArrayS('Leveled List Entries',
+      wbLeveledListEntry('Spell', [LVSP, SPEL])
+    ).SetRequired
   ], False, nil, cpNormal, False, wbLVLAfterLoad).SetSummaryKey([3]);
 
   wbRecord(MGEF, 'Magic Effect', [

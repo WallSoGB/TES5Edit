@@ -13579,7 +13579,7 @@ begin
     ], cpNormal, True),
     wbCTDAs,
     wbLLCT,
-    wbRArrayS('Leveled List Entries', wbLeveledListEntryNPC, cpNormal, False, nil, wbLVLOsAfterSet),
+    wbRArrayS('Leveled List Entries', wbLeveledListEntryNPC).SetCountPath(LLCT),
     wbArrayS(LLKC, 'Filter Keyword Chances',
       wbStructSK([0], 'Filter', [
         wbFormIDCk('Keyword', [KYWD]),
@@ -13588,7 +13588,7 @@ begin
       ])
     ),
     wbGenericModel
-  ], False, nil, cpNormal, False, wbLLEAfterLoad, wbLLEAfterSet);
+  ]).SetAfterLoad(wbLLEAfterLoad);
 
   wbRecord(LVLI , 'Leveled Item',
     wbFlags(wbFlagsList([
@@ -13617,7 +13617,7 @@ begin
     ], cpNormal, True),
     wbCTDAs,
     wbLLCT,
-    wbRArrayS('Leveled List Entries', wbLeveledListEntryItem, cpNormal, False, nil, wbLVLOsAfterSet),
+    wbRArrayS('Leveled List Entries', wbLeveledListEntryItem).SetCountPath(LLCT),
     wbArrayS(LLKC, 'Filter Keyword Chances',
       wbStructSK([0], 'Filter', [
         wbFormIDCk('Keyword', [KYWD]),
@@ -13629,7 +13629,7 @@ begin
     wbDIQO,
     wbByteRGBA(LIMC, 'Marker Color'),
     wbGenericModel
-  ], True, nil, cpNormal, False, wbLLEAfterLoad, wbLLEAfterSet);
+  ], True).SetAfterLoad(wbLLEAfterLoad);
 
   wbRecord(LVLP, 'Leveled Pack In', [
     wbEDID,
@@ -13652,7 +13652,7 @@ begin
     //wbCTDAs,
     //wbFormIDCk(LVLG, 'Use Global', [GLOB]),
     wbLLCT,
-    wbRArrayS('Leveled List Entries', wbLeveledListEntryPackIn, cpNormal, False, nil, wbLVLOsAfterSet),
+    wbRArrayS('Leveled List Entries', wbLeveledListEntryPackIn).SetCountPath(LLCT),
     {
     wbArrayS(LLKC, 'Filter Keyword Chances',
       wbStructSK([0], 'Filter', [
@@ -13667,7 +13667,7 @@ begin
     //wbUnknown(LIMC),
     wbGenericModel
     //wbLStringKC(ONAM, 'Override Name', 0, cpTranslate)
-  ], False, nil, cpNormal, False, wbLLEAfterLoad, wbLLEAfterSet);
+  ]).SetAfterLoad(wbLLEAfterLoad);
 
   wbRecord(LVSP, 'Leveled Spell', [
     wbEDID
@@ -17421,7 +17421,7 @@ begin
       wbInteger('', itU16, wbLVLFFlags)
     ], cpNormal, True),
     wbLLCT,
-    wbRArrayS('Leveled List Entries', wbLeveledListEntryPerkCard, cpNormal, False, nil, wbLVLOsAfterSet),
+    wbRArrayS('Leveled List Entries', wbLeveledListEntryPerkCard).SetCountPath(LLCT),
     wbUnknown(LVCL),
     wbUnknown(LVUO)
   ]);
