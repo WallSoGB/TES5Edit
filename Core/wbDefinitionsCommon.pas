@@ -493,7 +493,7 @@ end;
 function wbDIALAddInfo(const aMainRecord: IwbMainRecord): string;
 begin
   if wbIsSkyrim then
-    Result := aMainRecord.ElementNativeValues['QNAM']
+    Result := aMainRecord.ElementEditValues['QNAM']
   else
     Result := aMainRecord.ElementEditValues['Quest'];
 
