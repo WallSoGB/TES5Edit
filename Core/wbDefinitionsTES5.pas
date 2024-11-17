@@ -2952,7 +2952,7 @@ end;
       wbXLOD,
       wbXSCL,
       wbDataPosRot
-    ], True, wbPlacedAddInfo);
+    ], True).SetAddInfo(wbPlacedAddInfo);
   end;
 
 procedure DefineTES5;
@@ -4005,7 +4005,7 @@ begin
     {--- 3D Data ---}
     wbXSCL,
     wbDATAPosRot
-  ], True, wbPlacedAddInfo);
+  ], True).SetAddInfo(wbPlacedAddInfo);
 
   wbRecord(ACTI, 'Activator',
     wbFlags(wbFlagsList([
@@ -5087,7 +5087,9 @@ begin
     wbFormIDCk(XEZN, 'Encounter Zone', [ECZN]),
     wbFormIDCk(XCMO, 'Music Type', [MUSC]),
     wbFormIDCk(XCIM, 'Image Space', [IMGS])
-  ], True, wbCellAddInfo, cpNormal, False, wbCELLAfterLoad);
+  ], True)
+    .SetAddInfo(wbCellAddInfo)
+    .SetAfterLoad(wbCELLAfterLoad);
 
 
   wbRecord(CLAS, 'Class', [
@@ -5609,7 +5611,7 @@ begin
     wbInteger(TIFC, 'Info Count', itU32, nil, cpIgnore),
     wbINOM,
     wbINOA
-  ], False, wbDIALAddInfo);
+  ]).SetAddInfo(wbDIALAddInfo);
 
   wbRecord(DOOR, 'Door',
     wbFlags(wbFlagsList([
@@ -6368,7 +6370,7 @@ begin
       wbInteger('Vertex', itU16)),
     wbArray(NNAM, 'Non Connectors',
       wbInteger('Vertex', itU16))
-  ], False, wbNAVMAddInfo);
+  ]).SetAddInfo(wbNAVMAddInfo);
 
   wbRecord(NAVI, 'Navmesh Info Map', [
     wbEDID,
@@ -8549,7 +8551,7 @@ begin
     wbFormIDCkNoReach(ANAM, 'Speaker', [NPC_]),
     wbFormIDCk(TWAT, 'Walk Away Topic', [DIAL]),
     wbFormIDCk(ONAM, 'Audio Output Override', [SOPM])
-  ], False, wbINFOAddInfo, cpNormal, False, nil{wbINFOAfterLoad});
+  ]).SetAddInfo(wbINFOAddInfo);
 
   wbRecord(INGR, 'Ingredient', [
     wbEDID,
@@ -8626,7 +8628,7 @@ begin
     wbLandColors,
     wbLandLayers,
     wbRArray('Unknown', wbUnknown(MPCD))
-  ], False, wbLANDAddInfo);
+  ]).SetAddInfo(wbLANDAddInfo);
 
   wbRecord(LIGH, 'Light',
     wbFlags(wbFlagsList([
@@ -10527,7 +10529,9 @@ begin
     wbFormIDCk(XATR, 'Attach Ref', [REFR, PGRE, PHZD, PMIS, PARW, PBAR, PBEA, PCON, PFLA]),
     wbXLOD,
     wbDataPosRot
-  ], True, wbPlacedAddInfo, cpNormal, False, wbREFRAfterLoad);
+  ], True)
+    .SetAddInfo(wbPlacedAddInfo)
+    .SetAfterLoad(wbREFRAfterLoad);
 
   wbRecord(REGN, 'Region',
     wbFlags(wbFlagsList([

@@ -3237,7 +3237,7 @@ begin
     {--- 3D Data ---}
     wbXSCL,
     wbDATAPosRot
-  ], True, wbPlacedAddInfo);
+  ], True).SetAddInfo(wbPlacedAddInfo);
 
   wbRefRecord(ACRE, 'Placed Creature',
     wbFlags(wbFlagsList([
@@ -3318,7 +3318,7 @@ begin
     {--- 3D Data ---}
     wbXSCL,
     wbDATAPosRot
-  ], True, wbPlacedAddInfo);
+  ], True).SetAddInfo(wbPlacedAddInfo);
 
   wbRecord(ACTI, 'Activator',
     wbFlags(wbFlagsList([
@@ -4067,7 +4067,9 @@ begin
     wbFormIDCk(XCAS, 'Acoustic Space', [ASPC]),
     wbByteArray(XCMT, 'Unused', 1, cpIgnore),
     wbFormIDCk(XCMO, 'Music Type', [MUSC])
-  ], True, wbCellAddInfo, cpNormal, False, wbCELLAfterLoad);
+  ], True)
+    .SetAddInfo(wbCellAddInfo)
+    .SetAfterLoad(wbCELLAfterLoad);
 
   wbRecord(CLAS, 'Class', [
     wbEDIDReq,
@@ -5167,7 +5169,7 @@ begin
       ])
     ).SetCountPathOnValue('DATA\Edge Link Count', False)
      .IncludeFlag(dfNotAlignable)
-  ], False, wbNAVMAddInfo);
+  ]).SetAddInfo(wbNAVMAddInfo);
 
   wbRefRecord(PGRE, 'Placed Grenade',
     wbFlags(wbFlagsList([
@@ -5251,7 +5253,7 @@ begin
     {--- 3D Data ---}
     wbXSCL,
     wbDATAPosRot
-  ], True, wbPlacedAddInfo);
+  ], True).SetAddInfo(wbPlacedAddInfo);
 
   wbRefRecord(PMIS, 'Placed Missile', [
     wbEDID,
@@ -5331,7 +5333,7 @@ begin
     {--- 3D Data ---}
     wbXSCL,
     wbDATAPosRot
-  ], True, wbPlacedAddInfo);
+  ], True).SetAddInfo(wbPlacedAddInfo);
 
   wbRefRecord(PBEA, 'Placed Beam', [
     wbEDID,
@@ -5411,7 +5413,7 @@ begin
     {--- 3D Data ---}
     wbXSCL,
     wbDATAPosRot
-  ], True, wbPlacedAddInfo);
+  ], True).SetAddInfo(wbPlacedAddInfo);
 
    wbRecord(EXPL, 'Explosion', [
     wbEDIDReq,
@@ -6217,7 +6219,8 @@ begin
       'Hard',
       'Very Hard'
     ]))
-  ], False, wbINFOAddInfo, cpNormal, False, wbINFOAfterLoad);
+  ]).SetAddInfo(wbINFOAddInfo)
+    .SetAfterLoad(wbINFOAfterLoad);
 
   wbRecord(INGR, 'Ingredient', [
     wbEDIDReq,
@@ -6276,7 +6279,7 @@ begin
     wbLandHeights,
     wbLandColors,
     wbLandLayers
-  ], False, wbLANDAddInfo);
+  ]).SetAddInfo(wbLANDAddInfo);
 
   wbRecord(LIGH, 'Light',
     wbFlags(wbFlagsList([
@@ -7548,7 +7551,9 @@ begin
     {--- 3D Data ---}
     wbXSCL,
     wbDATAPosRot
-  ], True, wbPlacedAddInfo, cpNormal, False, wbREFRAfterLoad);
+  ], True)
+    .SetAddInfo(wbPlacedAddInfo)
+    .SetAfterLoad(wbREFRAfterLoad);
 
 
   wbRecord(REGN, 'Region',

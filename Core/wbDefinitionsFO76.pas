@@ -5347,7 +5347,7 @@ end;
       wbXLOD,
       wbDataPosRot,
       wbString(MNAM, 'Comments')
-    ], True, wbPlacedAddInfo);
+    ], True).SetAddInfo(wbPlacedAddInfo);
   end;
 
 procedure DefineFO76;
@@ -6814,7 +6814,7 @@ begin
     wbXSCL,
     wbDATAPosRot,
     wbString(MNAM, 'Comments')
-  ], True, wbPlacedAddInfo);
+  ], True).SetAddInfo(wbPlacedAddInfo);
 
   wbVatsValueFunctionEnum :=
     wbEnum([
@@ -9408,7 +9408,7 @@ begin
     ]),
     wbFloat(CII0),
     wbFloat(CIDH)
-  ], True, wbCellAddInfo, cpNormal, False{, wbCELLAfterLoad});
+  ], True).SetAddInfo(wbCellAddInfo);
 
   wbRecord(CLAS, 'Class', [
     wbEDID,
@@ -9807,7 +9807,7 @@ begin
     wbInteger(TIFC, 'Info Count', itU32, nil, cpIgnore),
     wbINOM,
     wbINOA
-  ], False, wbDIALAddInfo);
+  ]).SetAddInfo(wbDIALAddInfo);
 
   wbRecord(DOOR, 'Door',
     wbFlags(wbFlagsList([
@@ -10541,7 +10541,7 @@ begin
         ]).IncludeFlag(dfCollapsed)
       ).IncludeFlag(dfCollapsed)
     )
-  ], False, wbNAVMAddInfo);
+  ]).SetAddInfo(wbNAVMAddInfo);
 
   wbRecord(NAVI, 'Navmesh Info Map', [
     wbEDID,
@@ -12223,7 +12223,7 @@ begin
       {0x04} 'Exclusive'
     ])),
     wbFormIDCk(SNAM, 'Starting Topic', [DIAL], False, cpNormal, True)
-  ], False, wbDLBRAddInfo);
+  ]).SetAddInfo(wbDLBRAddInfo);
 
   wbRecord(MUST, 'Music Track', [
     wbEDID,
@@ -12547,7 +12547,7 @@ begin
     wbFormIDCk(TNAM, 'Template Scene', [SCEN]),
     wbInteger(XNAM, 'Index', itU32),
     wbFormIDCk(ONAM, 'Sound Output', [SOPM])
-  ], False, wbSCENAddInfo);
+  ]).SetAddInfo(wbSCENAddInfo);
 
   wbRecord(ASTP, 'Association Type', [
     wbEDID,
@@ -13232,7 +13232,7 @@ begin
       'Force'
     ])),
     wbUnknown(NAM8)
-  ], False, wbINFOAddInfo, cpNormal, False, nil{wbINFOAfterLoad});
+  ]).SetAddInfo(wbINFOAddInfo);
 
   wbRecord(INGR, 'Ingredient', [
     wbEDID,
@@ -13323,7 +13323,7 @@ begin
     wbLandLayers,
     wbRArray('Hi-Res Heightfield',
       wbByteArray(MPCD, 'Heightfield Data'))
-  ], False, wbLANDAddInfo);
+  ]).SetAddInfo(wbLANDAddInfo);
 
   wbRecord(LIGH, 'Light',
     wbFlags(wbFlagsList([
@@ -15986,7 +15986,9 @@ begin
     wbDataPosRot,
     wbFormIDCk(SRGN, 'Sub-Region', [REGN]),
     wbString(MNAM, 'Comments')
-  ], True, wbPlacedAddInfo, cpNormal, False, wbREFRAfterLoad);
+  ], True)
+    .SetAddInfo(wbPlacedAddInfo)
+    .SetAfterLoad(wbREFRAfterLoad);
 
   wbRecord(REGN, 'Region',
     wbFlags(wbFlagsList([

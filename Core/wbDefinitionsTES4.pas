@@ -1828,7 +1828,9 @@ wbEffects :=
     wbRagdoll,
     wbXSCL,
     wbDATAPosRot
-  ], True, wbPlacedAddInfo).SetAfterLoad(wbREFRAfterLoad);
+  ], True)
+    .SetAddInfo(wbPlacedAddInfo)
+    .SetAfterLoad(wbREFRAfterLoad);
 
   wbRefRecord(ACRE, 'Placed Creature',
     wbFlags(wbFlagsList([
@@ -1844,7 +1846,7 @@ wbEffects :=
     wbXESP,
     wbXSCL,
     wbDATAPosRot
-  ], True, wbPlacedAddInfo);
+  ], True).SetAddInfo(wbPlacedAddInfo);
 
   wbRecord(ACTI, 'Activator',
     wbFlags(wbFlagsList([
@@ -2062,7 +2064,9 @@ wbEffects :=
       wbInteger('Y', itS32)
     ]).SetDontShow(wbCellGridDontShow)
       .SetIsRemovable(wbCellGridIsRemovable)
-  ], True, wbCellAddInfo).SetAfterLoad(wbCELLAfterLoad);
+  ], True)
+    .SetAddInfo(wbCellAddInfo)
+    .SetAfterLoad(wbCELLAfterLoad);
 
   wbRecord(CLAS, 'Class', [
     wbEDID,
@@ -2695,7 +2699,7 @@ wbEffects :=
       wbFormIDCk(TCLF, 'Topic', [DIAL])
     ),
     wbResultScript
-  ], False, wbINFOAddInfo);
+  ]).SetAddInfo(wbINFOAddInfo);
 
   wbRecord(INGR, 'Ingredient',
     wbFlags(wbFlagsList([
@@ -2761,7 +2765,7 @@ wbEffects :=
     wbArray(VTEX, 'Landscape Textures',
       wbFormIDCk('Texture', [LTEX, NULL])
     )
-  ], False, wbLANDAddInfo);
+  ]).SetAddInfo(wbLANDAddInfo);
 
   wbRecord(LIGH, 'Light',
     wbFlags(wbFlagsList([
@@ -3235,7 +3239,8 @@ wbEffects :=
         wbArrayS('Points', wbInteger('Point', itU32))
       ])
     )
-  ], False, wbPGRDAddInfo).SetAfterLoad(wbPGRDAfterLoad);
+  ]).SetAddInfo(wbPGRDAddInfo)
+    .SetAfterLoad(wbPGRDAfterLoad);
 
   wbRecord(PLYR, 'Player Reference', [
     wbEDID,
@@ -3451,7 +3456,9 @@ wbEffects :=
     wbXSCL,
     wbInteger(XSOL, 'Contained Soul', itU8, wbSoulGemEnum),
     wbDATAPosRot
-  ], True, wbPlacedAddInfo).SetAfterLoad(wbREFRAfterLoad);
+  ], True)
+    .SetAddInfo(wbPlacedAddInfo)
+    .SetAfterLoad(wbREFRAfterLoad);
 
   wbRecord(REGN, 'Region',
     wbFlags(wbFlagsList([
@@ -3575,7 +3582,7 @@ wbEffects :=
        declaratively }
       wbVec3('Point')
     ).SetRequired
-  ], False, wbROADAddInfo);
+  ]).SetAddInfo(wbROADAddInfo);
 
   wbRecord(SBSP, 'Subspace', [
     wbEDID,

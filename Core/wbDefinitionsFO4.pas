@@ -4476,7 +4476,7 @@ end;
       wbXLOD,
       wbDataPosRot,
       wbString(MNAM, 'Comments')
-    ], True, wbPlacedAddInfo);
+    ], True).SetAddInfo(wbPlacedAddInfo);
   end;
 
 procedure DefineFO4;
@@ -5796,7 +5796,7 @@ begin
     wbXSCL,
     wbDATAPosRot,
     wbString(MNAM, 'Comments')
-  ], True, wbPlacedAddInfo);
+  ], True).SetAddInfo(wbPlacedAddInfo);
 
   wbVatsValueFunctionEnum :=
     wbEnum([
@@ -7418,7 +7418,7 @@ begin
         wbInteger('Combined Mesh', itU32, wbCombinedMeshIDToStr, wbCombinedMeshIDToInt)
       ]), wbCELLCombinedRefsCounter, cpNormal, False, nil, wbCELLCombinedRefsAfterSet)
     ])
-  ], True, wbCellAddInfo, cpNormal, False{, wbCELLAfterLoad});
+  ], True).SetAddInfo(wbCellAddInfo);
 
   wbRecord(CLAS, 'Class', [
     wbEDID,
@@ -7783,7 +7783,7 @@ begin
     wbInteger(TIFC, 'Info Count', itU32, nil, cpIgnore),
     wbINOM,
     wbINOA
-  ], False, wbDIALAddInfo);
+  ]).SetAddInfo(wbDIALAddInfo);
 
   wbRecord(DOOR, 'Door',
     wbFlags(wbFlagsList([
@@ -8523,7 +8523,7 @@ begin
         ]).IncludeFlag(dfCollapsed)
       ).IncludeFlag(dfCollapsed)
     )
-  ], False, wbNAVMAddInfo);
+  ]).SetAddInfo(wbNAVMAddInfo);
 
   wbRecord(NAVI, 'Navmesh Info Map', [
     wbEDID,
@@ -10014,7 +10014,7 @@ begin
       {0x04} 'Exclusive'
     ])),
     wbFormIDCk(SNAM, 'Starting Topic', [DIAL], False, cpNormal, True)
-  ], False, wbDLBRAddInfo);
+  ]).SetAddInfo(wbDLBRAddInfo);
 
   wbRecord(MUST, 'Music Track', [
     wbEDID,
@@ -10355,7 +10355,7 @@ begin
     wbString(NNAM, 'Notes'),
     wbFormIDCk(TNAM, 'Template Scene', [SCEN]),
     wbInteger(XNAM, 'Index', itU32)
-  ], False, wbSCENAddInfo);
+  ]).SetAddInfo(wbSCENAddInfo);
 
   wbRecord(ASTP, 'Association Type', [
     wbEDID,
@@ -10989,7 +10989,7 @@ begin
       'Unknown 2',
       'Force'
     ]))
-  ], False, wbINFOAddInfo, cpNormal, False, nil{wbINFOAfterLoad});
+  ]).SetAddInfo(wbINFOAddInfo);
 
   wbRecord(INGR, 'Ingredient', [
     wbEDID,
@@ -11071,7 +11071,7 @@ begin
     wbLandLayers,
     wbRArray('Hi-Res Heightfield',
       wbByteArray(MPCD, 'Heightfield Data'))
-  ], False, wbLANDAddInfo);
+  ]).SetAddInfo(wbLANDAddInfo);
 
   wbRecord(LIGH, 'Light',
     wbFlags(wbFlagsList([
@@ -12976,7 +12976,7 @@ begin
     wbXLOD, // not seen in FO4 vanilla files
     wbDataPosRot,
     wbString(MNAM, 'Comments')
-  ], True, wbPlacedAddInfo, cpNormal, False, wbREFRAfterLoad);
+  ], True).SetAddInfo(wbPlacedAddInfo).SetAfterLoad(wbREFRAfterLoad);
 
   wbRecord(REGN, 'Region',
     wbFlags(wbFlagsList([

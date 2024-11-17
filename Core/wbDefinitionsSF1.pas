@@ -8865,7 +8865,7 @@ end;
         wbXSCL,
         wbDataPosRot,
         wbString(MNAM, 'Comments')
-      ], True, wbPlacedAddInfo);
+      ], True).SetAddInfo(wbPlacedAddInfo);
     end;
 
 {>>>
@@ -9045,7 +9045,7 @@ end;
     wbString(XEMP, 'Environment Map'),
 
     wbXTV2
-  ], True, wbCellAddInfo, cpNormal, False{, wbCELLAfterLoad});
+  ], True).SetAddInfo(wbCellAddInfo);
 
   {subrecords checked against Starfield.esm}
   wbRecord(CLAS, 'Class', [
@@ -9607,7 +9607,7 @@ end;
     wbInteger(TIFC, 'Info Count', itU32, nil, cpIgnore),
     wbINOM,
     wbINOA
-  ], False, wbDIALAddInfo);
+  ]).SetAddInfo(wbDIALAddInfo);
 
   {subrecords checked against Starfield.esm}
   wbRecord(DOOR, 'Door',
@@ -10439,7 +10439,7 @@ end;
         ]).IncludeFlag(dfCollapsed)
       ).IncludeFlag(dfCollapsed)
     )
-  ], False, wbNAVMAddInfo);
+  ]).SetAddInfo(wbNAVMAddInfo);
 
   {subrecords checked against Starfield.esm}
   wbRecord(NAVI, 'Navmesh Info Map', [
@@ -12006,7 +12006,7 @@ end;
       {0x04} 'Exclusive'
     ])).IncludeFlag(dfCollapsed, wbCollapseFlags),
     wbFormIDCk(SNAM, 'Starting Topic', [DIAL], False, cpNormal, True)
-  ], False, wbDLBRAddInfo);
+  ]).SetAddInfo(wbDLBRAddInfo);
 
   {subrecords checked against Starfield.esm}
   wbRecord(MUST, 'Music Track', [
@@ -12519,7 +12519,7 @@ end;
       wbArray(SPPK, 'Perks', wbFormIDCk('Perk', [PERK]))
     ]),
     wbEmpty(DEVT, 'Show One Dialogue Track Flag')
-  ], False, wbSCENAddInfo);
+  ]).SetAddInfo(wbSCENAddInfo);
 
   (* still exists in game code, but not in Starfield.esm *)
   wbRecord(ASTP, 'Association Type', [
@@ -12893,7 +12893,7 @@ end;
     wbFormIDCk(NAM8, 'Affinity Event', [AFFE]),
     wbFormIDCk(SCSP, 'Speech Challenge', [SPCH]),
     wbFormIDCk(PERK, 'Skill/Perk', [PERK])
-  ], False, wbINFOAddInfo, cpNormal, False, nil{wbINFOAfterLoad});
+  ]).SetAddInfo(wbINFOAddInfo);
 
   (*{still exists in game code, but not in Starfield.esm}
   wbRecord(INGR, 'Ingredient', [
@@ -15681,9 +15681,7 @@ end;
     wbXSCL,
     wbDATAPosRot,
     wbString(MNAM, 'Comments')
-  ], True, wbPlacedAddInfo);
-
-  var TES4: TwbSignature := 'TES4';
+  ], True).SetAddInfo(wbPlacedAddInfo);
 
   {subrecords checked against Starfield.esm}
   wbRefRecord(REFR, 'Placed Object', wbFormaterUnion(wbREFRRecordFlagsDecider, [
@@ -16260,7 +16258,7 @@ end;
     wbDataPosRot,
 
     wbString(MNAM, 'Comments')
-  ], True, wbPlacedAddInfo, cpNormal, False);
+  ], True).SetAddInfo(wbPlacedAddInfo);
 
   {subrecords checked against Starfield.esm}
   wbRecord(REGN, 'Region',

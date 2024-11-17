@@ -2418,8 +2418,8 @@ type
     function GetGridCell(const aSubRecord: IwbSubRecord; out aGridCell: TwbGridCell): Boolean;
     function SetGetGridCellCallback(const aCallback: TwbMainRecordGetGridCellCallback): IwbMainRecordDef;
 
+    function SetAddInfo(const aAddInfo: TwbAddInfoCallback): IwbMainRecordDef;
     function SetToStr(const aToStr : TwbToStrCallback): IwbMainRecordDef{Self};
-
     function SetSummaryKey(const aSummaryKey: array of Integer): {Self}IwbMainRecordDef;
     function SetSummaryMemberPrefixSuffix(aIndex: Integer; const aPrefix, aSuffix: string): {Self}IwbMainRecordDef;
     function SetSummaryMemberMaxDepth(aIndex, aMaxDepth: Integer): {Self}IwbMainRecordDef;
@@ -6080,6 +6080,7 @@ type
     function GetGridCell(const aSubRecord: IwbSubRecord; out aGridCell: TwbGridCell): Boolean;
     function SetGetGridCellCallback(const aCallback: TwbMainRecordGetGridCellCallback): IwbMainRecordDef;
 
+    function SetAddInfo(const aAddInfo: TwbAddInfoCallback): IwbMainRecordDef;
     function SetToStr(const aToStr : TwbToStrCallback): IwbMainRecordDef{Self};
     function SetSummaryKey(const aSummaryKey: array of Integer): {Self}IwbMainRecordDef;
     function SetSummaryMemberPrefixSuffix(aIndex: Integer; const aPrefix, aSuffix: string): {Self}IwbMainRecordDef;
@@ -10988,6 +10989,15 @@ begin
     end;
 
   defReported := True;
+end;
+
+function TwbMainRecordDef.SetAddInfo(const aAddInfo: TwbAddInfoCallback): IwbMainRecordDef;
+begin
+  if defIsLocked then
+    Exit(TwbMainRecordDef(Duplicate).SetAddInfo(aAddInfo));
+
+  Result := Self;
+  recAddInfoCallback := aAddInfo;
 end;
 
 function TwbMainRecordDef.SetBuildIndexKeys(const aCallback: TwbBuildIndexKeysCallback): IwbMainRecordDef;
