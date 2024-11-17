@@ -1815,7 +1815,7 @@ wbEffects :=
     wbRagdoll,
     wbXSCL,
     wbDATAPosRot
-  ], True, wbPlacedAddInfo, cpNormal, False, wbREFRAfterLoad);
+  ], True, wbPlacedAddInfo).SetAfterLoad(wbREFRAfterLoad);
 
   wbRefRecord(ACRE, 'Placed Creature',
     wbFlags(wbFlagsList([
@@ -2029,7 +2029,7 @@ wbEffects :=
       wbInteger('Y', itS32)
     ]).SetDontShow(wbCellGridDontShow)
       .SetIsRemovable(wbCellGridIsRemovable)
-  ], True, wbCellAddInfo, cpNormal, False, wbCELLAfterLoad);
+  ], True, wbCellAddInfo).SetAfterLoad(wbCELLAfterLoad);
 
   wbRecord(CLAS, 'Class', [
     wbEDID,
@@ -2760,7 +2760,9 @@ wbEffects :=
     ).SetRequired,
     wbSCRI,
     wbFormIDCk(TNAM, 'Creature template', [CREA, NPC_])
-  ], True, nil, cpNormal, False, wbLVLAfterLoad).SetSummaryKey([3]);
+  ], True)
+    .SetSummaryKey([3])
+    .SetAfterLoad(wbLVLAfterLoad);
 
   wbRecord(LVLI, 'Leveled Item', [
     wbEDID,
@@ -2773,7 +2775,8 @@ wbEffects :=
       wbLeveledListEntry('Item', [ALCH, AMMO, APPA, ARMO, BOOK, CLOT, INGR, KEYM, LIGH, LVLI, MISC, SGST, SLGM, WEAP])
     ).SetRequired,
     wbUnused(DATA, 1)
-  ], False, nil, cpNormal, False, wbLVLAfterLoad).SetSummaryKey([3]);
+  ]).SetSummaryKey([3])
+    .SetAfterLoad(wbLVLAfterLoad);
 
   wbRecord(LVSP, 'Leveled Spell', [
     wbEDID,
@@ -2786,7 +2789,8 @@ wbEffects :=
     wbRArrayS('Leveled List Entries',
       wbLeveledListEntry('Spell', [LVSP, SPEL])
     ).SetRequired
-  ], False, nil, cpNormal, False, wbLVLAfterLoad).SetSummaryKey([3]);
+  ]).SetSummaryKey([3])
+    .SetAfterLoad(wbLVLAfterLoad);
 
   wbRecord(MGEF, 'Magic Effect', [
     wbStringMgefCode(EDID, 'Magic Effect Code'),
@@ -2899,8 +2903,8 @@ wbEffects :=
     wbArrayS(ESCE, 'Counter Effects',
       wbStringMgefCode('Counter Effect Code', 4)
     ).SetCountPathOnValue('DATA\Counter Effect Count', False)
-  ], False, nil, cpNormal, False, wbMGEFAfterLoad)
-  .IncludeFlag(dfIndexEditorID);;
+  ]).SetAfterLoad(wbMGEFAfterLoad)
+    .IncludeFlag(dfIndexEditorID);;
 
   wbRecord(MISC, 'Misc. Item',
     wbFlags(wbFlagsList([
@@ -3124,7 +3128,9 @@ wbEffects :=
     wbPGRP,
     wbByteArray(PGAG, 'Unknown'),
     wbArray(PGRR, 'Point-to-Point Connections',
-      wbArrayS('Point', wbInteger('Point', itS16), wbCalcPGRRSize{, cpNormal, False, wbPGRRPointAfterLoad})
+      wbArrayS('Point',
+        wbInteger('Point', itS16),
+      wbCalcPGRRSize)//.SetAfterLoad(wbPGRRPointAfterLoad)
     ),
     wbArrayS(PGRI, 'Inter-Cell Connections', wbStructSK([0,2,3,4], 'Inter-Cell Connection', [
       wbInteger('Point', itU16),
@@ -3132,14 +3138,14 @@ wbEffects :=
       wbFloat('X'),
       wbFloat('Y'),
       wbFloat('Z')
-    ]), 0, cpNormal, False, wbPGRIPointerAfterLoad),
+    ])).SetAfterLoad(wbPGRIPointerAfterLoad),
     wbRArrayS('Point-to-Reference Mappings',
       wbStructSK(PGRL, [0], 'Point-to-Reference Mapping', [
         wbFormIDCk('Reference', [REFR]),
         wbArrayS('Points', wbInteger('Point', itU32))
       ])
     )
-  ], False, wbPGRDAddInfo, cpNormal, False, wbPGRDAfterLoad);
+  ], False, wbPGRDAddInfo).SetAfterLoad(wbPGRDAfterLoad);
 
   wbRecord(PLYR, 'Player Reference', [
     wbEDID,
@@ -3341,7 +3347,7 @@ wbEffects :=
     wbXSCL,
     wbInteger(XSOL, 'Contained Soul', itU8, wbSoulGemEnum),
     wbDATAPosRot
-  ], True, wbPlacedAddInfo, cpNormal, False, wbREFRAfterLoad);
+  ], True, wbPlacedAddInfo).SetAfterLoad(wbREFRAfterLoad);
 
   wbRecord(REGN, 'Region',
     wbFlags(wbFlagsList([
@@ -3357,7 +3363,7 @@ wbEffects :=
       wbArray(RPLD, 'Points', wbStruct('Point', [
         wbFloat('X'),
         wbFloat('Y')
-      ]), 0, wbRPLDAfterLoad)
+      ])).SetAfterLoad(wbRPLDAfterLoad)
     ]).SetSummaryKey([1]).IncludeFlag(dfSummaryMembersNoName), cpNormal, True),
 
     wbRArrayS('Region Data Entries', wbRStructSK([0], 'Region Data Entry', [
