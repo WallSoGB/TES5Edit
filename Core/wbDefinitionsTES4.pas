@@ -1465,7 +1465,7 @@ begin
   wbDESC := wbStringKC(DESC, 'Description', 0, cpTranslate);
   wbEDID := wbString(EDID, 'Editor ID', 0, cpNormal); // not cpBenign according to Arthmoor
   wbFULL := wbStringKC(FULL, 'Name', 0, cpTranslate);
-  wbFULLReq := wbStringKC(FULL, 'Name', 0, cpTranslate, True);
+  wbFULLReq := wbStringKC(FULL, 'Name', 0, cpTranslate).SetRequired;
   wbICON := wbString(ICON, 'Icon FileName');
   wbSCRI := wbFormIDCk(SCRI, 'Script', [SCPT]);
   wbSPLO := wbFormIDCkST(SPLO, 'Spell', [LVSP, SPEL]);
@@ -1556,9 +1556,9 @@ begin
     );
 
   wbFaceGen := wbRStruct('FaceGen Data', [
-    wbByteArray(FGGS, 'FaceGen Geometry-Symmetric', 0, cpNormal, True),
-    wbByteArray(FGGA, 'FaceGen Geometry-Asymmetric', 0, cpNormal, True),
-    wbByteArray(FGTS, 'FaceGen Texture-Symmetric', 0, cpNormal, True)
+    wbByteArray(FGGS, 'FaceGen Geometry-Symmetric').SetRequired,
+    wbByteArray(FGGA, 'FaceGen Geometry-Asymmetric').SetRequired,
+    wbByteArray(FGTS, 'FaceGen Texture-Symmetric').SetRequired
   ], [], cpNormal, True);
 
   wbFactionRank :=
@@ -1788,11 +1788,11 @@ wbEffects :=
     wbHEDR,
     wbByteArray(OFST, 'Unknown', 0, cpIgnore),
     wbByteArray(DELE, 'Unknown', 0, cpIgnore),
-    wbString(CNAM, 'Author', 0, cpTranslate, True),
+    wbString(CNAM, 'Author', 0, cpTranslate).SetRequired,
     wbString(SNAM, 'Description', 0, cpTranslate),
     wbRArray('Master Files', wbRStruct('Master File', [
-      wbStringForward(MAST, 'FileName', 0, cpNormal, True),
-      wbUnused(DATA, 8, True)
+      wbStringForward(MAST, 'FileName').SetRequired,
+      wbUnused(DATA, 8).SetRequired
     ])).IncludeFlag(dfInternalEditOnly, not wbAllowMasterFilesEdit)
   ], False, nil, cpNormal, True);
 
@@ -1803,7 +1803,7 @@ wbEffects :=
       15, 'Visible When Distant'
     ])), [
     wbEDID,
-    wbFormIDCk(NAME, 'Base', [NPC_], False, cpNormal, True),
+    wbFormIDCk(NAME, 'Base', [NPC_]).SetRequired,
     wbRStruct('Unused', [
       wbFormIDCk(XPCI, 'Unused', [CELL]),
       wbString(FULL, 'Unused')
@@ -1824,7 +1824,7 @@ wbEffects :=
       15, 'Visible When Distant'
     ])), [
     wbEDID,
-    wbFormIDCk(NAME, 'Base', [CREA], False, cpNormal, True),
+    wbFormIDCk(NAME, 'Base', [CREA]).SetRequired,
     wbOwnership,
     wbRagdoll,
     wbXLOD,
@@ -1859,12 +1859,12 @@ wbEffects :=
     wbTexturedModel('Model', [MODL, MODB, MODT], []),
     wbICON,
     wbSCRI,
-    wbFloat(DATA, 'Weight', cpNormal, True),
+    wbFloat(DATA, 'Weight').SetRequired,
     wbStruct(ENIT, '', [
       wbInteger('Value', itS32),
       wbInteger('Flags', itU8, wbFlags(['No auto-calculation', 'Food item'])),
       wbUnused(3)
-    ], cpNormal, True),
+    ]).SetRequired,
     wbEffects
   ]);
 
@@ -1885,13 +1885,13 @@ wbEffects :=
       wbInteger('Value', itU32),
       wbFloat('Weight'),
       wbInteger('Damage', itU16)
-    ], cpNormal, True)
+    ]).SetRequired
   ]);
 
   wbRecord(ANIO, 'Animated Object', [
     wbEDID,
     wbTexturedModel('Model', [MODL, MODB, MODT], []),
-    wbFormIDCk(DATA, 'IDLE animation', [IDLE], False, cpNormal, True)
+    wbFormIDCk(DATA, 'IDLE animation', [IDLE]).SetRequired
   ]).SetSummaryKey([1, 2]).IncludeFlag(dfSummaryMembersNoName);
 
   wbRecord(APPA, 'Alchemical Apparatus', [
@@ -1905,7 +1905,7 @@ wbEffects :=
       wbInteger('Value', itU32),
       wbFloat('Weight'),
       wbFloat('Quality')
-    ], cpNormal, True)
+    ]).SetRequired
   ]);
 
   wbRecord(ARMO, 'Armor',
@@ -1958,7 +1958,7 @@ wbEffects :=
       wbInteger('Value', itU32),
       wbInteger('Health', itU32),
       wbFloat('Weight')
-    ], cpNormal, True)
+    ]).SetRequired
   ]);
 
   wbRecord(BOOK, 'Book',
@@ -1977,7 +1977,7 @@ wbEffects :=
       wbInteger('Teaches', itU8, wbSkillEnum),
       wbInteger('Value', itU32),
       wbFloat('Weight')
-    ], cpNormal, True)
+    ]).SetRequired
   ], True);
 
   wbRecord(BSGN, 'Birthsign', [
@@ -2005,7 +2005,7 @@ wbEffects :=
       {0x20} 'Public Area',
       {0x40} 'Hand changed',
       {0x80} 'Behave like exterior'
-    ]), cpNormal, True),
+    ])).SetRequired,
     wbStruct(XCLL, 'Lighting', [
       wbByteColors('Ambient Color'),
       wbByteColors('Directional Color'),
@@ -2098,7 +2098,7 @@ wbEffects :=
         {0x0080} '' {Heavy armor}
       ])),
       wbUnused(1)
-    ], cpNormal, True),
+    ]).SetRequired,
     wbTexturedModel('Male biped model', [MODL, MODB, MODT], []),
     wbTexturedModel('Male world model', [MOD2, MO2B, MO2T], []),
     wbString(ICON, 'Male icon FileName'),
@@ -2108,7 +2108,7 @@ wbEffects :=
     wbStruct(DATA, '', [
       wbInteger('Value', itU32),
       wbFloat('Weight')
-    ], cpNormal, True)
+    ]).SetRequired
   ]);
 
   wbRecord(CONT, 'Container',
@@ -2170,7 +2170,7 @@ wbEffects :=
       wbInteger('Level (offset)', itS16),
       wbInteger('Calc min', itU16),
       wbInteger('Calc max', itU16)
-    ], cpNormal, True),
+    ]).SetRequired,
     wbRArrayS('Factions', wbFaction),
     wbFormIDCk(INAM, 'Death item', [LVLI]),
     wbSCRI,
@@ -2183,7 +2183,7 @@ wbEffects :=
       wbInteger('Teaches', itU8, wbSkillEnum),
       wbInteger('Maximum training level', itU8),
       wbUnused(2)
-    ], cpNormal, True),
+    ]).SetRequired,
     wbRArray('AI Packages', wbFormIDCk(PKID, 'AI Package', [PACK])),
     wbArrayS(KFFZ, 'Animations', wbStringLC('Animation')),
     wbStruct(DATA, 'Creature Data', [
@@ -2211,12 +2211,12 @@ wbEffects :=
       wbInteger('Endurance', itU8),
       wbInteger('Personality', itU8),
       wbInteger('Luck', itU8)
-    ], cpNormal, True),
-    wbInteger(RNAM, 'Attack reach', itU8, nil, cpNormal, True),
+    ]).SetRequired,
+    wbInteger(RNAM, 'Attack reach', itU8).SetRequired,
     wbFormIDCk(ZNAM, 'Combat Style', [CSTY]),
-    wbFloat(TNAM, 'Turning Speed', cpNormal, True),
-    wbFloat(BNAM, 'Base Scale', cpNormal, True),
-    wbFloat(WNAM, 'Foot Weight', cpNormal, True),
+    wbFloat(TNAM, 'Turning Speed').SetRequired,
+    wbFloat(BNAM, 'Base Scale').SetRequired,
+    wbFloat(WNAM, 'Foot Weight').SetRequired,
     wbString(NAM0, 'Blood Spray'),
     wbString(NAM1, 'Blood Decal'),
     wbFormIDCk(CSCR, 'Inherits Sounds from', [CREA]),
@@ -2319,7 +2319,7 @@ wbEffects :=
       {4} 'Detection',
       {5} 'Service',
       {6} 'Miscellaneous'
-    ]), cpNormal, True),
+    ])).SetRequired,
     wbINOM,
     wbINOA
   ], True);
@@ -2340,7 +2340,7 @@ wbEffects :=
       {0x02} 'Automatic door',
       {0x04} 'Hidden',
       {0x08} 'Minimal use'
-    ]), cpNormal, True),
+    ])).SetRequired,
     wbRArrayS('Random teleport destinations', wbFormIDCk(TNAM, 'Destination', [CELL, WRLD]))
   ]);
 
@@ -2435,22 +2435,22 @@ wbEffects :=
       wbInteger('Enchant Cost', itU32),
       wbInteger('Flags', itU8, wbFlags(['Manual Enchant Cost (Autocalc Off)'])),
       wbUnused(3)
-    ], cpNormal, True),
+    ]).SetRequired,
     wbEffects
   ]);
 
   wbRecord(EYES, 'Eyes', [
     wbEDID,
     wbFULL,
-    wbString(ICON, 'Texture', 0, cpNormal, True),
-    wbInteger(DATA, 'Flags', itU8, wbFlags(['Playable']), cpNormal, True)
+    wbString(ICON, 'Texture').SetRequired,
+    wbInteger(DATA, 'Flags', itU8, wbFlags(['Playable'])).SetRequired
   ]);
 
   wbRecord(FACT, 'Faction', [
     wbEDID,
     wbFULL,
     wbFactionRelations,
-    wbInteger(DATA, 'Flags', itU8, wbFlags(['Hidden from Player', 'Evil', 'Special Combat']), cpNormal, True),
+    wbInteger(DATA, 'Flags', itU8, wbFlags(['Hidden from Player', 'Evil', 'Special Combat'])).SetRequired,
     wbFloat(CNAM, 'Crime Gold Multiplier', cpNormal, True, 1, -1, nil, nil, 1.0),
     wbRArrayS('Ranks', wbFactionRank)
   ]);
@@ -2472,7 +2472,7 @@ wbEffects :=
     wbFULL,
     wbTexturedModel('Model', [MODL, MODB, MODT], []),
     wbSCRI,
-    wbByteArray(MNAM, 'Marker Flags', 0, cpNormal, True)
+    wbByteArray(MNAM, 'Marker Flags').SetRequired
   ]);
 
   wbRecord(GLOB, 'Global', [
@@ -2481,8 +2481,9 @@ wbEffects :=
       Ord('s'), 'Short',
       Ord('l'), 'Long',
       Ord('f'), 'Float'
-    ]), cpNormal, True).SetDefaultEditValue('Float'),
-    wbFloat(FLTV, 'Value', cpNormal, True)
+    ])).SetDefaultEditValue('Float')
+       .SetRequired,
+    wbFloat(FLTV, 'Value').SetRequired
   ]).SetSummaryKey([2]);
 
   wbRecord(GMST, 'Game Setting', [
@@ -2525,28 +2526,28 @@ wbEffects :=
         'Fit to Slope'
       ])),
       wbUnused(3)
-    ], cpNormal, True)
+    ]).SetRequired
   ]).SetSummaryKey([1]);
 
   wbRecord(HAIR, 'Hair', [
     wbEDID,
     wbFULL,
     wbTexturedModel('Model', [MODL, MODB, MODT], []),
-    wbString(ICON, 'Texture', 0, cpNormal, True),
+    wbString(ICON, 'Texture').SetRequired,
     wbInteger(DATA, 'Flags', itU8, wbFlags([
       'Playable',
       'Not Male',
       'Not Female',
       'Fixed'
-    ]), cpNormal, True)
+    ])).SetRequired
   ]);
 
   wbRecord(IDLE, 'Idle Animation', [
     wbEDID,
     wbTexturedModel('Model', [MODL, MODB, MODT], []),
     wbConditions,
-    wbInteger(ANAM, 'Animation Group Section', itU8, wbIdleAnam, nil, cpNormal, True),
-    wbArray(DATA, 'Related Idle Animations', wbFormIDCk('Related Idle Animation', [IDLE, NULL]), ['Parent', 'Previous Sibling'], cpNormal, True)
+    wbInteger(ANAM, 'Animation Group Section', itU8, wbIdleAnam).SetRequired,
+    wbArray(DATA, 'Related Idle Animations', wbFormIDCk('Related Idle Animation', [IDLE, NULL]), ['Parent', 'Previous Sibling']).SetRequired
   ]).SetSummaryKey([1]);
 
   wbRecord(INFO, 'Dialog response', [
@@ -2571,7 +2572,7 @@ wbEffects :=
         {0x0040} 'Run for Rumors'
       ]))
     ], cpNormal, True, nil, 2),
-    wbFormIDCkNoReach(QSTI, 'Quest', [QUST], False, cpNormal, True),
+    wbFormIDCkNoReach(QSTI, 'Quest', [QUST]).SetRequired,
     wbFormIDCk(TPIC, 'Topic', [DIAL]),
     wbFormIDCkNoReach(PNAM, 'Previous INFO', [INFO, NULL]),
     wbRArray('Add topics', wbFormIDCk(NAME, 'Topic', [DIAL])),
@@ -2616,12 +2617,12 @@ wbEffects :=
     wbTexturedModel('Model', [MODL, MODB, MODT], []),
     wbICON,
     wbSCRI,
-    wbFloat(DATA, 'Weight', cpNormal, True),
+    wbFloat(DATA, 'Weight').SetRequired,
     wbStruct(ENIT, '', [
       wbInteger('Value', itS32),
       wbInteger('Flags', itU8, wbFlags(['No auto-calculation', 'Food item'])),
       wbUnused(3)
-    ], cpNormal, True),
+    ]).SetRequired,
     wbEffects
   ]);
 
@@ -2637,7 +2638,7 @@ wbEffects :=
     wbStruct(DATA, '', [
       wbInteger('Value', itS32),
       wbFloat('Weight')
-    ], cpNormal, True)
+    ]).SetRequired
   ]);
 
   wbRecord(LAND, 'Landscape',
@@ -2743,18 +2744,18 @@ wbEffects :=
       ]), cpNormal, True, nil, nil, 2),
       wbInteger('Friction', itU8, nil, cpNormal, True, nil, nil, 30),
       wbInteger('Restitution', itU8, nil, cpNormal, True, nil, nil, 30)
-    ], cpNormal, True),
+    ]).SetRequired,
     wbInteger(SNAM, 'Texture Specular Exponent', itU8, nil, cpNormal, True, False, nil, nil, 30),
     wbRArrayS('Grasses', wbFormIDCk(GNAM, 'Grass', [GRAS]))
   ]).SetSummaryKey([1]);
 
   wbRecord(LVLC, 'Leveled Creature', [
     wbEDID,
-    wbInteger(LVLD, 'Chance none', itU8, nil, cpNormal, True),
+    wbInteger(LVLD, 'Chance none', itU8).SetRequired,
     wbInteger(LVLF, 'Flags', itU8, wbFlags([
       {0x01} 'Calculate from all levels <= player''s level',
       {0x02} 'Calculate for each item in count'
-    ]), cpNormal, True),
+    ])).SetRequired,
     wbRArrayS('Leveled List Entries',
       wbLeveledListEntry('Creature', [CREA, LVLC])
     ).SetRequired,
@@ -2766,11 +2767,11 @@ wbEffects :=
 
   wbRecord(LVLI, 'Leveled Item', [
     wbEDID,
-    wbInteger(LVLD, 'Chance none', itU8, nil, cpNormal, True),
+    wbInteger(LVLD, 'Chance none', itU8).SetRequired,
     wbInteger(LVLF, 'Flags', itU8, wbFlags([
       {0x01} 'Calculate from all levels <= player''s level',
       {0x02} 'Calculate for each item in count'
-    ]), cpNormal, True),
+    ])).SetRequired,
     wbRArrayS('Leveled List Entries',
       wbLeveledListEntry('Item', [ALCH, AMMO, APPA, ARMO, BOOK, CLOT, INGR, KEYM, LIGH, LVLI, MISC, SGST, SLGM, WEAP])
     ).SetRequired,
@@ -2780,12 +2781,12 @@ wbEffects :=
 
   wbRecord(LVSP, 'Leveled Spell', [
     wbEDID,
-    wbInteger(LVLD, 'Chance none', itU8, nil, cpNormal, True),
+    wbInteger(LVLD, 'Chance none', itU8).SetRequired,
     wbInteger(LVLF, 'Flags', itU8, wbFlags([
       {0x01} 'Calculate from all levels <= player''s level',
       {0x02} 'Calculate for each item in count',
       {0x04} 'Use all spells'
-    ]), cpNormal, True),
+    ])).SetRequired,
     wbRArrayS('Leveled List Entries',
       wbLeveledListEntry('Spell', [LVSP, SPEL])
     ).SetRequired
@@ -2933,7 +2934,7 @@ wbEffects :=
           $3F800000, 'Stat'
         ]))
       ])
-    ], cpNormal, True)
+    ]).SetRequired
   ]);
 
   wbRecord(NPC_, 'Non-Player Character',
@@ -2975,10 +2976,10 @@ wbEffects :=
       wbInteger('Level (offset)', itS16),
       wbInteger('Calc min', itU16),
       wbInteger('Calc max', itU16)
-    ], cpNormal, True),
+    ]).SetRequired,
     wbRArrayS('Factions', wbFaction),
     wbFormIDCk(INAM, 'Death item', [LVLI]),
-    wbFormIDCk(RNAM, 'Race', [RACE], False, cpNormal, True),
+    wbFormIDCk(RNAM, 'Race', [RACE]).SetRequired,
     wbSPLOs,
     wbSCRI,
     wbCNTOs,
@@ -2991,10 +2992,10 @@ wbEffects :=
       wbInteger('Teaches', itU8, wbSkillEnum),
       wbInteger('Maximum training level', itU8),
       wbUnused(2)
-    ], cpNormal, True),
+    ]).SetRequired,
     wbRArray('AI Packages', wbFormIDCk(PKID, 'AI Package', [PACK])),
     wbArrayS(KFFZ, 'Animations', wbString('Animation')),
-    wbFormIDCk(CNAM, 'Class', [CLAS], False, cpNormal, True),
+    wbFormIDCk(CNAM, 'Class', [CLAS]).SetRequired,
     wbStruct(DATA, 'Stats', [
       wbInteger('Armorer', itU8),
       wbInteger('Athletics', itU8),
@@ -3027,7 +3028,7 @@ wbEffects :=
       wbInteger('Endurance', itU8),
       wbInteger('Personality', itU8),
       wbInteger('Luck', itU8)
-    ], cpNormal, True),
+    ]).SetRequired,
     wbFormIDCk(HNAM, 'Hair', [HAIR]),
     wbFloat(LNAM, 'Hair length'),
     wbArray(ENAM, 'Eyes', wbFormIDCk('Eyes', [EYES])),
@@ -3124,7 +3125,7 @@ wbEffects :=
     wbFlags(wbFlagsList([
       18, 'Compressed'
     ])), [
-    wbInteger(DATA, 'Point Count', itU16, nil, cpNormal, True),
+    wbInteger(DATA, 'Point Count', itU16).SetRequired,
     wbPGRP,
     wbByteArray(PGAG, 'Unknown'),
     wbArray(PGRR, 'Point-to-Point Connections',
@@ -3149,7 +3150,9 @@ wbEffects :=
 
   wbRecord(PLYR, 'Player Reference', [
     wbEDID,
-    wbFormID(PLYR, 'Player', cpNormal, True).SetDefaultNativeValue($7)
+    wbFormID(PLYR, 'Player')
+      .SetDefaultNativeValue($7)
+      .SetRequired
   ]).IncludeFlag(dfInternalEditOnly);
 
   wbRecord(QUST, 'Quest', [
@@ -3165,7 +3168,7 @@ wbEffects :=
         {0x08} 'Allow repeated stages'
       ])),
       wbInteger('Priority', itU8)
-    ], cpNormal, True),
+    ]).SetRequired,
     wbConditions,
     wbRArrayS('Stages', wbRStructSK([0], 'Stage', [
       wbInteger(INDX, 'Stage index', itS16),
@@ -3215,7 +3218,7 @@ wbEffects :=
       wbInteger('Flags', itU32, wbFlags([
         'Playable'
       ]))
-    ], cpNormal, True),
+    ]).SetRequired,
     wbStruct(VNAM, 'Voice', [
       wbFormIDCk('Male', [RACE, NULL]),
       wbFormIDCk('Female', [RACE, NULL])
@@ -3224,9 +3227,9 @@ wbEffects :=
       wbFormIDCk('Male', [HAIR]),
       wbFormIDCk('Female', [HAIR])
     ]),
-    wbInteger(CNAM, 'Default Hair Color', itU8, nil, cpNormal, True),
-    wbFloat(PNAM, 'FaceGen - Main clamp', cpNormal, True),
-    wbFloat(UNAM, 'FaceGen - Face clamp', cpNormal, True),
+    wbInteger(CNAM, 'Default Hair Color', itU8).SetRequired,
+    wbFloat(PNAM, 'FaceGen - Main clamp').SetRequired,
+    wbFloat(UNAM, 'FaceGen - Face clamp').SetRequired,
     wbStruct(ATTR, 'Base Attributes', [
       wbStruct('Male', [
         wbInteger('Strength', itU8),
@@ -3252,22 +3255,22 @@ wbEffects :=
     wbRStruct('Face Data', [
       wbEmpty(NAM0, 'Face Data Marker'),
       wbRArrayS('Parts', wbHeadPart(wbHeadPartIndexEnum, wbTexturedModel('Model', [MODL, MODB, MODT], []), nil))
-    ], [], cpNormal, True),
-    wbEmpty(NAM1, 'Body Data Marker', cpNormal, True),
+    ]).SetRequired,
+    wbEmpty(NAM1, 'Body Data Marker').SetRequired,
     wbRStruct('Male Body Data', [
       wbEmpty(MNAM, 'Male Body Data Marker'),
       wbTexturedModel('Model', [MODL, MODB, MODT], []),
       wbBodyParts
-    ], [], cpNormal, True),
+    ]).SetRequired,
     wbRStruct('Female Body Data', [
       wbEmpty(FNAM, 'Female Body Data Marker'),
       wbTexturedModel('Model', [MODL, MODB, MODT], []),
       wbBodyParts
-    ], [], cpNormal, True),
-    wbArrayS(HNAM, 'Hairs', wbFormIDCk('Hair', [HAIR]), 0, cpNormal, True),
-    wbArrayS(ENAM, 'Eyes', wbFormIDCk('Eye', [EYES]),  0,  cpNormal, True),
+    ]).SetRequired,
+    wbArrayS(HNAM, 'Hairs', wbFormIDCk('Hair', [HAIR])).SetRequired,
+    wbArrayS(ENAM, 'Eyes', wbFormIDCk('Eye', [EYES])).SetRequired,
     wbFaceGen,
-    wbByteArray(SNAM, 'Unknown', 2, cpNormal, True)
+    wbByteArray(SNAM, 'Unknown', 2).SetRequired
   ], True);
 
   wbRefRecord(REFR, 'Placed Object',
@@ -3321,7 +3324,7 @@ wbEffects :=
       wbInteger(FNAM, 'Map Flags', itU8, wbFlags([
         {0x01} 'Visible',
         {0x02} 'Can Travel To'
-      ]), cpNormal, True),
+      ])).SetRequired,
       wbFULLReq,
       wbStruct(TNAM, '', [
         wbInteger('Type', itU8, wbEnum([
@@ -3364,7 +3367,7 @@ wbEffects :=
         wbFloat('X'),
         wbFloat('Y')
       ])).SetAfterLoad(wbRPLDAfterLoad)
-    ]).SetSummaryKey([1]).IncludeFlag(dfSummaryMembersNoName), cpNormal, True),
+    ]).SetSummaryKey([1]).IncludeFlag(dfSummaryMembersNoName)).SetRequired,
 
     wbRArrayS('Region Data Entries', wbRStructSK([0], 'Region Data Entry', [
       {always starts with an RDAT}
@@ -3451,8 +3454,8 @@ wbEffects :=
        of point 0, then next 5 are the connections of point 1, the next 2 of point 2,
        the next 4 of point 3 and so on..., this can currently not be represented
        declaratively }
-      wbVec3('Point'),
-    0, nil, nil, cpNormal, True)
+      wbVec3('Point')
+    ).SetRequired
   ], False, wbROADAddInfo);
 
   wbRecord(SBSP, 'Subspace', [
@@ -3465,7 +3468,7 @@ wbEffects :=
     wbByteArray(SCHD, 'Unknown (Script Header?)'),
     wbSCHR,
     wbByteArray(SCDA, 'Compiled Script'),
-    wbStringScript(SCTX, 'Script Source', 0, cpNormal, True),
+    wbStringScript(SCTX, 'Script Source').SetRequired,
     wbRArrayS('Local Variables', wbRStructSK([0], 'Local Variable', [
       wbSLSD,
       wbString(SCVR, 'Name', 0, cpCritical)
@@ -3489,12 +3492,12 @@ wbEffects :=
       wbInteger('Uses ', itU8),
       wbInteger('Value', itU32),
       wbFloat('Weight')
-    ], cpNormal, True)
+    ]).SetRequired
   ]);
 
   wbRecord(SKIL, 'Skill', [
     wbEDID,
-    wbInteger(INDX, 'Skill', itS32, wbMajorSkillEnum, cpNormal, True),
+    wbInteger(INDX, 'Skill', itS32, wbMajorSkillEnum).SetRequired,
     wbDESC,
     wbICON,
     wbStruct(DATA, 'Skill Data', [
@@ -3503,10 +3506,10 @@ wbEffects :=
       wbInteger('Specialization', itU32, wbSpecializationEnum),
       wbArray('Use Values', wbFloat('Use Value'), 2)
     ], cpNormal, True),
-    wbString(ANAM, 'Apprentice Text', 0, cpTranslate, True),
-    wbString(JNAM, 'Journeyman Text', 0, cpTranslate, True),
-    wbString(ENAM, 'Expert Text', 0, cpTranslate, True),
-    wbString(MNAM, 'Master Text', 0, cpTranslate, True)
+    wbString(ANAM, 'Apprentice Text', 0, cpTranslate).SetRequired,
+    wbString(JNAM, 'Journeyman Text', 0, cpTranslate).SetRequired,
+    wbString(ENAM, 'Expert Text', 0, cpTranslate).SetRequired,
+    wbString(MNAM, 'Master Text', 0, cpTranslate).SetRequired
   ]).SetSummaryKey([2]);
 
   wbRecord(SLGM, 'Soul Gem',
@@ -3522,8 +3525,8 @@ wbEffects :=
       wbInteger('Value', itU32),
       wbFloat('Weight')
     ], cpNormal, True),
-    wbInteger(SOUL, 'Contained Soul', itU8, wbSoulGemEnum, cpNormal, True),
-    wbInteger(SLCP, 'Maximum Capacity', itU8, wbSoulGemEnum, cpNormal, True)
+    wbInteger(SOUL, 'Contained Soul', itU8, wbSoulGemEnum).SetRequired,
+    wbInteger(SLCP, 'Maximum Capacity', itU8, wbSoulGemEnum).SetRequired
   ]);
 
   wbRecord(SOUN, 'Sound', [
@@ -3569,8 +3572,8 @@ wbEffects :=
         wbUnused,
         wbUnused,
         wbUnused
-      ], cpNormal, True)
-    ], [], cpNormal, True)
+      ]).SetRequired
+    ]).SetRequired
   ]).SetSummaryKey([1]);
 
   wbRecord(SPEL, 'Spell', [
@@ -3610,7 +3613,7 @@ wbEffects :=
         {0x00000080} 'Touch Spell Explodes w/ no Target'
       ])),
       wbUnused(3)
-    ], cpNormal, True),
+    ]).SetRequired,
     wbEffects
   ]);
 
@@ -3636,11 +3639,11 @@ wbEffects :=
       wbInteger('Shadow Radius', itS32),
       wbFloat('Rock Speed'),
       wbFloat('Rustle Speed')
-    ], cpNormal, True),
+    ]).SetRequired,
     wbStruct(BNAM, 'Billboard Dimensions', [
       wbFloat('Width'),
       wbFloat('Height')
-    ], cpNormal, True)
+    ]).SetRequired
   ]).SetSummaryKey([1]);
 
   wbRecord(WATR, 'Water', [
