@@ -1854,7 +1854,7 @@ wbEffects :=
       wbInteger('Record Version', itU8),
       wbOBMEVersion,
       wbUnused($1C)
-    ], cpNormal, False, wbOBMEDontShow),
+    ]).SetDontShow(wbOBMEDontShow),
     wbFULL,
     wbTexturedModel('Model', [MODL, MODB, MODT], []),
     wbICON,
@@ -2422,7 +2422,7 @@ wbEffects :=
       wbInteger('Record Version', itU8),
       wbOBMEVersion,
       wbUnused($1C)
-    ], cpNormal, False, wbOBMEDontShow),
+    ]).SetDontShow(wbOBMEDontShow),
     wbFULL,
     wbStruct(ENIT, '', [
       wbInteger('Type', itU32, wbEnum([
@@ -2611,7 +2611,7 @@ wbEffects :=
       wbInteger('Record Version', itU8),
       wbOBMEVersion,
       wbUnused($1C)
-    ], cpNormal, False, wbOBMEDontShow),
+    ]).SetDontShow(wbOBMEDontShow),
     wbFULL,
     wbTexturedModel('Model', [MODL, MODB, MODT], []),
     wbICON,
@@ -2832,8 +2832,8 @@ wbEffects :=
       ])),
       wbByteArray('ParamB', 4),
       wbUnused($1C)
-    ], cpNormal, False, wbOBMEDontShow),
-    wbString(EDDX, 'EditorID', 0, cpNormal, False, wbEDDXDontShow),
+    ]).SetDontShow(wbOBMEDontShow),
+    wbString(EDDX, 'EditorID').SetDontShow(wbEDDXDontShow),
     wbFULL,
     wbDESC,
     wbICON,
@@ -3473,7 +3473,7 @@ wbEffects :=
       wbInteger('Record Version', itU8),
       wbOBMEVersion,
       wbUnused($1C)
-    ], cpNormal, False, wbOBMEDontShow),
+    ]).SetDontShow(wbOBMEDontShow),
     wbFULL,
     wbTexturedModel('Model', [MODL, MODB, MODT], []),
     wbICON,
@@ -3573,7 +3573,7 @@ wbEffects :=
       wbInteger('Record Version', itU8),
       wbOBMEVersion,
       wbUnused($1C)
-    ], cpNormal, False, wbOBMEDontShow),
+    ]).SetDontShow(wbOBMEDontShow),
     wbFULL,
     wbStruct(SPIT, '', [
       wbInteger('Type', itU32, wbEnum([
