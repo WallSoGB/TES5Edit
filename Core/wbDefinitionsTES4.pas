@@ -33,7 +33,7 @@ var
   wbHeadPartIndexEnum: IwbEnumDef;
   wbMagicSchoolEnum: IwbEnumDef;
   wbMajorSkillEnum: IwbEnumDef;
-  wbOBMEResolutionInfo: IwbEnumDef;
+  wbOBMEResolutionEnum: IwbEnumDef;
   wbResistEnum: IwbEnumDef;
   wbSkillEnum: IwbEnumDef;
   wbSpecializationEnum: IwbEnumDef;
@@ -1238,92 +1238,93 @@ begin
 {>>> Enums <<<}
 
   wbActorValueEnum :=
-    wbEnum([], [
-      -1, 'None',
-      0,  'Strength',
-      1,  'Intelligence',
-      2,  'Willpower',
-      3,  'Agility',
-      4,  'Speed',
-      5,  'Endurance',
-      6,  'Personality',
-      7,  'Luck',
-      8,  'Health',
-      9,  'Magicka',
-      10, 'Fatigue',
-      11, 'Encumbrance',
-      12, 'Armorer',
-      13, 'Athletics',
-      14, 'Blade',
-      15, 'Block',
-      16, 'Blunt',
-      17, 'Hand To Hand',
-      18, 'Heavy Armor',
-      19, 'Alchemy',
-      20, 'Alteration',
-      21, 'Conjuration',
-      22, 'Destruction',
-      23, 'Illusion',
-      24, 'Mysticism',
-      25, 'Restoration',
-      26, 'Acrobatics',
-      27, 'Light Armor',
-      28, 'Marksman',
-      29, 'Mercantile',
-      30, 'Security',
-      31, 'Sneak',
-      32, 'Speechcraft',
-      33, 'Aggression',
-      34, 'Confidence',
-      35, 'Energy',
-      36, 'Responsibility',
-      37, 'Bounty',
-      38, 'Fame',
-      39, 'Infamy',
-      40, 'Magicka Multiplier',
-      41, 'Night Eye Bonus',
-      42, 'Attack Bonus',
-      43, 'Defend Bonus',
-      44, 'Casting Penalty',
-      45, 'Blindness',
-      46, 'Chameleon',
-      47, 'Invisibility',
-      48, 'Paralysis',
-      49, 'Silence',
-      50, 'Confusion',
-      51, 'Detect Item Range',
-      52, 'Spell Absorb Chance',
-      53, 'Spell Reflect Chance',
-      54, 'Swim Speed Multiplier',
-      55, 'Water Breathing',
-      56, 'Water Walking',
-      57, 'Stunted Magicka',
-      58, 'Detect Life Range',
-      59, 'Reflect Damage',
-      60, 'Telekinesis',
-      61, 'Resist Fire',
-      62, 'Resist Frost',
-      63, 'Resist Disease',
-      64, 'Resist Magic',
-      65, 'Resist Normal Weapons',
-      66, 'Resist Paralysis',
-      67, 'Resist Poison',
-      68, 'Resist Shock',
-      69, 'Vampirism',
-      70, 'Darkness',
-      71, 'Resist Water Damage'
+    wbEnum([
+      {0}  'Strength',
+      {1}  'Intelligence',
+      {2}  'Willpower',
+      {3}  'Agility',
+      {4}  'Speed',
+      {5}  'Endurance',
+      {6}  'Personality',
+      {7}  'Luck',
+      {8}  'Health',
+      {9}  'Magicka',
+      {10} 'Fatigue',
+      {11} 'Encumbrance',
+      {12} 'Armorer',
+      {13} 'Athletics',
+      {14} 'Blade',
+      {15} 'Block',
+      {16} 'Blunt',
+      {17} 'Hand To Hand',
+      {18} 'Heavy Armor',
+      {19} 'Alchemy',
+      {20} 'Alteration',
+      {21} 'Conjuration',
+      {22} 'Destruction',
+      {23} 'Illusion',
+      {24} 'Mysticism',
+      {25} 'Restoration',
+      {26} 'Acrobatics',
+      {27} 'Light Armor',
+      {28} 'Marksman',
+      {29} 'Mercantile',
+      {30} 'Security',
+      {31} 'Sneak',
+      {32} 'Speechcraft',
+      {33} 'Aggression',
+      {34} 'Confidence',
+      {35} 'Energy',
+      {36} 'Responsibility',
+      {37} 'Bounty',
+      {38} 'Fame',
+      {39} 'Infamy',
+      {40} 'Magicka Multiplier',
+      {41} 'Night Eye Bonus',
+      {42} 'Attack Bonus',
+      {43} 'Defend Bonus',
+      {44} 'Casting Penalty',
+      {45} 'Blindness',
+      {46} 'Chameleon',
+      {47} 'Invisibility',
+      {48} 'Paralysis',
+      {49} 'Silence',
+      {50} 'Confusion',
+      {51} 'Detect Item Range',
+      {52} 'Spell Absorb Chance',
+      {53} 'Spell Reflect Chance',
+      {54} 'Swim Speed Multiplier',
+      {55} 'Water Breathing',
+      {56} 'Water Walking',
+      {57} 'Stunted Magicka',
+      {58} 'Detect Life Range',
+      {59} 'Reflect Damage',
+      {60} 'Telekinesis',
+      {61} 'Resist Fire',
+      {62} 'Resist Frost',
+      {63} 'Resist Disease',
+      {64} 'Resist Magic',
+      {65} 'Resist Normal Weapons',
+      {66} 'Resist Paralysis',
+      {67} 'Resist Poison',
+      {68} 'Resist Shock',
+      {69} 'Vampirism',
+      {70} 'Darkness',
+      {71} 'Resist Water Damage'
+    ], [
+      255, 'None'
     ]);
 
   wbAttributeEnum :=
-    wbEnum([], [
-      0,  'Strength',
-      1,  'Intelligence',
-      2,  'Willpower',
-      3,  'Agility',
-      4,  'Speed',
-      5,  'Endurance',
-      6,  'Personality',
-      7,  'Luck'
+    wbEnum([
+      {0} 'Strength',
+      {1} 'Intelligence',
+      {2} 'Willpower',
+      {3} 'Agility',
+      {4} 'Speed',
+      {5} 'Endurance',
+      {6} 'Personality',
+      {7} 'Luck'
     ]);
 
   wbFormTypeEnum :=
@@ -1367,98 +1368,107 @@ begin
     ]);
 
   wbHeadPartIndexEnum :=
-    wbEnum([], [
-      0, 'Head',
-      1, 'Ear (Male)',
-      2, 'Ear (Female)',
-      3, 'Mouth',
-      4, 'Teeth (Lower)',
-      5, 'Teeth (Upper)',
-      6, 'Tongue',
-      7, 'Eye (Left)',
-      8, 'Eye (Right)'
+    wbEnum([
+      {0} 'Head',
+      {1} 'Ear (Male)',
+      {2} 'Ear (Female)',
+      {3} 'Mouth',
+      {4} 'Teeth (Lower)',
+      {5} 'Teeth (Upper)',
+      {6} 'Tongue',
+      {7} 'Eye (Left)',
+      {8} 'Eye (Right)'
     ]);
 
   wbMagicSchoolEnum :=
-    wbEnum([], [
-      0, 'Alteration',
-      1, 'Conjuration',
-      2, 'Destruction',
-      3, 'Illusion',
-      4, 'Mysticism',
-      5, 'Restoration'
+    wbEnum([
+      {0} 'Alteration',
+      {1} 'Conjuration',
+      {2} 'Destruction',
+      {3} 'Illusion',
+      {4} 'Mysticism',
+      {5} 'Restoration'
     ]);
 
   wbMajorSkillEnum :=
     wbEnum([], [
-      -1, 'None',
-      12, 'Armoer',
-      13, 'Athletics',
-      14, 'Blade',
-      15, 'Block',
-      16, 'Blunt',
-      17, 'Hand To Hand',
-      18, 'Heavy Armor',
-      19, 'Alchemy',
-      20, 'Alteration',
-      21, 'Conjuration',
-      22, 'Destruction',
-      23, 'Illusion',
-      24, 'Mysticism',
-      25, 'Restoration',
-      26, 'Acrobatics',
-      27, 'Light Armor',
-      28, 'Marksman',
-      29, 'Mercantile',
-      30, 'Security',
-      31, 'Sneak',
-      32, 'Speechcraft'
+      12,  'Armoer',
+      13,  'Athletics',
+      14,  'Blade',
+      15,  'Block',
+      16,  'Blunt',
+      17,  'Hand To Hand',
+      18,  'Heavy Armor',
+      19,  'Alchemy',
+      20,  'Alteration',
+      21,  'Conjuration',
+      22,  'Destruction',
+      23,  'Illusion',
+      24,  'Mysticism',
+      25,  'Restoration',
+      26,  'Acrobatics',
+      27,  'Light Armor',
+      28,  'Marksman',
+      29,  'Mercantile',
+      30,  'Security',
+      31,  'Sneak',
+      32,  'Speechcraft',
+      255, 'None'
+    ]);
+
+  wbOBMEResolutionEnum :=
+    wbEnum([
+      {0} 'None',
+      {1} 'FormID',
+      {2} 'Magic Effect Code',
+      {3} 'Actor Value'
     ]);
 
   wbResistEnum :=
     wbEnum([], [
-      -1, 'None',
-      61, 'Resist Fire',
-      62, 'Resist Frost',
-      63, 'Resist Disease',
-      64, 'Resist Magic',
-      65, 'Resist Normal Weapons',
-      66, 'Resist Paralysis',
-      67, 'Resist Poison',
-      68, 'Resist Shock'
+      61,  'Resist Fire',
+      62,  'Resist Frost',
+      63,  'Resist Disease',
+      64,  'Resist Magic',
+      65,  'Resist Normal Weapons',
+      66,  'Resist Paralysis',
+      67,  'Resist Poison',
+      68,  'Resist Shock',
+      255, 'None'
     ]);
 
   wbSkillEnum :=
-    wbEnum([], [
-      0,   'Armorer',
-      1,   'Athletics',
-      2,   'Blade',
-      3,   'Block',
-      4,   'Blunt',
-      5,   'Hand To Hand',
-      6,   'Heavy Armor',
-      7,   'Alchemy',
-      8,   'Alteration',
-      9,   'Conjuration',
-      10,  'Destruction',
-      11,  'Illusion',
-      12,  'Mysticism',
-      13,  'Restoration',
-      14,  'Acrobatics',
-      15,  'Light Armor',
-      16,  'Marksman',
-      17,  'Mercantile',
-      18,  'Security',
-      19,  'Sneak',
-      20,  'Speechcraft',
+    wbEnum([
+      {0}   'Armorer',
+      {1}   'Athletics',
+      {2}   'Blade',
+      {3}   'Block',
+      {4}   'Blunt',
+      {5}   'Hand To Hand',
+      {6}   'Heavy Armor',
+      {7}   'Alchemy',
+      {8}   'Alteration',
+      {9}   'Conjuration',
+      {10}  'Destruction',
+      {11}  'Illusion',
+      {12}  'Mysticism',
+      {13}  'Restoration',
+      {14}  'Acrobatics',
+      {15}  'Light Armor',
+      {16}  'Marksman',
+      {17}  'Mercantile',
+      {18}  'Security',
+      {19}  'Sneak',
+      {20}  'Speechcraft'
+    ], [
       255, 'None'
     ]);
 
   wbSpecializationEnum :=
-    wbEnum([], [
-      0, 'Combat',
-      1, 'Magic',
-      2, 'Stealth'
+    wbEnum([
+      {0} 'Combat',
+      {1} 'Magic',
+      {2} 'Stealth'
     ]);
 
 {>>> Simple Defs <<<}
@@ -1571,15 +1581,6 @@ begin
       wbString(INAM, 'Insignia')
     ]);
 
-
-  wbOBMEResolutionInfo :=
-    wbEnum([
-      'None',
-      'FormID',
-      'Magic Effect Code',
-      'Actor Value'
-    ]);
-
   wbOBMEVersion :=
     wbStruct('OBME Version', [
       wbInteger('Beta', itU8),
@@ -1610,12 +1611,14 @@ begin
         wbInteger('RefCount', itU32),
         wbInteger('CompiledSize', itU32),
         wbInteger('VariableCount', itU32),
-        wbInteger('Type', itU32, wbEnum([
-          'Object',
-          'Quest'
-        ], [
-          $100, 'Magic Effect'
-        ]))
+        wbInteger('Type', itU32,
+          wbEnum([
+            {0} 'Object',
+            {1} 'Quest'
+          ], [
+            $100, 'Magic Effect'
+          ])
+        )
       ]).SetSummaryKeyOnValue([4, 2, 1, 3])
         .SetSummaryPrefixSuffixOnValue(4, '', '')
         .SetSummaryPrefixSuffixOnValue(2, '{CompiledSize = ', ',')
@@ -1628,12 +1631,14 @@ begin
         wbInteger('RefCount', itU32),
         wbInteger('CompiledSize', itU32),
         wbInteger('VariableCount', itU32),
-        wbInteger('Type', itU32, wbEnum([
-          'Object',
-          'Quest'
-        ], [
-          $100, 'Magic Effect'
-        ])),
+        wbInteger('Type', itU32,
+          wbEnum([
+            {0} 'Object',
+            {1} 'Quest'
+          ], [
+            $100, 'Magic Effect'
+          ])
+        ),
         wbByteArray('Unknown')
       ]).SetSummaryKeyOnValue([4, 2, 1, 3])
         .SetSummaryPrefixSuffixOnValue(4, '', '')
@@ -1654,8 +1659,14 @@ wbEffects :=
             wbInteger('Magnitude', itU32),
             wbInteger('Area', itU32),
             wbInteger('Duration', itU32),
-            wbInteger('Type', itU32, wbEnum(['Self', 'Touch', 'Target'])),
-            wbInteger('Actor Value', itS32, wbActorValueEnum)
+            wbInteger('Type', itU32,
+              wbEnum([
+                {0} 'Self',
+                {1} 'Touch',
+                {2} 'Target'
+              ])
+            ),
+            wbInteger('Actor Value', itU32, wbActorValueEnum)
           ]).SetAfterLoad(wbEFITAfterLoad)
             .SetRequired,
           wbRStructSK([0], 'Script Effect', [
@@ -1675,8 +1686,8 @@ wbEffects :=
               wbStruct(EFME, 'Oblivion Magic Extender', [
                 wbInteger('Record Version', itU8),
                 wbOBMEVersion,
-                wbInteger('EFIT Param Info', itU8, wbOBMEResolutionInfo),
-                wbInteger('EFIX Param Info', itU8, wbOBMEResolutionInfo),
+                wbInteger('EFIT Param Info', itU8, wbOBMEResolutionEnum),
+                wbInteger('EFIX Param Info', itU8, wbOBMEResolutionEnum),
                 wbUnused($0A)
               ]),
               wbStringMgefCode(EFID, 'Magic Effect Code', 4).SetRequired,
@@ -1685,7 +1696,13 @@ wbEffects :=
                 wbInteger('Magnitude', itU32),
                 wbInteger('Area', itU32),
                 wbInteger('Duration', itU32),
-                wbInteger('Type', itU32, wbEnum(['Self', 'Touch', 'Target'])),
+                wbInteger('Type', itU32,
+                  wbEnum([
+                    {0} 'Self',
+                    {1} 'Touch',
+                    {2} 'Target'
+                  ])
+                ),
                 wbUnion('Param #1', wbEFITOBMEParamDecider, [
                   wbByteArray('Param #1 - Unknown Type', 4),
                   wbFormID('Param #1 - FormID'),
@@ -1729,11 +1746,6 @@ wbEffects :=
     wbRArray('References',
       wbRUnion('', [
         wbFormID(SCRO, 'Global Reference'),
-//        wbFormIDCk(SCRO, 'Global Reference',
-//          [ACTI, DOOR, FLOR, STAT, FURN, CREA, SPEL, NPC_, CONT, ARMO, AMMO, MISC, WEAP,
-//           INGR, SLGM, SGST, BOOK, KEYM, CLOT, ALCH, APPA, LIGH, QUST, PLYR, PACK, LVLI,
-//           FACT, ACHR, REFR, ACRE, GLOB, DIAL, CELL, SOUN, MGEF, WTHR, CLAS, EFSH, RACE,
-//           LVLC, CSTY, WATR, WRLD, SCPT, BSGN, TREE, ENCH, NULL]),
         wbInteger(SCRV, 'Local Variable', itU32)
       ])
     ).IncludeFlag(dfNotAlignable);
@@ -1748,24 +1760,25 @@ wbEffects :=
   wbSLSD := wbStructSK(SLSD, [0], 'Local Variable Data', [
     wbInteger('Index', itU32),
     wbUnused(12),
-    wbInteger('Flags', itU8, wbFlags(['IsLongOrShort']), cpCritical),
+    wbInteger('IsLongOrShort', itU8, wbBoolEnum, cpCritical),
     wbByteArray('Unused')
   ]).IncludeFlag(dfSummaryMembersNoName);
 
   wbCSDTs :=
     wbRArrayS('Sound Types',
       wbRStructSK([0], 'Sound Type', [
-        wbInteger(CSDT, 'Type', itU32,wbEnum([
-          {0x00} 'Left Foot',
-          {0x01} 'Right Foot',
-          {0x02} 'Left Back Foot',
-          {0x03} 'Right Back Foot',
-          {0x04} 'Idle',
-          {0x05} 'Aware',
-          {0x06} 'Attack',
-          {0x07} 'Hit',
-          {0x08} 'Death',
-          {0x09} 'Weapon'
+        wbInteger(CSDT, 'Type', itU32,
+          wbEnum([
+            {0} 'Left Foot',
+            {1} 'Right Foot',
+            {2} 'Left Back Foot',
+            {3} 'Right Back Foot',
+            {4} 'Idle',
+            {5} 'Aware',
+            {6} 'Attack',
+            {7} 'Hit',
+            {8} 'Death',
+            {9} 'Weapon'
         ])),
         wbSoundTypeSounds
       ])
@@ -1773,9 +1786,7 @@ wbEffects :=
 
   wbXESP := wbStruct(XESP, 'Enable Parent', [
     wbFormIDCk('Reference', [ACHR, ACRE, PLYR, REFR]),
-    wbInteger('Flags', itU8, wbFlags([
-      'Set Enable State to Opposite of Parent'
-    ])),
+    wbInteger('Set Enable State To Opposite Of Parent', itU8, wbBoolEnum),
     wbUnused(3)
   ]);
 
@@ -1866,8 +1877,8 @@ wbEffects :=
       wbInteger('Value', itS32),
       wbInteger('Flags', itU8,
         wbFlags([
-          'No auto-calculation',
-          'Food item'
+          {0} 'No auto-calculation',
+          {1} 'Food item'
         ])
       ).IncludeFlag(dfCollapsed, wbCollapseFlags),
       wbUnused(3)
@@ -1911,10 +1922,10 @@ wbEffects :=
     wbStruct(DATA, '', [
       wbInteger('Type', itU8,
         wbEnum([
-          'Mortar and Pestle',
-          'Alembic',
-          'Calcinator',
-          'Retort'
+          {0} 'Mortar and Pestle',
+          {1} 'Alembic',
+          {2} 'Calcinator',
+          {3} 'Retort'
         ])
       ),
       wbInteger('Value', itU32),
@@ -1934,35 +1945,31 @@ wbEffects :=
     wbStruct(BMDT, '', [
       wbInteger('Biped Flags', itU16,
         wbFlags([
-          {0x00000001} 'Head',
-          {0x00000002} 'Hair',
-          {0x00000004} 'Upper Body',
-          {0x00000008} 'Lower Body',
-          {0x00000010} 'Hand',
-          {0x00000020} 'Foot',
-          {0x00000040} 'Right Ring',
-          {0x00000080} 'Left Ring',
-          {0x00000100} 'Amulet',
-          {0x00000200} 'Weapon',
-          {0x00000400} 'Back Weapon',
-          {0x00000800} 'Side Weapon',
-          {0x00001000} 'Quiver',
-          {0x00002000} 'Shield',
-          {0x00004000} 'Torch',
-          {0x00008000} 'Tail'
+          {0}  'Head',
+          {1}  'Hair',
+          {2}  'Upper Body',
+          {3}  'Lower Body',
+          {4}  'Hand',
+          {5}  'Foot',
+          {6}  'Right Ring',
+          {7}  'Left Ring',
+          {8}  'Amulet',
+          {9}  'Weapon',
+          {10} 'Back Weapon',
+          {11} 'Side Weapon',
+          {12} 'Quiver',
+          {13} 'Shield',
+          {14} 'Torch',
+          {15} 'Tail'
         ])
       ).IncludeFlag(dfCollapsed, wbCollapseFlags),
       wbInteger('General Flags', itU8,
-        wbFlags([
-          {0x0001} 'Hide Rings',
-          {0x0002} 'Hide Amulets',
-          {0x0004} '',
-          {0x0008} '',
-          {0x0010} '',
-          {0x0020} '',
-          {0x0040} 'Non-Playable',
-          {0x0080} 'Heavy armor'
-        ])
+        wbFlags(wbSparseFlags([
+          0, 'Hide Rings',
+          1, 'Hide Amulets',
+          6, 'Non-Playable',
+          7, 'Heavy armor'
+        ], False, 8))
       ).IncludeFlag(dfCollapsed, wbCollapseFlags),
       wbUnused(1)
     ]).SetRequired,
@@ -1994,8 +2001,8 @@ wbEffects :=
     wbStruct(DATA, '', [
       wbInteger('Flags', itU8,
         wbFlags([
-          'Scroll',
-          'Can''t be taken'
+          {0} 'Scroll',
+          {1} 'Can''t be taken'
         ])
       ).IncludeFlag(dfCollapsed, wbCollapseFlags),
       wbInteger('Teaches', itU8, wbSkillEnum),
@@ -2021,16 +2028,15 @@ wbEffects :=
     wbEDID,
     wbFULL,
     wbInteger(DATA, 'Flags', itU8,
-      wbFlags([
-        {0x01} 'Is Interior Cell',
-        {0x02} 'Has water',
-        {0x04} 'Can''t Travel From Here',
-        {0x08} 'Force hide land (exterior cell) / Oblivion interior (interior cell)',
-        {0x10} '',
-        {0x20} 'Public Area',
-        {0x40} 'Hand changed',
-        {0x80} 'Behave like exterior'
-      ])
+      wbFlags(wbSparseFlags([
+        0, 'Is Interior Cell',
+        1, 'Has water',
+        2, 'Can''t Travel From Here',
+        3, 'Force hide land (exterior cell) / Oblivion interior (interior cell)',
+        5, 'Public Area',
+        6, 'Hand changed',
+        7, 'Behave like exterior'
+      ], False, 8))
     ).SetRequired
      .IncludeFlag(dfCollapsed, wbCollapseFlags),
     wbStruct(XCLL, 'Lighting', [
@@ -2065,16 +2071,16 @@ wbEffects :=
     wbICON,
     wbStruct(DATA, '', [
       wbArrayS('Primary Attributes',
-        wbInteger('Primary Attribute', itS32, wbAttributeEnum),
+        wbInteger('Primary Attribute', itU32, wbAttributeEnum),
       2),
       wbInteger('Specialization', itU32, wbSpecializationEnum),
       wbArrayS('Major Skills',
-        wbInteger('Major Skill', itS32, wbMajorSkillEnum),
+        wbInteger('Major Skill', itU32, wbMajorSkillEnum),
       7),
       wbInteger('Flags', itU32,
         wbFlags([
-          'Playable',
-          'Guard'
+          {0} 'Playable',
+          {1} 'Guard'
         ])
       ).IncludeFlag(dfCollapsed, wbCollapseFlags),
       wbInteger('Buys/Sells and Services', itU32, wbServiceFlags),
@@ -2109,35 +2115,30 @@ wbEffects :=
     wbStruct(BMDT, '', [
       wbInteger('Biped Flags', itU16,
         wbFlags([
-          {0x00000001} 'Head',
-          {0x00000002} 'Hair',
-          {0x00000004} 'Upper Body',
-          {0x00000008} 'Lower Body',
-          {0x00000010} 'Hand',
-          {0x00000020} 'Foot',
-          {0x00000040} 'Right Ring',
-          {0x00000080} 'Left Ring',
-          {0x00000100} 'Amulet',
-          {0x00000200} 'Weapon',
-          {0x00000400} 'Back Weapon',
-          {0x00000800} 'Side Weapon',
-          {0x00001000} 'Quiver',
-          {0x00002000} 'Shield',
-          {0x00004000} 'Torch',
-          {0x00008000} 'Tail'
+          {0}  'Head',
+          {1}  'Hair',
+          {2}  'Upper Body',
+          {3}  'Lower Body',
+          {4}  'Hand',
+          {5}  'Foot',
+          {6}  'Right Ring',
+          {7}  'Left Ring',
+          {8}  'Amulet',
+          {9}  'Weapon',
+          {10} 'Back Weapon',
+          {11} 'Side Weapon',
+          {12} 'Quiver',
+          {13} 'Shield',
+          {14} 'Torch',
+          {15} 'Tail'
         ])
       ).IncludeFlag(dfCollapsed, wbCollapseFlags),
       wbInteger('General Flags', itU8,
-        wbFlags([
-          {0x0001} 'Hide Rings',
-          {0x0002} 'Hide Amulets',
-          {0x0004} '',
-          {0x0008} '',
-          {0x0010} '',
-          {0x0020} '',
-          {0x0040} 'Non-Playable',
-          {0x0080} '' {Heavy armor}
-        ])
+        wbFlags(wbSparseFlags([
+          0, 'Hide Rings',
+          1, 'Hide Amulets',
+          6, 'Non-Playable'
+        ], False, 7))
       ).IncludeFlag(dfCollapsed, wbCollapseFlags),
       wbUnused(1)
     ]).SetRequired,
@@ -2164,10 +2165,9 @@ wbEffects :=
     wbCNTOs,
     wbStruct(DATA, '', [
       wbInteger('Flags', itU8,
-        wbFlags([
-          '',
-          'Respawns'
-        ])
+        wbFlags(wbSparseFlags([
+          1, 'Respawns'
+        ], False, 2))
       ).IncludeFlag(dfCollapsed, wbCollapseFlags),
       wbFloat('Weight')
     ]).SetRequired,
@@ -2191,29 +2191,25 @@ wbEffects :=
     wbModelInfos(NIFT, 'Model List Textures'),
     wbStruct(ACBS, 'Configuration', [
       wbInteger('Flags', itU32,
-        wbFlags([
-          {0x000001} 'Biped',
-          {0x000002} 'Essential',
-          {0x000004} 'Weapon & Shield',
-          {0x000008} 'Respawn',
-          {0x000010} 'Swims',
-          {0x000020} 'Flies',
-          {0x000040} 'Walks',
-          {0x000080} 'PC Level Offset',
-          {0x000100} 'Unused', //??
-          {0x000200} 'No Low Level Processing',
-          {0x000400} 'Unused', //??
-          {0x000800} 'No Blood Spray',
-          {0x001000} 'No Blood Decal',
-          {0x002000} '',
-          {0x004000} '',
-          {0x008000} 'No Head',
-          {0x010000} 'No Right Arm',
-          {0x020000} 'No Left Arm',
-          {0x040000} 'No Combat in Water',
-          {0x080000} 'No Shadow',
-          {0x100000} 'No Corpse Check'
-        ])
+        wbFlags(wbSparseFlags([
+          0,  'Biped',
+          1,  'Essential',
+          2,  'Weapon & Shield',
+          3,  'Respawn',
+          4,  'Swims',
+          5,  'Flies',
+          6,  'Walks',
+          7,  'PC Level Offset',
+          9,  'No Low Level Processing',
+          11, 'No Blood Spray',
+          12, 'No Blood Decal',
+          15, 'No Head',
+          16, 'No Right Arm',
+          17, 'No Left Arm',
+          18, 'No Combat in Water',
+          19, 'No Shadow',
+          20, 'No Corpse Check'
+        ], False, 21), True)
       ).IncludeFlag(dfCollapsed, wbCollapseFlags),
       wbInteger('Base spell points', itU16),
       wbInteger('Fatigue', itU16),
@@ -2244,12 +2240,12 @@ wbEffects :=
     wbStruct(DATA, 'Creature Data', [
       wbInteger('Type', itU8,
         wbEnum([
-          'Creature',
-          'Daedra',
-          'Undead',
-          'Humanoid',
-          'Horse',
-          'Giant'
+          {0} 'Creature',
+          {1} 'Daedra',
+          {2} 'Undead',
+          {3} 'Humanoid',
+          {4} 'Horse',
+          {5} 'Giant'
         ])
       ),
       wbInteger('Combat Skill', itU8),
@@ -2314,14 +2310,14 @@ wbEffects :=
       wbFloat('Hold Timer (max)'),
       wbInteger('Flags', itU8,
         wbFlags([
-          'Advanced',
-          'Choose Attack using % Chance',
-          'Ignore Allies in Area',
-          'Will Yield',
-          'Rejects Yields',
-          'Fleeing Disabled',
-          'Prefers Ranged',
-          'Melee Alert OK'
+          {0} 'Advanced',
+          {1} 'Choose Attack using % Chance',
+          {2} 'Ignore Allies in Area',
+          {3} 'Will Yield',
+          {4} 'Rejects Yields',
+          {5} 'Fleeing Disabled',
+          {6} 'Prefers Ranged',
+          {7} 'Melee Alert OK'
         ])
       ).IncludeFlag(dfCollapsed, wbCollapseFlags),
       wbInteger('Acrobatic Dodge % Chance', itU8),
@@ -2396,10 +2392,10 @@ wbEffects :=
     wbFormIDCk(BNAM, 'Loop sound', [SOUN]),
     wbInteger(FNAM, 'Flags', itU8,
       wbFlags([
-        {0x01} 'Oblivion gate',
-        {0x02} 'Automatic door',
-        {0x04} 'Hidden',
-        {0x08} 'Minimal use'
+        {0} 'Oblivion gate',
+        {1} 'Automatic door',
+        {2} 'Hidden',
+        {3} 'Minimal use'
       ])
     ).SetRequired,
     wbRArrayS('Random teleport destinations',
@@ -2413,14 +2409,12 @@ wbEffects :=
     wbString(ICO2, 'Particle Shader Texture'),
     wbStruct(DATA, '', [
       wbInteger('Flags', itU8,
-        wbFlags([
-          {0} 'No Membrane Shader',
-          {1} '',
-          {2} '',
-          {3} 'No Particle Shader',
-          {4} 'Edge Effect - Inverse',
-          {5} 'Membrane Shader - Affect Skin Only'
-        ])
+        wbFlags(wbSparseFlags([
+          0, 'No Membrane Shader',
+          3, 'No Particle Shader',
+          4, 'Edge Effect - Inverse',
+          5, 'Membrane Shader - Affect Skin Only'
+        ], False, 6))
       ).IncludeFlag(dfCollapsed, wbCollapseFlags),
       wbUnused(3),
       wbInteger('Membrane Shader - Source Blend Mode', itU32, wbBlendModeEnum),
@@ -2519,9 +2513,9 @@ wbEffects :=
     wbFactionRelations,
     wbInteger(DATA, 'Flags', itU8,
       wbFlags([
-        'Hidden from Player',
-        'Evil',
-        'Special Combat'
+        {0} 'Hidden from Player',
+        {1} 'Evil',
+        {2} 'Special Combat'
       ])
     ).SetRequired
      .IncludeFlag(dfCollapsed, wbCollapseFlags),
@@ -2553,11 +2547,13 @@ wbEffects :=
 
   wbRecord(GLOB, 'Global', [
     wbEDID,
-    wbInteger(FNAM, 'Type', itU8, wbEnum([], [
-      Ord('s'), 'Short',
-      Ord('l'), 'Long',
-      Ord('f'), 'Float'
-    ])).SetDefaultEditValue('Float')
+    wbInteger(FNAM, 'Type', itU8,
+      wbEnum([], [
+        Ord('s'), 'Short',
+        Ord('l'), 'Long',
+        Ord('f'), 'Float'
+      ])
+    ).SetDefaultEditValue('Float')
        .SetRequired,
     wbFloat(FLTV, 'Value').SetRequired
   ]).SetSummaryKey([2]);
@@ -2584,14 +2580,14 @@ wbEffects :=
       wbUnused(2),
       wbInteger('Unit from water type', itU32,
         wbEnum([
-          'Above - At Least',
-          'Above - At Most',
-          'Below - At Least',
-          'Below - At Most',
-          'Either - At Least',
-          'Either - At Most',
-          'Either - At Most Above',
-          'Either - At Most Below'
+          {0} 'Above - At Least',
+          {1} 'Above - At Most',
+          {2} 'Below - At Least',
+          {3} 'Below - At Most',
+          {4} 'Either - At Least',
+          {5} 'Either - At Most',
+          {6} 'Either - At Most Above',
+          {7} 'Either - At Most Below'
         ])
       ),
       wbFloat('Position Range'),
@@ -2600,9 +2596,9 @@ wbEffects :=
       wbFloat('Wave Period'),
       wbInteger('Flags', itU8,
         wbFlags([
-          'Vertex Lighting',
-          'Uniform Scaling',
-          'Fit to Slope'
+          {0} 'Vertex Lighting',
+          {1} 'Uniform Scaling',
+          {2} 'Fit to Slope'
         ])
       ).IncludeFlag(dfCollapsed, wbCollapseFlags),
       wbUnused(3)
@@ -2616,10 +2612,10 @@ wbEffects :=
     wbString(ICON, 'Texture').SetRequired,
     wbInteger(DATA, 'Flags', itU8,
       wbFlags([
-        'Playable',
-        'Not Male',
-        'Not Female',
-        'Fixed'
+        {0} 'Playable',
+        {1} 'Not Male',
+        {2} 'Not Female',
+        {3} 'Fixed'
       ])
     ).SetRequired
      .IncludeFlag(dfCollapsed, wbCollapseFlags)
@@ -2639,26 +2635,26 @@ wbEffects :=
   wbRecord(INFO, 'Dialog response', [
     wbStruct(DATA, '', [
       wbInteger('Type', itU8,
-        wbEnum([], [
-          0, 'Topic',
-          1, 'Conversation',
-          2, 'Combat',
-          3, 'Persuasion',
-          4, 'Detection',
-          5, 'Service',
-          6, 'Miscellaneous'
+        wbEnum([
+          {0} 'Topic',
+          {1} 'Conversation',
+          {2} 'Combat',
+          {3} 'Persuasion',
+          {4} 'Detection',
+          {5} 'Service',
+          {6} 'Miscellaneous'
         ])
       ),
       wbNextSpeaker,
       wbInteger('Flags', itU8,
         wbFlags([
-          {0x0001} 'Goodbye',
-          {0x0002} 'Random',
-          {0x0004} 'Say Once',
-          {0x0008} 'Run Immediately',
-          {0x0010} 'Info Refusal',
-          {0x0020} 'Random End',
-          {0x0040} 'Run for Rumors'
+          {0} 'Goodbye',
+          {1} 'Random',
+          {2} 'Say Once',
+          {3} 'Run Immediately',
+          {4} 'Info Refusal',
+          {5} 'Random End',
+          {6} 'Run for Rumors'
         ])
       ).IncludeFlag(dfCollapsed, wbCollapseFlags)
     ], cpNormal, True, nil, 2),
@@ -2671,15 +2667,17 @@ wbEffects :=
     wbRArray('Responses',
       wbRStruct('Response', [
         wbStruct(TRDT, 'Response Data', [
-          wbInteger('Emotion Type', itU32, wbEnum([
-            {0} 'Neutral',
-            {1} 'Anger',
-            {2} 'Disgust',
-            {3} 'Fear',
-            {4} 'Sad',
-            {5} 'Happy',
-            {6} 'Surprise'
-          ])),
+          wbInteger('Emotion Type', itU32,
+            wbEnum([
+              {0} 'Neutral',
+              {1} 'Anger',
+              {2} 'Disgust',
+              {3} 'Fear',
+              {4} 'Sad',
+              {5} 'Happy',
+              {6} 'Surprise'
+            ])
+          ),
           wbInteger('Emotion Value', itS32),
           wbUnused(4),
           wbInteger('Response number', itU8),
@@ -2718,8 +2716,8 @@ wbEffects :=
       wbInteger('Value', itS32),
       wbInteger('Flags', itU8,
         wbFlags([
-          'No auto-calculation',
-          'Food item'
+          {0} 'No auto-calculation',
+          {1} 'Food item'
         ])
       ).IncludeFlag(dfCollapsed, wbCollapseFlags),
       wbUnused(3)
@@ -2747,19 +2745,14 @@ wbEffects :=
       18, 'Compressed'
     ])), [
     wbInteger(DATA, 'Flags', itU32,
-      wbFlags([
-        {0x001} 'Has Vertex Normals/Height Map',
-        {0x002} 'Has Vertex Colours',
-        {0x004} 'Has Layers',
-        {0x008} 'Unknown 4',
-        {0x010} 'Auto-Calc Normals',
-        {0x020} '',
-        {0x040} '',
-        {0x080} '',
-        {0x100} '',
-        {0x200} '',
-        {0x400} 'Ignored'
-      ])
+      wbFlags(wbSparseFlags([
+        0,  'Has Vertex Normals/Height Map',
+        1,  'Has Vertex Colours',
+        2,  'Has Layers',
+        3,  'Unknown 4',
+        4,  'Auto-Calc Normals',
+        10, 'Ignored'
+      ], False, 11))
     ).IncludeFlag(dfCollapsed, wbCollapseFlags),
     wbLandNormals,
     wbLandHeights,
@@ -2785,17 +2778,17 @@ wbEffects :=
       wbByteColors('Color'),
       wbInteger('Flags', itU32,
         wbFlags([
-          {0x00000001} 'Dynamic',
-          {0x00000002} 'Can be Carried',
-          {0x00000004} 'Negative',
-          {0x00000008} 'Flicker',
-          {0x00000010} 'Unused',
-          {0x00000020} 'Off By Default',
-          {0x00000040} 'Flicker Slow',
-          {0x00000080} 'Pulse',
-          {0x00000100} 'Pulse Slow',
-          {0x00000200} 'Spot Light',
-          {0x00000400} 'Spot Shadow'
+          {0}  'Dynamic',
+          {1}  'Can be Carried',
+          {2}  'Negative',
+          {3}  'Flicker',
+          {4}  'Unused',
+          {5}  'Off By Default',
+          {6}  'Flicker Slow',
+          {7}  'Pulse',
+          {8}  'Pulse Slow',
+          {9}  'Spot Light',
+          {10} 'Spot Shadow'
         ])
       ).IncludeFlag(dfCollapsed, wbCollapseFlags),
       wbFloat('Falloff Exponent').SetDefaultNativeValue(1),
@@ -2833,21 +2826,21 @@ wbEffects :=
     wbStruct(HNAM, 'Havok Data', [
       wbInteger('Material Type', itU8,
         wbEnum([
-          {00} 'STONE',
-          {01} 'CLOTH',
-          {02} 'DIRT',
-          {03} 'GLASS',
-          {04} 'GRASS',
-          {05} 'METAL',
-          {06} 'ORGANIC',
-          {07} 'SKIN',
-          {08} 'WATER',
-          {09} 'WOOD',
-          {10} 'HEAVY STONE',
-          {11} 'HEAVY METAL',
-          {12} 'HEAVY WOOD',
-          {13} 'CHAIN',
-          {14} 'SNOW'
+          {0}  'Stone',
+          {1}  'Cloth',
+          {2}  'Dirt',
+          {3}  'Glass',
+          {4}  'Grass',
+          {5}  'Metal',
+          {6}  'Organic',
+          {7}  'Skin',
+          {8}  'Water',
+          {9}  'Wood',
+          {10} 'Heavy Stone',
+          {11} 'Heavy Metal',
+          {12} 'Heavy Wood',
+          {13} 'Chain',
+          {14} 'Snow'
         ])
       ).SetDefaultNativeValue(2),
       wbInteger('Friction', itU8).SetDefaultNativeValue(30),
@@ -2864,13 +2857,13 @@ wbEffects :=
     wbInteger(LVLD, 'Chance none', itU8).SetRequired,
     wbInteger(LVLF, 'Flags', itU8,
       wbFlags([
-        {0x01} 'Calculate from all levels <= player''s level',
-        {0x02} 'Calculate for each item in count'
+        {0} 'Calculate from all levels <= player''s level',
+        {1} 'Calculate for each item in count'
       ])
     ).SetRequired
      .IncludeFlag(dfCollapsed, wbCollapseFlags),
     wbRArrayS('Leveled List Entries',
-      wbLeveledListEntry('Creature', [CREA, LVLC])
+      wbLeveledListEntry('Creature', [CREA, LVLC, NPC_])
     ).SetRequired,
     wbSCRI,
     wbFormIDCk(TNAM, 'Creature template', [CREA, NPC_])
@@ -2883,8 +2876,8 @@ wbEffects :=
     wbInteger(LVLD, 'Chance none', itU8).SetRequired,
     wbInteger(LVLF, 'Flags', itU8,
       wbFlags([
-        {0x01} 'Calculate from all levels <= player''s level',
-        {0x02} 'Calculate for each item in count'
+        {0} 'Calculate from all levels <= player''s level',
+        {1} 'Calculate for each item in count'
       ])
     ).SetRequired
      .IncludeFlag(dfCollapsed, wbCollapseFlags),
@@ -2900,9 +2893,9 @@ wbEffects :=
     wbInteger(LVLD, 'Chance none', itU8).SetRequired,
     wbInteger(LVLF, 'Flags', itU8,
       wbFlags([
-        {0x01} 'Calculate from all levels <= player''s level',
-        {0x02} 'Calculate for each item in count',
-        {0x04} 'Use all spells'
+        {0} 'Calculate from all levels <= player''s level',
+        {1} 'Calculate for each item in count',
+        {2} 'Use all spells'
       ])
     ).SetRequired
      .IncludeFlag(dfCollapsed, wbCollapseFlags),
@@ -2917,8 +2910,8 @@ wbEffects :=
     wbStruct(OBME, 'Oblivion Magic Extender', [
       wbInteger('Record Version', itU8),
       wbOBMEVersion,
-      wbInteger('Param A Info', itU8, wbOBMEResolutionInfo),
-      wbInteger('Param B Info', itU8, wbOBMEResolutionInfo),
+      wbInteger('Param A Info', itU8, wbOBMEResolutionEnum),
+      wbInteger('Param B Info', itU8, wbOBMEResolutionEnum),
       wbUnused(2),
       wbString('Handler', 4),
       wbInteger('Flag Overrides', itU32,
@@ -2943,40 +2936,31 @@ wbEffects :=
     wbTexturedModel('Model', [MODL, MODB, MODT], []),
     wbStruct(DATA, 'Data', [
       wbInteger('Flags', itU32,
-        wbFlags([
-          {0x00000001} 'Hostile',
-          {0x00000002} 'Recover',
-          {0x00000004} 'Detrimental',
-          {0x00000008} 'Magnitude %',
-          {0x00000010} 'Self',
-          {0x00000020} 'Touch',
-          {0x00000040} 'Target',
-          {0x00000080} 'No duration',
-          {0x00000100} 'No magnitude',
-          {0x00000200} 'No area',
-          {0x00000400} 'FX persist',
-          {0x00000800} 'Spellmaking',
-          {0x00001000} 'Enchanting',
-          {0x00002000} 'No Ingredient',
-          {0x00004000} 'Unknown 14',
-          {0x00008000} 'Unknown 15',
-          {0x00010000} 'Use weapon',
-          {0x00020000} 'Use armor',
-          {0x00040000} 'Use creature',
-          {0x00080000} 'Use skill',
-          {0x00100000} 'Use attribute',
-          {0x00200000} 'Unknown 21',
-          {0x00400000} 'Unknown 22',
-          {0x00800000} 'Unknown 23',
-          {0x01000000} 'Use actor value',
-          {0x02000000} 'Spray projectile type (or Fog if Bolt is specified as well)',
-          {0x04000000} 'Bolt projectile type',
-          {0x08000000} 'No hit effect',
-          {0x10000000} 'Unknown 28',
-          {0x20000000} 'Unknown 29',
-          {0x40000000} 'Unknown 30',
-          {0x80000000} 'Unknown 31'
-        ])
+        wbFlags(wbSparseFlags([
+          0,  'Hostile',
+          1,  'Recover',
+          2,  'Detrimental',
+          3,  'Magnitude %',
+          4,  'Self',
+          5,  'Touch',
+          6,  'Target',
+          7,  'No duration',
+          8,  'No magnitude',
+          9,  'No area',
+          10, 'FX persist',
+          11, 'Spellmaking',
+          12, 'Enchanting',
+          13, 'No Ingredient',
+          16, 'Use weapon',
+          17, 'Use armor',
+          18, 'Use creature',
+          19, 'Use skill',
+          20, 'Use attribute',
+          24, 'Use actor value',
+          25, 'Spray projectile type (or Fog if Bolt is specified as well)',
+          26, 'Bolt projectile type',
+          27, 'No hit effect'
+        ], False, 28), True)
       ).IncludeFlag(dfCollapsed, wbCollapseFlags),
       wbFloat('Base cost'),
       wbUnion('Assoc. Item', wbMGEFFAssocItemDecider, [
@@ -2984,10 +2968,10 @@ wbEffects :=
         wbFormIDCk('Assoc. Weapon', [WEAP]),
         wbFormIDCk('Assoc. Armor', [ARMO, NULL{?}]),
         wbFormIDCk('Assoc. Creature', [CREA, LVLC, NPC_]),
-        wbInteger('Assoc. Actor Value', itS32, wbActorValueEnum)
+        wbInteger('Assoc. Actor Value', itU32, wbActorValueEnum)
       ]),
-      wbInteger('Magic School', itS32, wbMagicSchoolEnum),
-      wbInteger('Resist value', itS32, wbResistEnum),
+      wbInteger('Magic School', itU32, wbMagicSchoolEnum),
+      wbInteger('Resist value', itU32, wbResistEnum),
       wbInteger('Counter Effect Count', itU16), //!!! must be updated automatically when ESCE length changes!
       wbUnused(2),
       wbFormIDCk('Light', [LIGH, NULL]),
@@ -3023,16 +3007,18 @@ wbEffects :=
       ]),
       wbUnion('', wbMISCActorValueDecider, [
         wbFloat('Weight'),
-        wbInteger('Group', itU32, wbEnum([], [
-          $40E00000, ' [NONE]',
-          $40400000, 'AI',
-          $00000000, 'Attribute',
-          $40C00000, 'Combat',
-          $40A00000, 'Misc',
-          $40000000, 'Skill',
-          $40800000, 'Social',
-          $3F800000, 'Stat'
-        ]))
+        wbInteger('Group', itU32,
+          wbEnum([], [
+            $40E00000, ' [NONE]',
+            $40400000, 'AI',
+            $00000000, 'Attribute',
+            $40C00000, 'Combat',
+            $40A00000, 'Misc',
+            $40000000, 'Skill',
+            $40800000, 'Social',
+            $3F800000, 'Stat'
+          ])
+        )
       ])
     ]).SetRequired
   ]);
@@ -3059,7 +3045,7 @@ wbEffects :=
           14, 'Summonable',
           15, 'No Persuasion',
           20, 'Can Corpse Check'
-      ]))),
+      ], False, 21))),
       wbInteger('Base spell points', itU16),
       wbInteger('Fatigue', itU16),
       wbInteger('Barter gold', itU16),
@@ -3155,14 +3141,14 @@ wbEffects :=
         .IncludeFlag(dfSummaryMembersNoName)
     ]).IncludeFlag(dfSummaryMembersNoName),
     wbStruct(PLDT, 'Location', [
-      wbInteger('Type', itS32,
-        wbEnumSummary([
-          {0} 'Near reference', 'near',
-          {1} 'In cell', 'in',
-          {2} 'Near current location', 'near current location',
-          {3} 'Near editor location', 'near editor location',
-          {4} 'Object ID', 'at any',
-          {5} 'Object type', 'at any object type'
+      wbInteger('Type', itU32,
+        wbEnum([
+          {0} 'Near Reference',
+          {1} 'In Cell',
+          {2} 'Near Current Location',
+          {3} 'Near Editor Location',
+          {4} 'Object ID',
+          {5} 'Object Type'
         ])
       ),
       wbUnion('Location', wbPxDTLocationDecider, [
@@ -3179,21 +3165,21 @@ wbEffects :=
       .IncludeFlag(dfSummaryMembersNoName),
     wbStruct(PSDT, 'Schedule', [
       wbInteger('Month', itS8),
-      wbInteger('Day of week', itS8,
+      wbInteger('Day of week', itU8,
         wbEnum([
-          'Sundas',
-          'Morndas',
-          'Tirdas',
-          'Middas',
-          'Turdas',
-          'Fredas',
-          'Loredas',
-          'Morndas to Fredas',
-          'Loredas, Sundas',
-          'Morndas, Middas, Fredas',
-          'Tirdas, Turdas'
+          {0}  'Sundas',
+          {1}  'Morndas',
+          {2}  'Tirdas',
+          {3}  'Middas',
+          {4}  'Turdas',
+          {5}  'Fredas',
+          {6}  'Loredas',
+          {7}  'Morndas to Fredas',
+          {8}  'Loredas, Sundas',
+          {9}  'Morndas, Middas, Fredas',
+          {10} 'Tirdas, Turdas'
         ], [
-          -1, 'Any'
+          255, 'Any'
         ])
       ),
       wbInteger('Date', itU8),
@@ -3201,11 +3187,11 @@ wbEffects :=
       wbInteger('Duration', itS32)
     ]),
     wbStruct(PTDT, 'Target', [
-      wbInteger('Type', itS32,
-        wbEnumSummary([
-          {0} 'Specific reference', 'only',
-          {1} 'Object ID', 'any',
-          {2} 'Object type', 'any object type'
+      wbInteger('Type', itU32,
+        wbEnum([
+          {0} 'Specific Reference',
+          {1} 'Object ID',
+          {2} 'Object Type'
         ])
       ),
       wbUnion('Target', wbPxDTLocationDecider, [
@@ -3265,12 +3251,11 @@ wbEffects :=
     wbICON,
     wbStruct(DATA, 'General', [
       wbInteger('Flags', itU8,
-        wbFlags([
-          {0x01} 'Start game enabled',
-          {0x02} '',
-          {0x04} 'Allow repeated conversation topics',
-          {0x08} 'Allow repeated stages'
-        ])
+        wbFlags(wbSparseFlags([
+          0, 'Start game enabled',
+          2, 'Allow repeated conversation topics',
+          3, 'Allow repeated stages'
+        ], False, 4))
       ),
       wbInteger('Priority', itU8)
     ]).SetRequired,
@@ -3308,7 +3293,7 @@ wbEffects :=
     wbStruct(DATA, '', [
       wbArrayS('Skill Boosts',
         wbStructSK([0], 'Skill Boost', [
-          wbInteger('Skill', itS8, wbMajorSkillEnum),
+          wbInteger('Skill', itU8, wbMajorSkillEnum),
           wbInteger('Boost', itS8)
         ]).SetSummaryKey([1, 0])
           .SetSummaryMemberPrefixSuffix(1, '+', '')
@@ -3407,11 +3392,9 @@ wbEffects :=
         wbUnused(4)
       ]),
       wbInteger('Flags', itU8,
-        wbFlags([
-          '',
-          '',
-          'Leveled Lock'
-        ])
+        wbFlags(wbSparseFlags([
+          3, 'Leveled Lock'
+        ], False, 3))
       ).IncludeFlag(dfCollapsed, wbCollapseFlags),
       wbUnused(3)
     ]),
@@ -3437,27 +3420,27 @@ wbEffects :=
       wbEmpty(XMRK, 'Map Marker Data'),
       wbInteger(FNAM, 'Map Flags', itU8,
         wbFlags([
-          {0x01} 'Visible',
-          {0x02} 'Can Travel To'
+          {0} 'Visible',
+          {1} 'Can Travel To'
         ])
       ).SetRequired,
       wbFULLReq,
       wbStruct(TNAM, '', [
         wbInteger('Type', itU8,
           wbEnum([
-            {0x00} 'None',
-            {0x01} 'Camp',
-            {0x02} 'Cave',
-            {0x03} 'City',
-            {0x04} 'Elven Ruin',
-            {0x05} 'Fort Ruin',
-            {0x06} 'Mine',
-            {0x07} 'Landmark',
-            {0x08} 'Tavern',
-            {0x09} 'Settlement',
-            {0x0A} 'Daedric Shrine',
-            {0x0B} 'Oblivion Gate',
-            {0x0C} 'Unknown? (door icon)'
+            {0}  'None',
+            {1}  'Camp',
+            {2}  'Cave',
+            {3}  'City',
+            {4}  'Elven Ruin',
+            {5}  'Fort Ruin',
+            {6}  'Mine',
+            {7}  'Landmark',
+            {8}  'Tavern',
+            {9}  'Settlement',
+            {10} 'Daedric Shrine',
+            {11} 'Oblivion Gate',
+            {12} 'Unknown? (door icon)'
           ])
         ),
         wbUnused(1)
@@ -3525,14 +3508,14 @@ wbEffects :=
             wbInteger('Max Slope', itU8),
             wbInteger('Flags', itU8,
               wbFlags([
-                {0}'Conform to slope',
-                {1}'Paint Vertices',
-                {2}'Size Variance +/-',
-                {3}'X +/-',
-                {4}'Y +/-',
-                {5}'Z +/-',
-                {6}'Tree',
-                {7}'Huge Rock'
+                {0} 'Conform to slope',
+                {1} 'Paint Vertices',
+                {2} 'Size Variance +/-',
+                {3} 'X +/-',
+                {4} 'Y +/-',
+                {5} 'Z +/-',
+                {6} 'Tree',
+                {7} 'Huge Rock'
               ])
             ).IncludeFlag(dfCollapsed, wbCollapseFlags),
             wbInteger('Radius wrt Parent', itU16),
@@ -3636,12 +3619,12 @@ wbEffects :=
 
   wbRecord(SKIL, 'Skill', [
     wbEDID,
-    wbInteger(INDX, 'Skill', itS32, wbMajorSkillEnum).SetRequired,
+    wbInteger(INDX, 'Skill', itU32, wbMajorSkillEnum).SetRequired,
     wbDESC,
     wbICON,
     wbStruct(DATA, 'Skill Data', [
-      wbInteger('Action', itS32, wbMajorSkillEnum),
-      wbInteger('Attribute', itS32, wbAttributeEnum),
+      wbInteger('Action', itU32, wbMajorSkillEnum),
+      wbInteger('Attribute', itU32, wbAttributeEnum),
       wbInteger('Specialization', itU32, wbSpecializationEnum),
       wbArray('Use Values', wbFloat('Use Value'), 2)
     ], cpNormal, True),
@@ -3679,14 +3662,14 @@ wbEffects :=
         wbUnused(1),
         wbInteger('Flags', itU16,
           wbFlags([
-            {0x0001} 'Random Frequency Shift',
-            {0x0002} 'Play At Random',
-            {0x0004} 'Environment Ignored',
-            {0x0008} 'Random Location',
-            {0x0010} 'Loop',
-            {0x0020} 'Menu Sound',
-            {0x0040} '2D',
-            {0x0080} '360 LFE'
+            {0} 'Random Frequency Shift',
+            {1} 'Play At Random',
+            {2} 'Environment Ignored',
+            {3} 'Random Location',
+            {4} 'Loop',
+            {5} 'Menu Sound',
+            {6} '2D',
+            {7} '360 LFE'
           ])
         ).IncludeFlag(dfCollapsed, wbCollapseFlags),
         wbUnused(2),
@@ -3701,14 +3684,14 @@ wbEffects :=
         wbUnused(1),
         wbInteger('Flags', itU16,
           wbFlags([
-            {0x0001} 'Random Frequency Shift',
-            {0x0002} 'Play At Random',
-            {0x0004} 'Environment Ignored',
-            {0x0008} 'Random Location',
-            {0x0010} 'Loop',
-            {0x0020} 'Menu Sound',
-            {0x0040} '2D',
-            {0x0080} '360 LFE'
+            {0} 'Random Frequency Shift',
+            {1} 'Play At Random',
+            {2} 'Environment Ignored',
+            {3} 'Random Location',
+            {4} 'Loop',
+            {5} 'Menu Sound',
+            {6} '2D',
+            {7} '360 LFE'
           ])
         ).IncludeFlag(dfCollapsed, wbCollapseFlags),
         wbUnused(2),
@@ -3751,14 +3734,14 @@ wbEffects :=
       wbUnused(3),
       wbInteger('Flags', itU8,
         wbFlags([
-          {0x00000001} 'Manual Spell Cost',
-          {0x00000002} 'Immune to Silence 1',
-          {0x00000004} 'Player Start Spell',
-          {0x00000008} 'Immune to Silence 2',
-          {0x00000010} 'Area Effect Ignores LOS',
-          {0x00000020} 'Script Effect Always Applies',
-          {0x00000040} 'Disallow Spell Absorb/Reflect',
-          {0x00000080} 'Touch Spell Explodes w/ no Target'
+          {0} 'Manual Spell Cost',
+          {1} 'Immune to Silence 1',
+          {2} 'Player Start Spell',
+          {3} 'Immune to Silence 2',
+          {4} 'Area Effect Ignores LOS',
+          {5} 'Script Effect Always Applies',
+          {6} 'Disallow Spell Absorb/Reflect',
+          {7} 'Touch Spell Explodes w/ no Target'
         ])
       ),
       wbUnused(3)
@@ -3804,10 +3787,10 @@ wbEffects :=
       .SetDefaultNativeValue(75)
       .SetRequired,
     wbInteger(FNAM, 'Flags', itU8,
-      wbFlags(wbSparseFlags([
-        0, 'Causes Damage',
-        1, 'Reflective'
-     ], False, 2))
+      wbFlags([
+        {0} 'Causes Damage',
+        {1} 'Reflective'
+     ])
     ).SetRequired,
     wbString(MNAM, 'Material ID').SetRequired,
     wbFormIDCk(SNAM, 'Sound', [SOUN]),
@@ -3922,12 +3905,12 @@ wbEffects :=
       wbInteger('Thunder/Lightning - End Fade Out', itU8),
       wbInteger('Thunder/Lightning - Frequency', itU8),
       wbInteger('Flags ', itU8,
-        wbFlags(wbSparseFlags([
-          0, 'Weather - Pleasant',
-          1, 'Weather - Cloudy',
-          2, 'Weather - Rainy',
-          3, 'Weather - Snow'
-        ], False, 4), True)
+        wbFlags([
+          {0} 'Weather - Pleasant',
+          {1} 'Weather - Cloudy',
+          {2} 'Weather - Rainy',
+          {3} 'Weather - Snow'
+        ], True)
       ).IncludeFlag(dfCollapsed, wbCollapseFlags),
       wbWeatherLightningColor
     ]).SetRequired,
