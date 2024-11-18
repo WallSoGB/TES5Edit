@@ -43,12 +43,10 @@ var
   wbBodyParts: IwbRecordMemberDef;
   wbCNTOs: IwbRecordMemberDef;
   wbConditions: IwbRecordMemberDef;
-  wbCSDTs: IwbRecordMemberDef;
   wbDESC: IwbRecordMemberDef;
   wbEDID: IwbRecordMemberDef;
   wbEffects: IwbRecordMemberDef;
   wbFaceGen: IwbRecordMemberDef;
-  wbFactionRank: IwbRecordMemberDef;
   wbFULL: IwbRecordMemberDef;
   wbFULLReq: IwbRecordMemberDef;
   wbICON: IwbRecordMemberDef;
@@ -1471,7 +1469,8 @@ begin
       {2} 'Stealth'
     ]);
 
-{>>> Simple Defs <<<}
+{>>> Common Defs <<<}
+
   wbDESC := wbStringKC(DESC, 'Description', 0, cpTranslate);
   wbEDID := wbString(EDID, 'Editor ID', 0, cpNormal); // not cpBenign according to Arthmoor
   wbFULL := wbStringKC(FULL, 'Name', 0, cpTranslate);
@@ -1482,30 +1481,7 @@ begin
   wbSPLOs := wbRArrayS('Spells', wbSPLO);
   wbXSCL := wbFloat(XSCL, 'Scale');
 
-{>>> Common Structs <<<}
-
-  wbBodyParts :=
-    wbRArrayS('Parts',
-      wbRStructSK([0], 'Part', [
-        wbInteger(INDX, 'Index', itU32, wbBodyPartIndexEnum),
-        wbICON
-      ]).SetSummaryKey([0, 1])
-        .SetSummaryMemberPrefixSuffix(0, '[', ']')
-        .SetSummaryMemberPrefixSuffix(1, 'ICON: ', '')
-        .SetSummaryDelimiter(' ')
-        .IncludeFlag(dfSummaryMembersNoName)
-        .IncludeFlag(dfSummaryNoSortKey)
-        .IncludeFlag(dfCollapsed, wbCollapseBodyParts)
-    );
-
-  wbCNTOS :=
-    wbRArrayS('Items',
-      wbStructSK(CNTO, [0], 'Item', [
-        wbFormIDCk('Item', [ALCH, AMMO, APPA, ARMO, BOOK, CLOT, INGR, KEYM, LIGH, LVLI, MISC, SGST, SLGM, WEAP]),
-        wbInteger('Count', itS32).SetDefaultNativeValue(1)
-      ]).SetToStr(wbItemToStr)
-        .IncludeFlag(dfCollapsed, wbCollapseItems)
-    );
+{>>> Struct Members <<<}
 
   wbConditionParameters := [
     wbUnknown(4),
@@ -1555,6 +1531,31 @@ begin
     wbUnused(0)
   ];
 
+{>>> Common Record Members <<<}
+
+  wbBodyParts :=
+    wbRArrayS('Parts',
+      wbRStructSK([0], 'Part', [
+        wbInteger(INDX, 'Index', itU32, wbBodyPartIndexEnum),
+        wbICON
+      ]).SetSummaryKey([0, 1])
+        .SetSummaryMemberPrefixSuffix(0, '[', ']')
+        .SetSummaryMemberPrefixSuffix(1, 'ICON: ', '')
+        .SetSummaryDelimiter(' ')
+        .IncludeFlag(dfSummaryMembersNoName)
+        .IncludeFlag(dfSummaryNoSortKey)
+        .IncludeFlag(dfCollapsed, wbCollapseBodyParts)
+    );
+
+  wbCNTOS :=
+    wbRArrayS('Items',
+      wbStructSK(CNTO, [0], 'Item', [
+        wbFormIDCk('Item', [ALCH, AMMO, APPA, ARMO, BOOK, CLOT, INGR, KEYM, LIGH, LVLI, MISC, SGST, SLGM, WEAP]),
+        wbInteger('Count', itS32).SetDefaultNativeValue(1)
+      ]).SetToStr(wbItemToStr)
+        .IncludeFlag(dfCollapsed, wbCollapseItems)
+    );
+
   wbConditions :=
     wbRArray('Conditions',
       wbRUnion('Condition', [
@@ -1567,19 +1568,12 @@ begin
       ])
     );
 
-  wbFaceGen := wbRStruct('FaceGen Data', [
-    wbByteArray(FGGS, 'FaceGen Geometry-Symmetric').SetRequired,
-    wbByteArray(FGGA, 'FaceGen Geometry-Asymmetric').SetRequired,
-    wbByteArray(FGTS, 'FaceGen Texture-Symmetric').SetRequired
-  ]).SetRequired;
-
-  wbFactionRank :=
-    wbRStructSK([0], 'Rank', [
-      wbInteger(RNAM, 'Rank#', itS32),
-      wbString(MNAM, 'Male', 0, cpTranslate),
-      wbString(FNAM, 'Female', 0, cpTranslate),
-      wbString(INAM, 'Insignia')
-    ]);
+  wbFaceGen :=
+    wbRStruct('FaceGen Data', [
+      wbByteArray(FGGS, 'FaceGen Geometry-Symmetric').SetRequired,
+      wbByteArray(FGGA, 'FaceGen Geometry-Asymmetric').SetRequired,
+      wbByteArray(FGTS, 'FaceGen Texture-Symmetric').SetRequired
+    ]).SetRequired;
 
   wbOBMEVersion :=
     wbStruct('OBME Version', [
@@ -1763,26 +1757,6 @@ wbEffects :=
     wbInteger('IsLongOrShort', itU8, wbBoolEnum, cpCritical),
     wbByteArray('Unused')
   ]).IncludeFlag(dfSummaryMembersNoName);
-
-  wbCSDTs :=
-    wbRArrayS('Sound Types',
-      wbRStructSK([0], 'Sound Type', [
-        wbInteger(CSDT, 'Type', itU32,
-          wbEnum([
-            {0} 'Left Foot',
-            {1} 'Right Foot',
-            {2} 'Left Back Foot',
-            {3} 'Right Back Foot',
-            {4} 'Idle',
-            {5} 'Aware',
-            {6} 'Attack',
-            {7} 'Hit',
-            {8} 'Death',
-            {9} 'Weapon'
-        ])),
-        wbSoundTypeSounds
-      ])
-    );
 
   wbXESP := wbStruct(XESP, 'Enable Parent', [
     wbFormIDCk('Reference', [ACHR, ACRE, PLYR, REFR]),
@@ -2277,7 +2251,24 @@ wbEffects :=
     wbString(NAM0, 'Blood Spray'),
     wbString(NAM1, 'Blood Decal'),
     wbFormIDCk(CSCR, 'Inherits Sounds from', [CREA]),
-    wbCSDTs
+    wbRArrayS('Sound Types',
+      wbRStructSK([0], 'Sound Type', [
+        wbInteger(CSDT, 'Type', itU32,
+          wbEnum([
+            {0} 'Left Foot',
+            {1} 'Right Foot',
+            {2} 'Left Back Foot',
+            {3} 'Right Back Foot',
+            {4} 'Idle',
+            {5} 'Aware',
+            {6} 'Attack',
+            {7} 'Hit',
+            {8} 'Death',
+            {9} 'Weapon'
+        ])),
+        wbSoundTypeSounds
+      ])
+    )
   ], True);
 
   wbRecord(CSTY, 'Combat Style', [
@@ -2526,7 +2517,14 @@ wbEffects :=
     wbFloat(CNAM, 'Crime Gold Multiplier')
       .SetDefaultNativeValue(1)
       .SetRequired,
-    wbRArrayS('Ranks', wbFactionRank)
+    wbRArrayS('Ranks',
+      wbRStructSK([0], 'Rank', [
+        wbInteger(RNAM, 'Rank#', itS32),
+        wbString(MNAM, 'Male', 0, cpTranslate),
+        wbString(FNAM, 'Female', 0, cpTranslate),
+        wbString(INAM, 'Insignia')
+      ])
+    )
   ]);
 
   wbRecord(FLOR, 'Flora', [
