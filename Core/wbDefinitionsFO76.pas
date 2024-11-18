@@ -16001,14 +16001,7 @@ begin
     wbFormIDCkNoReach(WNAM, 'Worldspace/Reference', [WRLD, REFR]),
     wbFormIDCkNoReach(LNAM, 'Location', [LCTN]),
     wbInteger(LCPR, 'Location Priority', itU8),
-    wbRArray('Region Areas', wbRStruct('Region Area', [
-      wbInteger(RPLI, 'Edge Fall-off', itU32),
-      wbArray(RPLD, 'Points', wbStruct('Point', [
-        wbFloat('X'),
-        wbFloat('Y')
-      ]).SetSummaryKey([1]).IncludeFlag(dfSummaryMembersNoName), 0, wbRPLDAfterLoad),
-      wbUnknown(ANAM)
-    ])),
+    wbRegionAreas,
     wbRArrayS('Region Data Entries', wbRStructSK([0], 'Region Data Entry', [
       {always starts with an RDAT}
       wbStructSK(RDAT, [0], 'Data Header', [

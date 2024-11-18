@@ -7564,14 +7564,7 @@ begin
     wbICON,
     wbByteColors(RCLR, 'Map Color').SetRequired,
     wbFormIDCkNoReach(WNAM, 'Worldspace', [WRLD]),
-
-    wbRArray('Region Areas', wbRStruct('Region Area', [
-      wbInteger(RPLI, 'Edge Fall-off', itU32),
-      wbArray(RPLD, 'Region Point List Data', wbStruct('Point', [
-        wbFloat('X'),
-        wbFloat('Y')
-      ]), 0, wbRPLDAfterLoad)
-    ])),
+    wbRegionAreas,
 
     wbRArrayS('Region Data Entries', wbRStructSK([0], 'Region Data Entry', [
       {always starts with an RDAT}
@@ -7594,7 +7587,8 @@ begin
       {followed by one of these: }
 
       {--- Objects ---}
-      wbArray(RDOT, 'Objects', wbStruct('Object', [
+      wbArray(RDOT, 'Objects',
+      wbStruct('Object', [
         wbFormIDCk('Object', [TREE, STAT, LTEX]),
         wbInteger('Parent Index', itU16, wbHideFFFF),
         wbUnused(2),
@@ -7602,7 +7596,8 @@ begin
         wbInteger('Clustering', itU8),
         wbInteger('Min Slope', itU8),
         wbInteger('Max Slope', itU8),
-        wbInteger('Flags', itU8, wbFlags([
+        wbInteger('Flags', itU8,
+        wbFlags([
           {0}'Conform to slope',
           {1}'Paint Vertices',
           {2}'Size Variance +/-',
@@ -7611,7 +7606,8 @@ begin
           {5}'Z +/-',
           {6}'Tree',
           {7}'Huge Rock'
-        ])),
+        ])
+        ),
         wbInteger('Radius wrt Parent', itU16),
         wbInteger('Radius', itU16),
         wbFloat('Min Height'),
@@ -7623,7 +7619,8 @@ begin
           wbInteger('X', itU16),
           wbInteger('Y', itU16),
           wbInteger('Z', itU16)
-        ]).SetToStr(wbVec3ToStr).IncludeFlag(dfCollapsed, wbCollapseVec3),
+        ]).SetToStr(wbVec3ToStr)
+          .IncludeFlag(dfCollapsed, wbCollapseVec3),
         wbUnused(2),
         wbByteArray('Unknown', 4)
       ]), 0, nil, nil, cpNormal, False, wbREGNObjectsDontShow),

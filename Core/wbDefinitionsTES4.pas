@@ -3468,18 +3468,7 @@ begin
     wbICON,
     wbByteColors(RCLR, 'Map Color').SetRequired,
     wbFormIDCkNoReach(WNAM, 'Worldspace', [WRLD]),
-    wbRArray('Region Areas',
-      wbRStruct('Region Area', [
-        wbInteger(RPLI, 'Edge Fall-off', itU32),
-        wbArray(RPLD, 'Points',
-          wbStruct('Point', [
-            wbFloat('X'),
-            wbFloat('Y')
-          ])
-        ).SetAfterLoad(wbRPLDAfterLoad)
-      ]).SetSummaryKey([1])
-      .IncludeFlag(dfSummaryMembersNoName)
-    ).SetRequired,
+    wbRegionAreas,
     wbRArrayS('Region Data Entries',
       wbRStructSK([0], 'Region Data Entry', [
         wbStructSK(RDAT, [0], 'Data Header', [

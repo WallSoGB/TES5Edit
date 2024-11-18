@@ -99,6 +99,8 @@ var
   wbNavmeshCoverFlags: IwbFlagsDef;
   wbNavmeshEdgeLinkEnum: IwbEnumDef;
 
+  wbRegionAreas: IwbRecordMemberDef;
+
   wbWeatherCloudTextures: IwbRecordMemberDef;
   wbWeatherCloudSpeed: IwbRecordMemberDef;
   wbWeatherCloudColors: IwbRecordMemberDef;
@@ -5997,6 +5999,25 @@ Can't properly represent that with current record definition methods.
       2, 'Ledge Down',
       3, 'Enable/Disable Portal'
     ]);
+
+{>>>Region Common Defs<<<}
+  //TES4,FO3,FNV,TES5,FO4,FO76,SF1
+  wbRegionAreas :=
+    wbRArray('Region Areas',
+      wbRStruct('Region Area', [
+        wbInteger(RPLI, 'Edge Fall-off', itU32),
+        wbArray(RPLD, 'Points',
+          wbStruct('Point', [
+            wbFloat('X'),
+            wbFloat('Y')
+          ])
+        ).SetAfterLoad(wbRPLDAfterLoad),
+        IfThen(wbIsFallout4 or wbIsFallout76,
+          wbUnknown(ANAM),
+          nil
+        )
+      ])
+    );
 
 {>>>Weather Common Defs<<<}
   //TES4,FO3,FNV,TES5,FO4,FO76
