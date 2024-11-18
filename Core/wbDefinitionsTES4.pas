@@ -27,8 +27,10 @@ uses
 var
   wbConditionMembers: array of IwbValueDef;
   wbConditionParameters: array of IwbValueDef;
+  wbSoundDataMembers: array of IwbValueDef;
 
   wbAttributeEnum: IwbEnumDef;
+  wbDialogueTypeEnum: IwbEnumDef;
   wbFormTypeEnum: IwbEnumDef;
   wbHeadPartIndexEnum: IwbEnumDef;
   wbMagicSchoolEnum: IwbEnumDef;
@@ -37,6 +39,8 @@ var
   wbResistEnum: IwbEnumDef;
   wbSkillEnum: IwbEnumDef;
   wbSpecializationEnum: IwbEnumDef;
+
+  wbBipedFlags: IwbFlagsDef;
 
   wbOBMEVersion: IwbStructDef;
 
@@ -1325,6 +1329,17 @@ begin
       {7} 'Luck'
     ]);
 
+  wbDialogueTypeEnum :=
+    wbEnum([
+      {0} 'Topic',
+      {1} 'Conversation',
+      {2} 'Combat',
+      {3} 'Persuasion',
+      {4} 'Detection',
+      {5} 'Service',
+      {6} 'Miscellaneous'
+    ]);
+
   wbFormTypeEnum :=
     wbEnum([], [
       10, 'Sound',
@@ -1469,6 +1484,28 @@ begin
       {2} 'Stealth'
     ]);
 
+{>>> Flags <<<}
+
+  wbBipedFlags :=
+    wbFlags([
+      {0}  'Head',
+      {1}  'Hair',
+      {2}  'Upper Body',
+      {3}  'Lower Body',
+      {4}  'Hand',
+      {5}  'Foot',
+      {6}  'Right Ring',
+      {7}  'Left Ring',
+      {8}  'Amulet',
+      {9}  'Weapon',
+      {10} 'Back Weapon',
+      {11} 'Side Weapon',
+      {12} 'Quiver',
+      {13} 'Shield',
+      {14} 'Torch',
+      {15} 'Tail'
+    ]);
+
 {>>> Common Defs <<<}
 
   wbDESC := wbStringKC(DESC, 'Description', 0, cpTranslate);
@@ -1529,6 +1566,29 @@ begin
     wbUnion('Parameter #1', wbCTDAParam1Decider, wbConditionParameters),
     wbUnion('Parameter #2', wbCTDAParam2Decider, wbConditionParameters),
     wbUnused(0)
+  ];
+
+  wbSoundDataMembers := [
+    wbInteger('Minimum attenuation distance', itU8, wbMul(5)),
+    wbInteger('Maximum attenuation distance', itU8, wbMul(100)),
+    wbInteger('Frequency adjustment %', itS8),
+    wbUnused(1),
+    wbInteger('Flags', itU16,
+      wbFlags([
+        {0} 'Random Frequency Shift',
+        {1} 'Play At Random',
+        {2} 'Environment Ignored',
+        {3} 'Random Location',
+        {4} 'Loop',
+        {5} 'Menu Sound',
+        {6} '2D',
+        {7} '360 LFE'
+      ])
+    ).IncludeFlag(dfCollapsed, wbCollapseFlags),
+    wbUnused(2),
+    wbInteger('Static Attenuation (db)', itU16, wbDiv(100)),
+    wbInteger('Stop time', itU8),
+    wbInteger('Start time', itU8)
   ];
 
 {>>> Common Record Members <<<}
@@ -1643,7 +1703,7 @@ begin
         .IncludeFlag(dfCollapsed, wbCollapseScriptData)
     ]);
 
-wbEffects :=
+  wbEffects :=
     wbRArray('Effects',
       wbRUnion('Effects', [
         wbRStructSK([0, 1], 'Effect', [
@@ -1919,26 +1979,7 @@ wbEffects :=
     wbSCRI,
     wbEnchantment(True),
     wbStruct(BMDT, '', [
-      wbInteger('Biped Flags', itU16,
-        wbFlags([
-          {0}  'Head',
-          {1}  'Hair',
-          {2}  'Upper Body',
-          {3}  'Lower Body',
-          {4}  'Hand',
-          {5}  'Foot',
-          {6}  'Right Ring',
-          {7}  'Left Ring',
-          {8}  'Amulet',
-          {9}  'Weapon',
-          {10} 'Back Weapon',
-          {11} 'Side Weapon',
-          {12} 'Quiver',
-          {13} 'Shield',
-          {14} 'Torch',
-          {15} 'Tail'
-        ])
-      ).IncludeFlag(dfCollapsed, wbCollapseFlags),
+      wbInteger('Biped Flags', itU16, wbBipedFlags).IncludeFlag(dfCollapsed, wbCollapseFlags),
       wbInteger('General Flags', itU8,
         wbFlags(wbSparseFlags([
           0, 'Hide Rings',
@@ -2091,26 +2132,7 @@ wbEffects :=
     wbSCRI,
     wbEnchantment(True),
     wbStruct(BMDT, '', [
-      wbInteger('Biped Flags', itU16,
-        wbFlags([
-          {0}  'Head',
-          {1}  'Hair',
-          {2}  'Upper Body',
-          {3}  'Lower Body',
-          {4}  'Hand',
-          {5}  'Foot',
-          {6}  'Right Ring',
-          {7}  'Left Ring',
-          {8}  'Amulet',
-          {9}  'Weapon',
-          {10} 'Back Weapon',
-          {11} 'Side Weapon',
-          {12} 'Quiver',
-          {13} 'Shield',
-          {14} 'Torch',
-          {15} 'Tail'
-        ])
-      ).IncludeFlag(dfCollapsed, wbCollapseFlags),
+      wbInteger('Biped Flags', itU16, wbBipedFlags).IncludeFlag(dfCollapsed, wbCollapseFlags),
       wbInteger('General Flags', itU8,
         wbFlags(wbSparseFlags([
           0, 'Hide Rings',
@@ -2359,17 +2381,7 @@ wbEffects :=
     wbRArrayS('Quests', wbFormIDCkNoReach(QSTI, 'Quest', [QUST], False, cpBenign)),
     wbRArrayS('Quests?', wbFormIDCkNoReach(QSTR, 'Quest?', [QUST], False, cpBenign)),
     wbFULL,
-    wbInteger(DATA, 'Type', itU8,
-      wbEnum([
-        {0} 'Topic',
-        {1} 'Conversation',
-        {2} 'Combat',
-        {3} 'Persuasion',
-        {4} 'Detection',
-        {5} 'Service',
-        {6} 'Miscellaneous'
-      ])
-    ).SetRequired,
+    wbInteger(DATA, 'Type', itU8, wbDialogueTypeEnum).SetRequired,
     wbINOM,
     wbINOA
   ], True);
@@ -2636,17 +2648,7 @@ wbEffects :=
 
   wbRecord(INFO, 'Dialog response', [
     wbStruct(DATA, '', [
-      wbInteger('Type', itU8,
-        wbEnum([
-          {0} 'Topic',
-          {1} 'Conversation',
-          {2} 'Combat',
-          {3} 'Persuasion',
-          {4} 'Detection',
-          {5} 'Service',
-          {6} 'Miscellaneous'
-        ])
-      ),
+      wbInteger('Type', itU8, wbDialogueTypeEnum),
       wbNextSpeaker,
       wbInteger('Flags', itU8,
         wbFlags([
@@ -3466,7 +3468,6 @@ wbEffects :=
     wbICON,
     wbByteColors(RCLR, 'Map Color').SetRequired,
     wbFormIDCkNoReach(WNAM, 'Worldspace', [WRLD]),
-
     wbRArray('Region Areas',
       wbRStruct('Region Area', [
         wbInteger(RPLI, 'Edge Fall-off', itU32),
@@ -3479,10 +3480,8 @@ wbEffects :=
       ]).SetSummaryKey([1])
       .IncludeFlag(dfSummaryMembersNoName)
     ).SetRequired,
-
     wbRArrayS('Region Data Entries',
       wbRStructSK([0], 'Region Data Entry', [
-        {always starts with an RDAT}
         wbStructSK(RDAT, [0], 'Data Header', [
           wbInteger('Type', itU32,
             wbEnum([], [
@@ -3492,16 +3491,14 @@ wbEffects :=
               5, 'Land',
               6, 'Grass',
               7, 'Sound'
-           ])
+            ])
           ),
           wbInteger('Override', itU8, wbBoolEnum),
           wbInteger('Priority', itU8),
           wbUnused(2)
         ], cpNormal, True, nil, 3),
 
-        {followed by one of these: }
-
-      {--- Objects ---}
+        {--- Objects ---}
         wbArray(RDOT, 'Objects',
           wbStruct('Object', [
             wbFormIDCk('Object', [FLOR, LTEX, STAT, TREE]),
@@ -3660,50 +3657,8 @@ wbEffects :=
     wbEDID,
     wbString(FNAM, 'Sound FileName'),
     wbRUnion('Sound Data', [
-      wbStruct(SNDX, 'Sound Data', [
-        wbInteger('Minimum attenuation distance', itU8, wbMul(5)),
-        wbInteger('Maximum attenuation distance', itU8, wbMul(100)),
-        wbInteger('Frequency adjustment %', itS8),
-        wbUnused(1),
-        wbInteger('Flags', itU16,
-          wbFlags([
-            {0} 'Random Frequency Shift',
-            {1} 'Play At Random',
-            {2} 'Environment Ignored',
-            {3} 'Random Location',
-            {4} 'Loop',
-            {5} 'Menu Sound',
-            {6} '2D',
-            {7} '360 LFE'
-          ])
-        ).IncludeFlag(dfCollapsed, wbCollapseFlags),
-        wbUnused(2),
-        wbInteger('Static Attenuation (db)', itU16, wbDiv(100)),
-        wbInteger('Stop time', itU8),
-        wbInteger('Start time', itU8)
-      ]).SetRequired,
-      wbStruct(SNDD, 'Sound Data', [
-        wbInteger('Minimum attenuation distance', itU8, wbMul(5)),
-        wbInteger('Maximum attenuation distance', itU8, wbMul(100)),
-        wbInteger('Frequency adjustment %', itS8),
-        wbUnused(1),
-        wbInteger('Flags', itU16,
-          wbFlags([
-            {0} 'Random Frequency Shift',
-            {1} 'Play At Random',
-            {2} 'Environment Ignored',
-            {3} 'Random Location',
-            {4} 'Loop',
-            {5} 'Menu Sound',
-            {6} '2D',
-            {7} '360 LFE'
-          ])
-        ).IncludeFlag(dfCollapsed, wbCollapseFlags),
-        wbUnused(2),
-        wbUnused,
-        wbUnused,
-        wbUnused
-      ]).SetRequired
+      wbStruct(SNDX, 'Sound Data', wbSoundDataMembers, cpNormal, True, nil, 6),
+      wbStruct(SNDD, 'Sound Data', wbSoundDataMembers, cpNormal, True, nil, 6)
     ]).SetRequired
   ]).SetSummaryKey([1]);
 
