@@ -1930,8 +1930,7 @@ begin
     wbFULL,
     wbTexturedModel('Model', [MODL, MODB, MODT], []),
     wbICON,
-    wbFormIDCk(ENAM, 'Enchantment', [ENCH]),
-    wbInteger(ANAM, 'Enchantment Points', itU16),
+    wbEnchantment(True),
     wbStruct(DATA, '', [
       wbFloat('Speed'),
       wbInteger('Ignores Normal Weapon Resistance', itU8, wbBoolEnum),
@@ -2089,13 +2088,9 @@ begin
     wbDESC,
     wbICON,
     wbStruct(DATA, '', [
-      wbArrayS('Primary Attributes',
-        wbInteger('Primary Attribute', itU32, wbAttributeEnum),
-      2),
+      wbArrayS('Primary Attributes', wbInteger('Primary Attribute', itU32, wbAttributeEnum), 2),
       wbInteger('Specialization', itU32, wbSpecializationEnum),
-      wbArrayS('Major Skills',
-        wbInteger('Major Skill', itU32, wbMajorSkillEnum),
-      7),
+      wbArrayS('Major Skills', wbInteger('Major Skill', itU32, wbMajorSkillEnum), 7),
       wbInteger('Flags', itU32,
         wbFlags([
           {0} 'Playable',
@@ -2185,9 +2180,7 @@ begin
     wbTexturedModel('Model', [MODL, MODB, MODT], []),
     wbCNTOs,
     wbSPLOs,
-    wbArrayS(NIFZ, 'Models',
-      wbStringLC('Model')
-    ),
+    wbArrayS(NIFZ, 'Models', wbStringLC('Model')),
     wbModelInfos(NIFT, 'Model List Textures'),
     wbStruct(ACBS, 'Configuration', [
       wbInteger('Flags', itU32,
@@ -2234,9 +2227,7 @@ begin
     wbRArray('AI Packages',
       wbFormIDCk(PKID, 'AI Package', [PACK])
     ),
-    wbArrayS(KFFZ, 'Animations',
-      wbStringLC('Animation')
-    ),
+    wbArrayS(KFFZ, 'Animations', wbStringLC('Animation')),
     wbStruct(DATA, 'Creature Data', [
       wbInteger('Type', itU8,
         wbEnum([
@@ -2762,9 +2753,7 @@ begin
     wbLandHeights,
     wbLandColors,
     wbLandLayers,
-    wbArray(VTEX, 'Landscape Textures',
-      wbFormIDCk('Texture', [LTEX, NULL])
-    )
+    wbArray(VTEX, 'Landscape Textures', wbFormIDCk('Texture', [LTEX, NULL]))
   ]).SetAddInfo(wbLANDAddInfo);
 
   wbRecord(LIGH, 'Light',
@@ -2989,9 +2978,8 @@ begin
       wbFloat('Constant Effect enchantment factor'),
       wbFloat('Constant Effect barter factor')
     ], cpNormal, True, nil, 10),
-    wbArrayS(ESCE, 'Counter Effects',
-      wbStringMgefCode('Counter Effect Code', 4)
-    ).SetCountPathOnValue('DATA\Counter Effect Count', False)
+    wbArrayS(ESCE, 'Counter Effects', wbStringMgefCode('Counter Effect Code', 4))
+      .SetCountPathOnValue('DATA\Counter Effect Count', False)
   ]).SetAfterLoad(wbMGEFAfterLoad)
     .IncludeFlag(dfIndexEditorID);;
 
@@ -3076,9 +3064,7 @@ begin
     wbRArray('AI Packages',
       wbFormIDCk(PKID, 'AI Package', [PACK])
     ),
-    wbArrayS(KFFZ, 'Animations',
-      wbString('Animation')
-    ),
+    wbArrayS(KFFZ, 'Animations', wbString('Animation')),
     wbFormIDCk(CNAM, 'Class', [CLAS]).SetRequired,
     wbStruct(DATA, 'Stats', [
       wbInteger('Armorer', itU8),
@@ -3115,9 +3101,7 @@ begin
     ]).SetRequired,
     wbFormIDCk(HNAM, 'Hair', [HAIR]),
     wbFloat(LNAM, 'Hair length'),
-    wbArray(ENAM, 'Eyes',
-      wbFormIDCk('Eyes', [EYES])
-    ),
+    wbArray(ENAM, 'Eyes', wbFormIDCk('Eyes', [EYES])),
     wbByteColors(HCLR, 'Hair color').SetRequired,
     wbFormIDCk(ZNAM, 'Combat Style', [CSTY]),
     wbFaceGen,
@@ -3364,12 +3348,8 @@ begin
       wbTexturedModel('Model', [MODL, MODB, MODT], []),
       wbBodyParts
     ]).SetRequired,
-    wbArrayS(HNAM, 'Hairs',
-      wbFormIDCk('Hair', [HAIR])
-    ).SetRequired,
-    wbArrayS(ENAM, 'Eyes',
-      wbFormIDCk('Eye', [EYES])
-    ).SetRequired,
+    wbArrayS(HNAM, 'Hairs', wbFormIDCk('Hair', [HAIR])).SetRequired,
+    wbArrayS(ENAM, 'Eyes', wbFormIDCk('Eye', [EYES])).SetRequired,
     wbFaceGen,
     wbByteArray(SNAM, 'Unknown', 2).SetRequired
   ], True);
@@ -3710,9 +3690,7 @@ begin
     wbEDID,
     wbTexturedModel('Model', [MODL, MODB, MODT], []),
     wbICON,
-    wbArrayS(SNAM, 'SpeedTree Seeds',
-      wbInteger('SpeedTree Seed', itU32)
-    ),
+    wbArrayS(SNAM, 'SpeedTree Seeds', wbInteger('SpeedTree Seed', itU32)),
     wbStruct(CNAM, 'Tree Data', [
       wbFloat('Leaf Curvature'),
       wbFloat('Minimum Leaf Angle'),
