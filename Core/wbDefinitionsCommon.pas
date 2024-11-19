@@ -4552,7 +4552,7 @@ begin
         wbInteger('End', itU8, aTimeCallback)
       ]),
       wbInteger('Volatility', itU8),
-      lMoonPhase
+      lMoonPhase.SetDefaultNativeValue(3)
     ], cpNormal, True);
 end;
 
