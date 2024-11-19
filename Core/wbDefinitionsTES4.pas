@@ -1099,57 +1099,6 @@ begin
   end;
 end;
 
-{
-function wbPGRPConnectionsCallback(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
-var
-  Point : IwbContainerElementRef;
-  s     : string;
-  i     : Integer;
-  PGRP  : IwbContainerElementRef;
-  PGRD  : IwbMainRecord;
-  PGRR  : IwbContainerElementRef;
-  Cons  : IwbContainerElementRef;
-begin
-  Result := '';
-  if aType = ctCheck then
-    Exit;
-
-  if wbFixupPGRD and (aInt > 0) and Assigned(aElement) and (aElement.ElementStates * [esModified] = []) then begin
-    Point := aElement.Container as IwbContainerElementRef;
-    if Assigned(Point) then begin
-      s := Trim(Point.Name);
-      i := Pos('#', s);
-      if i > 0 then begin
-        i := StrToIntDef(Copy(s, i+1, High(Integer)), -1);
-        if i >= 0 then begin
-          PGRP := Point.Container as IwbContainerElementRef;
-          if Assigned(PGRP) then begin
-            if Supports(PGRP.Container, IwbMainRecord, PGRD) then begin
-              if (csInitDone in PGRD.ContainerStates) and (PGRD.Signature = 'PGRD') then begin
-                PGRR := PGRD.RecordBySignature['PGRR'] as IwbContainerElementRef;
-                if Assigned(PGRR) and (PGRR.ElementCount > 0) and (csInitDone in PGRR.ContainerStates) then begin
-                  if (i < PGRR.ElementCount) then begin
-                    if Supports(PGRR.Elements[i], IwbContainer, Cons) then begin
-                      aInt := Cons.ElementCount;
-                    end;
-                  end;
-                end;
-                PGRR := nil;
-              end;
-            end;
-          end;
-        end;
-      end;
-    end;
-  end;
-
-  if aType = ctToSortKey then
-    Result := IntToHex64(aInt, 2)
-  else if aType in [ctToStr, ctToSummary] then
-    Result := aInt.ToString;
-end;
-}
-
 procedure wbPGRRPointAfterLoad(const aElement: IwbElement);
 var
   Connections : IwbContainerElementRef;
@@ -1643,20 +1592,17 @@ begin
     ]);
 
   wbPGRP :=
-    wbArray(PGRP, 'Points', wbStruct('Point', [
-      wbFloat('X'),
-      wbFloat('Y'),
-      wbFloat('Z (Even = Red/Orange, Odd = Blue)'),
-      wbInteger('Connections', itU8{, wbPGRPConnectionsCallback}),
-      wbUnused(3)
-    ])).SetRequired;
-
-      {The Connection Count in the PGRP record specifies how many entries in this
-       array belong to each point. If the first 4 points in the PGRP array have
-       Connection Counts 2, 5, 2, 4 then the first 2 entries are the connections
-       of point 0, then next 5 are the connections of point 1, the next 2 of point 2,
-       the next 4 of point 3 and so on..., this can currently not be represented
-       declaratively }
+    wbArray(PGRP, 'Points',
+      wbStruct('Point', [
+        wbFloat('X'),
+        wbFloat('Y'),
+        wbFloat('Z (Even = Red/Orange, Odd = Blue)'),
+        wbInteger('Connections', itU8),
+        wbUnused(3)
+      ])
+    ).SetCountPathOnValue('DATA', False)
+     .SetRequired
+     .IncludeFlag(dfNotAlignable);
 
   wbSCHR :=
     wbRUnion('Basic Script Data', [
@@ -3220,7 +3166,9 @@ begin
     wbRArrayS('Point-to-Reference Mappings',
       wbStructSK(PGRL, [0], 'Point-to-Reference Mapping', [
         wbFormIDCk('Reference', [REFR]),
-        wbArrayS('Points', wbInteger('Point', itU32))
+        wbArrayS('Points',
+          wbInteger('Point', itU32)
+        )
       ])
     )
   ]).SetAddInfo(wbPGRDAddInfo)
@@ -3537,14 +3485,10 @@ begin
 
   wbRecord(ROAD, 'Road', [
     wbPGRP,
-    wbArray(PGRR, 'Point-to-Point Connections (complex structure can''t be represented, see source)',
-      {The Connection Count in the PGRP record specifies how many entries in this
-       array belong to each point. If the first 4 points in the PGRP array have
-       Connection Counts 2, 5, 2, 4 then the first 2 entries are the connections
-       of point 0, then next 5 are the connections of point 1, the next 2 of point 2,
-       the next 4 of point 3 and so on..., this can currently not be represented
-       declaratively }
-      wbVec3('Point')
+    wbArray(PGRR, 'Point-to-Point Connections',
+      wbArray('Point',
+        wbVec3('Point'),
+      wbCalcPGRRSize)
     ).SetRequired
   ]).SetAddInfo(wbROADAddInfo);
 
