@@ -1388,15 +1388,15 @@ begin
 
   wbResistEnum :=
     wbEnum([], [
-      61,  'Resist Fire',
-      62,  'Resist Frost',
-      63,  'Resist Disease',
-      64,  'Resist Magic',
-      65,  'Resist Normal Weapons',
-      66,  'Resist Paralysis',
-      67,  'Resist Poison',
-      68,  'Resist Shock',
-      255, 'None'
+      -1, 'None',
+      61, 'Resist Fire',
+      62, 'Resist Frost',
+      63, 'Resist Disease',
+      64, 'Resist Magic',
+      65, 'Resist Normal Weapons',
+      66, 'Resist Paralysis',
+      67, 'Resist Poison',
+      68, 'Resist Shock'
     ]);
 
   wbSkillEnum :=
@@ -2910,7 +2910,7 @@ begin
         wbInteger('Assoc. Actor Value', itU32, wbActorValueEnum)
       ]),
       wbInteger('Magic School', itU32, wbMagicSchoolEnum),
-      wbInteger('Resist value', itU32, wbResistEnum),
+      wbInteger('Resist value', itS32, wbResistEnum),
       wbInteger('Counter Effect Count', itU16), //!!! must be updated automatically when ESCE length changes!
       wbUnused(2),
       wbFormIDCk('Light', [LIGH, NULL]),
@@ -3326,7 +3326,7 @@ begin
       ]),
       wbInteger('Flags', itU8,
         wbFlags(wbSparseFlags([
-          3, 'Leveled Lock'
+          2, 'Leveled Lock'
         ], False, 3))
       ).IncludeFlag(dfCollapsed, wbCollapseFlags),
       wbUnused(3)
