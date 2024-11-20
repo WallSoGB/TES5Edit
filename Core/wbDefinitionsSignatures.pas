@@ -1102,6 +1102,7 @@ const
   PWAT : TwbSignature = 'PWAT';
   QARF : TwbSignature = 'QARF'; { New to Fallout 76 1.2.2.1 }
   QARV : TwbSignature = 'QARV'; { New to Fallout 76 1.2.2.1 }
+  QDUP : TwbSignature = 'QDUP'; { New To Starfield }
   QECV : TwbSignature = 'QECV'; { New To Fallout 76 }
   QETE : TwbSignature = 'QETE'; { New To Fallout 76 }
   QETL : TwbSignature = 'QETL'; { New To Fallout 76 }

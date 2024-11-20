@@ -15826,6 +15826,7 @@ end;
     wbFormIDCk(LNAM, 'Location', [LCTN]),
     wbFormIDCk(QTLM, 'Quest Time Limit', [GLOB]),
     wbFormIDCk(QSRC, 'Source Quest', [QUST]),
+    wbArray(QDUP, 'Dialogue', wbFormIDCk('Unknown', [DIAL, INFO])),
     wbRArray('Text Display Globals', wbFormIDCk(QTGL, 'Global', [GLOB])),
     wbFLTR,
     wbString(NAM3, 'Summary'),
