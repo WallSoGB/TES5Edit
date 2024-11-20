@@ -12,7 +12,18 @@ unit wbDefinitionsFO3;
 
 interface
 
+procedure DefineFO3;
+
+implementation
+
 uses
+  Classes,
+  Math,
+  SysUtils,
+  Variants,
+  wbDefinitionsCommon,
+  wbDefinitionsSignatures,
+  wbHelpers,
   wbInterface;
 
 var
@@ -27,81 +38,65 @@ var
   wbVatsValueFunctionEnum: IwbEnumDef;
   wbWeaponAnimTypeEnum: IwbEnumDef;
 
-procedure DefineFO3;
+  wbActorValue: IwbIntegerDef;
 
-implementation
-
-uses
-  Types,
-  Classes,
-  SysUtils,
-  Math,
-  Variants,
-  wbHelpers,
-  wbDefinitionsCommon,
-  wbDefinitionsSignatures;
-
-var
-  wbEDID: IwbSubRecordDef;
+  wbAIDT: IwbRecordMemberDef;
+  wbBIPL: IwbRecordMemberDef;
+  wbBMDT: IwbRecordMemberDef;
+  wbBPNDStruct: IwbRecordMemberDef;
+  wbCNTO: IwbRecordMemberDef;
+  wbCNTOs: IwbRecordMemberDef;
+  wbCOED: IwbRecordMemberDef;
+  wbCSDT: IwbRecordMemberDef;
+  wbCSDTs: IwbRecordMemberDef;
+  wbCTDA: IwbRecordMemberDef;
+  wbCTDAs: IwbRecordMemberDef;
+  wbCTDAsReq: IwbRecordMemberDef;
+  wbDESC: IwbRecordMemberDef;
+  wbDESCReq: IwbRecordMemberDef;
+  wbDEST: IwbRecordMemberDef;
+  wbDESTActor: IwbRecordMemberDef;
+  wbDODT: IwbRecordMemberDef;
+  wbEDID: IwbRecordMemberDef;
   wbEDIDReq: IwbRecordMemberDef;
   wbEDIDReqKC: IwbRecordMemberDef;
-  wbBMDT: IwbRecordMemberDef;
-  wbYNAM: IwbSubRecordDef;
-  wbZNAM: IwbSubRecordDef;
-  wbCOED: IwbSubRecordDef;
-  wbXLCM: IwbSubRecordDef;
-  wbEITM: IwbSubRecordDef;
-  wbREPL: IwbSubRecordDef;
-  wbBIPL: IwbSubRecordDef;
-  wbDEST: IwbSubRecordStructDef;
-  wbDESTActor: IwbRecordMemberDef;
-  wbDODT: IwbSubRecordDef;
-  wbSLSD: IwbSubRecordDef;
-  wbSPLO: IwbSubRecordDef;
-  wbSPLOs: IwbRecordMemberDef;
-  wbCNTO: IwbRecordMemberDef;
-  wbCNTOs: IwbSubRecordArrayDef;
-  wbAIDT: IwbRecordMemberDef;
-  wbCSDT: IwbSubRecordStructDef;
-  wbCSDTs: IwbRecordMemberDef;
-  wbFULL: IwbSubRecordDef;
-  wbFULLActor: IwbRecordMemberDef;
-  wbFULLReq: IwbRecordMemberDef;
-  wbDESC: IwbSubRecordDef;
-  wbDESCReq: IwbRecordMemberDef;
-  wbXSCL: IwbSubRecordDef;
-  wbMODD: IwbSubRecordDef;
-  wbMOSD: IwbSubRecordDef;
-  wbMODS: IwbSubRecordDef;
-  wbMO2S: IwbSubRecordDef;
-  wbMO3S: IwbSubRecordDef;
-  wbMO4S: IwbSubRecordDef;
-  wbCTDA: IwbRecordMemberDef;
-  wbSCHRReq: IwbRecordMemberDef;
-  wbCTDAs: IwbSubRecordArrayDef;
-  wbCTDAsReq: IwbRecordMemberDef;
-  wbSCROs: IwbRecordMemberDef;
-//  wbPGRP: IwbSubRecordDef;
+  wbEffects: IwbRecordMemberDef;
+  wbEffectsReq: IwbRecordMemberDef;
+  wbEFID: IwbRecordMemberDef;
+  wbEFIT: IwbRecordMemberDef;
+  wbEITM: IwbRecordMemberDef;
   wbEmbeddedScript: IwbRecordMemberDef;
   wbEmbeddedScriptPerk: IwbRecordMemberDef;
   wbEmbeddedScriptReq: IwbRecordMemberDef;
-  wbSCRI: IwbSubRecordDef;
-  wbSCRIActor: IwbRecordMemberDef;
+  wbENAM: IwbRecordMemberDef;
+  wbETYP: IwbRecordMemberDef;
+  wbETYPReq: IwbRecordMemberDef;
   wbFaceGen: IwbRecordMemberDef;
   wbFaceGenNPC: IwbRecordMemberDef;
-  wbENAM: IwbSubRecordDef;
-//  wbFGGS: IwbSubRecordDef;
-  wbXESP: IwbSubRecordDef;
-  wbICON: IwbSubRecordStructDef;
-  wbICONReq: IwbSubRecordStructDef;
-  wbActorValue: IwbIntegerDef;
-  wbETYP: IwbSubRecordDef;
-  wbETYPReq: IwbRecordMemberDef;
-  wbEFID: IwbSubRecordDef;
-  wbEFIT: IwbRecordMemberDef;
-  wbEffects: IwbSubRecordArrayDef;
-  wbEffectsReq: IwbRecordMemberDef;
-  wbBPNDStruct: IwbRecordMemberDef;
+  wbFULL: IwbRecordMemberDef;
+  wbFULLActor: IwbRecordMemberDef;
+  wbFULLReq: IwbRecordMemberDef;
+  wbICON: IwbRecordMemberDef;
+  wbICONReq: IwbRecordMemberDef;
+  wbMODD: IwbRecordMemberDef;
+  wbMODS: IwbRecordMemberDef;
+  wbMOSD: IwbRecordMemberDef;
+  wbMO2S: IwbRecordMemberDef;
+  wbMO3S: IwbRecordMemberDef;
+  wbMO4S: IwbRecordMemberDef;
+  wbREPL: IwbRecordMemberDef;
+  wbSCHRReq: IwbRecordMemberDef;
+  wbSCRI: IwbRecordMemberDef;
+  wbSCRIActor: IwbRecordMemberDef;
+  wbSCROs: IwbRecordMemberDef;
+  wbSLSD: IwbRecordMemberDef;
+  wbSPLO: IwbRecordMemberDef;
+  wbSPLOs: IwbRecordMemberDef;
+  wbXESP: IwbRecordMemberDef;
+  wbXLCM: IwbRecordMemberDef;
+  wbXSCL: IwbRecordMemberDef;
+  wbYNAM: IwbRecordMemberDef;
+  wbZNAM: IwbRecordMemberDef;
 
 function wbGenericModel(aRequired: Boolean = False; aDontShow: TwbDontShowCallback = nil): IwbRecordMemberDef;
 begin

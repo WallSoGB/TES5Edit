@@ -4165,7 +4165,7 @@ begin
     {04} wbInteger('Mood', itU8, wbMoodEnum),
          wbByteArray('Unused', 3),
     {08} wbInteger('Buys/Sells and Services', itU32, wbServiceFlags),
-    {0C} wbInteger('Teaches', itS8, wbSkillEnum),
+    {0C} wbInteger('Teaches', itS8),
     {0D} wbInteger('Maximum training level', itU8),
     {0E} wbInteger('Assistance', itS8, wbAssistanceEnum),
     {0F} wbInteger('Aggro Radius Behavior', itU8, wbBoolEnum),
