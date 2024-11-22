@@ -5509,7 +5509,7 @@ begin
                    'Wear Sleep Outfit')),
      30, IsSF1    ('Group Package', ''),
      31, IsSF1    ('Weapon Drawr: Alert', '')
-    ]));
+    ]), True);
 
   wbServiceFlags :=
     wbFlags(wbSparseFlags([
