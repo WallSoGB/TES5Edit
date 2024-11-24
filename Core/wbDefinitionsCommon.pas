@@ -4542,7 +4542,7 @@ var
   lMoonPhase: IwbValueDef;
 begin
   if Assigned(aPhaseCallback) then
-    lMoonPhase := wbInteger('Moons / Phase Length', itU8, aPhaseCallback)
+    lMoonPhase := wbInteger('Moons / Phase Length', itU8, aPhaseCallback).SetDefaultNativeValue(3)
   else
     lMoonPhase := nil;
 
@@ -4557,7 +4557,7 @@ begin
         wbInteger('End', itU8, aTimeCallback)
       ]),
       wbInteger('Volatility', itU8),
-      lMoonPhase.SetDefaultNativeValue(3)
+      lMoonPhase
     ], cpNormal, True);
 end;
 
