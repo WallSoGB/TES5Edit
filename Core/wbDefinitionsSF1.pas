@@ -13246,7 +13246,8 @@ end;
     wbLLCT,
     wbRArrayS('Leveled List Entries',
       wbRStructExSK([0], [1], 'Leveled List Entry', [
-        wbLeveledListEntry('Pack In', [LVLP, PKIN])
+        wbLeveledListEntry('Pack In', [LVLP, PKIN]),
+        wbCTDAs.IncludeFlag(dfSummaryMembersNoName)
       ]).SetSummaryMemberMaxDepth(0, 1)
         .IncludeFlag(dfCollapsed, wbCollapseLeveledItems)
     ).SetCountPath(LLCT),
