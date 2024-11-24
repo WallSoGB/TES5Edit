@@ -6929,11 +6929,12 @@ begin
           .SetDefaultNativeValue(1)
           .SetDontShow(function(const aElement: IwbElement): Boolean
             begin
-              if not Assigned(aElement) then exit;
+              if not Assigned(aElement) then
+                Exit(True);
+
               var lContainer := aElement.Container;
               // only worry about the root array node where the INAM index is 0 and the PNAM is NULL
-              if (lContainer.Container.Elements[0].Equals(lContainer)) and (lContainer.ElementByPath['PNAM'].NativeValue = 0) and (lContainer.ElementByPath['INAM'].NativeValue = 0) then
-                Result := True;
+              Result := (lContainer.Container.Elements[0].Equals(lContainer)) and (lContainer.ElementByPath['PNAM'].NativeValue = 0) and (lContainer.ElementByPath['INAM'].NativeValue = 0);
             end),
         wbInteger(XNAM, 'Perk-Grid X', itU32, nil, cpNormal, True),
         wbInteger(YNAM, 'Perk-Grid Y', itU32, nil, cpNormal, True),

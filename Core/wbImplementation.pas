@@ -1505,7 +1505,7 @@ type
     function GetName: string; override;
     function GetDisplayName(aUseSuffix: Boolean): string; override;
 
-    function GetDisplaySignature: string; virtual;   
+    function GetDisplaySignature: string; override;
 
     procedure ResetMemoryOrder(aFrom: Integer = 0; aTo: Integer = High(Integer)); override;
 
@@ -2348,10 +2348,8 @@ const
   DFOB      : TwbSignature = 'DFOB';
 var
   FormID    : TwbFormID;
-  s         : string;
   i         : Integer;
   Master    : IwbMainRecord;
-  Signature : TwbSignature;
   GameMasterFile : IwbFileInternal;
 begin
   if not Assigned(aRecord) then
@@ -4543,7 +4541,7 @@ var
   Header      : IwbMainRecord;
   MasterFiles : IwbContainerElementRef;
   Rec         : IwbRecord;
-  i           : Integer;
+  i, j        : Integer;
 begin
   if fsOnlyHeader in flStates then begin
     if (GetElementCount <> 1) or not Supports(GetElement(0), IwbMainRecord, Header) then
@@ -4559,7 +4557,7 @@ begin
         if not Assigned(Rec) then
           raise Exception.CreateFmt('Unexpected error reading master list for file "%s"', [flFileName]);
         if not wbStripEmptyMasters or (Trim(Rec.EditValue) <> '') then
-          if not wbStripMasters or (wbStripMasters and wbStripMastersFileNames.Find(Rec.EditValue, i) = False) then
+          if not wbStripMasters or (wbStripMasters and wbStripMastersFileNames.Find(Rec.EditValue, j) = False) then
             aMasters.Add(Rec.EditValue);
       end;
   end else
@@ -4833,6 +4831,8 @@ begin
       Result := aFileID.MediumSlot >= GetMediumMasterCount(aNew);
     mtFull:
       Result := aFileID.FullSlot >= GetFullMasterCount(aNew);
+  else
+    Result := aFileID.FullSlot >= GetMasterCount(aNew);
   end else
     Result := aFileID.FullSlot >= GetMasterCount(aNew);
 end;
@@ -4963,7 +4963,8 @@ begin
   case lModuleType of
     mtLight: Mask := $FFF;
     mtMedium: Mask := $FFFF;
-    mtFull: Mask := $FFFFFF;
+  else
+    {mtFull: }Mask := $FFFFFF;
   end;
   
   NextObjectID := GetNextObjectID and Mask;
@@ -5421,10 +5422,6 @@ begin
 end;
 
 procedure TwbFile.RemoveMainRecord(const aRecord: IwbMainRecord);
-var
-  i      : Integer;
-  Master : IwbMainRecord;
-  FormID : TwbFormID;
 begin
   if not Assigned(aRecord) then
     Exit;
@@ -5440,12 +5437,14 @@ begin
 
       lFormID := aRecord.FixedFormID;
 
-      if (Length(flRecords) < 1) or not FindFormID(lFormID, i, True) then
+
+      var lFoundIdx: Integer;
+      if (Length(flRecords) < 1) or not FindFormID(lFormID, lFoundIdx, True) then
         raise Exception.Create('Can''t remove FormID [' + lFormID.ToString(True) + '] from file ' + GetName + ': FormID not registered');
 
-      flRecords[i] := nil;
-      if i < High(flRecords) then begin
-        Move(flRecords[Succ(i)], flRecords[i], SizeOf(Pointer) * (High(flRecords) - i));
+      flRecords[lFoundIdx] := nil;
+      if lFoundIdx < High(flRecords) then begin
+        Move(flRecords[Succ(lFoundIdx)], flRecords[lFoundIdx], SizeOf(Pointer) * (High(flRecords) - lFoundIdx));
         Pointer(flRecords[High(flRecords)]) := nil;
       end;
       SetLength(flRecords, Pred(Length(flRecords)));
@@ -5464,9 +5463,9 @@ begin
     if not lIsHardcoded and IsNewRecord(lFileID, True) then begin
       {record for this file}
     end else try
-      Master := GetMasterRecordByFormID(lFormID, True, True);
-      if Assigned(Master) and ((Master as IwbElement) <> (aRecord as IwbElement)) then
-        (Master as IwbMainRecordInternal).RemoveOverride(aRecord)
+      var lMaster := GetMasterRecordByFormID(lFormID, True, True);
+      if Assigned(lMaster) and ((lMaster as IwbElement) <> (aRecord as IwbElement)) then
+        (lMaster as IwbMainRecordInternal).RemoveOverride(aRecord)
       else
         (GetMasterForFileID(lFileID, True, False) as IwbFileInternal).RemoveInjectedMainRecord(aRecord);
     except
@@ -5601,7 +5600,7 @@ begin
         if not Assigned(Rec) then
           raise Exception.CreateFmt('Unexpected error reading master list for file "%s"', [flFileName]);
         if not wbStripEmptyMasters or (Trim(Rec.EditValue) <> '') then
-          if not wbStripMasters or (wbStripMasters and wbStripMastersFileNames.Find(Rec.EditValue, i) = False) then
+          if not wbStripMasters or (wbStripMasters and wbStripMastersFileNames.Find(Rec.EditValue, j) = False) then
             AddMaster(Rec.EditValue, False, flLoadOrder = High(Integer));
       end;
 
@@ -5738,10 +5737,10 @@ begin
           end else
             DialRecord := nil;
 
-          if (Signature = 'LAND') or (Signature = 'PGRD') or (Signature = 'FRMR') or (Signature = 'NAM0') then begin
+          if (Signature = 'LAND') or (Signature = 'PGRD') or (Signature = 'FRMR') or (Signature = 'NAM0') or (Signature = 'MVRF') or (Signature = 'CNDT') then begin
             if (Signature = 'LAND') or (Signature = 'PGRD') then
               GroupType := 9;
-            if Signature <> 'NAM0' then begin
+            if (Signature <> 'NAM0') and (Signature <> 'MVRF') then begin
               if Assigned(GroupRecord) then
                 if not Assigned(CellRecord) or (GroupRecord.GroupType <> GroupType) or not CellRecord.Equals(GroupRecord.ChildrenOf) then
                   GroupRecord := nil;
@@ -5759,7 +5758,7 @@ begin
           end else
             CellRecord := nil;
 
-          if Signature <> 'NAM0' then begin
+          if (Signature <> 'NAM0') and (Signature <> 'MVRF') then begin
             if not Assigned(Container) then begin
               if Assigned(GroupRecord) then
                 if (GroupRecord.GroupType <> 0) or (GroupRecord.GroupLabelSignature <> Signature) then
@@ -5805,7 +5804,7 @@ begin
                 GroupType := 8;
               end;
             end else
-              if Rec.Signature = 'NAM0' then
+              if (Rec.Signature = 'NAM0') or (Rec.Signature = 'MVRF') then
                 GroupType := 9;
           end else
             flProgress(Rec.Name + ' processed');
@@ -8597,7 +8596,7 @@ begin
       if PwbSignature(aPtr)^ = 'GRUP' then
         Result := TwbGroupRecord.Create(aContainer, aPtr, aEndPtr, aPrevMainRecord)
       else begin
-        if (wbGameMode = gmTES3) and (PwbSignature(aPtr)^ = 'NAM0') then
+        if (wbGameMode = gmTES3) and ((PwbSignature(aPtr)^ = 'NAM0') or (PwbSignature(aPtr)^ = 'MVRF')) then
           Result := TwbSubRecord.Create(nil, aPtr, aEndPtr, nil)
         else
           Result := TwbMainRecord.Create(aContainer, aPtr, aEndPtr, aPrevMainRecord);
@@ -8686,7 +8685,6 @@ var
   SelfRef   : IwbContainerElementRef;
   i         : Integer;
   Group     : IwbGroupRecord;
-  GrpType   : Integer;
 begin
   Result := nil;
 
@@ -10137,7 +10135,7 @@ begin
 
   CurrentPtr := GetDataBasePtr;
   while NativeUInt(CurrentPtr) < NativeUInt(dcDataEndPtr) do begin
-    if (IsTES3Cell or (FRMRCount > 0)) and ((PwbSignature(CurrentPtr)^ = 'FRMR') or (PwbSignature(CurrentPtr)^ = 'NAM0')) then begin
+    if (IsTES3Cell or (FRMRCount > 0)) and ((PwbSignature(CurrentPtr)^ = 'FRMR') or (PwbSignature(CurrentPtr)^ = 'NAM0') or (PwbSignature(CurrentPtr)^ = 'MVRF') or (PwbSignature(CurrentPtr)^ = 'CNDT')) then begin
       if dcEndPtr = dcDataEndPtr then
         dcEndPtr := CurrentPtr;
       dcDataEndPtr := CurrentPtr;
@@ -12251,7 +12249,7 @@ var
   p         : PwbMainRecordStruct;
 begin
   if Assigned(dcEndPtr) then
-    if (wbGameMode = gmTES3) and (PwbSignature(dcBasePtr)^ = 'FRMR') then begin
+    if (wbGameMode = gmTES3) and ((PwbSignature(dcBasePtr)^ = 'FRMR') or (PwbSignature(dcBasePtr)^ = 'CNDT')) then begin
       Assert(not (mrsBasePtrAllocated in mrStates));
       dcDataBasePtr := dcBasePtr;
       dcDataEndPtr := dcEndPtr;
@@ -21551,7 +21549,7 @@ begin
       lFinalBasePtr := Pointer(NativeUInt(aBasePtr) + NativeUInt(lWronglyAssumedFixedSizePerElement * ArrSize));
     end;
 
-  var lArrayElementNoName := ArrayDef.Element.Name = '';
+  //var lArrayElementNoName := ArrayDef.Element.Name = '';
 
   if ArrSize > 0 then
     while not VarSize or

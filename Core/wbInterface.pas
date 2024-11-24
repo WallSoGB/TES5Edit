@@ -58,7 +58,7 @@ var
     Major   : 4;
     Minor   : 1;
     Release : 5;
-    Build   : 'k';
+    Build   : 'l';
     Title   : '';
   );
 
@@ -12622,8 +12622,6 @@ function TwbSubRecordUnionDef.GetMemberIndexFor(const aContainer     : IwbContai
                                                       aSignature     : TwbSignature;
                                                 const aDataContainer : IwbDataContainer)
                                                                      : Integer;
-var
-  i: Integer;
 begin
   if Assigned(sruDecider) then begin
     var lDecidedMemberIdx := sruDecider(aContainer);
@@ -16490,7 +16488,8 @@ begin
       case fdKind of
         fkHalf  : lSize := SizeOf(THalfFloat)+Ord(ndTerminator);
         fkSingle: lSize := SizeOf(Single)+Ord(ndTerminator);
-        fkDouble: lSize := SizeOf(Double)+Ord(ndTerminator);
+      else
+        {fkDouble:} lSize := SizeOf(Double)+Ord(ndTerminator);
       end;
       if aSource.DataSize = lSize then begin
         aTargetDataContainer.CopyFrom(lSourceBasePtr, lSize);
@@ -16554,7 +16553,8 @@ begin
   case fdKind of
     fkHalf  : lSize := SizeOf(THalfFloat)+Ord(ndTerminator);
     fkSingle: lSize := SizeOf(Single)+Ord(ndTerminator);
-    fkDouble: lSize := SizeOf(Double)+Ord(ndTerminator);
+  else
+    {fkDouble:} lSize := SizeOf(Double)+Ord(ndTerminator);
   end;
   aElement.RequestStorageChange(aBasePtr, aEndPtr, lSize);
 
@@ -16629,7 +16629,8 @@ begin
   case fdKind of
     fkHalf  : lSize := SizeOf(THalfFloat)+Ord(ndTerminator);
     fkSingle: lSize := SizeOf(Single)+Ord(ndTerminator);
-    fkDouble: lSize := SizeOf(Double)+Ord(ndTerminator);
+  else
+    {fkDouble:} lSize := SizeOf(Double)+Ord(ndTerminator);
   end;
   aElement.RequestStorageChange(aBasePtr, aEndPtr, lSize);
   if Assigned(aBasePtr) then begin
@@ -16800,9 +16801,9 @@ begin
         case fdKind of
           fkHalf: begin
             if PHalfFloat(aBasePtr)^ = HalfPosMax then
-              Result := MaxHalf
+              Exit(MaxHalf)
             else if PHalfFloat(aBasePtr)^ = HalfNegMax then
-              Result := -MaxHalf
+              Exit(-MaxHalf)
             else begin
               Value := HalfToFloat(PHalfFloat(aBasePtr)^);
             end;
@@ -16817,7 +16818,8 @@ begin
             else
               Value := PSingle(aBasePtr)^;
           end;
-          fkDouble: begin
+        else
+          {fkDouble:} begin
             if PInt64(aBasePtr)^ = $7FEFFFFFFFFFFFFF then
               Exit(maxDouble)
             else if PInt64(aBasePtr)^ = $FFEFFFFFFFFFFFFF then
@@ -17263,7 +17265,7 @@ begin
         Exit;
 
       FormID := lMainRecord.LoadOrderFormID;
-      NativeValue := FormID.ToCardinal;
+      //NativeValue := FormID.ToCardinal;
     end else begin
       NativeValue := aSource.NativeValue;
       FormID := TwbFormID.FromCardinal(NativeValue);
@@ -18132,7 +18134,7 @@ begin
         end;
     end;
     if j >= 0 then
-      Result := IntToHex(i, 2) + ':' + Result
+      Result := IntToHex(j, 2) + ':' + Result
     else
       Result := 'XX:' + Result;
   end;
@@ -19281,7 +19283,7 @@ function TwbCallbackDef.GetEditType(const aElement: IwbElement): TwbEditType;
 var
   s: string;
 begin
-  Result := etDefault;
+  //Result := etDefault;
   s := cdToStr(0, aElement, ctEditType);
   if SameText(s, 'ComboBox') then
     Result := etComboBox
@@ -23402,7 +23404,9 @@ function TwbBaseStringDef.GetEditType(aBasePtr, aEndPtr: Pointer; const aElement
 begin
   inherited;
   if Assigned(bsdFormater) then
-    Result := bsdFormater.EditType[aElement];
+    Result := bsdFormater.EditType[aElement]
+  else
+    Result := etDefault;
 
   if Assigned(ndToStr) then begin
     var s := '';
@@ -23887,9 +23891,9 @@ end;
 
 procedure TwbGuidDef.FromStringInternal(aBasePtr, aEndPtr: Pointer; const aElement: IwbElement; const aValue: string);
 begin
-  var lLength := 0;
-  if Assigned(aBasePtr) and Assigned(aEndPtr) then
-    lLength := NativeInt(aEndPtr) - NativeInt(aBasePtr);
+  //var lLength := 0;
+  //if Assigned(aBasePtr) and Assigned(aEndPtr) then
+  //  lLength := NativeInt(aEndPtr) - NativeInt(aBasePtr);
 
   aElement.RequestStorageChange(aBasePtr, aEndPtr, 16);
 

@@ -887,6 +887,7 @@ const
   MUID : TwbSignature = 'MUID'; { New To Starfield }
   MUSC : TwbSignature = 'MUSC';
   MUST : TwbSignature = 'MUST';
+  MVRF : TwbSignature = 'MVRF'; { Morrowind Moved Ref Sig}
   MWD1 : TwbSignature = 'MWD1';
   MWD2 : TwbSignature = 'MWD2';
   MWD3 : TwbSignature = 'MWD3';
@@ -1102,6 +1103,7 @@ const
   PWAT : TwbSignature = 'PWAT';
   QARF : TwbSignature = 'QARF'; { New to Fallout 76 1.2.2.1 }
   QARV : TwbSignature = 'QARV'; { New to Fallout 76 1.2.2.1 }
+  QDUP : TwbSignature = 'QDUP'; { New To Starfield }
   QECV : TwbSignature = 'QECV'; { New To Fallout 76 }
   QETE : TwbSignature = 'QETE'; { New To Fallout 76 }
   QETL : TwbSignature = 'QETL'; { New To Fallout 76 }

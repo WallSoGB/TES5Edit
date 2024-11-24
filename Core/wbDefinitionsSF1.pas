@@ -7025,7 +7025,6 @@ end;
     procedure(var aValue: string; aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement; aType: TwbCallbackType)
     begin
       var loFull := 360;
-      var loHalf := 180;
 
       case aType of
         ctToStr, ctToSummary: begin
@@ -7060,11 +7059,11 @@ end;
             Exit;
 
           // Check numeric value
-          var lDeg := -1.0;
+          var lDeg: Double;
           try
             lDeg := StrToFloat(Copy(aValue, 1, lPosDegree - 1))
           except
-            Exit
+            Exit;
           end;
 
           if (lDeg < -loFull) or (lDeg > loFull) then
@@ -15201,6 +15200,7 @@ end;
     wbFormIDCk(LNAM, 'Location', [LCTN]),
     wbFormIDCk(QTLM, 'Quest Time Limit', [GLOB]),
     wbFormIDCk(QSRC, 'Source Quest', [QUST]),
+    wbArray(QDUP, 'Dialogue', wbFormIDCk('Unknown', [DIAL, INFO])),
     wbRArray('Text Display Globals', wbFormIDCk(QTGL, 'Global', [GLOB])),
     wbFLTR,
     wbString(NAM3, 'Summary'),
@@ -16932,8 +16932,6 @@ end;
       i    : Integer;
       s    : string;
     begin
-      Result := -1;
-
       i := 1;
       s := Trim(aString);
       while (i <= Length(s)) and (ANSIChar(s[i]) in ['0'..'9']) do

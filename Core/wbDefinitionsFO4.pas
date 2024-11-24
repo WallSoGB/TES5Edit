@@ -1415,35 +1415,6 @@ begin
     Result := 2;
 end;
 
-function wbCLFMColorDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
-var
-  Container  : IwbContainer;
-  rFNAM      : IwbElement;
-  i          : Integer;
-begin
-  Result := 0;
-
-  // resolving to a float causes data loss when copying
-  // since deciding field FNAM comes after a value CNAM
-  Exit;
-
-  if not wbTryGetContainerFromUnion(aElement, Container) then
-    Exit;
-
-  Container := Container.Container;
-  if not Assigned(Container) then
-    Exit;
-
-  rFNAM := Container.ElementBySignature['FNAM'];
-  if not Assigned(rFNAM) then
-    Exit;
-
-  i := rFNAM.NativeValue;
-
-  if i and 2 <> 0 then
-    Result := 1;
-end;
-
 function wbCLFMColorToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
 var
   Container  : IwbContainer;

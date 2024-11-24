@@ -1221,7 +1221,6 @@ var
   t: String;
   cIni, mIni: TIniFile;
 begin
-  Result := 0;
   j := 0;
   if Assigned(bsaNames) then
     j := bsaNames.Count;

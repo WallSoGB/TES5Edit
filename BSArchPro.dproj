@@ -7,7 +7,8 @@
         <MainSource>BSArchPro.dpr</MainSource>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <ProjectGuid>{6BB45C53-4ABF-4657-AC81-F842D25722BD}</ProjectGuid>
-        <ProjectVersion>19.5</ProjectVersion>
+        <ProjectName Condition="'$(ProjectName)'==''">BSArchPro</ProjectName>
+        <ProjectVersion>20.2</ProjectVersion>
         <TargetedPlatforms>3</TargetedPlatforms>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
@@ -59,13 +60,20 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
         <SanitizedProjectName>BSArchPro</SanitizedProjectName>
+        <DCC_COMBINING_SIGNED_UNSIGNED>false</DCC_COMBINING_SIGNED_UNSIGNED>
+        <DCC_COMBINING_SIGNED_UNSIGNED64>false</DCC_COMBINING_SIGNED_UNSIGNED64>
+        <DCC_COMPARING_SIGNED_UNSIGNED>false</DCC_COMPARING_SIGNED_UNSIGNED>
         <DCC_DcpOutput>.\Temp\BSArch\$(Platform)\$(Config)</DCC_DcpOutput>
         <DCC_DcuOutput>.\Temp\BSArch\$(Platform)\$(Config)</DCC_DcuOutput>
         <DCC_Define>$(USERDEFINES);EH_NO_VERSION;NX_EXCEPTION_LOG_IN_APP_FOLDER;$(DCC_Define)</DCC_Define>
         <DCC_ExeOutput>.\Build</DCC_ExeOutput>
+        <DCC_FOR_LOOP_VAR_UNDEF>error</DCC_FOR_LOOP_VAR_UNDEF>
+        <DCC_FOR_LOOP_VAR_VARPAR>error</DCC_FOR_LOOP_VAR_VARPAR>
+        <DCC_FOR_VARIABLE>error</DCC_FOR_VARIABLE>
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;$(DCC_Namespace)</DCC_Namespace>
         <DCC_UnitSearchPath>.\Core;.\BSArch;.\External\ImagingLib\Source\;.\External\ImagingLib\Source\zlib;.\External\ZLibEx;.\External\lz4\lib\delphi;.\External\FileContainer;.\External\TForge\Source\Include;.\External\TForge\Source\Shared;.\External\TForge\Source\Engine\Forge;.\External\TForge\Source\Engine\Hashes;.\External\JsonDataObjects\Source;.\External\VirtualTrees\Source;.\External\vcl-styles-utils\Common;.\External\delphi-detours-library\Source;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <DCC_UseMSBuildExternally>true</DCC_UseMSBuildExternally>
+        <DCC_WIDECHAR_REDUCED>false</DCC_WIDECHAR_REDUCED>
         <Icon_MainIcon>$(BDS)\bin\delphi_PROJECTICON.ico</Icon_MainIcon>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_Locale>1049</VerInfo_Locale>

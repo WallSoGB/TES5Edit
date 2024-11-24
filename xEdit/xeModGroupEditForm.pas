@@ -16,7 +16,8 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, Buttons, CheckLst, Menus,
   Vcl.Styles.Utils.SystemMenu, VirtualTrees, VirtualEditTree,
-  wbInterface, wbLoadOrder, wbModGroups, Vcl.ExtCtrls;
+  wbInterface, wbLoadOrder, wbModGroups, Vcl.ExtCtrls,
+  System.UITypes, Vcl.Mask;
 
 type
   TfrmModGroupEdit = class(TForm)

@@ -367,6 +367,7 @@ function IsFNV(const aDef1, aDef2: string): string; overload;
 function IsFNV(const aDef1, aDef2: IwbRecordMemberDef): IwbRecordMemberDef; overload;
 function IsFNV(const aDef1, aDef2: IwbValueDef): IwbValueDef; overload;
 function IsTES5(const aDef1, aDef2: String): string; overload;
+function IsTES5(const aDef1, aDef2: Cardinal): Cardinal; overload;
 function IsTES5(const aDef1, aDef2: Integer): Integer; overload;
 function IsTES5(const aDef1, aDef2: IwbRecordMemberDef): IwbRecordMemberDef; overload;
 function IsTES5(const aDef1, aDef2: IwbValueDef): IwbValueDef; overload;
@@ -1133,6 +1134,7 @@ var
   MainRecord : IwbMainRecord;
   Version : Cardinal;
 begin
+  Result := 0;
   if Assigned(aElement) then begin
     MainRecord := aElement.ContainingMainRecord;
     if Assigned(MainRecord) then begin
@@ -2455,9 +2457,6 @@ begin
 end;
 
 function wbFileHashCallback(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
-var
-  Strings: TDynStrings;
-  i: Integer;
 begin
   Result := '';
   if wbLoaderDone and (aType in [ctToStr, ctToSummary, ctToSortKey] ) then
@@ -2478,9 +2477,6 @@ begin
 end;
 
 function wbFolderHashCallback(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
-var
-  Strings: TDynStrings;
-  i: Integer;
 begin
   Result := '';
   if wbLoaderDone and (aType in [ctToStr, ctToSummary, ctToSortKey] ) then
@@ -3457,6 +3453,7 @@ end;
 
 function wbWwiseKeywordMappingSoundDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
 begin
+  Result := 0;
   If not Assigned(aElement) then
     Exit;
   Result := aElement.ContainingMainRecord.ElementNativeValues[WMTI];
@@ -3725,6 +3722,14 @@ begin
 end;
 
 function IsTES5(const aDef1, aDef2: IwbRecordMemberDef): IwbRecordMemberDef;
+begin
+  if wbIsSkyrim then
+    Result := aDef1
+  else
+    Result := aDef2;
+end;
+
+function IsTES5(const aDef1, aDef2: Cardinal): Cardinal;
 begin
   if wbIsSkyrim then
     Result := aDef1
@@ -5400,9 +5405,11 @@ begin
     ]);
 
   wbSexEnum :=
-    wbEnum([], [
-      0, 'Male',
-      1, 'Female'
+    wbEnum([
+      {0} 'Male',
+      {1} 'Female'
+    ], [
+      -1, 'None'
     ]);
 
   wbSoulGemEnum :=
@@ -6765,4 +6772,5 @@ Can't properly represent that with current record definition methods.
 end;
 
 end.
+
 
