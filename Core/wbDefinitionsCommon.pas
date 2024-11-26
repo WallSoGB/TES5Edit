@@ -503,7 +503,6 @@ begin
   if Result <> '' then begin
     Result := ' in ' + Result;
   end;
-
 end;
 
 function wbDLBRAddInfo(const aMainRecord: IwbMainRecord): string;
@@ -521,6 +520,13 @@ begin
   Result := aMainRecord.ElementEditValues['Topic'];
   if Result <> '' then begin
     Result := ' in ' + Result;
+  end;
+
+  if wbGameMode in [gmTES4, gmFO3, gmFNV] then begin
+    Result := Result + ' in ' + aMainRecord.ElementEditValues['QSTI'];
+  end;
+
+  if Result <> '' then begin
     Response := Trim(aMainRecord.ElementValues['Responses\Response\NAM1']);
     if Response <> '' then
       Result := '''''' + Response + '''''' + Result;
