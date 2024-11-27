@@ -400,6 +400,7 @@ const
   DMDT : TwbSignature = 'DMDT';
   DMGT : TwbSignature = 'DMGT'; { New to Fallout 4 }
   DMIN : TwbSignature = 'DMIN'; { New to Skyrim }
+  DMTL : TwbSignature = 'DMTL'; { Oblivion }
   DNAM : TwbSignature = 'DNAM';
   DOBJ : TwbSignature = 'DOBJ';
   DOCK : TwbSignature = 'DOCK'; { New To Starfield }

@@ -3574,7 +3574,13 @@ begin
       10, 'Quest Item'
     ])), [
     wbEDID,
-    wbTexturedModel('Model', [MODL, MODB, MODT], [])
+    wbTexturedModel('Model', [MODL, MODB, MODT], []),
+    wbArray(DMTL, 'Visible When Distant Textures',
+      wbStruct('Texture', [
+        wbInteger('File Hash (PC)', itU64, wbFileHashCallback),
+        wbInteger('File Hash (Console)', itU64, wbFileHashCallback),
+        wbInteger('Folder Hash', itU64, wbFolderHashCallback)
+      ]))
   ]).SetSummaryKey([1]);
 
   wbRecord(TREE, 'Tree', [
