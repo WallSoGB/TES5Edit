@@ -727,47 +727,32 @@ end;
 
 procedure wbCELLAfterLoad(const aElement: IwbElement);
 var
-  Container    : IwbContainerElementRef;
-//  Container2   : IwbContainerElementRef;
-  MainRecord   : IwbMainRecord;
-//  i            : Integer;
-  IsInterior   : Boolean;
-  GroupRecord  : IwbGroupRecord;
-//  Removed      : Boolean;
+  Container  : IwbContainerElementRef;
+  MainRecord : IwbMainRecord;
+  Regions    : IwbContainerElementRef;
 begin
   if wbBeginInternalEdit then try
     if not wbTryGetContainerWithValidMainRecord(aElement, Container, MainRecord) then
       Exit;
 
-    if not Container.ElementExists['DATA'] then
-      Exit;
-
-    IsInterior := (Container.ElementNativeValues['DATA'] and 1) <> 0;
-
-    if IsInterior then
-      Container.Add('XCLL')
-    else begin
-      Container.Add('XCLC');
+    var IsInterior := (Container.ElementNativeValues['DATA'] and 1) <> 0;
+    if IsInterior then begin
+      Container.Add('XCLL');
+      Container.RemoveElement('XCLR');
+    end else begin
+      Container.RemoveElement('XCCM');
       if (Container.ElementNativeValues['DATA'] and 2) = 0 then
-        if Supports(MainRecord.Container, IwbGroupRecord, GroupRecord) then
-          if GroupRecord.GroupType = 1 then
-            Container.ElementNativeValues['DATA'] :=
-              Container.ElementNativeValues['DATA'] or 2;
-    end;
+        Container.ElementNativeValues['DATA'] :=
+          Container.ElementNativeValues['DATA'] or 2;
 
-//    Removed := False;
-//    if Supports(Container.ElementBySignature[XCLR], IwbContainerElementRef, Container2) then begin
-//      for i:= Pred(Container2.ElementCount) downto 0 do
-//        if not Supports(Container2.Elements[i].LinksTo, IwbMainRecord, MainRecord) or (MainRecord.Signature <> 'REGN') then begin
-//          if not Removed then begin
-//            Removed := True;
-//            Container2.MarkModifiedRecursive;
-//          end;
-//          Container2.RemoveElement(i);
-//        end;
-//      if Container2.ElementCount < 1 then
-//        Container2.Remove;
-//    end;
+      if Supports(Container.ElementBySignature[XCLR], IwbContainerElementRef, Regions) then begin
+        for var i:= Pred(Regions.ElementCount) downto 0 do
+          if not Supports(Regions.Elements[i].LinksTo, IwbMainRecord, MainRecord) or (MainRecord.Signature <> 'REGN') then
+            Regions.RemoveElement(i);
+        if Regions.ElementCount < 1 then
+          Regions.Remove;
+      end;
+    end;
   finally
     wbEndInternalEdit;
   end;
@@ -1938,12 +1923,12 @@ begin
     wbInteger(DATA, 'Flags', itU8,
       wbFlags(wbSparseFlags([
         0, 'Is Interior Cell',
-        1, 'Has water',
+        1, 'Has Water',
         2, 'Can''t Travel From Here',
-        3, 'Force hide land (exterior cell) / Oblivion interior (interior cell)',
+        3, 'Force Hide Land (Exterior) / Oblivion Interior Iinterior)',
         5, 'Public Area',
-        6, 'Hand changed',
-        7, 'Behave like exterior'
+        6, 'Hand Changed',
+        7, 'Behave Like Exterior'
       ], False, 8))
     ).SetRequired
      .IncludeFlag(dfCollapsed, wbCollapseFlags),
@@ -1957,18 +1942,22 @@ begin
       wbInteger('Directional Rotation Z', itS32),
       wbFloat('Directional Fade').SetDefaultNativeValue(1),
       wbFloat('Fog Clip Dist')
-    ]).SetDontShow(wbCellLightingDontShow)
+    ]).SetDontShow(wbCellExteriorDontShow)
       .SetIsRemovable(wbCellLightingIsRemovable),
-    wbArrayS(XCLR, 'Regions', wbFormIDCk('Region', [REGN])),
+    wbArrayS(XCLR, 'Regions',
+      wbFormIDCk('Region', [REGN])
+    ).SetDontShow(wbCellInteriorDontShow),
     wbInteger(XCMT, 'Music', itU8, wbMusicEnum),
     wbFloat(XCLW, 'Water Height', cpBenign),
-    wbFormIDCk(XCCM, 'Climate', [CLMT]),
-    wbFormIDCk(XCWT, 'Water', [WATR]),
+    wbFormIDCk(XCCM, 'Climate', [CLMT])
+      .SetDefaultNativeValue(351)
+      .SetDontShow(wbCellExteriorDontShow),
+    wbFormIDCk(XCWT, 'Water', [WATR]).SetDefaultNativeValue(24),
     wbOwnership([XCCM, XCLW, XCMT]),
     wbStruct(XCLC, 'Grid', [
       wbInteger('X', itS32),
       wbInteger('Y', itS32)
-    ]).SetDontShow(wbCellGridDontShow)
+    ]).SetDontShow(wbCellInteriorDontShow)
       .SetIsRemovable(wbCellGridIsRemovable)
   ], True).SetAddInfo(wbCellAddInfo)
           .SetAfterLoad(wbCELLAfterLoad);

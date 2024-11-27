@@ -9312,7 +9312,7 @@ begin
         wbVec3('Radius')
       ])
     ], cpNormal, False, nil, 11)
-      .SetDontShow(wbCellLightingDontShow)
+      .SetDontShow(wbCellExteriorDontShow)
       .SetIsRemovable(wbCellLightingIsRemovable),
 
     wbInteger(CNAM, 'Precombined Object Level XY', itU8),

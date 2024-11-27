@@ -4081,7 +4081,7 @@ begin
       wbFloat('Fog Clip Dist'),
       wbFloat('Fog Power')
     ], cpNormal, False, nil, 7)
-      .SetDontShow(wbCellLightingDontShow)
+      .SetDontShow(wbCellExteriorDontShow)
       .SetIsRemovable(wbCellLightingIsRemovable),
     wbArray(IMPF, 'Footstep Materials', wbString('Unknown', 30), [
       'ConcSolid',

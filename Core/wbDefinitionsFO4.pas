@@ -7331,7 +7331,7 @@ begin
       wbFloat('Far Height Mid'),
       wbFloat('Far Height Range')
     ], cpNormal, False, nil, 11)
-      .SetDontShow(wbCellLightingDontShow)
+      .SetDontShow(wbCellExteriorDontShow)
       .SetIsRemovable(wbCellLightingIsRemovable),
 
     wbInteger(CNAM, 'Precombined Object Level XY', itU8),

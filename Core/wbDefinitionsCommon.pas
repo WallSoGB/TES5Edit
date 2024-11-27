@@ -200,8 +200,8 @@ function wbFlagNavmeshGroundDontSHow(const aElement: IwbElement): Boolean;
 function wbFlagPartialFormDontShow(const aElement: IwbElement): Boolean;
 
 {>>> Don't Show Callbacks <<<} //10
-function wbCellGridDontShow(const aElement: IwbElement): Boolean;
-function wbCellLightingDontShow(const aElement: IwbElement): Boolean;
+function wbCellInteriorDontShow(const aElement: IwbElement): Boolean;
+function wbCellExteriorDontShow(const aElement: IwbElement): Boolean;
 function wbModelInfoDontShow(const aElement: IwbElement): Boolean;
 function wbREGNGrassDontShow(const aElement: IwbElement): Boolean;
 function wbREGNImposterDontShow(const aElement: IwbElement): Boolean;
@@ -1279,15 +1279,15 @@ end;
 
 {>>> Don't Show Callbacks <<<} //10
 
-function wbCellGridDontShow(const aElement: IwbElement): Boolean;
+function wbCellInteriorDontShow(const aElement: IwbElement): Boolean;
 begin
   Result := (aElement.ContainingMainRecord.ElementNativeValues['DATA'] and 1 = 1);
 end;
 
-function wbCellLightingDontShow(const aElement: IwbElement): Boolean;
-Begin
+function wbCellExteriorDontShow(const aElement: IwbElement): Boolean;
+begin
   Result := (aElement.ContainingMainRecord.ElementNativeValues['DATA'] and 1 = 0);
-End;
+end;
 
 function wbModelInfoDontShow(const aElement: IwbElement): Boolean;
 begin
@@ -5672,7 +5672,7 @@ begin
     .SetSummaryPrefixSuffixOnValue(1, '', ')')
     .SetSummaryPrefixSuffixOnValue(2, ' {Land: ', '}')
     .IncludeFlagOnValue(dfSummaryMembersNoName)
-    .SetDontShow(wbCellGridDontShow)
+    .SetDontShow(wbCellInteriorDontShow)
     .SetIsRemovable(wbCellGridIsRemovable)
     .IncludeFlag(dfCollapsed);
 

@@ -8973,7 +8973,7 @@ end;
           ])),
     {105} wbUnused(3)
     {108}
-    ]).SetDontShow(wbCellLightingDontShow)
+    ]).SetDontShow(wbCellExteriorDontShow)
       .SetIsRemovable(wbCellLightingIsRemovable),
 
     wbMHDTCELL

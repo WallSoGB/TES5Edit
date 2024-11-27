@@ -5054,7 +5054,7 @@ begin
         {0x00000400}'Light Fade Distances'
       ]))
     ], cpNormal, False, nil, 11)
-      .SetDontShow(wbCellLightingDontShow)
+      .SetDontShow(wbCellExteriorDontShow)
       .SetIsRemovable(wbCellLightingIsRemovable),
 
     wbTVDT,
