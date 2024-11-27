@@ -3575,7 +3575,7 @@ begin
     ])), [
     wbEDID,
     wbTexturedModel('Model', [MODL, MODB, MODT], []),
-    wbArray(DMTL, 'Visible When Distant Textures',
+    wbArray(DMTL, 'Distant Model Texture List',
       wbStruct('Texture', [
         wbInteger('File Hash (PC)', itU64, wbFileHashCallback),
         wbInteger('File Hash (Console)', itU64, wbFileHashCallback),
