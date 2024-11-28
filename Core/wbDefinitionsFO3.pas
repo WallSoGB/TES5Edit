@@ -3565,12 +3565,7 @@ begin
       wbInteger('Magnitude', itU32),
       wbInteger('Area', itU32),
       wbInteger('Duration', itU32),
-      wbInteger('Type', itU32,
-        wbEnum([
-          {0} 'Self',
-          {1} 'Touch',
-          {2} 'Target'
-        ])),
+      wbInteger('Type', itU32, wbEffectTypeEnum),
       wbActorValue
     ]).SetAfterLoad(wbEFITAfterLoad)
       .SetRequired;

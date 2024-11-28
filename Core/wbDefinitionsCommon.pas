@@ -41,6 +41,7 @@ var
   wbCriticalStageEnum: IwbEnumDef;
   wbCrimeTypeEnum: IwbEnumDef;
   wbCreatureTypeEnum: IwbEnumDef;
+  wbEffectTypeEnum: IwbEnumDef;
   wbEquipTypeEnum: IwbEnumDef;
   wbMenuModeEnum: IwbEnumDef;
   wbMoodEnum: IwbEnumDef;
@@ -5243,6 +5244,13 @@ begin
       5, 'Feral Ghoul',
       6, 'Robot',
       7, 'Giant'
+    ]);
+
+  wbEffectTypeEnum :=
+    wbEnum([
+      {0} 'Self',
+      {1} 'Touch',
+      {2} 'Target'
     ]);
 
   wbEquipTypeEnum :=

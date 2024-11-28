@@ -3997,7 +3997,7 @@ begin
       wbInteger('Magnitude', itU32),
       wbInteger('Area', itU32),
       wbInteger('Duration', itU32),
-      wbInteger('Type', itU32, wbEnum(['Self', 'Touch', 'Target'])),
+      wbInteger('Type', itU32, wbEffectTypeEnum),
       wbActorValue
     ], cpNormal, True, nil, -1, wbEFITAfterLoad);
 

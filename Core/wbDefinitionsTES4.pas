@@ -1605,12 +1605,7 @@ begin
             wbInteger('Magnitude', itU32),
             wbInteger('Area', itU32),
             wbInteger('Duration', itU32),
-            wbInteger('Type', itU32,
-              wbEnum([
-                {0} 'Self',
-                {1} 'Touch',
-                {2} 'Target'
-              ])),
+            wbInteger('Type', itU32, wbEffectTypeEnum),
             wbInteger('Actor Value', itU32, wbActorValueEnum).SetDefaultNativeValue(8)
           ]).SetAfterLoad(wbEFITAfterLoad)
             .SetRequired,
@@ -1641,12 +1636,7 @@ begin
                 wbInteger('Magnitude', itU32),
                 wbInteger('Area', itU32),
                 wbInteger('Duration', itU32),
-                wbInteger('Type', itU32,
-                  wbEnum([
-                    {0} 'Self',
-                    {1} 'Touch',
-                    {2} 'Target'
-                  ])),
+                wbInteger('Type', itU32, wbEffectTypeEnum),
                 wbUnion('Param #1', wbEFITOBMEParamDecider, [
                   wbByteArray('Param #1 - Unknown Type', 4),
                   wbFormID('Param #1 - FormID'),
