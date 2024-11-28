@@ -8860,7 +8860,7 @@ end;
         wbXESP,
 
         wbEmpty(XATP, 'Activation Point'),
-
+        wbFormIDCk(XLRL, 'Location Reference', [LCTN], False, cpBenignIfAdded),
         wbXSCL,
         wbDataPosRot,
         wbString(MNAM, 'Comments')
@@ -15647,7 +15647,7 @@ end;
 
     wbFormIDCk(XLCN, 'Persist Location', [LCTN]),
 
-    wbFormIDCk(XLRL, 'Location Reference', [LCTN]),
+    wbFormIDCk(XLRL, 'Location Reference', [LCTN], False, cpBenignIfAdded),
 
     wbEmpty(XIS2, 'Ignored by Sandbox'),
 
@@ -15959,7 +15959,7 @@ end;
 
     wbFormIDCk(XLCN, 'Persist Location', [LCTN]),
 
-    wbFormIDCk(XLRL, 'Location Reference', [LCRT, LCTN, NULL], False, cpBenignIfAdded),
+    wbFormIDCk(XLRL, 'Location Reference', [LCTN], False, cpBenignIfAdded),
 
     wbRStruct('Projected Decal', [
       wbStruct(XPDD, 'Projected Decal Data', [
