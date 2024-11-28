@@ -16280,7 +16280,7 @@ begin
   wbRecord(TES4, 'Main File Header',
     wbFlags(wbFlagsList([
       {0x00000001}  0, 'ESM',
-      {0x00000010}  4, 'Optimized File',
+      {0x00000010}  4, 'Optimized',
       {0x00000080}  7, 'Localized',
       {0x00000100}  8, 'Pre-calc Data Only',
       {0x00000200}  9, 'ESL'

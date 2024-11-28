@@ -7681,7 +7681,8 @@ begin
 
   wbRecord(TES4, 'Main File Header',
     wbFlags(wbFlagsList([
-      0, 'ESM'
+      0, 'ESM',
+      4, 'Optimized'
     ])), [
     wbHEDR,
     wbByteArray(OFST, 'Unknown', 0, cpIgnore),

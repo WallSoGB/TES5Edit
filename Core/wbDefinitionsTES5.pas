@@ -10782,7 +10782,7 @@ begin
       1, 'Altered',
       2, 'Checked',
       3, 'Active',
-      4, 'Optimized File',
+      4, 'Optimized',
       5, 'Temp ID Owner',
       7, 'Localized',
       8, 'Precalc Data Only',
