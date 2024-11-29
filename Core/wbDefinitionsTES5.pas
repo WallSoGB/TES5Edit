@@ -10745,21 +10745,16 @@ begin
     wbEDID,
     wbOBND(True),
     wbGenericModel,
-    IsSSE(
-      wbStruct(DNAM, 'Direction Material', [
-        wbFloat('Max Angle (30-120)'),
-        wbFormIDCk('Material', [MATO, NULL]),
-        // SSE
-        wbInteger('Flags', itU8, wbFlags([
-          {0x01} 'Considered Snow'
-        ])),
-        wbUnused(3)
-      ], cpNormal, True, nil, 2),
-      wbStruct(DNAM, 'Direction Material', [
-        wbFloat('Max Angle (30-120)'),
-        wbFormIDCk('Material', [MATO, NULL])
-      ], cpNormal, True)
-    ),
+    wbStruct(DNAM, 'Direction Material', [
+      wbFloat('Max Angle (30-120)'),
+      wbFormIDCk('Material', [MATO, NULL]),
+      IsSSE(
+        wbInteger('Considered Snow', itU8, wbBoolEnum),
+        nil),
+      IsSSE(
+        wbUnused(3),
+        nil)
+    ], cpNormal, True, nil, 2),
     wbArray(MNAM, 'Distant LOD',
       wbStruct('LOD', [
         {>>> Contains null-terminated mesh FileName followed by random data up to 260 bytes <<<}
