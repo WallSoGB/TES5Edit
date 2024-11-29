@@ -63,36 +63,39 @@ var
 
 type
   TCTDAFunctionParamType = (
-    ptNone,
-    ptInteger,
-    ptQuestStage,
-    ptVariableName,
+    //Misc
+    {1} ptNone,
+    {2} ptInteger,
+    {3} ptQuestStage,
+    {4} ptVariableName,
 
-    ptActorValue,    //wbActorValue
-    ptAxis,          //wbAxisEnum
-    ptCrimeType,     //wbCrimeTypeEnum
-    ptFormType,      //wbFormTypeEnum
-    ptSex,           //wbSexEnum
+    //Enums
+    {5} ptActorValue,    //wbActorValueEnum
+    {6} ptAxis,          //wbAxisEnum
+    {7} ptCrimeType,     //wbCrimeTypeEnum
+    {8} ptFormType,      //wbFormTypeEnum
+    {9} ptSex,           //wbSexEnum
 
-    ptActor,              //ACHR, ACRE, PLYR, TRGT
-    ptActorBase,          //CREA, NPC_
-    ptBaseObject,         //ACTI, ALCH, AMMO, APPA, ARMO, BOOK, CLOT, CONT, CREA, DOOR, FLOR, FURN, GRAS, INGR, KEYM, LIGH, LVLC, MISC, NPC_, SBSP, SGST, SLGM, SOUN, STAT, TREE, WEAP
-    ptBirthsign,          //BSGN
-    ptCell,               //CELL
-    ptClass,              //CLAS
-    ptFaction,            //FACT
-    ptFurniture,          //FURN
-    ptGlobal,             //GLOB
-    ptInventoryObject,    //ALCH, AMMO, APPA, ARMO, BOOK, CLOT, INGR, KEYM, LIGH, MISC, SGST, SLGM, WEAP
-    ptMagicEffect,        //MGEF
-    ptOwner,              //FACT, NPC_
-    ptPackage,            //PACK
-    ptQuest,              //QUST
-    ptRace,               //RACE
-    ptReference,          //ACHR, ACRE, PLYR, REFR, TRGT
-    ptSpell,              //SPEL
-    ptWeather,            //WTHR
-    ptWorldspace          //WRLD
+    //FormIDs
+    {10} ptActor,              //ACHR, ACRE, PLYR, TRGT
+    {11} ptActorBase,          //CREA, NPC_
+    {12} ptBaseObject,         //ACTI, ALCH, AMMO, APPA, ARMO, BOOK, CLOT, CONT, CREA, DOOR, FLOR, FURN, GRAS, INGR, KEYM, LIGH, LVLC, MISC, NPC_, SBSP, SGST, SLGM, SOUN, STAT, TREE, WEAP
+    {13} ptBirthsign,          //BSGN
+    {14} ptCell,               //CELL
+    {15} ptClass,              //CLAS
+    {16} ptFaction,            //FACT
+    {17} ptFurniture,          //FURN
+    {18} ptGlobal,             //GLOB
+    {19} ptInventoryObject,    //ALCH, AMMO, APPA, ARMO, BOOK, CLOT, INGR, KEYM, LIGH, MISC, SGST, SLGM, WEAP
+    {20} ptMagicEffect,        //MGEF
+    {21} ptOwner,              //FACT, NPC_
+    {22} ptPackage,            //PACK
+    {23} ptQuest,              //QUST
+    {24} ptRace,               //RACE
+    {25} ptReference,          //ACHR, ACRE, PLYR, REFR, TRGT
+    {26} ptSpell,              //SPEL
+    {27} ptWeather,            //WTHR
+    {28} ptWorldspace          //WRLD
   );
 
   PCTDAFunction = ^TCTDAFunction;
@@ -1421,51 +1424,54 @@ begin
 {>>> Struct Members <<<}
 
   wbConditionParameters := [
-    wbUnknown(4),
-    wbByteArray('None', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
-    wbInteger('Integer', itS32),
-    wbInteger('Quest Stage', itS32, wbCTDAParam2QuestStageToStr, wbCTDAParam2QuestStageToInt),
-    wbInteger('Variable Name', itS32, wbCTDAParam2VariableNameToStr, wbCTDAParam2VariableNameToInt),
+    //Misc
+    {0} wbUnknown(4),
+    {1} wbByteArray('None', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
+    {2} wbInteger('Integer', itS32),
+    {3} wbInteger('Quest Stage', itS32, wbCTDAParam2QuestStageToStr, wbCTDAParam2QuestStageToInt),
+    {4} wbInteger('Variable Name', itS32, wbCTDAParam2VariableNameToStr, wbCTDAParam2VariableNameToInt),
 
-	  wbFormIDCk('Actor Value', [ACVA]),
-	  wbInteger('Axis', itU32, wbAxisEnum),
-   	wbInteger('Crime Type', itU32, wbCrimeTypeEnum),
-    wbInteger('Form Type', itU32, wbFormTypeEnum),
-    wbInteger('Sex', itU32, wbSexEnum),
+    //Enums
+	  {5} wbInteger('Actor Value', itU32, wbActorValueEnum),
+	  {6} wbInteger('Axis', itU32, wbAxisEnum),
+   	{7} wbInteger('Crime Type', itU32, wbCrimeTypeEnum),
+    {8} wbInteger('Form Type', itU32, wbFormTypeEnum),
+    {9} wbInteger('Sex', itU32, wbSexEnum),
 
-   	wbFormIDCkNoReach('Actor', [ACHR, ACRE, PLYR, TRGT]),
-    wbFormIDCkNoReach('Actor Base', [CREA, NPC_]),
-    wbFormIDCkNoReach('Base Object', [ACTI, ALCH, AMMO, APPA, ARMO, BOOK, CLOT, CONT, CREA, DOOR, FLOR, FURN, GRAS, INGR, KEYM, LIGH, LVLC, MISC, NPC_, SBSP, SGST, SLGM, SOUN, STAT, TREE, WEAP]),
-    wbFormIDCkNoReach('Birthsign', [BSGN]),
-    wbFormIDCkNoReach('Cell', [CELL]),
-    wbFormIDCkNoReach('Class', [CLAS]),
-    wbFormIDCkNoReach('Faction', [FACT]),
-    wbFormIDCkNoReach('Furniture', [FURN]),
-    wbFormIDCkNoReach('Global', [GLOB]),
-    wbFormIDCkNoReach('Inventory Object', [ALCH, AMMO, APPA, ARMO, BOOK, CLOT, INGR, KEYM, LIGH, MISC, SGST, SLGM, WEAP]),
-    wbFormIDCkNoReach('Magic Effect', [MGEF]),
-    wbFormIDCkNoReach('Owner', [FACT, NPC_]),
-    wbFormIDCkNoReach('Package', [PACK]),
-    wbFormIDCkNoReach('Quest', [QUST]),
-    wbFormIDCkNoReach('Race', [RACE]),
-    wbFormIDCkNoReach('Reference', [ACHR, ACRE, PLYR, REFR, TRGT]),
-    wbFormIDCkNoReach('Spell', [SPEL]),
-    wbFormIDCkNoReach('Weather', [WTHR]),
-    wbFormIDCkNoReach('Worldspace', [WRLD])
+    //FormIDs
+   	{10} wbFormIDCkNoReach('Actor', [ACHR, ACRE, PLYR, TRGT]),
+    {11} wbFormIDCkNoReach('Actor Base', [CREA, NPC_]),
+    {12} wbFormIDCkNoReach('Base Object', [ACTI, ALCH, AMMO, APPA, ARMO, BOOK, CLOT, CONT, CREA, DOOR, FLOR, FURN, GRAS, INGR, KEYM, LIGH, LVLC, MISC, NPC_, SBSP, SGST, SLGM, SOUN, STAT, TREE, WEAP]),
+    {13} wbFormIDCkNoReach('Birthsign', [BSGN]),
+    {14} wbFormIDCkNoReach('Cell', [CELL]),
+    {15} wbFormIDCkNoReach('Class', [CLAS]),
+    {16} wbFormIDCkNoReach('Faction', [FACT]),
+    {17} wbFormIDCkNoReach('Furniture', [FURN]),
+    {18} wbFormIDCkNoReach('Global', [GLOB]),
+    {19} wbFormIDCkNoReach('Inventory Object', [ALCH, AMMO, APPA, ARMO, BOOK, CLOT, INGR, KEYM, LIGH, MISC, SGST, SLGM, WEAP]),
+    {20} wbFormIDCkNoReach('Magic Effect', [MGEF]),
+    {21} wbFormIDCkNoReach('Owner', [FACT, NPC_]),
+    {22} wbFormIDCkNoReach('Package', [PACK]),
+    {23} wbFormIDCkNoReach('Quest', [QUST]),
+    {24} wbFormIDCkNoReach('Race', [RACE]),
+    {25} wbFormIDCkNoReach('Reference', [ACHR, ACRE, PLYR, REFR, TRGT]),
+    {26} wbFormIDCkNoReach('Spell', [SPEL]),
+    {27} wbFormIDCkNoReach('Weather', [WTHR]),
+    {28} wbFormIDCkNoReach('Worldspace', [WRLD])
   ];
 
   wbConditionMembers := [
-    wbInteger('Type', itU8, wbConditionTypeToStr, wbConditionTypeToInt).SetAfterSet(wbConditionTypeAfterSet),
-    wbUnused(3),
-    wbUnion('Comparison Value', wbConditionCompValueDecider, [
-      wbFloat('Comparison Value - Float'),
-      wbFormIDCk('Comparison Value - Global', [GLOB])
-    ]),
-    wbInteger('Function', itU16, wbCTDAFunctionToStr, wbCTDAFunctionToInt),
-    wbUnused(2),
-    wbUnion('Parameter #1', wbCTDAParam1Decider, wbConditionParameters),
-    wbUnion('Parameter #2', wbCTDAParam2Decider, wbConditionParameters),
-    wbUnused(0)
+    {0} wbInteger('Type', itU8, wbConditionTypeToStr, wbConditionTypeToInt).SetAfterSet(wbConditionTypeAfterSet),
+    {1} wbUnused(3),
+    {2} wbUnion('Comparison Value', wbConditionCompValueDecider, [
+          wbFloat('Comparison Value - Float'),
+          wbFormIDCk('Comparison Value - Global', [GLOB])
+        ]),
+    {3} wbInteger('Function', itU16, wbCTDAFunctionToStr, wbCTDAFunctionToInt),
+    {4} wbUnused(2),
+    {5} wbUnion('Parameter #1', wbCTDAParam1Decider, wbConditionParameters),
+    {6} wbUnion('Parameter #2', wbCTDAParam2Decider, wbConditionParameters),
+    {7} wbUnused(0)
   ];
 
   wbSoundDataMembers := [
