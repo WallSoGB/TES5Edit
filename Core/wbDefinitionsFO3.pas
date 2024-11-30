@@ -2800,7 +2800,7 @@ begin
       {71} 'Variable10',
       {72} 'Ignore Negative Effects'
     ], [
-      -1, 'None'
+      255, 'None'
     ]);
 
   wbFormTypeEnum :=
@@ -2976,7 +2976,7 @@ begin
       {12} 'Throwing (unused)',
       {13} 'Unarmed'
     ], [
-      -1, 'None'
+      255, 'None'
     ]);
 
   wbSoundLevelEnum :=
@@ -3067,7 +3067,7 @@ begin
 
   {>>> Common Defs <<<}
 
-  wbActorValue := wbInteger('Actor Value', itS32, wbActorValueEnum);
+  wbActorValue := wbInteger('Actor Value', itU32, wbActorValueEnum);
   wbBIPL := wbFormIDCk(BIPL, 'Biped Model List', [FLST]);
   wbDESC := wbStringKC(DESC, 'Description', 0, cpTranslate);
   wbDESCReq := wbStringKC(DESC, 'Description', 0, cpTranslate).SetRequired;
@@ -3106,7 +3106,7 @@ begin
     {2}  wbFormIDCkNoReach('Target', [CREA, NPC_]),
     {3}  wbFormIDCkNoReach('Target List', [FLST], [CREA, NPC_]),
     {4}  wbUnused(4),
-    {5}  wbInteger('Target Part', itS32, wbActorValueEnum),
+    {5}  wbInteger('Target Part', itU32, wbActorValueEnum),
     {6}  wbInteger('VATS Action', itU32, wbVatsActionEnum),
     {7}  wbUnused(4).IncludeFlag(dfZeroSortKey),
     {8}  wbUnused(4).IncludeFlag(dfZeroSortKey),
@@ -3131,7 +3131,7 @@ begin
     {5}  wbUnion('VATS Value Param', wbConditionVATSValueParam, wbConditionVATSValueParameters),
 
     //Enums
-    {6}  wbInteger('Actor Value', itS32, wbActorValueEnum),
+    {6}  wbInteger('Actor Value', itU32, wbActorValueEnum),
     {7}  wbInteger('Alignment', itU32, wbAlignmentEnum),
     {8}  wbInteger('Axis', itU32, wbAxisEnum),
     {9}  wbInteger('Body Location', itS32, wbBodyLocationEnum),
@@ -3185,7 +3185,7 @@ begin
       wbInteger('Mood', itU8, wbMoodEnum),
       wbUnused(3),
       wbInteger('Buys/Sells and Services', itU32, wbServiceFlags),
-      wbInteger('Teaches', itS8, wbSkillEnum),
+      wbInteger('Teaches', itU8, wbSkillEnum),
       wbInteger('Maximum training level', itU8),
       wbInteger('Assistance', itS8, wbAssistanceEnum),
       wbInteger('Aggro Radius Behavior', itU8, wbBoolEnum),
@@ -3367,14 +3367,14 @@ begin
     wbRArrayS('Parts',
       wbHeadPart(
         wbEnum([
-          'Head',
-          'Ears',
-          'Mouth',
-          'Teeth Lower',
-          'Teeth Upper',
-          'Tongue',
-          'Left Eye',
-          'Right Eye'
+          {0} 'Head',
+          {1} 'Ears',
+          {2} 'Mouth',
+          {3} 'Teeth Lower',
+          {4} 'Teeth Upper',
+          {5} 'Tongue',
+          {6} 'Left Eye',
+          {7} 'Right Eye'
         ]),
         wbGenericModel(True),
         wbHeadPartsAfterSet)
@@ -3813,7 +3813,7 @@ begin
         'Scroll',
         'Can''t be Taken'
       ])),
-      wbInteger('Skill', itS8, wbSkillEnum),
+      wbInteger('Skill', itU8, wbSkillEnum),
       wbInteger('Value', itS32),
       wbFloat('Weight')
     ]).SetRequired
@@ -3900,10 +3900,10 @@ begin
     wbDESCReq,
     wbICON,
     wbStruct(DATA, '', [
-      wbArray('Tag Skills', wbInteger('Tag Skill', itS32, wbActorValueEnum), 4),
+      wbArray('Tag Skills', wbInteger('Tag Skill', itU32, wbActorValueEnum), 4),
       wbInteger('Flags', itU32, wbFlags(['Playable', 'Guard'], True)),
       wbInteger('Buys/Sells and Services', itU32, wbServiceFlags),
-      wbInteger('Teaches', itS8, wbSkillEnum),
+      wbInteger('Teaches', itU8, wbSkillEnum),
       wbInteger('Maximum training level', itU8),
       wbUnused(2)
     ]).SetRequired,
@@ -4202,11 +4202,12 @@ begin
       {28} wbFloat('Fire Timer (max)'),
       {32} wbFloat('Ranged Weapon Range Mult (min)'),
       {36} wbUnused(4),
-      {40} wbInteger('Weapon Restrictions', itU32, wbEnum([
-        'None',
-        'Melee Only',
-        'Ranged Only'
-      ])),
+      {40} wbInteger('Weapon Restrictions', itU32,
+             wbEnum([
+               {0} 'None',
+               {1} 'Melee Only',
+               {2} 'Ranged Only'
+             ])),
       {44} wbFloat('Ranged Weapon Range Mult (max)'),
       {48} wbFloat('Max Targeting FOV'),
       {52} wbFloat('Combat Radius'),
@@ -4224,16 +4225,17 @@ begin
       .SetDefaultNativeValue(50)
       .SetRequired,
     wbStruct(DATA, '', [
-      wbInteger('Type', itU8, wbEnum([
-        {0} 'Topic',
-        {1} 'Conversation',
-        {2} 'Combat',
-        {3} 'Persuasion',
-        {4} 'Detection',
-        {5} 'Service',
-        {6} 'Miscellaneous',
-        {7} 'Radio'
-      ])),
+      wbInteger('Type', itU8,
+        wbEnum([
+          {0} 'Topic',
+          {1} 'Conversation',
+          {2} 'Combat',
+          {3} 'Persuasion',
+          {4} 'Detection',
+          {5} 'Service',
+          {6} 'Miscellaneous',
+          {7} 'Radio'
+        ])),
       wbInteger('Flags', itU8, wbFlags([
         'Rumors',
         'Top-level'
@@ -4365,12 +4367,11 @@ begin
     wbEDIDReq,
     wbFULL,
     wbStruct(ENIT, 'Effect Data', [
-      wbInteger('Type', itU32, wbEnum([
-        {0} '',
-        {1} '',
-        {2} 'Weapon',
-        {3} 'Apparel'
-      ])),
+      wbInteger('Type', itU32,
+        wbEnum([], [
+          2, 'Weapon',
+          3, 'Apparel'
+      ]  )),
       wbUnused(4),
       wbUnused(4),
       wbInteger('Flags', itU8, wbFlags([
@@ -4440,11 +4441,12 @@ begin
       6, 'Constant'
     ])), [
     wbEDIDReq,
-    wbInteger(FNAM, 'Type', itU8, wbEnum([], [
-      Ord('s'), 'Short',
-      Ord('l'), 'Long',
-      Ord('f'), 'Float'
-    ])).SetDefaultEditValue('Float').SetRequired,
+    wbInteger(FNAM, 'Type', itU8,
+      wbEnum([], [
+        Ord('s'), 'Short',
+        Ord('l'), 'Long',
+        Ord('f'), 'Float'
+      ])).SetDefaultEditValue('Float').SetRequired,
     wbFloat(FLTV, 'Value').SetRequired
   ]);
 
@@ -4499,39 +4501,40 @@ begin
     wbOBND(True),
     wbFormIDCk(SNAM, 'Sound - Looping', [SOUN]),
     wbFormIDCk(RDAT, 'Use Sound from Region (Interiors Only)', [REGN]),
-    wbInteger(ANAM, 'Environment Type', itU32, wbEnum([
-      'None',
-      'Default',
-      'Generic',
-      'Padded Cell',
-      'Room',
-      'Bathroom',
-      'Livingroom',
-      'Stone Room',
-      'Auditorium',
-      'Concerthall',
-      'Cave',
-      'Arena',
-      'Hangar',
-      'Carpeted Hallway',
-      'Hallway',
-      'Stone Corridor',
-      'Alley',
-      'Forest',
-      'City',
-      'Mountains',
-      'Quarry',
-      'Plain',
-      'Parkinglot',
-      'Sewerpipe',
-      'Underwater',
-      'Small Room',
-      'Medium Room',
-      'Large Room',
-      'Medium Hall',
-      'Large Hall',
-      'Plate'
-    ])).SetRequired
+    wbInteger(ANAM, 'Environment Type', itU32,
+      wbEnum([
+        {0}  'None',
+        {1}  'Default',
+        {2}  'Generic',
+        {3}  'Padded Cell',
+        {4}  'Room',
+        {5}  'Bathroom',
+        {6}  'Livingroom',
+        {7}  'Stone Room',
+        {8}  'Auditorium',
+        {9}  'Concerthall',
+        {10} 'Cave',
+        {11} 'Arena',
+        {12} 'Hangar',
+        {13} 'Carpeted Hallway',
+        {14} 'Hallway',
+        {15} 'Stone Corridor',
+        {16} 'Alley',
+        {17} 'Forest',
+        {18} 'City',
+        {19} 'Mountains',
+        {20} 'Quarry',
+        {21} 'Plain',
+        {22} 'Parkinglot',
+        {23} 'Sewerpipe',
+        {24} 'Underwater',
+        {25} 'Small Room',
+        {26} 'Medium Room',
+        {27} 'Large Room',
+        {28} 'Medium Hall',
+        {29} 'Large Hall',
+        {30} 'Plate'
+      ])).SetRequired
   ]);
 
   wbRecord(TACT, 'Talking Activator',
@@ -4581,32 +4584,34 @@ begin
     wbFormIDCk(SNAM, 'Sound - Looping', [SOUN]),
     wbFormIDCk(PNAM, 'Password Note', [NOTE]),
     wbStruct(DNAM, '', [
-      wbInteger('Base Hacking Difficulty', itU8, wbEnum([
-        'Very Easy',
-        'Easy',
-        'Average',
-        'Hard',
-        'Very Hard',
-        'Requires Key'
-      ])),
+      wbInteger('Base Hacking Difficulty', itU8,
+        wbEnum([
+          {0} 'Very Easy',
+          {1} 'Easy',
+          {2} 'Average',
+          {3} 'Hard',
+          {4} 'Very Hard',
+          {5} 'Requires Key'
+        ])),
       wbInteger('Flags', itU8, wbFlags([
         'Leveled',
         'Unlocked',
         'Alternate Colors',
         'Hide Welcome Text when displaying Image'
       ])),
-      wbInteger('ServerType', itU8, wbEnum([
-        '-Server 1-',
-        '-Server 2-',
-        '-Server 3-',
-        '-Server 4-',
-        '-Server 5-',
-        '-Server 6-',
-        '-Server 7-',
-        '-Server 8-',
-        '-Server 9-',
-        '-Server 10-'
-      ])),
+      wbInteger('ServerType', itU8,
+        wbEnum([
+          {0} '-Server 1-',
+          {1} '-Server 2-',
+          {2} '-Server 3-',
+          {3} '-Server 4-',
+          {4} '-Server 5-',
+          {5} '-Server 6-',
+          {6} '-Server 7-',
+          {7} '-Server 8-',
+          {8} '-Server 9-',
+          {9} '-Server 10-'
+        ])),
       wbUnused(1)
     ]).SetRequired,
     wbRArray('Menu Items',
@@ -4739,12 +4744,13 @@ begin
     wbICON,
     wbYNAM,
     wbZNAM,
-    wbInteger(DATA, 'Type', itU8, wbEnum([
-      'Sound',
-      'Text',
-      'Image',
-      'Voice'
-    ]), cpNormal, True),
+    wbInteger(DATA, 'Type', itU8,
+      wbEnum([
+        {0} 'Sound',
+        {1} 'Text',
+        {2} 'Image',
+        {3} 'Voice'
+      ])).SetRequired,
     wbRArrayS('Quests', wbFormIDCkNoReach(ONAM, 'Quest', [QUST])),
     wbString(XNAM, 'Texture'),
     wbUnion(TNAM, 'Text / Topic', wbNOTETNAMDecide, [
@@ -4779,17 +4785,13 @@ begin
         'Pins Limbs',
         'Pass Through Small Transparent'
       ])),
-      {00} wbInteger('Type', itU16, wbEnum([
-        {00} '',
-        {01} 'Missile',
-        {02} 'Lobber',
-        {03} '',
-        {04} 'Beam',
-        {05} '',
-        {06} '',
-        {07} '',
-        {08} 'Flame'
-      ])),
+      {00} wbInteger('Type', itU16,
+             wbEnum([], [
+               1, 'Missile',
+               2, 'Lobber',
+               4, 'Beam',
+               8, 'Flame'
+             ])),
       {04} wbFloat('Gravity'),
       {08} wbFloat('Speed'),
       {12} wbFloat('Range'),
@@ -5448,16 +5450,16 @@ begin
           wbStructSK([0, 1], 'Entry Point', [
             wbInteger('Entry Point', itU8,
               wbEnum([
-                {00} 'Calculate Weapon Damage',
-                {01} 'Calculate My Critical Hit Chance',
-                {02} 'Calculate My Critical Hit Damage',
-                {03} 'Calculate Weapon Attack AP Cost',
-                {04} 'Calculate Mine Explode Chance',
-                {05} 'Adjust Range Penalty',
-                {06} 'Adjust Limb Damage',
-                {07} 'Calculate Weapon Range',
-                {08} 'Calculate To Hit Chance',
-                {09} 'Adjust Experience Points',
+                {0}  'Calculate Weapon Damage',
+                {1}  'Calculate My Critical Hit Chance',
+                {2}  'Calculate My Critical Hit Damage',
+                {3}  'Calculate Weapon Attack AP Cost',
+                {4}  'Calculate Mine Explode Chance',
+                {5}  'Adjust Range Penalty',
+                {6}  'Adjust Limb Damage',
+                {7}  'Calculate Weapon Range',
+                {8}  'Calculate To Hit Chance',
+                {9}  'Adjust Experience Points',
                 {10} 'Adjust Gained Skill Points',
                 {11} 'Adjust Book Skill Points',
                 {12} 'Modify Recovered Health',
@@ -5541,7 +5543,7 @@ begin
           ])).IncludeFlag(dfCollapsed, wbCollapseFlags),
         wbInteger('Part Type', itS8, wbBodyLocationEnum),
         wbInteger('Health Percent', itU8),
-        wbInteger('Actor Value', itS8, wbActorValueEnum),
+        wbInteger('Actor Value', itU8, wbActorValueEnum),
         wbInteger('To Hit Chance', itU8),
         wbInteger('Explodable - Explosion Chance %', itU8),
         wbInteger('Explodable - Debris Count', itU16),
@@ -5600,22 +5602,25 @@ begin
     wbEDIDReq,
     wbGenericModel,
     wbStruct(DATA, 'Data', [
-      {00} wbInteger('Action', itU32, wbEnum([
-        'Shoot',
-        'Fly',
-        'Hit',
-        'Zoom'
-      ])),
-      {04} wbInteger('Location', itU32, wbEnum([
-        'Attacker',
-        'Projectile',
-        'Target'
-      ])),
-      {08} wbInteger('Target', itU32, wbEnum([
-        'Attacker',
-        'Projectile',
-        'Target'
-      ])),
+      {00} wbInteger('Action', itU32,
+             wbEnum([
+               {0} 'Shoot',
+               {1} 'Fly',
+               {2} 'Hit',
+               {3} 'Zoom'
+             ])),
+      {04} wbInteger('Location', itU32,
+             wbEnum([
+               {0} 'Attacker',
+               {1} 'Projectile',
+               {2} 'Target'
+             ])),
+      {08} wbInteger('Target', itU32,
+             wbEnum([
+               {0} 'Attacker',
+               {1} 'Projectile',
+               {2} 'Target'
+             ])),
       {12} wbInteger('Flags', itU32, wbFlags([
         'Position Follows Location',
         'Rotation Follows Target',
@@ -5640,11 +5645,12 @@ begin
     wbEDIDReq,
     wbConditions,
     wbArray(ANAM, 'Related Camera Paths', wbFormIDCk('Related Camera Path', [CPTH, NULL]), ['Parent', 'Previous Sibling']).SetRequired,
-    wbInteger(DATA, 'Camera Zoom', itU8, wbEnum([
-      'Default',
-      'Disable',
-      'Shot List'
-    ])).SetRequired,
+    wbInteger(DATA, 'Camera Zoom', itU8,
+      wbEnum([
+        {0} 'Default',
+        {1} 'Disable',
+        {2} 'Shot List'
+      ])).SetRequired,
     wbRArray('Camera Shots', wbFormIDCk(SNAM, 'Camera Shot', [CAMS]))
   ]);
 
@@ -5661,11 +5667,12 @@ begin
     wbGenericModel,
     wbStruct(DATA, '', [
       wbFloat('Effect - Duration'),
-      wbInteger('Effect - Orientation', itU32, wbEnum([
-        'Surface Normal',
-        'Projectile Vector',
-        'Projectile Reflection'
-      ])),
+      wbInteger('Effect - Orientation', itU32,
+        wbEnum([
+          {0} 'Surface Normal',
+          {1} 'Projectile Vector',
+          {2} 'Projectile Reflection'
+        ])),
       wbFloat('Angle Threshold'),
       wbFloat('Placement Radius'),
       wbInteger('Sound Level', itU32, wbSoundLevelEnum),
@@ -5853,16 +5860,17 @@ begin
       wbUnused(1),
       wbInteger('Unit from water amount', itU16),
       wbUnused(2),
-      wbInteger('Unit from water type', itU32, wbEnum([
-        'Above - At Least',
-        'Above - At Most',
-        'Below - At Least',
-        'Below - At Most',
-        'Either - At Least',
-        'Either - At Most',
-        'Either - At Most Above',
-        'Either - At Most Below'
-      ])),
+      wbInteger('Unit from water type', itU32,
+        wbEnum([
+          {0} 'Above - At Least',
+          {1} 'Above - At Most',
+          {2} 'Below - At Least',
+          {3} 'Below - At Most',
+          {4} 'Either - At Least',
+          {5} 'Either - At Most',
+          {6} 'Either - At Most Above',
+          {7} 'Either - At Most Below'
+        ])),
       wbFloat('Position Range'),
       wbFloat('Height Range'),
       wbFloat('Color Range'),
@@ -5914,15 +5922,16 @@ begin
       13, 'Unknown 13'
     ])), [
     wbStruct(DATA, '', [
-      wbInteger('Type', itU8, wbEnum([
-        {0} 'Topic',
-        {1} 'Conversation',
-        {2} 'Combat',
-        {3} 'Persuasion',
-        {4} 'Detection',
-        {5} 'Service',
-        {6} 'Miscellaneous',
-        {7} 'Radio'
+      wbInteger('Type', itU8,
+        wbEnum([
+          {0} 'Topic',
+          {1} 'Conversation',
+          {2} 'Combat',
+          {3} 'Persuasion',
+          {4} 'Detection',
+          {5} 'Service',
+          {6} 'Miscellaneous',
+          {7} 'Radio'
       ])),
       wbNextSpeaker,
       wbInteger('Flags 1', itU8, wbFlags([
@@ -5947,16 +5956,17 @@ begin
     wbRArray('Responses',
       wbRStruct('Response', [
         wbStruct(TRDT, 'Response Data', [
-          wbInteger('Emotion Type', itU32, wbEnum([
-            {0} 'Neutral',
-            {1} 'Anger',
-            {2} 'Disgust',
-            {3} 'Fear',
-            {4} 'Sad',
-            {5} 'Happy',
-            {6} 'Surprise',
-            {7} 'Pained'
-          ])),
+          wbInteger('Emotion Type', itU32,
+            wbEnum([
+              {0} 'Neutral',
+              {1} 'Anger',
+              {2} 'Disgust',
+              {3} 'Fear',
+              {4} 'Sad',
+              {5} 'Happy',
+              {6} 'Surprise',
+              {7} 'Pained'
+            ])),
           wbInteger('Emotion Value', itS32),
           wbUnused(4),
           wbInteger('Response number', itU8),
@@ -5988,14 +5998,14 @@ begin
     wbStringKC(RNAM, 'Prompt', 0, cpTranslate),
     wbFormIDCk(ANAM, 'Speaker', [CREA, NPC_]),
     wbFormIDCk(KNAM, 'ActorValue/Perk', [AVIF, PERK]),
-    wbInteger(DNAM, 'Speech Challenge', itU32, wbEnum([
-      '---',
-      'Very Easy',
-      'Easy',
-      'Average',
-      'Hard',
-      'Very Hard'
-    ]))
+    wbInteger(DNAM, 'Speech Challenge', itU32,
+      wbEnum([], [
+        1, 'Very Easy',
+        2, 'Easy',
+        3, 'Average',
+        4, 'Hard',
+        5, 'Very Hard'
+      ]))
   ]).SetAddInfo(wbINFOAddInfo)
     .SetAfterLoad(wbINFOAfterLoad);
 
@@ -6117,40 +6127,41 @@ begin
     wbICON,
     wbFormIDCk(TNAM, 'Texture', [TXST]).SetRequired,
     wbStruct(HNAM, 'Havok Data', [
-      wbInteger('Material Type', itU8, wbEnum([
-        {00} 'STONE',
-        {01} 'CLOTH',
-        {02} 'DIRT',
-        {03} 'GLASS',
-        {04} 'GRASS',
-        {05} 'METAL',
-        {06} 'ORGANIC',
-        {07} 'SKIN',
-        {08} 'WATER',
-        {09} 'WOOD',
-        {10} 'HEAVY STONE',
-        {11} 'HEAVY METAL',
-        {12} 'HEAVY WOOD',
-        {13} 'CHAIN',
-        {14} 'SNOW',
-        {15} 'ELEVATOR',
-        {16} 'HOLLOW METAL',
-        {17} 'SHEET METAL',
-        {18} 'SAND',
-        {19} 'BRIKEN CONCRETE',
-        {20} 'VEHILCE BODY',
-        {21} 'VEHILCE PART SOLID',
-        {22} 'VEHILCE PART HOLLOW',
-        {23} 'BARREL',
-        {24} 'BOTTLE',
-        {25} 'SODA CAN',
-        {26} 'PISTOL',
-        {27} 'RIFLE',
-        {28} 'SHOPPING CART',
-        {29} 'LUNCHBOX',
-        {30} 'BABY RATTLE',
-        {31} 'RUBER BALL'
-      ])),
+      wbInteger('Material Type', itU8,
+        wbEnum([
+          {0}  'STONE',
+          {1}  'CLOTH',
+          {2}  'DIRT',
+          {3}  'GLASS',
+          {4}  'GRASS',
+          {5}  'METAL',
+          {6}  'ORGANIC',
+          {7}  'SKIN',
+          {8}  'WATER',
+          {9}  'WOOD',
+          {10} 'HEAVY STONE',
+          {11} 'HEAVY METAL',
+          {12} 'HEAVY WOOD',
+          {13} 'CHAIN',
+          {14} 'SNOW',
+          {15} 'ELEVATOR',
+          {16} 'HOLLOW METAL',
+          {17} 'SHEET METAL',
+          {18} 'SAND',
+          {19} 'BRIKEN CONCRETE',
+          {20} 'VEHILCE BODY',
+          {21} 'VEHILCE PART SOLID',
+          {22} 'VEHILCE PART HOLLOW',
+          {23} 'BARREL',
+          {24} 'BOTTLE',
+          {25} 'SODA CAN',
+          {26} 'PISTOL',
+          {27} 'RIFLE',
+          {28} 'SHOPPING CART',
+          {29} 'LUNCHBOX',
+          {30} 'BABY RATTLE',
+          {31} 'RUBER BALL'
+        ])),
       wbInteger('Friction', itU8),
       wbInteger('Restitution', itU8)
     ]).SetRequired,
@@ -6260,11 +6271,8 @@ begin
              wbFormIDCk('Assoc. Item', [WEAP, ARMO, NULL]), //Bound Item
              wbFormIDCk('Assoc. Creature', [CREA]) //Summon Creature
            ]).SetAfterSet(wbMGEFAssocItemAfterSet),
-      {12} wbInteger('Magic School (Unused)', itS32, wbEnum([
-      ], [
-        -1, 'None'
-      ])),
-      {16} wbInteger('Resistance Type', itS32, wbActorValueEnum),
+      {12} wbByteArray('Magic School (Unused)', 4),
+      {16} wbInteger('Resistance Type', itU32, wbActorValueEnum),
       {20} wbInteger('Counter effect count', itU16),
       {22} wbUnused(2),
       {24} wbFormIDCk('Light', [LIGH, NULL]),
@@ -6553,16 +6561,17 @@ begin
     ], cpNormal, True, nil, 2),
     wbRStruct('Locations', [
       wbStruct(PLDT, 'Location 1', [
-        wbInteger('Type', itS32, wbEnum([     // Byte + filler
-          {0} 'Near reference',
-          {1} 'In cell',
-          {2} 'Near current location',
-          {3} 'Near editor location',
-          {4} 'Object ID',
-          {5} 'Object Type',
-          {6} 'Near linked reference',
-          {7} 'At package location'
-        ])),
+        wbInteger('Type', itU32,
+          wbEnum([     // Byte + filler
+            {0} 'Near reference',
+            {1} 'In cell',
+            {2} 'Near current location',
+            {3} 'Near editor location',
+            {4} 'Object ID',
+            {5} 'Object Type',
+            {6} 'Near linked reference',
+            {7} 'At package location'
+          ])),
         wbUnion('Location', wbPxDTLocationDecider, [
           wbFormIDCkNoReach('Reference', [REFR, PGRE, PMIS, PBEA, ACHR, ACRE, PLYR], True),
           wbFormIDCkNoReach('Cell', [CELL]),
@@ -6576,16 +6585,17 @@ begin
         wbInteger('Radius', itS32)
       ]),
       wbStruct(PLD2, 'Location 2', [
-        wbInteger('Type', itS32, wbEnum([
-          {0} 'Near reference',
-          {1} 'In cell',
-          {2} 'Near current location',
-          {3} 'Near editor location',
-          {4} 'Object ID',
-          {5} 'Object Type',
-          {6} 'Near linked reference',
-          {7} 'At package location'
-        ])),
+        wbInteger('Type', itU32,
+          wbEnum([
+            {0} 'Near reference',
+            {1} 'In cell',
+            {2} 'Near current location',
+            {3} 'Near editor location',
+            {4} 'Object ID',
+            {5} 'Object Type',
+            {6} 'Near linked reference',
+            {7} 'At package location'
+          ])),
         wbUnion('Location', wbPxDTLocationDecider, [
           wbFormIDCkNoReach('Reference', [REFR, PGRE, PMIS, PBEA, ACHR, ACRE, PLYR], True),
           wbFormIDCkNoReach('Cell', [CELL]),
@@ -6601,32 +6611,34 @@ begin
     ], [], cpNormal, False, nil, True),
     wbStruct(PSDT, 'Schedule', [
       wbInteger('Month', itS8),
-      wbInteger('Day of week', itS8, wbEnum([
-        'Sunday',
-        'Monday',
-        'Tuesday',
-        'Wednesday',
-        'Thursday',
-        'Friday',
-        'Saturday',
-        'Weekdays',
-        'Weekends',
-        'Monday, Wednesday, Friday',
-        'Tuesday, Thursday'
-      ], [
-        -1, 'Any'
-      ])),
+      wbInteger('Day of week', itU8,
+        wbEnum([
+          {0}  'Sunday',
+          {1}  'Monday',
+          {2}  'Tuesday',
+          {3}  'Wednesday',
+          {4}  'Thursday',
+          {5}  'Friday',
+          {6}  'Saturday',
+          {7}  'Weekdays',
+          {8}  'Weekends',
+          {9}  'Monday, Wednesday, Friday',
+          {10} 'Tuesday, Thursday'
+        ], [
+          255, 'Any'
+        ])),
       wbInteger('Date', itU8),
       wbInteger('Time', itS8),
       wbInteger('Duration', itS32)
     ]).SetRequired,
     wbStruct(PTDT, 'Target 1', [
-      wbInteger('Type', itS32, wbEnum([
-        {0} 'Specific Reference',
-        {1} 'Object ID',
-        {2} 'Object Type',
-        {3} 'Linked Reference'
-      ]), cpNormal, False, nil, nil, 2),
+      wbInteger('Type', itU32,
+        wbEnum([
+          {0} 'Specific Reference',
+          {1} 'Object ID',
+          {2} 'Object Type',
+          {3} 'Linked Reference'
+        ])).SetDefaultNativeValue(2),
       wbUnion('Target', wbPxDTLocationDecider, [
         wbFormIDCkNoReach('Reference', [ACHR, ACRE, REFR, PGRE, PMIS, PBEA, PLYR], True),
         wbFormIDCkNoReach('Object ID', [ACTI, DOOR, STAT, FURN, CREA, SPEL, NPC_, LVLN, LVLC, CONT, ARMO, AMMO, MISC, WEAP, BOOK, KEYM, ALCH, LIGH, FACT, FLST]),
@@ -6690,14 +6702,16 @@ begin
         '',
         'Hold Fire When Blocked'
       ])),
-      wbInteger('Fire Rate', itU8, wbEnum([
-        'Auto Fire',
-        'Volley Fire'
-      ])),
-      wbInteger('Fire Count', itU8, wbEnum([
-        'Number of Bursts',
-        'Repeat Fire'
-      ])),
+      wbInteger('Fire Rate', itU8,
+        wbEnum([
+          {0} 'Auto Fire',
+          {1} 'Volley Fire'
+        ])),
+      wbInteger('Fire Count', itU8,
+        wbEnum([
+          {0} 'Number of Bursts',
+          {1} 'Repeat Fire'
+        ])),
       wbInteger('Number of Bursts', itU16),
       wbStruct('Shoots Per Volleys', [
         wbInteger('Min', itU16),
@@ -6710,12 +6724,13 @@ begin
       wbUnused(4)
     ]),
     wbStruct(PTD2, 'Target 2', [
-      wbInteger('Type', itS32, wbEnum([
-        {0} 'Specific reference',
-        {1} 'Object ID',
-        {2} 'Object Type',
-        {3} 'Linked Reference'
-      ])),
+      wbInteger('Type', itU32,
+        wbEnum([
+          {0} 'Specific reference',
+          {1} 'Object ID',
+          {2} 'Object Type',
+          {3} 'Linked Reference'
+        ])),
       wbUnion('Target', wbPxDTLocationDecider, [
         wbFormIDCkNoReach('Reference', [ACHR, ACRE, REFR, PGRE, PMIS, PBEA, PLYR], True),
         wbFormIDCkNoReach('Object ID', [ACTI, DOOR, STAT, FURN, CREA, SPEL, NPC_, LVLN, LVLC, CONT, ARMO, AMMO, MISC, WEAP, BOOK, KEYM, ALCH, LIGH, FACT, FLST]),
@@ -6742,23 +6757,25 @@ begin
         'Don''t Control Target Movement'
       ])),
       wbUnused(4),
-      wbInteger('Dialogue Type', itU32, wbEnum([
-        'Conversation',
-        'Say To'
-      ])),
+      wbInteger('Dialogue Type', itU32,
+        wbEnum([
+          {0} 'Conversation',
+          {1} 'Say To'
+        ])),
       wbByteArray('Unknown', 4)
     ], cpNormal, False, nil, 3),
     wbStruct(PLD2, 'Location 2 (again??)', [
-      wbInteger('Type', itS32, wbEnum([
-        {0} 'Near reference',
-        {1} 'In cell',
-        {2} 'Near current location',
-        {3} 'Near editor location',
-        {4} 'Object ID',
-        {5} 'Object Type',
-        {6} 'Near linked reference',
-        {7} 'At package location'
-      ])),
+      wbInteger('Type', itU32,
+        wbEnum([
+          {0} 'Near reference',
+          {1} 'In cell',
+          {2} 'Near current location',
+          {3} 'Near editor location',
+          {4} 'Object ID',
+          {5} 'Object Type',
+          {6} 'Near linked reference',
+          {7} 'At package location'
+        ])),
       wbUnion('Location', wbPxDTLocationDecider, [
         wbFormIDCkNoReach('Reference', [REFR, PGRE, PMIS, PBEA, ACHR, ACRE, PLYR], True),
         wbFormIDCkNoReach('Cell', [CELL]),
@@ -6845,7 +6862,7 @@ begin
     wbFactionRelations,
     wbStruct(DATA, '', [
       wbArrayS('Skill Boosts', wbStructSK([0], 'Skill Boost', [
-        wbInteger('Skill', itS8, wbActorValueEnum),
+        wbInteger('Skill', itU8, wbActorValueEnum),
         wbInteger('Boost', itS8)
       ]).SetSummaryKey([1, 0])
         .SetSummaryMemberPrefixSuffix(1, '+', '')
@@ -6869,24 +6886,29 @@ begin
     wbEmpty(NAM2, 'Unknown Marker').SetRequired,
     wbArray(VTCK, 'Voices', wbFormIDCk('Voice', [VTYP]), ['Male', 'Female']).SetRequired,
     wbArray(DNAM, 'Default Hair Styles', wbFormIDCk('Default Hair Style', [HAIR, NULL]), ['Male', 'Female']).SetRequired,
-    wbArray(CNAM, 'Default Hair Colors', wbInteger('Default Hair Color', itU8, wbEnum([
-      'Bleached',
-      'Brown',
-      'Chocolate',
-      'Platinum',
-      'Cornsilk',
-      'Suede',
-      'Pecan',
-      'Auburn',
-      'Ginger',
-      'Honey',
-      'Gold',
-      'Rosewood',
-      'Black',
-      'Chestnut',
-      'Steel',
-      'Champagne'
-    ])), ['Male', 'Female']).SetRequired,
+    wbArray(CNAM, 'Default Hair Colors',
+      wbInteger('Default Hair Color', itU8,
+        wbEnum([
+          {0}  'Bleached',
+          {1}  'Brown',
+          {2}  'Chocolate',
+          {3}  'Platinum',
+          {4}  'Cornsilk',
+          {5}  'Suede',
+          {6}  'Pecan',
+          {7}  'Auburn',
+          {8}  'Ginger',
+          {9}  'Honey',
+          {10} 'Gold',
+          {11} 'Rosewood',
+          {12} 'Black',
+          {13} 'Chestnut',
+          {14} 'Steel',
+          {15} 'Champagne'
+        ])), [
+          {0} 'Male',
+          {1} 'Female'
+    ]).SetRequired,
     wbFloat(PNAM, 'FaceGen - Main clamp').SetRequired,
     wbFloat(UNAM, 'FaceGen - Face clamp').SetRequired,
     wbByteArray(ATTR, 'Unused').SetRequired,
@@ -6982,58 +7004,60 @@ begin
       ]).SetToStr(wbVec3ToStr).IncludeFlag(dfCollapsed, wbCollapseVec3),
       wbFloatColors('Color'),
       wbUnknown(4),
-      wbInteger('Type', itU32, wbEnum([
-        'None',
-        'Box',
-        'Sphere',
-        'Portal Box'
-      ]))
+      wbInteger('Type', itU32,
+        wbEnum([
+          {0} 'None',
+          {1} 'Box',
+          {2} 'Sphere',
+          {3} 'Portal Box'
+        ]))
     ]),
-    wbInteger(XTRI, 'Collision Layer', itU32, wbEnum([
-      'Unidentified',
-      'Static',
-      'AnimStatic',
-      'Transparent',
-      'Clutter',
-      'Weapon',
-      'Projectile',
-      'Spell',
-      'Biped',
-      'Trees',
-      'Props',
-      'Water',
-      'Trigger',
-      'Terrain',
-      'Trap',
-      'Non Collidable',
-      'Cloud Trap',
-      'Ground',
-      'Portal',
-      'Debris Small',
-      'Debris Large',
-      'Acoustic Space',
-      'Actor Zone',
-      'Projectile Zone',
-      'Gas Trap',
-      'Shell Casing',
-      'Transparent Small',
-      'Invisible Wall',
-      'Transparent Small Anim',
-      'Dead Bip',
-      'Char Controller',
-      'Avoid Box',
-      'Collision Box',
-      'Camera Sphere',
-      'Door Detection',
-      'Camera Pick',
-      'Item Pick',
-      'Line Of Sight',
-      'Path Pick',
-      'Custom Pick 1',
-      'Custom Pick 2',
-      'Spell Explosion',
-      'Dropping Pick'
-    ])),
+    wbInteger(XTRI, 'Collision Layer', itU32,
+      wbEnum([
+        {0}  'Unidentified',
+        {1}  'Static',
+        {2}  'AnimStatic',
+        {3}  'Transparent',
+        {4}  'Clutter',
+        {5}  'Weapon',
+        {6}  'Projectile',
+        {7}  'Spell',
+        {8}  'Biped',
+        {9}  'Trees',
+        {10} 'Props',
+        {11} 'Water',
+        {12} 'Trigger',
+        {13} 'Terrain',
+        {14} 'Trap',
+        {15} 'Non Collidable',
+        {16} 'Cloud Trap',
+        {17} 'Ground',
+        {18} 'Portal',
+        {19} 'Debris Small',
+        {20} 'Debris Large',
+        {21} 'Acoustic Space',
+        {22} 'Actor Zone',
+        {23} 'Projectile Zone',
+        {24} 'Gas Trap',
+        {25} 'Shell Casing',
+        {26} 'Transparent Small',
+        {27} 'Invisible Wall',
+        {28} 'Transparent Small Anim',
+        {29} 'Dead Bip',
+        {30} 'Char Controller',
+        {31} 'Avoid Box',
+        {32} 'Collision Box',
+        {33} 'Camera Sphere',
+        {34} 'Door Detection',
+        {35} 'Camera Pick',
+        {36} 'Item Pick',
+        {37} 'Line Of Sight',
+        {38} 'Path Pick',
+        {39} 'Custom Pick 1',
+        {40} 'Custom Pick 2',
+        {41} 'Spell Explosion',
+        {42} 'Dropping Pick'
+      ])),
     wbEmpty(XMBP, 'MultiBound Primitive Marker'),
 
     {--- Bound Contents ---}
@@ -7060,23 +7084,24 @@ begin
       ])).SetRequired,
       wbFULLReq,
       wbStruct(TNAM, '', [
-        wbInteger('Type', itU8, wbEnum([
-          'None',
-          'City',
-          'Settlement',
-          'Encampment',
-          'Natural Landmark',
-          'Cave',
-          'Factory',
-          'Monument',
-          'Military',
-          'Office',
-          'Town Ruins',
-          'Urban Ruins',
-          'Sewer Ruins',
-          'Metro',
-          'Vault'
-        ])),
+        wbInteger('Type', itU8,
+          wbEnum([
+            {0}  'None',
+            {1}  'City',
+            {2}  'Settlement',
+            {3}  'Encampment',
+            {4}  'Natural Landmark',
+            {5}  'Cave',
+            {6}  'Factory',
+            {7}  'Monument',
+            {8}  'Military',
+            {9}  'Office',
+            {1}  'Town Ruins',
+            {10} 'Urban Ruins',
+            {11} 'Sewer Ruins',
+            {12} 'Metro',
+            {13} 'Vault'
+          ])),
         wbUnused(1)
       ]).SetRequired
     ]),
@@ -7106,13 +7131,14 @@ begin
     {--- Radio ---}
     wbStruct(XRDO, 'Radio Data', [
       wbFloat('Range Radius'),
-      wbInteger('Broadcast Range Type', itU32, wbEnum([
-        'Radius',
-        'Everywhere',
-        'Worldspace and Linked Interiors',
-        'Linked Interiors',
-        'Current Cell Only'
-      ])),
+      wbInteger('Broadcast Range Type', itU32,
+        wbEnum([
+          {0} 'Radius',
+          {1} 'Everywhere',
+          {2} 'Worldspace and Linked Interiors',
+          {3} 'Linked Interiors',
+          {4} 'Current Cell Only'
+        ])),
       wbFloat('Static Percentage'),
       wbFormIDCkNoReach('Position Reference', [REFR, ACRE, ACHR, PGRE, PMIS, PBEA, NULL])
     ]),
@@ -7260,8 +7286,7 @@ begin
             5, 'Land',
             6, 'Grass',
             7, 'Sound'
-          ])
-        ),
+          ])),
         wbInteger('Override', itU8, wbBoolEnum),
         wbInteger('Priority', itU8),
         wbByteArray('Unused')
@@ -7398,23 +7423,19 @@ begin
     wbEDIDReq,
     wbFULL,
     wbStruct(SPIT, '', [
-      wbInteger('Type', itU32, wbEnum([
-        {0} 'Actor Effect',
-        {1} 'Disease',
-        {2} 'Power',
-        {3} 'Lesser Power',
-        {4} 'Ability',
-        {5} 'Poison',
-        {6} '',
-        {7} '',
-        {8} '',
-        {9} '',
-       {10} 'Addiction'
-      ])),
+      wbInteger('Type', itU32,
+        wbEnum([
+          {0} 'Actor Effect',
+          {1} 'Disease',
+          {2} 'Power',
+          {3} 'Lesser Power',
+          {4} 'Ability',
+          {5} 'Poison'
+        ], [
+          10, 'Addiction'
+        ])),
       wbInteger('Cost (Unused)', itU32),
-      wbInteger('Level (Unused)', itU32, wbEnum([
-        {0} 'Unused'
-      ])),
+      wbInteger('Level (Unused)', itU32),
       wbInteger('Flags', itU8, wbFlags([
         {0x00000001} 'No Auto-Calc',
         {0x00000002} 'Immune to Silence 1?',
@@ -7697,13 +7718,13 @@ begin
         'Don''t Use 1st Person IS Animations',
         'Non-Playable'
       ])),
-      {13} wbInteger('Grip Animation', itU8, wbEnum([
-      ], [
-        171, 'HandGrip1',
-        172, 'HandGrip2',
-        173, 'HandGrip3',
-        255, 'DEFAULT'
-      ])),
+      {13} wbInteger('Grip Animation', itU8,
+             wbEnum([], [
+               171, 'HandGrip1',
+               172, 'HandGrip2',
+               173, 'HandGrip3',
+               255, 'DEFAULT'
+             ])),
       {14} wbInteger('Ammo Use', itU8),
       {15} wbInteger('Reload Animation', itU8,
              wbEnum([
@@ -7728,46 +7749,48 @@ begin
       {32} wbUnused(4),
       {36} wbFormIDCk('Projectile', [PROJ, NULL]),
       {40} wbInteger('Base VATS To-Hit Chance', itU8),
-      {41} wbInteger('Attack Animation', itU8, wbEnum([
-           ], [
-             26, 'AttackLeft',
-             32, 'AttackRight',
-             38, 'Attack3',
-             44, 'Attack4',
-             50, 'Attack5',
-             56, 'Attack6',
-             62, 'Attack7',
-             68, 'Attack8',
-             74, 'AttackLoop',
-             80, 'AttackSpin',
-             86, 'AttackSpin2',
-             97, 'PlaceMine',
-            103, 'PlaceMine2',
-            109, 'AttackThrow',
-            115, 'AttackThrow2',
-            121, 'AttackThrow3',
-            127, 'AttackThrow4',
-            133, 'AttackThrow5',
-            255, 'DEFAULT'
-           ])),
+      {41} wbInteger('Attack Animation', itU8,
+             wbEnum([], [
+               26,  'AttackLeft',
+               32,  'AttackRight',
+               38,  'Attack3',
+               44,  'Attack4',
+               50,  'Attack5',
+               56,  'Attack6',
+               62,  'Attack7',
+               68,  'Attack8',
+               74,  'AttackLoop',
+               80,  'AttackSpin',
+               86,  'AttackSpin2',
+               97,  'PlaceMine',
+               103, 'PlaceMine2',
+               109, 'AttackThrow',
+               115, 'AttackThrow2',
+               121, 'AttackThrow3',
+               127, 'AttackThrow4',
+               133, 'AttackThrow5',
+               255, 'DEFAULT'
+             ])),
       {42} wbInteger('Projectile Count', itU8),
-      {43} wbInteger('Embedded Weapon - Actor Value', itU8, wbEnum([
-        {00} 'Perception',
-        {01} 'Endurance',
-        {02} 'Left Attack',
-        {03} 'Right Attack',
-        {04} 'Left Mobility',
-        {05} 'Right Mobility',
-        {06} 'Brain'
-      ])),
+      {43} wbInteger('Embedded Weapon - Actor Value', itU8,
+             wbEnum([
+               {0} 'Perception',
+               {1} 'Endurance',
+               {2} 'Left Attack',
+               {3} 'Right Attack',
+               {4} 'Left Mobility',
+               {5} 'Right Mobility',
+               {6} 'Brain'
+             ])),
       {44} wbFloat('Min Range'),
       {48} wbFloat('Max Range'),
-      {52} wbInteger('On Hit', itU32, wbEnum([
-        'Normal formula behavior',
-        'Dismember Only',
-        'Explode Only',
-        'No Dismember/Explode'
-      ])),
+      {52} wbInteger('On Hit', itU32,
+             wbEnum([
+               {0} 'Normal formula behavior',
+               {1} 'Dismember Only',
+               {2} 'Explode Only',
+               {3} 'No Dismember/Explode'
+             ])),
       {56} wbInteger('Flags 2', itU32, wbFlags([
         {0x00000001}'Player Only',
         {0x00000002}'NPCs Use Ammo',
@@ -7793,16 +7816,17 @@ begin
       {92} wbFloat('Reload Time'),
       {96} wbFloat('Jam Time'),
      {100} wbFloat('Aim Arc'),
-     {104} wbInteger('Skill', itS32, wbActorValueEnum),
-     {108} wbInteger('Rumble - Pattern', itU32, wbEnum([
-       'Constant',
-       'Square',
-       'Triangle',
-       'Sawtooth'
-     ])),
+     {104} wbInteger('Skill', itU32, wbActorValueEnum),
+     {108} wbInteger('Rumble - Pattern', itU32,
+             wbEnum([
+               {0} 'Constant',
+               {1} 'Square',
+               {2} 'Triangle',
+               {3} 'Sawtooth'
+             ])),
      {112} wbFloat('Rumble - Wavelength'),
      {116} wbFloat('Limb Dmg Mult'),
-     {120} wbInteger('Resist Type', itS32, wbActorValueEnum),
+     {120} wbInteger('Resist Type', itU32, wbActorValueEnum),
      {124} wbFloat('Sight Usage'),
      {128} wbFloat('Semi-Automatic Fire Delay Min'),
      {132} wbFloat('Semi-Automatic Fire Delay Max')
