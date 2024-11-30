@@ -422,8 +422,6 @@ begin
 end;
 
 function wbConditionFunctionToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
-var
-  wbConditionFunctionEditInfo: string;
 begin
   Result := '';
 
@@ -447,9 +445,11 @@ begin
       else
         Result := '<Unknown: '+aInt.ToString+'>';
     end;
+
     ctEditType: Result := 'ComboBox';
 
     ctEditInfo: begin
+      var wbConditionFunctionEditInfo: string;
       if wbConditionFunctionEditInfo = '' then begin
         with TStringList.Create do try
           for var i := Low(wbConditionFunctions) to High(wbConditionFunctions) do
@@ -527,7 +527,7 @@ begin
   if MainRecord.Signature <> QUST then begin
     case aType of
       ctToStr: Result := aInt.ToString + ' <Warning: "' + MainRecord.ShortName + '" is not a Quest Record>';
-      ctCheck: Result := '<Warning: "'+MainRecord.ShortName+'" is not a Quest record>';
+      ctCheck: Result := '<Warning: "'+ MainRecord.ShortName +'" is not a Quest record>';
     end;
     Exit;
   end;
@@ -600,15 +600,13 @@ begin
 
   var BaseRecord := MainRecord.BaseRecord;
   if Assigned(BaseRecord) then
-    MainRecord := BaseRecord;
-
-  MainRecord := MainRecord.WinningOverride;
+    MainRecord := BaseRecord.WinningOverride;
 
   var ScriptRef := MainRecord.RecordBySignature['SCRI'];
   if not Assigned(ScriptRef) then begin
     case aType of
       ctToStr: Result := aInt.ToString + ' <Warning: "' + MainRecord.ShortName + '" does not contain a SCRI Sub-Record>';
-      ctCheck: Result := '<Warning: "'+MainRecord.ShortName+'" does not contain a SCRI subrecord>';
+      ctCheck: Result := '<Warning: "' + MainRecord.ShortName + '" does not contain a SCRI subrecord>';
     end;
     Exit;
   end;
@@ -616,7 +614,7 @@ begin
   if not Supports(ScriptRef.LinksTo, IwbMainRecord, Script) then begin
     case aType of
       ctToStr: Result := aInt.ToString + ' <Warning: "' + MainRecord.ShortName + '" does not have a valid script>';
-      ctCheck: Result := '<Warning: "'+MainRecord.ShortName+'" does not have a valid script>';
+      ctCheck: Result := '<Warning: "' + MainRecord.ShortName + '" does not have a valid script>';
     end;
     Exit;
   end;
@@ -688,16 +686,14 @@ begin
 
   var BaseRecord := MainRecord.BaseRecord;
   if Assigned(BaseRecord) then
-    MainRecord := BaseRecord;
-
-  MainRecord := MainRecord.WinningOverride;
+    MainRecord := BaseRecord.WinningOverride;
 
   var ScriptRef := MainRecord.RecordBySignature['SCRI'];
-    if not Assigned(ScriptRef) then
-    raise Exception.Create('"'+MainRecord.ShortName+'" does not contain a SCRI subrecord');
+  if not Assigned(ScriptRef) then
+    raise Exception.Create('"' + MainRecord.ShortName + '" does not contain a SCRI subrecord');
 
   if not Supports(ScriptRef.LinksTo, IwbMainRecord, Script) then
-    raise Exception.Create('"'+MainRecord.ShortName+'" does not have a valid script');
+    raise Exception.Create('"' + MainRecord.ShortName + '" does not have a valid script');
 
   Script := Script.HighestOverrideOrSelf[aElement._File.LoadOrder];
 
@@ -711,7 +707,7 @@ begin
       end;
   end;
 
-  raise Exception.Create('Variable "'+aString+'" was not found in "'+MainRecord.ShortName+'"');
+  raise Exception.Create('Variable "' + aString + '" was not found in "' + MainRecord.ShortName + '"');
 end;
 
 function wbConditionVATSValueParam(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
