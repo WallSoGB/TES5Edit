@@ -62,7 +62,7 @@ var
   wbXSCL: IwbRecordMemberDef;
 
 type
-  TCTDAFunctionParamType = (
+  TConditionParameterType = (
     //Misc
     {1} ptNone,
     {2} ptInteger,
@@ -98,16 +98,16 @@ type
     {28} ptWorldspace          //WRLD
   );
 
-  PCTDAFunction = ^TCTDAFunction;
-  TCTDAFunction = record
+  PConditionFunction = ^TConditionFunction;
+  TConditionFunction = record
     Index: Integer;
     Name: string;
-    ParamType1: TCTDAFunctionParamType;
-    ParamType2: TCTDAFunctionParamType;
+    ParamType1: TConditionParameterType;
+    ParamType2: TConditionParameterType;
   end;
 
 const
-  wbCTDAFunctions : array[0..199] of TCTDAFunction = (
+  wbConditionFunctions : array[0..199] of TConditionFunction = (
     (Index:   1; Name: 'GetDistance'; ParamType1: ptReference),
     (Index:   5; Name: 'GetLocked'),
     (Index:   6; Name: 'GetPos'; ParamType1: ptAxis),
@@ -312,189 +312,157 @@ const
     (Index: 2578; Name: 'IsDiseased')
   );
 
-function wbCTDAParamDescFromIndex(aIndex: Integer): PCTDAFunction;
-var
-  L, H, I, C: Integer;
+function wbConditionDescFromIndex(aIndex: Integer): PConditionFunction;
 begin
   Result := nil;
 
-  L := Low(wbCTDAFunctions);
-  H := High(wbCTDAFunctions);
+  var L := Low(wbConditionFunctions);
+  var H := High(wbConditionFunctions);
   while L <= H do begin
-    I := (L + H) shr 1;
-    C := CmpW32(wbCTDAFunctions[I].Index, aIndex);
+    var I := (L + H) shr 1;
+    var C := CmpW32(wbConditionFunctions[I].Index, aIndex);
     if C < 0 then
       L := I + 1
     else begin
       H := I - 1;
       if C = 0 then begin
         L := I;
-        Result := @wbCTDAFunctions[L];
+        Result := @wbConditionFunctions[L];
       end;
     end;
   end;
 end;
 
-function wbCTDAFunctionToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
-var
-  wbCTDAFunctionEditInfo : string;
-  Desc                   : PCTDAFunction;
-  i                      : Integer;
+function wbConditionFunctionToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
 begin
   Result := '';
+
+  var Desc := wbConditionDescFromIndex(aInt);
+
   case aType of
     ctToStr, ctToSummary, ctToEditValue: begin
-      Desc := wbCTDAParamDescFromIndex(aInt);
       if Assigned(Desc) then
         Result := Desc.Name
       else if aType in [ctToSummary, ctToEditValue] then
         Result := aInt.ToString
       else
-        Result := '<Unknown: '+aInt.ToString+'>';
+        Result := '<Unknown: ' + aInt.ToString + '>';
     end;
+
     ctToSortKey: Result := IntToHex(aInt, 8);
+
     ctCheck: begin
-      Desc := wbCTDAParamDescFromIndex(aInt);
       if Assigned(Desc) then
         Result := ''
       else
-        Result := '<Unknown: '+aInt.ToString+'>';
+        Result := '<Unknown: ' + aInt.ToString + '>';
     end;
-    ctEditType:
-      Result := 'ComboBox';
+    ctEditType: Result := 'ComboBox';
+
     ctEditInfo: begin
-      Result := wbCTDAFunctionEditInfo;
-      if Result = '' then begin
+      var wbConditionFunctionEditInfo: string;
+      if wbConditionFunctionEditInfo = '' then begin
         with TStringList.Create do try
-          for i := Low(wbCTDAFunctions) to High(wbCTDAFunctions) do
-            Add(wbCTDAFunctions[i].Name);
+          for var i := Low(wbConditionFunctions) to High(wbConditionFunctions) do
+            Add(wbConditionFunctions[i].Name);
           Sort;
-          Result := CommaText;
+          wbConditionFunctionEditInfo := CommaText;
         finally
           Free;
         end;
-        wbCTDAFunctionEditInfo := Result;
       end;
+      Result := wbConditionFunctionEditInfo;
     end;
   end;
 end;
 
-function wbCTDAFunctionToInt(const aString: string; const aElement: IwbElement): Int64;
-var
-  i: Integer;
+function wbConditionFunctionToInt(const aString: string; const aElement: IwbElement): Int64;
 begin
-  for i := Low(wbCTDAFunctions) to High(wbCTDAFunctions) do
-    with wbCTDAFunctions[i] do
-      if SameText(Name, aString) then begin
-        Result := Index;
-        Exit;
-      end;
+  for var i := Low(wbConditionFunctions) to High(wbConditionFunctions) do
+    with wbConditionFunctions[i] do
+      if SameText(Name, aString) then
+        Exit(Index);
+
   Result := StrToInt64(aString);
 end;
 
-function wbCTDAParam1Decider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+function wbConditionParam1Decider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
 var
-  Desc: PCTDAFunction;
   Container: IwbContainer;
 begin
   Result := 0;
   if not wbTryGetContainerFromUnion(aElement, Container) then
     Exit;
 
-  Desc := wbCTDAParamDescFromIndex(Container.ElementByName['Function'].NativeValue);
+  var Desc := wbConditionDescFromIndex(Container.ElementByName['Function'].NativeValue);
   if Assigned(Desc) then
     Result := Succ(Integer(Desc.ParamType1));
 end;
 
-function wbCTDAParam2Decider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+function wbConditionParam2Decider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
 var
-  Desc: PCTDAFunction;
   Container: IwbContainer;
 begin
   Result := 0;
   if not wbTryGetContainerFromUnion(aElement, Container) then
     Exit;
 
-  Desc := wbCTDAParamDescFromIndex(Container.ElementByName['Function'].NativeValue);
+  var Desc := wbConditionDescFromIndex(Container.ElementByName['Function'].NativeValue);
   if Assigned(Desc) then
     Result := Succ(Integer(Desc.ParamType2));
 end;
 
-function wbCTDAParam2QuestStageToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
+function wbConditionQuestStageToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
 var
   Container  : IwbContainerElementRef;
-  Param1     : IwbElement;
   MainRecord : IwbMainRecord;
   EditInfos  : TStringList;
   Stages     : IwbContainerElementRef;
   Stage      : IwbContainerElementRef;
-  i, j       : Integer;
-  s, t       : string;
 begin
   case aType of
-    ctToStr, ctToSummary: begin
-      Result := aInt.ToString;
-      if aType = ctToStr then
-        Result := Result + ' <Warning: Could not resolve Parameter 1>';
-    end;
-    ctToEditValue: Result := aInt.ToString;
-    ctToSortKey: begin
-      Result := IntToHex64(aInt, 8);
-      Exit;
-    end;
+    ctToEditValue, ctToSummary: Result := aInt.ToString;
+    ctToStr: Result := aInt.ToString + ' <Warning: Could not resolve Parameter 1>';
+    ctToSortKey: Exit(IntToHex64(aInt, 8));
     ctCheck: Result := '<Warning: Could not resolve Parameter 1>';
-    ctEditType: Result := '';
-    ctEditInfo: Result := '';
+    ctEditInfo, ctEditType: Result := '';
   end;
 
   if not wbTryGetContainerRefFromUnionOrValue(aElement, Container) then
     Exit;
 
-  Param1 := Container.ElementByName['Parameter #1'];
-  if not wbTryGetMainRecord(Param1, MainRecord) then
+  if not wbTryGetMainRecord(Container.ElementByName['Parameter #1'], MainRecord) then
     Exit;
 
   MainRecord := MainRecord.WinningOverride;
-
   if MainRecord.Signature <> QUST then begin
     case aType of
-      ctToStr, ctToSummary: begin
-        Result := aInt.ToString;
-        if aType = ctToStr then
-          Result := Result + ' <Warning: "'+MainRecord.ShortName+'" is not a Quest record>';
-      end;
-      ctCheck: Result := '<Warning: "'+MainRecord.ShortName+'" is not a Quest record>';
+      ctToStr: Result := aInt.ToString + ' <Warning: "' + MainRecord.ShortName + '" is not a Quest record>';
+      ctCheck: Result := '<Warning: "' + MainRecord.ShortName + '" is not a Quest record>';
     end;
     Exit;
   end;
 
   case aType of
-    ctEditType: begin
-      Result := 'ComboBox';
-      Exit;
-    end;
-    ctEditInfo:
-      EditInfos := TStringList.Create;
+    ctEditType: Exit('ComboBox');
+    ctEditInfo: EditInfos := TStringList.Create;
   else
     EditInfos := nil;
   end;
+
   try
     if Supports(MainRecord.ElementByName['Stages'], IwbContainerElementRef, Stages) then begin
-      for i := 0 to Pred(Stages.ElementCount) do
+      for var i := 0 to Pred(Stages.ElementCount) do
         if Supports(Stages.Elements[i], IwbContainerElementRef, Stage) then begin
-          j := Stage.ElementNativeValues['INDX'];
-          if aType = ctToSummary then
-            s := Stage.ElementSummaries['Log Entries\Log Entry\CNAM']
-          else
-            s := Stage.ElementValues['Log Entries\Log Entry\CNAM'];
-          s := s.Trim;
-          t := IntToStr(j);
+          var j := Stage.ElementNativeValues['INDX'];
+          var s := Trim(Stage.ElementValues['Log Entries\Log Entry\CNAM']);
+          var t := IntToStr(j);
           while Length(t) < 3 do
             t := '0' + t;
           if s <> '' then
             t := t + ' ' + s;
           if Assigned(EditInfos) then
-            EditInfos.AddObject(t, TObject(j))
+            EditInfos.AddObject(t, TObject(Integer(j)))
           else if j = aInt then begin
             case aType of
               ctToStr, ctToSummary, ctToEditValue: Result := t;
@@ -506,11 +474,7 @@ begin
     end;
 
     case aType of
-      ctToStr, ctToSummary: begin
-        Result := aInt.ToString;
-        if aType = ctToStr then
-          Result := Result + ' <Warning: Quest Stage not found in "' + MainRecord.Name + '">';
-      end;
+      ctToStr: Result := aInt.ToString + ' <Warning: Quest Stage not found in "' + MainRecord.Name + '">';
       ctCheck: Result := '<Warning: Quest Stage not found in "' + MainRecord.Name + '">';
       ctEditInfo: begin
         EditInfos.Sort;
@@ -522,101 +486,67 @@ begin
   end;
 end;
 
-function wbCTDAParam2VariableNameToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
+function wbConditionVariableNameToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
 var
   Container  : IwbContainerElementRef;
-  Param1     : IwbElement;
   MainRecord : IwbMainRecord;
-  BaseRecord : IwbMainRecord;
-  ScriptRef  : IwbElement;
   Script     : IwbMainRecord;
   Variables  : TStringList;
   LocalVars  : IwbContainerElementRef;
   LocalVar   : IwbContainerElementRef;
-  i, j       : Integer;
-  s          : string;
 begin
   case aType of
-    ctToStr, ctToSummary: begin
-      Result := aInt.ToString;
-      if aType = ctToStr then
-        Result := Result + ' <Warning: Could not resolve Parameter 1>';
-    end;
-    ctToEditValue: Result := aInt.ToString;
-    ctToSortKey: begin
-      Result := IntToHex64(aInt, 8);
-      Exit;
-    end;
+    ctToEditValue, ctToSummary: Result := aInt.ToString;
+    ctToStr: Result := aInt.ToString + ' <Warning: Could not resolve Parameter 1>';
+    ctToSortKey: Exit(IntToHex64(aInt, 8));
     ctCheck: Result := '<Warning: Could not resolve Parameter 1>';
-    ctEditType: Result := '';
-    ctEditInfo: Result := '';
+    ctEditInfo, ctEditType: Result := '';
   end;
 
   if not wbTryGetContainerRefFromUnionOrValue(aElement, Container) then
     Exit;
 
-  Param1 := Container.ElementByName['Parameter #1'];
-  if not wbTryGetMainRecord(Param1, MainRecord) then
+  if not wbTryGetMainRecord(Container.ElementByName['Parameter #1'], MainRecord) then
     Exit;
 
-{    if Param1.NativeValue = 0 then
-      if Supports(Container.Container, IwbContainerElementRef, Container) then
-        for i := 0 to Pred(Container.ElementCount) do
-          if Supports(Container.Elements[i], IwbContainerElementRef, Container2) then
-            if SameText(Container2.ElementValues['Function'], 'GetIsID') then begin
-              Param1 := Container2.ElementByName['Parameter #1'];
-              if Supports(Param1.LinksTo, IwbMainRecord, MainRecord) then
-                Break;
-            end;}
-
-  BaseRecord := MainRecord.BaseRecord;
+  var BaseRecord := MainRecord.BaseRecord;
   if Assigned(BaseRecord) then
-    MainRecord := BaseRecord;
+    MainRecord := BaseRecord.WinningOverride;
 
-  ScriptRef := MainRecord.RecordBySignature['SCRI'];
-
+  var ScriptRef := MainRecord.RecordBySignature['SCRI'];
   if not Assigned(ScriptRef) then begin
     case aType of
-      ctToStr, ctToSummary: begin
-        Result := aInt.ToString;
-        if aType = ctToStr then
-          Result := Result + ' <Warning: "'+MainRecord.ShortName+'" does not contain a SCRI subrecord>';
-      end;
-      ctCheck: Result := '<Warning: "'+MainRecord.ShortName+'" does not contain a SCRI subrecord>';
+      ctToStr: Result := aInt.ToString + ' <Warning: "' + MainRecord.ShortName + '" does not contain a SCRI subrecord>';
+      ctCheck: Result := '<Warning: "' + MainRecord.ShortName + '" does not contain a SCRI subrecord>';
     end;
     Exit;
   end;
 
   if not Supports(ScriptRef.LinksTo, IwbMainRecord, Script) then begin
     case aType of
-      ctToStr, ctToSummary: begin
-        Result := aInt.ToString;
-        if aType = ctToStr then
-          Result := Result + ' <Warning: "'+MainRecord.ShortName+'" does not have a valid script>';
-      end;
-      ctCheck: Result := '<Warning: "'+MainRecord.ShortName+'" does not have a valid script>';
+      ctToStr: Result := aInt.ToString + ' <Warning: "'+MainRecord.ShortName+'" does not have a valid script>';
+      ctCheck: Result := '<Warning: "' + MainRecord.ShortName + '" does not have a valid script>';
     end;
     Exit;
   end;
 
+  Script := Script.HighestOverrideOrSelf[aElement._File.LoadOrder];
+
   case aType of
-    ctEditType: begin
-      Result := 'ComboBox';
-      Exit;
-    end;
-    ctEditInfo:
-      Variables := TStringList.Create;
+    ctEditType: Exit('ComboBox');
+    ctEditInfo: Variables := TStringList.Create;
   else
     Variables := nil;
   end;
+
   try
     if Supports(Script.ElementByName['Local Variables'], IwbContainerElementRef, LocalVars) then begin
-      for i := 0 to Pred(LocalVars.ElementCount) do
+      for var i := 0 to Pred(LocalVars.ElementCount) do
         if Supports(LocalVars.Elements[i], IwbContainerElementRef, LocalVar) then begin
-          j := LocalVar.ElementNativeValues['SLSD\Index'];
-          s := LocalVar.ElementNativeValues['SCVR'];
+          var j := LocalVar.ElementNativeValues['SLSD\Index'];
+          var s := LocalVar.ElementNativeValues['SCVR'];
           if Assigned(Variables) then
-            Variables.AddObject(s, TObject(j))
+            Variables.AddObject(s, TObject(Integer(j)))
           else if j = aInt then begin
             case aType of
               ctToStr, ctToSummary, ctToEditValue: Result := s;
@@ -628,11 +558,7 @@ begin
     end;
 
     case aType of
-      ctToStr, ctToSummary: begin
-        Result := aInt.ToString;
-        if aType = ctToStr then
-          Result := Result + ' <Warning: Variable Index not found in "' + Script.Name + '">';
-      end;
+      ctToStr: Result := aInt.ToString + ' <Warning: Variable Index not found in "' + Script.Name + '">';
       ctCheck: Result := '<Warning: Variable Index not found in "' + Script.Name + '">';
       ctEditInfo: begin
         Variables.Sort;
@@ -644,18 +570,12 @@ begin
   end;
 end;
 
-function wbCTDAParam2VariableNameToInt(const aString: string; const aElement: IwbElement): Int64;
+function wbConditionVariableNameToInt(const aString: string; const aElement: IwbElement): Int64;
 var
-  Container  : IwbContainerElementRef;
-  Param1     : IwbElement;
   MainRecord : IwbMainRecord;
-  BaseRecord : IwbMainRecord;
-  ScriptRef  : IwbElement;
   Script     : IwbMainRecord;
   LocalVars  : IwbContainerElementRef;
   LocalVar   : IwbContainerElementRef;
-  i, j       : Integer;
-  s          : string;
 begin
   Result := StrToInt64Def(aString, Low(Cardinal));
   if Result <> Low(Cardinal) then
@@ -664,44 +584,41 @@ begin
   if not Assigned(aElement) then
     raise Exception.Create('aElement not specified');
 
-  Container := GetContainerRefFromUnionOrValue(aElement);
-
+  var Container := GetContainerRefFromUnionOrValue(aElement);
   if not Assigned(Container) then
     raise Exception.Create('Container not assigned');
 
-  Param1 := Container.ElementByName['Parameter #1'];
-
+  var Param1 := Container.ElementByName['Parameter #1'];
   if not Assigned(Param1) then
     raise Exception.Create('Could not find "Parameter #1"');
 
   if not Supports(Param1.LinksTo, IwbMainRecord, MainRecord) then
     raise Exception.Create('"Parameter #1" does not reference a valid main record');
 
-  BaseRecord := MainRecord.BaseRecord;
+  var BaseRecord := MainRecord.BaseRecord;
   if Assigned(BaseRecord) then
-    MainRecord := BaseRecord;
+    MainRecord := BaseRecord.WinningOverride;
 
-  ScriptRef := MainRecord.RecordBySignature['SCRI'];
-
+  var ScriptRef := MainRecord.RecordBySignature['SCRI'];
   if not Assigned(ScriptRef) then
-    raise Exception.Create('"'+MainRecord.ShortName+'" does not contain a SCRI subrecord');
+    raise Exception.Create('"' + MainRecord.ShortName + '" does not contain a SCRI subrecord');
 
   if not Supports(ScriptRef.LinksTo, IwbMainRecord, Script) then
-    raise Exception.Create('"'+MainRecord.ShortName+'" does not have a valid script');
+    raise Exception.Create('"' + MainRecord.ShortName + '" does not have a valid script');
+
+  Script := Script.HighestOverrideOrSelf[aElement._File.LoadOrder];
 
   if Supports(Script.ElementByName['Local Variables'], IwbContainerElementRef, LocalVars) then begin
-    for i := 0 to Pred(LocalVars.ElementCount) do
+    for var i := 0 to Pred(LocalVars.ElementCount) do
       if Supports(LocalVars.Elements[i], IwbContainerElementRef, LocalVar) then begin
-        j := LocalVar.ElementNativeValues['SLSD\Index'];
-        s := LocalVar.ElementNativeValues['SCVR'];
-        if SameText(s, Trim(aString)) then begin
-          Result := j;
-          Exit;
-        end;
+        var j := LocalVar.ElementNativeValues['SLSD\Index'];
+        var s := LocalVar.ElementNativeValues['SCVR'];
+        if SameText(s, Trim(aString)) then
+          Exit(j);
       end;
   end;
 
-  raise Exception.Create('Variable "'+aString+'" was not found in "'+MainRecord.ShortName+'"');
+  raise Exception.Create('Variable "' + aString + '" was not found in "' + MainRecord.ShortName + '"');
 end;
 
 function wbCalcPGRRSize(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Cardinal;
@@ -1428,8 +1345,8 @@ begin
     {0} wbUnknown(4),
     {1} wbByteArray('None', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
     {2} wbInteger('Integer', itS32),
-    {3} wbInteger('Quest Stage', itS32, wbCTDAParam2QuestStageToStr, wbCTDAParam2QuestStageToInt),
-    {4} wbInteger('Variable Name', itS32, wbCTDAParam2VariableNameToStr, wbCTDAParam2VariableNameToInt),
+    {3} wbInteger('Quest Stage', itS32, wbConditionQuestStageToStr, wbCTDAParam2QuestStageToInt),
+    {4} wbInteger('Variable Name', itS32, wbConditionVariableNameToStr, wbConditionVariableNameToInt),
 
     //Enums
 	  {5} wbInteger('Actor Value', itU32, wbActorValueEnum),
@@ -1467,10 +1384,10 @@ begin
           wbFloat('Comparison Value - Float'),
           wbFormIDCk('Comparison Value - Global', [GLOB])
         ]),
-    {3} wbInteger('Function', itU16, wbCTDAFunctionToStr, wbCTDAFunctionToInt),
+    {3} wbInteger('Function', itU16, wbConditionFunctionToStr, wbConditionFunctionToInt),
     {4} wbUnused(2),
-    {5} wbUnion('Parameter #1', wbCTDAParam1Decider, wbConditionParameters),
-    {6} wbUnion('Parameter #2', wbCTDAParam2Decider, wbConditionParameters),
+    {5} wbUnion('Parameter #1', wbConditionParam1Decider, wbConditionParameters),
+    {6} wbUnion('Parameter #2', wbConditionParam2Decider, wbConditionParameters),
     {7} wbUnused(0)
   ];
 
