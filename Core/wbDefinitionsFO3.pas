@@ -27,12 +27,17 @@ uses
   wbInterface;
 
 var
+  wbConditionParameters: array of IwbValueDef;
+  wbConditionVATSValueParameters: array of IwbValueDef;
+  wbConditionBaseObjects: TwbSignatures;
+
   wbFormTypeEnum: IwbEnumDef;
   wbMiscStatEnum: IwbEnumDef;
   wbObjectTypeEnum: IwbEnumDef;
   wbPlayerActionEnum: IwbEnumDef;
   wbSkillEnum: IwbEnumDef;
   wbSoundLevelEnum: IwbEnumDef;
+  wbVatsActionEnum: IwbEnumDef;
   wbVatsValueFunctionEnum: IwbEnumDef;
   wbWeaponAnimTypeEnum: IwbEnumDef;
 
@@ -43,9 +48,7 @@ var
   wbBMDT: IwbRecordMemberDef;
   wbCNTOs: IwbRecordMemberDef;
   wbCOED: IwbRecordMemberDef;
-  wbCTDA: IwbRecordMemberDef;
-  wbCTDAs: IwbRecordMemberDef;
-  wbCTDAsReq: IwbRecordMemberDef;
+  wbConditions: IwbRecordMemberDef;
   wbDESC: IwbRecordMemberDef;
   wbDESCReq: IwbRecordMemberDef;
   wbDEST: IwbRecordMemberDef;
@@ -84,6 +87,666 @@ var
   wbXSCL: IwbRecordMemberDef;
   wbYNAM: IwbRecordMemberDef;
   wbZNAM: IwbRecordMemberDef;
+
+type
+  TConditionParameterType = (
+    //Misc
+	  {1}  ptNone,
+    {2}  ptInteger,
+	  {3}  ptQuestStage,
+    {4}  ptVariableName,
+	  {5}  ptVATSValueParam,
+
+	  //Enums
+	  {6}  ptActorValue,        //wbActorValueEnum
+	  {7}  ptAlignment,         //wbAlignmentEnum
+	  {8}  ptAxis,              //wbAxisEnum
+	  {9}  ptBodyLocation,      //wbBodyLocationEnum
+	  {10} ptCreatureType,      //wbCreatureTypeEnum
+	  {11} ptCrimeType,         //wbCrimeTypeEnum
+	  {12} ptCriticalStage,     //wbCriticalStageEnum
+	  {13} ptEquipType,         //wbEquipTypeEnum
+	  {14} ptFormType,          //wbFormTypeEnum
+	  {15} ptMenuMode,          //wbMenuModeEnum
+	  {16} ptMiscStat,          //wbMiscStatEnum
+	  {17} ptPlayerAction,      //PlayerActionEnum
+    {18} ptSex,               //wbSexEnum
+	  {19} ptVATSValueFunction, //wbVATSValueFunctionEnum
+
+    //FormIDs
+	  {20} ptActor,           //ACHR, ACRE
+	  {21} ptActorBase,       //NPC_, CREA
+	  {22} ptBaseEffect,      //MGEF
+    {23} ptBaseObject,      //ACTI, ALCH, AMMO, ARMA, ARMO, ASPC, BOOK, CONT, CREA, DOOR, FLST, FURN, GRAS, IDLM, KEYM, LIGH, LVLC, LVLN, MISC, MSTT, NOTE, NPC_, PROJ, PWAT, SCOL, SOUN, STAT, TACT, TERM, TREE, WEAP
+	  {24} ptCell,            //CELL
+	  {25} ptClass,           //CLAS
+	  {26} ptEffectItem,      //SPEL
+	  {27} ptEncounterZone,   //ECZN
+	  {28} ptFaction,         //FACT
+	  {29} ptFormList,        //FLST
+	  {30} ptFurniture,       //FLST, FURN
+	  {31} ptGlobal,          //GLOB
+	  {32} ptIdleForm,        //IDLE
+	  {33} ptInventoryObject, //ALCH, AMMO, ARMA, ARMO, BOOK, KEYM, MISC, NOTE, WEAP
+	  {34} ptNote,            //NOTE
+	  {35} ptOwner,           //FACT, NPC_
+	  {36} ptPackage,         //PACK
+	  {37} ptPerk,            //PERK
+	  {38} ptQuest,           //QUST
+	  {39} ptRace,            //RACE
+	  {40} ptReference,       //ACHR, ACRE, PGRE, REFR
+    {41} ptVoiceType,       //VTYP
+    {42} ptWeapon,          //WEAP
+    {43} ptWeather,         //WTHR
+    {44} ptWorldspace       //WRLD
+  );
+
+  PConditionFunction = ^TConditionFunction;
+  TConditionFunction = record
+    Index: Integer;
+    Name: string;
+    ParamType1: TConditionParameterType;
+    ParamType2: TConditionParameterType;
+  end;
+
+const
+  wbConditionFunctions : array[0..243] of TConditionFunction = (
+    // Added by Fallout 3
+    (Index:   1; Name: 'GetDistance'; ParamType1: ptReference),
+    (Index:   5; Name: 'GetLocked'),
+    (Index:   6; Name: 'GetPos'; ParamType1: ptAxis),
+    (Index:   8; Name: 'GetAngle'; ParamType1: ptAxis),
+    (Index:  10; Name: 'GetStartingPos'; ParamType1: ptAxis),
+    (Index:  11; Name: 'GetStartingAngle'; ParamType1: ptAxis),
+    (Index:  12; Name: 'GetSecondsPassed'),
+    (Index:  14; Name: 'GetActorValue'; ParamType1: ptActorValue),
+    (Index:  18; Name: 'GetCurrentTime'),
+    (Index:  24; Name: 'GetScale'),
+    (Index:  25; Name: 'IsMoving'),
+    (Index:  26; Name: 'IsTurning'),
+    (Index:  27; Name: 'GetLineOfSight'; ParamType1: ptReference),
+    (Index:  32; Name: 'GetInSameCell'; ParamType1: ptReference),
+    (Index:  35; Name: 'GetDisabled'),
+    (Index:  36; Name: 'MenuMode'; ParamType1: ptMenuMode),
+    (Index:  39; Name: 'GetDisease'),
+    (Index:  40; Name: 'GetVampire'),
+    (Index:  41; Name: 'GetClothingValue'),
+    (Index:  42; Name: 'SameFaction'; ParamType1: ptActor),
+    (Index:  43; Name: 'SameRace'; ParamType1: ptActor),
+    (Index:  44; Name: 'SameSex'; ParamType1: ptActor),
+    (Index:  45; Name: 'GetDetected'; ParamType1: ptActor),
+    (Index:  46; Name: 'GetDead'),
+    (Index:  47; Name: 'GetItemCount'; ParamType1: ptInventoryObject),
+    (Index:  48; Name: 'GetGold'),
+    (Index:  49; Name: 'GetSleeping'),
+    (Index:  50; Name: 'GetTalkedToPC'),
+    (Index:  53; Name: 'GetScriptVariable'; ParamType1: ptReference; ParamType2: ptVariableName),
+    (Index:  56; Name: 'GetQuestRunning'; ParamType1: ptQuest),
+    (Index:  58; Name: 'GetStage'; ParamType1: ptQuest),
+    (Index:  59; Name: 'GetStageDone'; ParamType1: ptQuest; ParamType2: ptQuestStage),
+    (Index:  60; Name: 'GetFactionRankDifference'; ParamType1: ptFaction; ParamType2: ptActor),
+    (Index:  61; Name: 'GetAlarmed'),
+    (Index:  62; Name: 'IsRaining'),
+    (Index:  63; Name: 'GetAttacked'),
+    (Index:  64; Name: 'GetIsCreature'),
+    (Index:  65; Name: 'GetLockLevel'),
+    (Index:  66; Name: 'GetShouldAttack'; ParamType1: ptActor),
+    (Index:  67; Name: 'GetInCell'; ParamType1: ptCell),
+    (Index:  68; Name: 'GetIsClass'; ParamType1: ptClass),
+    (Index:  69; Name: 'GetIsRace'; ParamType1: ptRace),
+    (Index:  70; Name: 'GetIsSex'; ParamType1: ptSex),
+    (Index:  71; Name: 'GetInFaction'; ParamType1: ptFaction),
+    (Index:  72; Name: 'GetIsID'; ParamType1: ptBaseObject),
+    (Index:  73; Name: 'GetFactionRank'; ParamType1: ptFaction),
+    (Index:  74; Name: 'GetGlobalValue'; ParamType1: ptGlobal),
+    (Index:  75; Name: 'IsSnowing'),
+    (Index:  76; Name: 'GetDisposition'; ParamType1: ptActor),
+    (Index:  77; Name: 'GetRandomPercent'),
+    (Index:  79; Name: 'GetQuestVariable'; ParamType1: ptQuest; ParamType2: ptVariableName),
+    (Index:  80; Name: 'GetLevel'),
+    (Index:  81; Name: 'GetArmorRating'),
+    (Index:  84; Name: 'GetDeadCount'; ParamType1: ptActorBase),
+    (Index:  91; Name: 'GetIsAlerted'),
+    (Index:  98; Name: 'GetPlayerControlsDisabled'; ParamType1: ptInteger; ParamType2: ptInteger{; ParamType3: ptInteger; ParamType4: ptInteger; ParamType5: ptInteger; ParamType6: ptInteger; ParamType7: ptInteger}),
+    (Index:  99; Name: 'GetHeadingAngle'; ParamType1: ptReference),
+    (Index: 101; Name: 'IsWeaponOut'),
+    (Index: 102; Name: 'IsTorchOut'),
+    (Index: 103; Name: 'IsShieldOut'),
+    (Index: 106; Name: 'IsFacingUp'),
+    (Index: 107; Name: 'GetKnockedState'),
+    (Index: 108; Name: 'GetWeaponAnimType'),
+    (Index: 109; Name: 'IsWeaponSkillType'; ParamType1: ptActorValue),
+    (Index: 110; Name: 'GetCurrentAIPackage'),
+    (Index: 111; Name: 'IsWaiting'),
+    (Index: 112; Name: 'IsIdlePlaying'),
+    (Index: 116; Name: 'GetMinorCrimeCount'),
+    (Index: 117; Name: 'GetMajorCrimeCount'),
+    (Index: 118; Name: 'GetActorAggroRadiusViolated'),
+    (Index: 122; Name: 'GetCrime'; ParamType1: ptActor; ParamType2: ptCrimeType),
+    (Index: 123; Name: 'IsGreetingPlayer'),
+    (Index: 125; Name: 'IsGuard'),
+    (Index: 127; Name: 'HasBeenEaten'),
+    (Index: 128; Name: 'GetFatiguePercentage'),
+    (Index: 129; Name: 'GetPCIsClass'; ParamType1: ptClass),
+    (Index: 130; Name: 'GetPCIsRace'; ParamType1: ptRace),
+    (Index: 131; Name: 'GetPCIsSex'; ParamType1: ptSex),
+    (Index: 132; Name: 'GetPCInFaction'; ParamType1: ptFaction),
+    (Index: 133; Name: 'SameFactionAsPC'),
+    (Index: 134; Name: 'SameRaceAsPC'),
+    (Index: 135; Name: 'SameSexAsPC'),
+    (Index: 136; Name: 'GetIsReference'; ParamType1: ptReference),
+    (Index: 141; Name: 'IsTalking'),
+    (Index: 142; Name: 'GetWalkSpeed'),
+    (Index: 143; Name: 'GetCurrentAIProcedure'),
+    (Index: 144; Name: 'GetTrespassWarningLevel'),
+    (Index: 145; Name: 'IsTrespassing'),
+    (Index: 146; Name: 'IsInMyOwnedCell'),
+    (Index: 147; Name: 'GetWindSpeed'),
+    (Index: 148; Name: 'GetCurrentWeatherPercent'),
+    (Index: 149; Name: 'GetIsCurrentWeather'; ParamType1: ptWeather),
+    (Index: 150; Name: 'IsContinuingPackagePCNear'),
+    (Index: 153; Name: 'CanHaveFlames'),
+    (Index: 154; Name: 'HasFlames'),
+    (Index: 157; Name: 'GetOpenState'),
+    (Index: 159; Name: 'GetSitting'),
+    (Index: 160; Name: 'GetFurnitureMarkerID'),
+    (Index: 161; Name: 'GetIsCurrentPackage'; ParamType1: ptPackage),
+    (Index: 162; Name: 'IsCurrentFurnitureRef'; ParamType1: ptReference),
+    (Index: 163; Name: 'IsCurrentFurnitureObj'; ParamType1: ptFurniture),
+    (Index: 170; Name: 'GetDayOfWeek'),
+    (Index: 172; Name: 'GetTalkedToPCParam'; ParamType1: ptActor),
+    (Index: 175; Name: 'IsPCSleeping'),
+    (Index: 176; Name: 'IsPCAMurderer'),
+    (Index: 180; Name: 'GetDetectionLevel'; ParamType1: ptActor),
+    (Index: 182; Name: 'GetEquipped'; ParamType1: ptInventoryObject),
+    (Index: 185; Name: 'IsSwimming'),
+    (Index: 190; Name: 'GetAmountSoldStolen'),
+    (Index: 192; Name: 'GetIgnoreCrime'),
+    (Index: 193; Name: 'GetPCExpelled'; ParamType1: ptFaction),
+    (Index: 195; Name: 'GetPCFactionMurder'; ParamType1: ptFaction),
+    (Index: 197; Name: 'GetPCEnemyofFaction'; ParamType1: ptFaction),
+    (Index: 199; Name: 'GetPCFactionAttack'; ParamType1: ptFaction),
+    (Index: 203; Name: 'GetDestroyed'),
+    (Index: 214; Name: 'HasMagicEffect'; ParamType1: ptBaseEffect),
+    (Index: 215; Name: 'GetDefaultOpen'),
+    (Index: 219; Name: 'GetAnimAction'),
+    (Index: 223; Name: 'IsSpellTarget'; ParamType1: ptEffectItem),
+    (Index: 224; Name: 'GetVATSMode'),
+    (Index: 225; Name: 'GetPersuasionNumber'),
+    (Index: 226; Name: 'GetSandman'),
+    (Index: 227; Name: 'GetCannibal'),
+    (Index: 228; Name: 'GetIsClassDefault'; ParamType1: ptClass),
+    (Index: 229; Name: 'GetClassDefaultMatch'),
+    (Index: 230; Name: 'GetInCellParam'; ParamType1: ptCell; ParamType2: ptReference),
+    (Index: 235; Name: 'GetVatsTargetHeight'),
+    (Index: 237; Name: 'GetIsGhost'),
+    (Index: 242; Name: 'GetUnconscious'),
+    (Index: 244; Name: 'GetRestrained'),
+    (Index: 246; Name: 'GetIsUsedItem'; ParamType1: ptBaseObject),
+    (Index: 247; Name: 'GetIsUsedItemType'; ParamType1: ptFormType),
+    (Index: 254; Name: 'GetIsPlayableRace'),
+    (Index: 255; Name: 'GetOffersServicesNow'),
+    (Index: 258; Name: 'GetUsedItemLevel'),
+    (Index: 259; Name: 'GetUsedItemActivate'),
+    (Index: 264; Name: 'GetBarterGold'),
+    (Index: 265; Name: 'IsTimePassing'),
+    (Index: 266; Name: 'IsPleasant'),
+    (Index: 267; Name: 'IsCloudy'),
+    (Index: 274; Name: 'GetArmorRatingUpperBody'),
+    (Index: 277; Name: 'GetBaseActorValue'; ParamType1: ptActorValue),
+    (Index: 278; Name: 'IsOwner'; ParamType1: ptOwner),
+    (Index: 280; Name: 'IsCellOwner'; ParamType1: ptCell; ParamType2: ptOwner),
+    (Index: 282; Name: 'IsHorseStolen'),
+    (Index: 285; Name: 'IsLeftUp'),
+    (Index: 286; Name: 'IsSneaking'),
+    (Index: 287; Name: 'IsRunning'),
+    (Index: 288; Name: 'GetFriendHit'),
+    (Index: 289; Name: 'IsInCombat'),
+    (Index: 300; Name: 'IsInInterior'),
+    (Index: 304; Name: 'IsWaterObject'),
+    (Index: 306; Name: 'IsActorUsingATorch'),
+    (Index: 309; Name: 'IsXBox'),
+    (Index: 310; Name: 'GetInWorldspace'; ParamType1: ptWorldSpace),
+    (Index: 312; Name: 'GetPCMiscStat'; ParamType1: ptMiscStat),
+    (Index: 313; Name: 'IsActorEvil'),
+    (Index: 314; Name: 'IsActorAVictim'),
+    (Index: 315; Name: 'GetTotalPersuasionNumber'),
+    (Index: 318; Name: 'GetIdleDoneOnce'),
+    (Index: 320; Name: 'GetNoRumors'),
+    (Index: 323; Name: 'WhichServiceMenu'),
+    (Index: 327; Name: 'IsRidingHorse'),
+    (Index: 332; Name: 'IsInDangerousWater'),
+    (Index: 338; Name: 'GetIgnoreFriendlyHits'),
+    (Index: 339; Name: 'IsPlayersLastRiddenHorse'),
+    (Index: 353; Name: 'IsActor'),
+    (Index: 354; Name: 'IsEssential'),
+    (Index: 358; Name: 'IsPlayerMovingIntoNewSpace'),
+    (Index: 361; Name: 'GetTimeDead'),
+    (Index: 362; Name: 'GetPlayerHasLastRiddenHorse'),
+    (Index: 365; Name: 'IsChild'),
+    (Index: 367; Name: 'GetLastPlayerAction'),
+    (Index: 368; Name: 'IsPlayerActionActive'; ParamType1: ptPlayerAction),
+    (Index: 370; Name: 'IsTalkingActivatorActor'; ParamType1: ptActor),
+    (Index: 372; Name: 'IsInList'; ParamType1: ptFormList),
+    (Index: 382; Name: 'GetHasNote'; ParamType1: ptNote),
+    (Index: 391; Name: 'GetHitLocation'),
+    (Index: 392; Name: 'IsPC1stPerson'),
+    (Index: 397; Name: 'GetCauseofDeath'),
+    (Index: 398; Name: 'IsLimbGone'; ParamType1: ptBodyLocation),
+    (Index: 399; Name: 'IsWeaponInList'; ParamType1: ptFormList),
+    (Index: 403; Name: 'HasFriendDisposition'),
+    (Index: 408; Name: 'GetVATSValue'; ParamType1: ptVATSValueFunction; ParamType2: ptVATSValueParam),
+    (Index: 409; Name: 'IsKiller'; ParamType1: ptActor),
+    (Index: 410; Name: 'IsKillerObject'; ParamType1: ptFormList),
+    (Index: 411; Name: 'GetFactionCombatReaction'; ParamType1: ptFaction; ParamType2: ptFaction),
+    (Index: 415; Name: 'Exists'; ParamType1: ptReference),
+    (Index: 416; Name: 'GetGroupMemberCount'),
+    (Index: 417; Name: 'GetGroupTargetCount'),
+    (Index: 427; Name: 'GetIsVoiceType'; ParamType1: ptVoiceType),
+    (Index: 428; Name: 'GetPlantedExplosive'),
+    (Index: 430; Name: 'IsActorTalkingThroughActivator'),
+    (Index: 431; Name: 'GetHealthPercentage'),
+    (Index: 433; Name: 'GetIsObjectType'; ParamType1: ptFormType),
+    (Index: 435; Name: 'GetDialogueEmotion'),
+    (Index: 436; Name: 'GetDialogueEmotionValue'),
+    (Index: 438; Name: 'GetIsCreatureType'; ParamType1: ptCreatureType),
+    (Index: 446; Name: 'GetInZone'; ParamType1: ptEncounterZone),
+    (Index: 449; Name: 'HasPerk'; ParamType1: ptPerk),
+    (Index: 450; Name: 'GetFactionRelation'; ParamType1: ptActor),
+    (Index: 451; Name: 'IsLastIdlePlayed'; ParamType1: ptIdleForm),
+    (Index: 454; Name: 'GetPlayerTeammate'),
+    (Index: 455; Name: 'GetPlayerTeammateCount'),
+    (Index: 459; Name: 'GetActorCrimePlayerEnemy'),
+    (Index: 460; Name: 'GetActorFactionPlayerEnemy'),
+    (Index: 464; Name: 'IsPlayerGrabbedRef'; ParamType1: ptReference),
+    (Index: 471; Name: 'GetDestructionStage'),
+    (Index: 474; Name: 'GetIsAlignment'; ParamType1: ptAlignment),
+    (Index: 478; Name: 'GetThreatRatio'; ParamType1: ptActor),
+    (Index: 480; Name: 'GetIsUsedItemEquipType'; ParamType1: ptEquipType),
+    (Index: 489; Name: 'GetConcussed'),
+    (Index: 492; Name: 'GetMapMarkerVisible'),
+    (Index: 495; Name: 'GetPermanentActorValue'; ParamType1: ptActorValue),
+    (Index: 496; Name: 'GetKillingBlowLimb'),
+    (Index: 500; Name: 'GetWeaponHealthPerc'),
+    (Index: 503; Name: 'GetRadiationLevel'),
+    (Index: 510; Name: 'GetLastHitCritical'),
+    (Index: 515; Name: 'IsCombatTarget'; ParamType1: ptActor),
+    (Index: 518; Name: 'GetVATSRightAreaFree'; ParamType1: ptReference),
+    (Index: 519; Name: 'GetVATSLeftAreaFree'; ParamType1: ptReference),
+    (Index: 520; Name: 'GetVATSBackAreaFree'; ParamType1: ptReference),
+    (Index: 521; Name: 'GetVATSFrontAreaFree'; ParamType1: ptReference),
+    (Index: 522; Name: 'GetIsLockBroken'),
+    (Index: 523; Name: 'IsPS3'),
+    (Index: 524; Name: 'IsWin32'),
+    (Index: 525; Name: 'GetVATSRightTargetVisible'; ParamType1: ptReference),
+    (Index: 526; Name: 'GetVATSLeftTargetVisible'; ParamType1: ptReference),
+    (Index: 527; Name: 'GetVATSBackTargetVisible'; ParamType1: ptReference),
+    (Index: 528; Name: 'GetVATSFrontTargetVisible'; ParamType1: ptReference),
+    (Index: 531; Name: 'IsInCriticalStage'; ParamType1: ptCriticalStage),
+    (Index: 533; Name: 'GetXPForNextLevel'),
+    (Index: 546; Name: 'GetQuestCompleted'; ParamType1: ptQuest),
+    (Index: 550; Name: 'IsGoreDisabled'),
+    (Index: 555; Name: 'GetSpellUsageNum'; ParamType1: ptEffectItem),
+    (Index: 557; Name: 'GetActorsInHigh'),
+    (Index: 558; Name: 'HasLoaded3D'),
+
+    // Added by FOSE:
+    (Index: 1024; Name: 'GetFOSEVersion'; ),
+    (Index: 1025; Name: 'GetFOSERevision'; ),
+    (Index: 1028; Name: 'GetWeight'; ParamType1: ptInventoryObject; ),
+    (Index: 1082; Name: 'IsKeyPressed'; ParamType1: ptInteger;),
+    (Index: 1165; Name: 'GetWeaponHasScope'; ParamType1: ptInventoryObject; ),
+    (Index: 1166; Name: 'IsControlPressed'; ParamType1: ptInteger; ),
+    (Index: 1213; Name: 'GetFOSEBeta'; )
+  );
+
+function wbConditionDescFromIndex(aIndex: Integer): PConditionFunction;
+begin
+  Result := nil;
+
+  var L := Low(wbConditionFunctions);
+  var H := High(wbConditionFunctions);
+  while L <= H do begin
+    var I := (L + H) shr 1;
+    var C := CmpW32(wbConditionFunctions[I].Index, aIndex);
+    if C < 0 then
+      L := I + 1
+    else begin
+      H := I - 1;
+      if C = 0 then begin
+        L := I;
+        Result := @wbConditionFunctions[L];
+      end;
+    end;
+  end;
+end;
+
+function wbConditionFunctionToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
+var
+  wbConditionFunctionEditInfo: string;
+begin
+  Result := '';
+
+  var Desc := wbConditionDescFromIndex(aInt);
+
+  case aType of
+    ctToStr, ctToSummary, ctToEditValue: begin
+      if Assigned(Desc) then
+        Result := Desc.Name
+      else if aType in [ctToSummary, ctToEditValue] then
+        Result := aInt.ToString
+      else
+        Result := '<Unknown: '+aInt.ToString+'>';
+    end;
+
+    ctToSortKey: Result := IntToHex(aInt, 8);
+
+    ctCheck: begin
+      if Assigned(Desc) then
+        Result := ''
+      else
+        Result := '<Unknown: '+aInt.ToString+'>';
+    end;
+    ctEditType: Result := 'ComboBox';
+
+    ctEditInfo: begin
+      if wbConditionFunctionEditInfo = '' then begin
+        with TStringList.Create do try
+          for var i := Low(wbConditionFunctions) to High(wbConditionFunctions) do
+            Add(wbConditionFunctions[i].Name);
+          Sort;
+          wbConditionFunctionEditInfo := CommaText;
+        finally
+          Free;
+        end;
+      end;
+      Result := wbConditionFunctionEditInfo;
+    end;
+  end;
+end;
+
+function wbConditionFunctionToInt(const aString: string; const aElement: IwbElement): Int64;
+begin
+  for var i := Low(wbConditionFunctions) to High(wbConditionFunctions) do
+    with wbConditionFunctions[i] do
+      if SameText(Name, aString) then
+        Exit(Index);
+
+  Result := StrToInt64(aString);
+end;
+
+function wbConditionParam1Decider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+var
+  Container: IwbContainer;
+begin
+  Result := 0;
+  if not wbTryGetContainerFromUnion(aElement, Container) then
+    Exit;
+
+  var Desc := wbConditionDescFromIndex(Container.ElementByName['Function'].NativeValue);
+  if Assigned(Desc) then
+    Result := Succ(Integer(Desc.ParamType1));
+end;
+
+function wbConditionParam2Decider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+var
+  Container: IwbContainer;
+begin
+  Result := 0;
+  if not wbTryGetContainerFromUnion(aElement, Container) then
+    Exit;
+
+  var Desc := wbConditionDescFromIndex(Container.ElementByName['Function'].NativeValue);
+  if Assigned(Desc) then
+    Result := Succ(Integer(Desc.ParamType2));
+end;
+
+function wbConditionQuestStageToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
+var
+  Container  : IwbContainerElementRef;
+  MainRecord : IwbMainRecord;
+  EditInfos  : TStringList;
+  Stages     : IwbContainerElementRef;
+  Stage      : IwbContainerElementRef;
+begin
+  case aType of
+    ctToEditValue, ctToSummary: Result := aInt.ToString;
+    ctToStr: Result := aInt.ToString + ' <Warning: Could not resolve Parameter 1>';
+    ctToSortKey: Exit(IntToHex64(aInt, 8));
+    ctCheck: Result := '<Warning: Could not resolve Parameter 1>';
+    ctEditInfo, ctEditType: Result := '';
+  end;
+
+  if not wbTryGetContainerRefFromUnionOrValue(aElement, Container) then
+    Exit;
+
+  if not wbTryGetMainRecord(Container.ElementByName['Parameter #1'], MainRecord) then
+    Exit;
+
+  MainRecord := MainRecord.WinningOverride;
+  if MainRecord.Signature <> QUST then begin
+    case aType of
+      ctToStr: Result := aInt.ToString + ' <Warning: "' + MainRecord.ShortName + '" is not a Quest Record>';
+      ctCheck: Result := '<Warning: "'+MainRecord.ShortName+'" is not a Quest record>';
+    end;
+    Exit;
+  end;
+
+  case aType of
+    ctEditType: Exit('ComboBox');
+    ctEditInfo: EditInfos := TStringList.Create;
+  else
+    EditInfos := nil;
+  end;
+
+  try
+    if Supports(MainRecord.ElementByName['Stages'], IwbContainerElementRef, Stages) then begin
+      for var i := 0 to Pred(Stages.ElementCount) do
+        if Supports(Stages.Elements[i], IwbContainerElementRef, Stage) then begin
+          var j := Stage.ElementNativeValues['INDX'];
+          var s := Trim(Stage.ElementValues['Log Entries\Log Entry\CNAM']);
+          var t := IntToStr(j);
+          while Length(t) < 3 do
+            t := '0' + t;
+          if s <> '' then
+            t := t + ' ' + s;
+          if Assigned(EditInfos) then
+            EditInfos.AddObject(t, TObject(Integer(j)))
+          else if j = aInt then begin
+            case aType of
+              ctToStr, ctToSummary, ctToEditValue: Result := t;
+              ctCheck: Result := '';
+            end;
+            Exit;
+          end;
+        end;
+    end;
+
+    case aType of
+      ctToStr: Result := aInt.ToString + ' <Warning: Quest Stage not found in "' + MainRecord.Name + '">';
+      ctCheck: Result := '<Warning: Quest Stage not found in "' + MainRecord.Name + '">';
+      ctEditInfo: begin
+        EditInfos.Sort;
+        Result := EditInfos.CommaText;
+      end;
+    end;
+  finally
+    FreeAndNil(EditInfos);
+  end;
+end;
+
+function wbConditionVariableNameToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
+var
+  Container  : IwbContainerElementRef;
+  MainRecord : IwbMainRecord;
+  Script     : IwbMainRecord;
+  Variables  : TStringList;
+  LocalVars  : IwbContainerElementRef;
+  LocalVar   : IwbContainerElementRef;
+begin
+  case aType of
+    ctToEditValue, ctToSummary: Result := aInt.ToString;
+    ctToStr: Result := aInt.ToString + ' <Warning: Could not resolve Parameter 1>';
+    ctToSortKey: Exit(IntToHex64(aInt, 8));
+    ctCheck: Result := '<Warning: Could not resolve Parameter 1>';
+    ctEditInfo, ctEditType: Result := '';
+  end;
+
+  if not wbTryGetContainerRefFromUnionOrValue(aElement, Container) then
+    Exit;
+
+  if not wbTryGetMainRecord(Container.ElementByName['Parameter #1'], MainRecord) then
+    Exit;
+
+  var BaseRecord := MainRecord.BaseRecord;
+  if Assigned(BaseRecord) then
+    MainRecord := BaseRecord;
+
+  MainRecord := MainRecord.WinningOverride;
+
+  var ScriptRef := MainRecord.RecordBySignature['SCRI'];
+  if not Assigned(ScriptRef) then begin
+    case aType of
+      ctToStr: Result := aInt.ToString + ' <Warning: "' + MainRecord.ShortName + '" does not contain a SCRI Sub-Record>';
+      ctCheck: Result := '<Warning: "'+MainRecord.ShortName+'" does not contain a SCRI subrecord>';
+    end;
+    Exit;
+  end;
+
+  if not Supports(ScriptRef.LinksTo, IwbMainRecord, Script) then begin
+    case aType of
+      ctToStr: Result := aInt.ToString + ' <Warning: "' + MainRecord.ShortName + '" does not have a valid script>';
+      ctCheck: Result := '<Warning: "'+MainRecord.ShortName+'" does not have a valid script>';
+    end;
+    Exit;
+  end;
+
+  Script := Script.HighestOverrideOrSelf[aElement._File.LoadOrder];
+
+  case aType of
+    ctEditType: Exit('ComboBox');
+    ctEditInfo: Variables := TStringList.Create;
+  else
+    Variables := nil;
+  end;
+
+  try
+    if Supports(Script.ElementByName['Local Variables'], IwbContainerElementRef, LocalVars) then begin
+      for var i := 0 to Pred(LocalVars.ElementCount) do
+        if Supports(LocalVars.Elements[i], IwbContainerElementRef, LocalVar) then begin
+          var j := LocalVar.ElementNativeValues['SLSD\Index'];
+          var s := LocalVar.ElementNativeValues['SCVR'];
+          if Assigned(Variables) then
+            Variables.AddObject(s, TObject(Integer(j)))
+          else if j = aInt then begin
+            case aType of
+              ctToStr, ctToSummary, ctToEditValue: Result := s;
+              ctCheck: Result := '';
+            end;
+            Exit;
+          end;
+        end;
+    end;
+
+    case aType of
+      ctToStr: Result := aInt.ToString + ' <Warning: Variable Index not found in "' + Script.Name + '">';
+      ctCheck: Result := '<Warning: Variable Index not found in "' + Script.Name + '">';
+      ctEditInfo: begin
+        Variables.Sort;
+        Result := Variables.CommaText;
+      end;
+    end;
+  finally
+    FreeAndNil(Variables);
+  end;
+end;
+
+function wbConditionVariableNameToInt(const aString: string; const aElement: IwbElement): Int64;
+var
+  MainRecord : IwbMainRecord;
+  Script     : IwbMainRecord;
+  LocalVars  : IwbContainerElementRef;
+  LocalVar   : IwbContainerElementRef;
+begin
+  Result := StrToInt64Def(aString, Low(Cardinal));
+  if Result <> Low(Cardinal) then
+    Exit;
+
+  if not Assigned(aElement) then
+    raise Exception.Create('aElement not specified');
+
+  var Container := GetContainerRefFromUnionOrValue(aElement);
+  if not Assigned(Container) then
+    raise Exception.Create('Container not assigned');
+
+  var Param1 := Container.ElementByName['Parameter #1'];
+  if not Assigned(Param1) then
+    raise Exception.Create('Could not find "Parameter #1"');
+
+  if not Supports(Param1.LinksTo, IwbMainRecord, MainRecord) then
+    raise Exception.Create('"Parameter #1" does not reference a valid main record');
+
+  var BaseRecord := MainRecord.BaseRecord;
+  if Assigned(BaseRecord) then
+    MainRecord := BaseRecord;
+
+  MainRecord := MainRecord.WinningOverride;
+
+  var ScriptRef := MainRecord.RecordBySignature['SCRI'];
+    if not Assigned(ScriptRef) then
+    raise Exception.Create('"'+MainRecord.ShortName+'" does not contain a SCRI subrecord');
+
+  if not Supports(ScriptRef.LinksTo, IwbMainRecord, Script) then
+    raise Exception.Create('"'+MainRecord.ShortName+'" does not have a valid script');
+
+  Script := Script.HighestOverrideOrSelf[aElement._File.LoadOrder];
+
+  if Supports(Script.ElementByName['Local Variables'], IwbContainerElementRef, LocalVars) then begin
+    for var i := 0 to Pred(LocalVars.ElementCount) do
+      if Supports(LocalVars.Elements[i], IwbContainerElementRef, LocalVar) then begin
+        var j := LocalVar.ElementNativeValues['SLSD\Index'];
+        var s := LocalVar.ElementNativeValues['SCVR'];
+        if SameText(s, Trim(aString)) then
+          Exit(j)
+      end;
+  end;
+
+  raise Exception.Create('Variable "'+aString+'" was not found in "'+MainRecord.ShortName+'"');
+end;
+
+function wbConditionVATSValueParam(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+var
+  Container : IwbContainer;
+begin
+  Result := 0;
+  if not wbTryGetContainerFromUnion(aElement, Container) then
+    Exit;
+
+  Result := Container.ElementByName['Parameter #1'].NativeValue;
+end;
+
+procedure wbConditionsfterLoad(const aElement: IwbElement);
+var
+  Container  : IwbContainerElementRef;
+begin
+  if wbBeginInternalEdit then try
+    if not Supports(aElement, IwbContainerElementRef, Container) then
+      Exit;
+
+    if Container.ElementCount < 1 then
+      Exit;
+
+    var TypeFlags := Container.ElementNativeValues['Type'];
+    if (TypeFlags and 2) <> 0 then begin
+      if Container.DataSize = 20 then
+        Container.DataSize := 28;
+      Container.ElementNativeValues['Type'] := TypeFlags and not 2;
+      Container.ElementEditValues['Run On'] := 'Target';
+    end;
+  finally
+    wbEndInternalEdit;
+  end;
+end;
 
 function wbGenericModel(aRequired: Boolean = False; aDontShow: TwbDontShowCallback = nil): IwbRecordMemberDef;
 begin
@@ -127,295 +790,6 @@ begin
   AsFloat := wbActorValueEnum.FromEditValue(aString, aElement);
   PSingle(@AsCardinal)^ := AsFloat;
   Result := AsCardinal;
-end;
-
-function wbCTDAParam2VariableNameToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
-var
-  Container  : IwbContainerElementRef;
-  //Container2 : IwbContainerElementRef;
-  Param1     : IwbElement;
-  MainRecord : IwbMainRecord;
-  BaseRecord : IwbMainRecord;
-  ScriptRef  : IwbElement;
-  Script     : IwbMainRecord;
-  Variables  : TStringList;
-  LocalVars  : IwbContainerElementRef;
-  LocalVar   : IwbContainerElementRef;
-  i, j       : Integer;
-  s          : string;
-begin
-  case aType of
-    ctToStr, ctToSummary: begin
-      Result := aInt.ToString;
-      if aType = ctToStr then
-        Result := Result + ' <Warning: Could not resolve Parameter 1>';
-    end;
-    ctToEditValue: Result := aInt.ToString;
-    ctToSortKey: begin
-      Result := IntToHex64(aInt, 8);
-      Exit;
-    end;
-    ctCheck: Result := '<Warning: Could not resolve Parameter 1>';
-    ctEditType: Result := '';
-    ctEditInfo: Result := '';
-  end;
-
-  if not wbTryGetContainerRefFromUnionOrValue(aElement, Container) then
-    Exit;
-
-  Param1 := Container.ElementByName['Parameter #1'];
-  if not wbTryGetMainRecord(Param1, MainRecord) then
-    Exit;
-
-{    if Param1.NativeValue = 0 then
-      if Supports(Container.Container, IwbContainerElementRef, Container) then
-        for i := 0 to Pred(Container.ElementCount) do
-          if Supports(Container.Elements[i], IwbContainerElementRef, Container2) then
-            if SameText(Container2.ElementValues['Function'], 'GetIsID') then begin
-              Param1 := Container2.ElementByName['Parameter #1'];
-              if Supports(Param1.LinksTo, IwbMainRecord, MainRecord) then
-                Break;
-            end;}
-
-  BaseRecord := MainRecord.BaseRecord;
-  if Assigned(BaseRecord) then
-    MainRecord := BaseRecord;
-
-  MainRecord := MainRecord.WinningOverride;
-
-  ScriptRef := MainRecord.RecordBySignature['SCRI'];
-
-  if not Assigned(ScriptRef) then begin
-    case aType of
-      ctToStr, ctToSummary: begin
-        Result := aInt.ToString;
-        if aType = ctToStr then
-          Result := Result + ' <Warning: "'+MainRecord.ShortName+'" does not contain a SCRI subrecord>';
-      end;
-      ctCheck: Result := '<Warning: "'+MainRecord.ShortName+'" does not contain a SCRI subrecord>';
-    end;
-    Exit;
-  end;
-
-  if not Supports(ScriptRef.LinksTo, IwbMainRecord, Script) then begin
-    case aType of
-      ctToStr, ctToSummary: begin
-        Result := aInt.ToString;
-        if aType = ctToStr then
-          Result := Result + ' <Warning: "'+MainRecord.ShortName+'" does not have a valid script>';
-      end;
-      ctCheck: Result := '<Warning: "'+MainRecord.ShortName+'" does not have a valid script>';
-    end;
-    Exit;
-  end;
-
-  Script := Script.HighestOverrideOrSelf[aElement._File.LoadOrder];
-
-  case aType of
-    ctEditType: begin
-      Result := 'ComboBox';
-      Exit;
-    end;
-    ctEditInfo:
-      Variables := TStringList.Create;
-  else
-    Variables := nil;
-  end;
-  try
-    if Supports(Script.ElementByName['Local Variables'], IwbContainerElementRef, LocalVars) then begin
-      for i := 0 to Pred(LocalVars.ElementCount) do
-        if Supports(LocalVars.Elements[i], IwbContainerElementRef, LocalVar) then begin
-          j := LocalVar.ElementNativeValues['SLSD\Index'];
-          s := LocalVar.ElementNativeValues['SCVR'];
-          if Assigned(Variables) then
-            Variables.AddObject(s, TObject(j))
-          else if j = aInt then begin
-            case aType of
-              ctToStr, ctToSummary, ctToEditValue: Result := s;
-              ctCheck: Result := '';
-            end;
-            Exit;
-          end;
-        end;
-    end;
-
-    case aType of
-      ctToStr, ctToSummary: begin
-        Result := aInt.ToString;
-        if aType = ctToStr then
-          Result := Result + ' <Warning: Variable Index not found in "' + Script.Name + '">';
-      end;
-      ctCheck: Result := '<Warning: Variable Index not found in "' + Script.Name + '">';
-      ctEditInfo: begin
-        Variables.Sort;
-        Result := Variables.CommaText;
-      end;
-    end;
-  finally
-    FreeAndNil(Variables);
-  end;
-end;
-
-function wbCTDAParam2VariableNameToInt(const aString: string; const aElement: IwbElement): Int64;
-var
-  Container  : IwbContainerElementRef;
-  Param1     : IwbElement;
-  MainRecord : IwbMainRecord;
-  BaseRecord : IwbMainRecord;
-  ScriptRef  : IwbElement;
-  Script     : IwbMainRecord;
-  LocalVars  : IwbContainerElementRef;
-  LocalVar   : IwbContainerElementRef;
-  i, j       : Integer;
-  s          : string;
-begin
-  Result := StrToInt64Def(aString, Low(Cardinal));
-  if Result <> Low(Cardinal) then
-    Exit;
-
-  if not Assigned(aElement) then
-    raise Exception.Create('aElement not specified');
-
-  Container := GetContainerRefFromUnionOrValue(aElement);
-
-  if not Assigned(Container) then
-    raise Exception.Create('Container not assigned');
-
-  Param1 := Container.ElementByName['Parameter #1'];
-
-  if not Assigned(Param1) then
-    raise Exception.Create('Could not find "Parameter #1"');
-
-  if not Supports(Param1.LinksTo, IwbMainRecord, MainRecord) then
-    raise Exception.Create('"Parameter #1" does not reference a valid main record');
-
-  BaseRecord := MainRecord.BaseRecord;
-  if Assigned(BaseRecord) then
-    MainRecord := BaseRecord;
-
-  MainRecord := MainRecord.WinningOverride;
-
-  ScriptRef := MainRecord.RecordBySignature['SCRI'];
-
-  if not Assigned(ScriptRef) then
-    raise Exception.Create('"'+MainRecord.ShortName+'" does not contain a SCRI subrecord');
-
-  if not Supports(ScriptRef.LinksTo, IwbMainRecord, Script) then
-    raise Exception.Create('"'+MainRecord.ShortName+'" does not have a valid script');
-
-  Script := Script.HighestOverrideOrSelf[aElement._File.LoadOrder];
-
-  if Supports(Script.ElementByName['Local Variables'], IwbContainerElementRef, LocalVars) then begin
-    for i := 0 to Pred(LocalVars.ElementCount) do
-      if Supports(LocalVars.Elements[i], IwbContainerElementRef, LocalVar) then begin
-        j := LocalVar.ElementNativeValues['SLSD\Index'];
-        s := LocalVar.ElementNativeValues['SCVR'];
-        if SameText(s, Trim(aString)) then begin
-          Result := j;
-          Exit;
-        end;
-      end;
-  end;
-
-  raise Exception.Create('Variable "'+aString+'" was not found in "'+MainRecord.ShortName+'"');
-end;
-
-function wbCTDAParam2QuestStageToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
-var
-  Container  : IwbContainerElementRef;
-  Param1     : IwbElement;
-  MainRecord : IwbMainRecord;
-  EditInfos  : TStringList;
-  Stages     : IwbContainerElementRef;
-  Stage      : IwbContainerElementRef;
-  i, j       : Integer;
-  s, t       : string;
-begin
-  case aType of
-    ctToStr, ctToSummary: begin
-      Result := aInt.ToString;
-      if aType = ctToStr then
-        Result := Result + ' <Warning: Could not resolve Parameter 1>';
-    end;
-    ctToEditValue: Result := aInt.ToString;
-    ctToSortKey: begin
-      Result := IntToHex64(aInt, 8);
-      Exit;
-    end;
-    ctCheck: Result := '<Warning: Could not resolve Parameter 1>';
-    ctEditType: Result := '';
-    ctEditInfo: Result := '';
-  end;
-
-  if not wbTryGetContainerRefFromUnionOrValue(aElement, Container) then
-    Exit;
-
-  Param1 := Container.ElementByName['Parameter #1'];
-  if not wbTryGetMainRecord(Param1, MainRecord) then
-    Exit;
-
-  MainRecord := MainRecord.WinningOverride;
-
-  if MainRecord.Signature <> QUST then begin
-    case aType of
-      ctToStr, ctToSummary: begin
-        Result := aInt.ToString;
-        if aType = ctToStr then
-          Result := Result + ' <Warning: "'+MainRecord.ShortName+'" is not a Quest record>';
-      end;
-      ctCheck: Result := '<Warning: "'+MainRecord.ShortName+'" is not a Quest record>';
-    end;
-    Exit;
-  end;
-
-  case aType of
-    ctEditType: begin
-      Result := 'ComboBox';
-      Exit;
-    end;
-    ctEditInfo:
-      EditInfos := TStringList.Create;
-  else
-    EditInfos := nil;
-  end;
-  try
-    if Supports(MainRecord.ElementByName['Stages'], IwbContainerElementRef, Stages) then begin
-      for i := 0 to Pred(Stages.ElementCount) do
-        if Supports(Stages.Elements[i], IwbContainerElementRef, Stage) then begin
-          j := Stage.ElementNativeValues['INDX'];
-          s := Trim(Stage.ElementValues['Log Entries\Log Entry\CNAM']);
-          t := IntToStr(j);
-          while Length(t) < 3 do
-            t := '0' + t;
-          if s <> '' then
-            t := t + ' ' + s;
-          if Assigned(EditInfos) then
-            EditInfos.AddObject(t, TObject(j))
-          else if j = aInt then begin
-            case aType of
-              ctToStr, ctToSummary, ctToEditValue: Result := t;
-              ctCheck: Result := '';
-            end;
-            Exit;
-          end;
-        end;
-    end;
-
-    case aType of
-      ctToStr, ctToSummary: begin
-        Result := aInt.ToString;
-        if aType = ctToStr then
-          Result := Result + ' <Warning: Quest Stage not found in "' + MainRecord.Name + '">';
-      end;
-      ctCheck: Result := '<Warning: Quest Stage not found in "' + MainRecord.Name + '">';
-      ctEditInfo: begin
-        EditInfos.Sort;
-        Result := EditInfos.CommaText;
-      end;
-    end;
-  finally
-    FreeAndNil(EditInfos);
-  end;
 end;
 
 function wbPerkDATAQuestStageToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
@@ -506,105 +880,6 @@ begin
           Result := Result + ' <Warning: Quest Stage not found in "' + MainRecord.Name + '">';
       end;
       ctCheck: Result := '<Warning: Quest Stage not found in "' + MainRecord.Name + '">';
-      ctEditInfo: begin
-        EditInfos.Sort;
-        Result := EditInfos.CommaText;
-      end;
-    end;
-  finally
-    FreeAndNil(EditInfos);
-  end;
-end;
-
-function wbCTDAParam2QuestObjectiveToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
-var
-  Container  : IwbContainerElementRef;
-  Param1     : IwbElement;
-  MainRecord : IwbMainRecord;
-  EditInfos  : TStringList;
-  Objectives     : IwbContainerElementRef;
-  Objective      : IwbContainerElementRef;
-  i, j       : Integer;
-  s, t       : string;
-begin
-  case aType of
-    ctToStr, ctToSummary: begin
-      Result := aInt.ToString;
-      if aType = ctToStr then
-        Result := Result + ' <Warning: Could not resolve Parameter 1>';
-    end;
-    ctToEditValue: Result := aInt.ToString;
-    ctToSortKey: begin
-      Result := IntToHex64(aInt, 8);
-      Exit;
-    end;
-    ctCheck: Result := '<Warning: Could not resolve Parameter 1>';
-    ctEditType: Result := '';
-    ctEditInfo: Result := '';
-  end;
-
-  if not wbTryGetContainerRefFromUnionOrValue(aElement, Container) then
-    Exit;
-
-  Param1 := Container.ElementByName['Parameter #1'];
-  if not wbTryGetMainRecord(Param1, MainRecord) then
-    Exit;
-
-  MainRecord := MainRecord.WinningOverride;
-
-  if MainRecord.Signature <> QUST then begin
-    case aType of
-      ctToStr, ctToSummary: begin
-        Result := aInt.ToString;
-        if aType = ctToStr then
-          Result := Result + ' <Warning: "'+MainRecord.ShortName+'" is not a Quest record>';
-      end;
-      ctCheck: Result := '<Warning: "'+MainRecord.ShortName+'" is not a Quest record>';
-    end;
-    Exit;
-  end;
-
-  case aType of
-    ctEditType: begin
-      Result := 'ComboBox';
-      Exit;
-    end;
-    ctEditInfo:
-      EditInfos := TStringList.Create;
-  else
-    EditInfos := nil;
-  end;
-
-  try
-    if Supports(MainRecord.ElementByName['Objectives'], IwbContainerElementRef, Objectives) then begin
-      for i := 0 to Pred(Objectives.ElementCount) do
-        if Supports(Objectives.Elements[i], IwbContainerElementRef, Objective) then begin
-          j := Objective.ElementNativeValues['QOBJ'];
-          s := Trim(Objective.ElementValues['NNAM']);
-          t := IntToStr(j);
-          while Length(t) < 3 do
-            t := '0' + t;
-          if s <> '' then
-            t := t + ' ' + s;
-          if Assigned(EditInfos) then
-            EditInfos.AddObject(t, TObject(j))
-          else if j = aInt then begin
-            case aType of
-              ctToStr, ctToSummary, ctToEditValue: Result := t;
-              ctCheck: Result := '';
-            end;
-            Exit;
-          end;
-        end;
-    end;
-
-    case aType of
-      ctToStr, ctToSummary: begin
-        Result := aInt.ToString;
-        if aType = ctToStr then
-          Result := Result + ' <Warning: Quest Objective not found in "' + MainRecord.Name + '">';
-      end;
-      ctCheck: Result := '<Warning: Quest Objective not found in "' + MainRecord.Name + '">';
       ctEditInfo: begin
         EditInfos.Sort;
         Result := EditInfos.CommaText;
@@ -997,434 +1272,6 @@ begin
   if Result = 2 then
     if Integer(Container.ElementNativeValues['..\DATA\Entry Point\Function']) = 5 then
       Result := 5;
-end;
-
-type
-  TCTDAFunctionParamType = (
-    ptNone,
-    ptInteger,
-    ptVariableName,  //Integer
-    ptSex,           //Enum: Male, Female
-    ptActorValue,    //Enum: wbActorValue
-    ptCrimeType,     //?? Enum
-    ptAxis,          //?? Char
-    ptQuestStage,    //?? Integer
-    ptMiscStat,      //?? Enum
-    ptAlignment,     //?? Enum
-    ptEquipType,     //?? Enum
-    ptFormType,      //?? Enum
-    ptCriticalStage, //?? Enum
-
-    ptObjectReference,    //REFR, ACHR, ACRE, PGRE
-    ptInventoryObject,    //ARMO, BOOK, MISC, WEAP, AMMO, KEYM, ALCH, NOTE, ARMA
-    ptActor,              //ACHR, ACRE
-    ptVoiceType,          //VTYP
-    ptIdleForm,           //IDLE
-    ptFormList,           //FLST
-    ptNote,               //NOTE
-    ptQuest,              //QUST
-    ptFaction,            //FACT
-    ptWeapon,             //WEAP
-    ptCell,               //CELL
-    ptClass,              //CLAS
-    ptRace,               //RACE
-    ptActorBase,          //NPC_, CREA
-    ptGlobal,             //GLOB
-    ptWeather,            //WTHR
-    ptPackage,            //PACK
-    ptEncounterZone,      //ECZN
-    ptPerk,               //PERK
-    ptOwner,              //FACT, NPC_
-    ptFurniture,          //FURN
-    ptMagicItem,          //SPEL
-    ptMagicEffect,        //MGEF
-    ptWorldspace,         //WRLD
-    ptVATSValueFunction,
-    ptVATSValueParam,
-    ptCreatureType,
-    ptMenuMode,
-    ptPlayerAction,
-    ptBodyLocation,
-    ptReferencableObject  //TREE, SOUN, ACTI, DOOR, STAT, FURN, CONT, ARMO, AMMO, MISC, WEAP, BOOK, KEYM, ALCH, LIGH, GRAS, ASPC, IDLM, ARMA, MSTT, NOTE, PWAT, SCOL, TACT, TERM
-  );
-
-  PCTDAFunction = ^TCTDAFunction;
-  TCTDAFunction = record
-    Index: Integer;
-    Name: string;
-    ParamType1: TCTDAFunctionParamType;
-    ParamType2: TCTDAFunctionParamType;
-  end;
-
-const
-  wbCTDAFunctions : array[0..243] of TCTDAFunction = (
-    // Added by Fallout 3
-    (Index:   1; Name: 'GetDistance'; ParamType1: ptObjectReference),
-    (Index:   5; Name: 'GetLocked'),
-    (Index:   6; Name: 'GetPos'; ParamType1: ptAxis),
-    (Index:   8; Name: 'GetAngle'; ParamType1: ptAxis),
-    (Index:  10; Name: 'GetStartingPos'; ParamType1: ptAxis),
-    (Index:  11; Name: 'GetStartingAngle'; ParamType1: ptAxis),
-    (Index:  12; Name: 'GetSecondsPassed'),
-    (Index:  14; Name: 'GetActorValue'; ParamType1: ptActorValue),
-    (Index:  18; Name: 'GetCurrentTime'),
-    (Index:  24; Name: 'GetScale'),
-    (Index:  25; Name: 'IsMoving'),
-    (Index:  26; Name: 'IsTurning'),
-    (Index:  27; Name: 'GetLineOfSight'; ParamType1: ptObjectReference),
-    (Index:  32; Name: 'GetInSameCell'; ParamType1: ptObjectReference),
-    (Index:  35; Name: 'GetDisabled'),
-    (Index:  36; Name: 'MenuMode'; ParamType1: ptMenuMode),
-    (Index:  39; Name: 'GetDisease'),
-    (Index:  40; Name: 'GetVampire'),
-    (Index:  41; Name: 'GetClothingValue'),
-    (Index:  42; Name: 'SameFaction'; ParamType1: ptActor),
-    (Index:  43; Name: 'SameRace'; ParamType1: ptActor),
-    (Index:  44; Name: 'SameSex'; ParamType1: ptActor),
-    (Index:  45; Name: 'GetDetected'; ParamType1: ptActor),
-    (Index:  46; Name: 'GetDead'),
-    (Index:  47; Name: 'GetItemCount'; ParamType1: ptInventoryObject),
-    (Index:  48; Name: 'GetGold'),
-    (Index:  49; Name: 'GetSleeping'),
-    (Index:  50; Name: 'GetTalkedToPC'),
-    (Index:  53; Name: 'GetScriptVariable'; ParamType1: ptObjectReference; ParamType2: ptVariableName),
-    (Index:  56; Name: 'GetQuestRunning'; ParamType1: ptQuest),
-    (Index:  58; Name: 'GetStage'; ParamType1: ptQuest),
-    (Index:  59; Name: 'GetStageDone'; ParamType1: ptQuest; ParamType2: ptQuestStage),
-    (Index:  60; Name: 'GetFactionRankDifference'; ParamType1: ptFaction; ParamType2: ptActor),
-    (Index:  61; Name: 'GetAlarmed'),
-    (Index:  62; Name: 'IsRaining'),
-    (Index:  63; Name: 'GetAttacked'),
-    (Index:  64; Name: 'GetIsCreature'),
-    (Index:  65; Name: 'GetLockLevel'),
-    (Index:  66; Name: 'GetShouldAttack'; ParamType1: ptActor),
-    (Index:  67; Name: 'GetInCell'; ParamType1: ptCell),
-    (Index:  68; Name: 'GetIsClass'; ParamType1: ptClass),
-    (Index:  69; Name: 'GetIsRace'; ParamType1: ptRace),
-    (Index:  70; Name: 'GetIsSex'; ParamType1: ptSex),
-    (Index:  71; Name: 'GetInFaction'; ParamType1: ptFaction),
-    (Index:  72; Name: 'GetIsID'; ParamType1: ptReferencableObject),
-    (Index:  73; Name: 'GetFactionRank'; ParamType1: ptFaction),
-    (Index:  74; Name: 'GetGlobalValue'; ParamType1: ptGlobal),
-    (Index:  75; Name: 'IsSnowing'),
-    (Index:  76; Name: 'GetDisposition'; ParamType1: ptActor),
-    (Index:  77; Name: 'GetRandomPercent'),
-    (Index:  79; Name: 'GetQuestVariable'; ParamType1: ptQuest; ParamType2: ptVariableName),
-    (Index:  80; Name: 'GetLevel'),
-    (Index:  81; Name: 'GetArmorRating'),
-    (Index:  84; Name: 'GetDeadCount'; ParamType1: ptActorBase),
-    (Index:  91; Name: 'GetIsAlerted'),
-    (Index:  98; Name: 'GetPlayerControlsDisabled'; ParamType1: ptInteger; ParamType2: ptInteger{; ParamType3: ptInteger; ParamType4: ptInteger; ParamType5: ptInteger; ParamType6: ptInteger; ParamType7: ptInteger}),
-    (Index:  99; Name: 'GetHeadingAngle'; ParamType1: ptObjectReference),
-    (Index: 101; Name: 'IsWeaponOut'),
-    (Index: 102; Name: 'IsTorchOut'),
-    (Index: 103; Name: 'IsShieldOut'),
-    (Index: 106; Name: 'IsFacingUp'),
-    (Index: 107; Name: 'GetKnockedState'),
-    (Index: 108; Name: 'GetWeaponAnimType'),
-    (Index: 109; Name: 'IsWeaponSkillType'; ParamType1: ptActorValue),
-    (Index: 110; Name: 'GetCurrentAIPackage'),
-    (Index: 111; Name: 'IsWaiting'),
-    (Index: 112; Name: 'IsIdlePlaying'),
-    (Index: 116; Name: 'GetMinorCrimeCount'),
-    (Index: 117; Name: 'GetMajorCrimeCount'),
-    (Index: 118; Name: 'GetActorAggroRadiusViolated'),
-    (Index: 122; Name: 'GetCrime'; ParamType1: ptActor; ParamType2: ptCrimeType),
-    (Index: 123; Name: 'IsGreetingPlayer'),
-    (Index: 125; Name: 'IsGuard'),
-    (Index: 127; Name: 'HasBeenEaten'),
-    (Index: 128; Name: 'GetFatiguePercentage'),
-    (Index: 129; Name: 'GetPCIsClass'; ParamType1: ptClass),
-    (Index: 130; Name: 'GetPCIsRace'; ParamType1: ptRace),
-    (Index: 131; Name: 'GetPCIsSex'; ParamType1: ptSex),
-    (Index: 132; Name: 'GetPCInFaction'; ParamType1: ptFaction),
-    (Index: 133; Name: 'SameFactionAsPC'),
-    (Index: 134; Name: 'SameRaceAsPC'),
-    (Index: 135; Name: 'SameSexAsPC'),
-    (Index: 136; Name: 'GetIsReference'; ParamType1: ptObjectReference),
-    (Index: 141; Name: 'IsTalking'),
-    (Index: 142; Name: 'GetWalkSpeed'),
-    (Index: 143; Name: 'GetCurrentAIProcedure'),
-    (Index: 144; Name: 'GetTrespassWarningLevel'),
-    (Index: 145; Name: 'IsTrespassing'),
-    (Index: 146; Name: 'IsInMyOwnedCell'),
-    (Index: 147; Name: 'GetWindSpeed'),
-    (Index: 148; Name: 'GetCurrentWeatherPercent'),
-    (Index: 149; Name: 'GetIsCurrentWeather'; ParamType1: ptWeather),
-    (Index: 150; Name: 'IsContinuingPackagePCNear'),
-    (Index: 153; Name: 'CanHaveFlames'),
-    (Index: 154; Name: 'HasFlames'),
-    (Index: 157; Name: 'GetOpenState'),
-    (Index: 159; Name: 'GetSitting'),
-    (Index: 160; Name: 'GetFurnitureMarkerID'),
-    (Index: 161; Name: 'GetIsCurrentPackage'; ParamType1: ptPackage),
-    (Index: 162; Name: 'IsCurrentFurnitureRef'; ParamType1: ptObjectReference),
-    (Index: 163; Name: 'IsCurrentFurnitureObj'; ParamType1: ptFurniture),
-    (Index: 170; Name: 'GetDayOfWeek'),
-    (Index: 172; Name: 'GetTalkedToPCParam'; ParamType1: ptActor),
-    (Index: 175; Name: 'IsPCSleeping'),
-    (Index: 176; Name: 'IsPCAMurderer'),
-    (Index: 180; Name: 'GetDetectionLevel'; ParamType1: ptActor),
-    (Index: 182; Name: 'GetEquipped'; ParamType1: ptInventoryObject),
-    (Index: 185; Name: 'IsSwimming'),
-    (Index: 190; Name: 'GetAmountSoldStolen'),
-    (Index: 192; Name: 'GetIgnoreCrime'),
-    (Index: 193; Name: 'GetPCExpelled'; ParamType1: ptFaction),
-    (Index: 195; Name: 'GetPCFactionMurder'; ParamType1: ptFaction),
-    (Index: 197; Name: 'GetPCEnemyofFaction'; ParamType1: ptFaction),
-    (Index: 199; Name: 'GetPCFactionAttack'; ParamType1: ptFaction),
-    (Index: 203; Name: 'GetDestroyed'),
-    (Index: 214; Name: 'HasMagicEffect'; ParamType1: ptMagicEffect),
-    (Index: 215; Name: 'GetDefaultOpen'),
-    (Index: 219; Name: 'GetAnimAction'),
-    (Index: 223; Name: 'IsSpellTarget'; ParamType1: ptMagicItem),
-    (Index: 224; Name: 'GetVATSMode'),
-    (Index: 225; Name: 'GetPersuasionNumber'),
-    (Index: 226; Name: 'GetSandman'),
-    (Index: 227; Name: 'GetCannibal'),
-    (Index: 228; Name: 'GetIsClassDefault'; ParamType1: ptClass),
-    (Index: 229; Name: 'GetClassDefaultMatch'),
-    (Index: 230; Name: 'GetInCellParam'; ParamType1: ptCell; ParamType2: ptObjectReference),
-    (Index: 235; Name: 'GetVatsTargetHeight'),
-    (Index: 237; Name: 'GetIsGhost'),
-    (Index: 242; Name: 'GetUnconscious'),
-    (Index: 244; Name: 'GetRestrained'),
-    (Index: 246; Name: 'GetIsUsedItem'; ParamType1: ptReferencableObject),
-    (Index: 247; Name: 'GetIsUsedItemType'; ParamType1: ptFormType),
-    (Index: 254; Name: 'GetIsPlayableRace'),
-    (Index: 255; Name: 'GetOffersServicesNow'),
-    (Index: 258; Name: 'GetUsedItemLevel'),
-    (Index: 259; Name: 'GetUsedItemActivate'),
-    (Index: 264; Name: 'GetBarterGold'),
-    (Index: 265; Name: 'IsTimePassing'),
-    (Index: 266; Name: 'IsPleasant'),
-    (Index: 267; Name: 'IsCloudy'),
-    (Index: 274; Name: 'GetArmorRatingUpperBody'),
-    (Index: 277; Name: 'GetBaseActorValue'; ParamType1: ptActorValue),
-    (Index: 278; Name: 'IsOwner'; ParamType1: ptOwner),
-    (Index: 280; Name: 'IsCellOwner'; ParamType1: ptCell; ParamType2: ptOwner),
-    (Index: 282; Name: 'IsHorseStolen'),
-    (Index: 285; Name: 'IsLeftUp'),
-    (Index: 286; Name: 'IsSneaking'),
-    (Index: 287; Name: 'IsRunning'),
-    (Index: 288; Name: 'GetFriendHit'),
-    (Index: 289; Name: 'IsInCombat'),
-    (Index: 300; Name: 'IsInInterior'),
-    (Index: 304; Name: 'IsWaterObject'),
-    (Index: 306; Name: 'IsActorUsingATorch'),
-    (Index: 309; Name: 'IsXBox'),
-    (Index: 310; Name: 'GetInWorldspace'; ParamType1: ptWorldSpace),
-    (Index: 312; Name: 'GetPCMiscStat'; ParamType1: ptMiscStat),
-    (Index: 313; Name: 'IsActorEvil'),
-    (Index: 314; Name: 'IsActorAVictim'),
-    (Index: 315; Name: 'GetTotalPersuasionNumber'),
-    (Index: 318; Name: 'GetIdleDoneOnce'),
-    (Index: 320; Name: 'GetNoRumors'),
-    (Index: 323; Name: 'WhichServiceMenu'),
-    (Index: 327; Name: 'IsRidingHorse'),
-    (Index: 332; Name: 'IsInDangerousWater'),
-    (Index: 338; Name: 'GetIgnoreFriendlyHits'),
-    (Index: 339; Name: 'IsPlayersLastRiddenHorse'),
-    (Index: 353; Name: 'IsActor'),
-    (Index: 354; Name: 'IsEssential'),
-    (Index: 358; Name: 'IsPlayerMovingIntoNewSpace'),
-    (Index: 361; Name: 'GetTimeDead'),
-    (Index: 362; Name: 'GetPlayerHasLastRiddenHorse'),
-    (Index: 365; Name: 'IsChild'),
-    (Index: 367; Name: 'GetLastPlayerAction'),
-    (Index: 368; Name: 'IsPlayerActionActive'; ParamType1: ptPlayerAction),
-    (Index: 370; Name: 'IsTalkingActivatorActor'; ParamType1: ptActor),
-    (Index: 372; Name: 'IsInList'; ParamType1: ptFormList),
-    (Index: 382; Name: 'GetHasNote'; ParamType1: ptNote),
-    (Index: 391; Name: 'GetHitLocation'),
-    (Index: 392; Name: 'IsPC1stPerson'),
-    (Index: 397; Name: 'GetCauseofDeath'),
-    (Index: 398; Name: 'IsLimbGone'; ParamType1: ptBodyLocation),
-    (Index: 399; Name: 'IsWeaponInList'; ParamType1: ptFormList),
-    (Index: 403; Name: 'HasFriendDisposition'),
-    (Index: 408; Name: 'GetVATSValue'; ParamType1: ptVATSValueFunction; ParamType2: ptVATSValueParam),
-    (Index: 409; Name: 'IsKiller'; ParamType1: ptActor),
-    (Index: 410; Name: 'IsKillerObject'; ParamType1: ptFormList),
-    (Index: 411; Name: 'GetFactionCombatReaction'; ParamType1: ptFaction; ParamType2: ptFaction),
-    (Index: 415; Name: 'Exists'; ParamType1: ptObjectReference),
-    (Index: 416; Name: 'GetGroupMemberCount'),
-    (Index: 417; Name: 'GetGroupTargetCount'),
-    (Index: 427; Name: 'GetIsVoiceType'; ParamType1: ptVoiceType),
-    (Index: 428; Name: 'GetPlantedExplosive'),
-    (Index: 430; Name: 'IsActorTalkingThroughActivator'),
-    (Index: 431; Name: 'GetHealthPercentage'),
-    (Index: 433; Name: 'GetIsObjectType'; ParamType1: ptFormType),
-    (Index: 435; Name: 'GetDialogueEmotion'),
-    (Index: 436; Name: 'GetDialogueEmotionValue'),
-    (Index: 438; Name: 'GetIsCreatureType'; ParamType1: ptCreatureType),
-    (Index: 446; Name: 'GetInZone'; ParamType1: ptEncounterZone),
-    (Index: 449; Name: 'HasPerk'; ParamType1: ptPerk),
-    (Index: 450; Name: 'GetFactionRelation'; ParamType1: ptActor),
-    (Index: 451; Name: 'IsLastIdlePlayed'; ParamType1: ptIdleForm),
-    (Index: 454; Name: 'GetPlayerTeammate'),
-    (Index: 455; Name: 'GetPlayerTeammateCount'),
-    (Index: 459; Name: 'GetActorCrimePlayerEnemy'),
-    (Index: 460; Name: 'GetActorFactionPlayerEnemy'),
-    (Index: 464; Name: 'IsPlayerGrabbedRef'; ParamType1: ptObjectReference),
-    (Index: 471; Name: 'GetDestructionStage'),
-    (Index: 474; Name: 'GetIsAlignment'; ParamType1: ptAlignment),
-    (Index: 478; Name: 'GetThreatRatio'; ParamType1: ptActor),
-    (Index: 480; Name: 'GetIsUsedItemEquipType'; ParamType1: ptEquipType),
-    (Index: 489; Name: 'GetConcussed'),
-    (Index: 492; Name: 'GetMapMarkerVisible'),
-    (Index: 495; Name: 'GetPermanentActorValue'; ParamType1: ptActorValue),
-    (Index: 496; Name: 'GetKillingBlowLimb'),
-    (Index: 500; Name: 'GetWeaponHealthPerc'),
-    (Index: 503; Name: 'GetRadiationLevel'),
-    (Index: 510; Name: 'GetLastHitCritical'),
-    (Index: 515; Name: 'IsCombatTarget'; ParamType1: ptActor),
-    (Index: 518; Name: 'GetVATSRightAreaFree'; ParamType1: ptObjectReference),
-    (Index: 519; Name: 'GetVATSLeftAreaFree'; ParamType1: ptObjectReference),
-    (Index: 520; Name: 'GetVATSBackAreaFree'; ParamType1: ptObjectReference),
-    (Index: 521; Name: 'GetVATSFrontAreaFree'; ParamType1: ptObjectReference),
-    (Index: 522; Name: 'GetIsLockBroken'),
-    (Index: 523; Name: 'IsPS3'),
-    (Index: 524; Name: 'IsWin32'),
-    (Index: 525; Name: 'GetVATSRightTargetVisible'; ParamType1: ptObjectReference),
-    (Index: 526; Name: 'GetVATSLeftTargetVisible'; ParamType1: ptObjectReference),
-    (Index: 527; Name: 'GetVATSBackTargetVisible'; ParamType1: ptObjectReference),
-    (Index: 528; Name: 'GetVATSFrontTargetVisible'; ParamType1: ptObjectReference),
-    (Index: 531; Name: 'IsInCriticalStage'; ParamType1: ptCriticalStage),
-    (Index: 533; Name: 'GetXPForNextLevel'),
-    (Index: 546; Name: 'GetQuestCompleted'; ParamType1: ptQuest),
-    (Index: 550; Name: 'IsGoreDisabled'),
-    (Index: 555; Name: 'GetSpellUsageNum'; ParamType1: ptMagicItem),
-    (Index: 557; Name: 'GetActorsInHigh'),
-    (Index: 558; Name: 'HasLoaded3D'),
-
-    // Added by FOSE:
-    (Index: 1024; Name: 'GetFOSEVersion'; ),
-    (Index: 1025; Name: 'GetFOSERevision'; ),
-    (Index: 1028; Name: 'GetWeight'; ParamType1: ptInventoryObject; ),
-    (Index: 1082; Name: 'IsKeyPressed'; ParamType1: ptInteger;),
-    (Index: 1165; Name: 'GetWeaponHasScope'; ParamType1: ptInventoryObject; ),
-    (Index: 1166; Name: 'IsControlPressed'; ParamType1: ptInteger; ),
-    (Index: 1213; Name: 'GetFOSEBeta'; )
-  );
-var
-  wbCTDAFunctionEditInfo: string;
-
-function wbCTDAParamDescFromIndex(aIndex: Integer): PCTDAFunction;
-var
-  L, H, I, C: Integer;
-begin
-  Result := nil;
-
-  L := Low(wbCTDAFunctions);
-  H := High(wbCTDAFunctions);
-  while L <= H do begin
-    I := (L + H) shr 1;
-    C := CmpW32(wbCTDAFunctions[I].Index, aIndex);
-    if C < 0 then
-      L := I + 1
-    else begin
-      H := I - 1;
-      if C = 0 then begin
-        L := I;
-        Result := @wbCTDAFunctions[L];
-      end;
-    end;
-  end;
-end;
-
-function wbCTDAParam1Decider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
-var
-  Desc: PCTDAFunction;
-  Container: IwbContainer;
-begin
-  Result := 0;
-  if not wbTryGetContainerFromUnion(aElement, Container) then
-    Exit;
-
-  Desc := wbCTDAParamDescFromIndex(Container.ElementByName['Function'].NativeValue);
-  if Assigned(Desc) then
-    Result := Succ(Integer(Desc.ParamType1));
-end;
-
-function wbCTDAParam2VATSValueParam(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
-var
-  Container : IwbContainer;
-begin
-  Result := 0;
-  if not wbTryGetContainerFromUnion(aElement, Container) then
-    Exit;
-
-  Result := Container.ElementByName['Parameter #1'].NativeValue;
-end;
-
-function wbCTDAParam2Decider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
-var
-  Desc: PCTDAFunction;
-  Container: IwbContainer;
-begin
-  Result := 0;
-  if not wbTryGetContainerFromUnion(aElement, Container) then
-    Exit;
-
-  Desc := wbCTDAParamDescFromIndex(Container.ElementByName['Function'].NativeValue);
-  if Assigned(Desc) then
-    Result := Succ(Integer(Desc.ParamType2));
-end;
-
-function wbCTDAFunctionToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
-var
-  Desc : PCTDAFunction;
-  i    : Integer;
-begin
-  Result := '';
-  case aType of
-    ctToStr, ctToSummary, ctToEditValue: begin
-      Desc := wbCTDAParamDescFromIndex(aInt);
-      if Assigned(Desc) then
-        Result := Desc.Name
-      else if aType in [ctToSummary, ctToEditValue] then
-        Result := aInt.ToString
-      else
-        Result := '<Unknown: '+aInt.ToString+'>';
-    end;
-    ctToSortKey: Result := IntToHex(aInt, 8);
-    ctCheck: begin
-      Desc := wbCTDAParamDescFromIndex(aInt);
-      if Assigned(Desc) then
-        Result := ''
-      else
-        Result := '<Unknown: '+aInt.ToString+'>';
-    end;
-    ctEditType:
-      Result := 'ComboBox';
-    ctEditInfo: begin
-      Result := wbCTDAFunctionEditInfo;
-      if Result = '' then begin
-        with TStringList.Create do try
-          for i := Low(wbCTDAFunctions) to High(wbCTDAFunctions) do
-            Add(wbCTDAFunctions[i].Name);
-          Sort;
-          Result := CommaText;
-        finally
-          Free;
-        end;
-        wbCTDAFunctionEditInfo := Result;
-      end;
-    end;
-  end;
-end;
-
-function wbCTDAFunctionToInt(const aString: string; const aElement: IwbElement): Int64;
-var
-  i: Integer;
-begin
-  for i := Low(wbCTDAFunctions) to High(wbCTDAFunctions) do
-    with wbCTDAFunctions[i] do
-      if SameText(Name, aString) then begin
-        Result := Index;
-        Exit;
-      end;
-  Result := StrToInt64(aString);
 end;
 
 type
@@ -2349,31 +2196,6 @@ begin
   end;
 end;
 
-procedure wbCTDAAfterLoad(const aElement: IwbElement);
-var
-  Container  : IwbContainerElementRef;
-  //Size       : Cardinal;
-  TypeFlags  : Cardinal;
-begin
-  if wbBeginInternalEdit then try
-    if not Supports(aElement, IwbContainerElementRef, Container) then
-      Exit;
-
-    if Container.ElementCount < 1 then
-      Exit;
-
-    TypeFlags := Container.ElementNativeValues['Type'];
-    if (TypeFlags and $02) <> 0 then begin
-      if Container.DataSize = 20 then
-        Container.DataSize := 28;
-      Container.ElementNativeValues['Type'] := TypeFlags and not $02;
-      Container.ElementEditValues['Run On'] := 'Target';
-    end;
-  finally
-    wbEndInternalEdit;
-  end;
-end;
-
 procedure wbMGEFAfterLoad(const aElement: IwbElement);
 var
   Container     : IwbContainerElementRef;
@@ -2904,6 +2726,8 @@ begin
 
   wbIgnoreRecords.Add(XXXX);
 
+  {>>> Enums <<<}
+
   wbActorValueEnum :=
     wbEnum([
       {0}  'Aggression',
@@ -3186,6 +3010,26 @@ begin
       {2} 'Silent'
     ]);
 
+  wbVatsActionEnum :=
+    wbEnum([
+      {0}  'Unarmed Attack',
+      {1}  'One Hand Melee Attack',
+      {2}  'Two Hand Melee Attack',
+      {3}  'Fire Pistol',
+      {4}  'Fire Rifle',
+      {5}  'Fire Handle Weapon',
+      {6}  'Fire Launcher',
+      {7}  'Throw Grenade',
+      {8}  'Place Mine',
+      {9}  'Reload',
+      {10} 'Crouch',
+      {11} 'Stand',
+      {12} 'Switch Weapon',
+      {13} 'Toggle Weapon Drawn',
+      {14} 'Heal',
+      {15} 'Player Death'
+    ]);
+
   wbVatsValueFunctionEnum :=
     wbEnum([
       {0}  'Weapon Is',
@@ -3225,7 +3069,7 @@ begin
       {12} 'Mine Drop (1 Hand)'
     ]);
 
-
+  {>>> Flags <<<}
 
   wbMODD :=
     wbInteger(MODD, 'FaceGen Model Flags', itU8,
@@ -3245,7 +3089,7 @@ begin
         {3} 'Left Hand'
       ]));
 
-
+  {>>> Common Defs <<<}
 
   wbActorValue := wbInteger('Actor Value', itS32, wbActorValueEnum);
   wbBIPL := wbFormIDCk(BIPL, 'Biped Model List', [FLST]);
@@ -3271,6 +3115,90 @@ begin
   wbYNAM := wbFormIDCk(YNAM, 'Sound - Pick Up', [SOUN]);
   wbZNAM := wbFormIDCk(ZNAM, 'Sound - Drop', [SOUN]);
 
+  {>>> TwbSignatures <<<}
+
+  wbConditionBaseObjects :=
+    [ACTI, ALCH, AMMO, ARMA, ARMO, ASPC, BOOK, CONT, CREA, DOOR,
+     FURN, GRAS, IDLM, KEYM, LIGH, LVLC, LVLN, MISC, MSTT, NOTE,
+     NPC_, PROJ, PWAT, SCOL, SOUN, STAT, TACT, TERM, TREE, WEAP];
+
+  {>>> Struct Members <<<}
+
+  wbConditionVATSValueParameters := [
+    {0}  wbFormIDCkNoReach('Weapon', [WEAP]),
+    {1}  wbFormIDCkNoReach('Weapon List', [FLST], [WEAP]),
+    {2}  wbFormIDCkNoReach('Target', [CREA, NPC_]),
+    {3}  wbFormIDCkNoReach('Target List', [FLST], [CREA, NPC_]),
+    {4}  wbUnused(4),
+    {5}  wbInteger('Target Part', itS32, wbActorValueEnum),
+    {6}  wbInteger('VATS Action', itU32, wbVatsActionEnum),
+    {7}  wbUnused(4).IncludeFlag(dfZeroSortKey),
+    {8}  wbUnused(4).IncludeFlag(dfZeroSortKey),
+    {9}  wbFormIDCkNoReach('Critical Effect', [SPEL]),
+    {10} wbFormIDCkNoReach('Critical Effect List', [FLST], [SPEL]),
+    {11} wbUnused(4).IncludeFlag(dfZeroSortKey),
+    {12} wbUnused(4).IncludeFlag(dfZeroSortKey),
+    {13} wbUnused(4).IncludeFlag(dfZeroSortKey),
+    {14} wbUnused(4).IncludeFlag(dfZeroSortKey),
+    {15} wbInteger('Weapon Type', itU32, wbWeaponAnimTypeEnum),
+    {16} wbUnused(4).IncludeFlag(dfZeroSortKey),
+    {17} wbUnused(4).IncludeFlag(dfZeroSortKey)
+  ];
+
+  wbConditionParameters := [
+    //Misc
+    {0}  wbUnknown(4),
+    {1}  wbByteArray('None', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
+    {2}  wbInteger('Integer', itS32),
+    {3}  wbInteger('Quest Stage', itS32, wbConditionQuestStageToStr, wbCTDAParam2QuestStageToInt),
+    {4}  wbInteger('Variable Name', itS32, wbConditionVariableNameToStr, wbConditionVariableNameToInt),
+    {5}  wbUnion('VATS Value Param', wbConditionVATSValueParam, wbConditionVATSValueParameters),
+
+    //Enums
+    {6}  wbInteger('Actor Value', itS32, wbActorValueEnum),
+    {7}  wbInteger('Alignment', itU32, wbAlignmentEnum),
+    {8}  wbInteger('Axis', itU32, wbAxisEnum),
+    {9}  wbInteger('Body Location', itS32, wbBodyLocationEnum),
+    {10} wbInteger('Creature Type', itU32, wbCreatureTypeEnum),
+    {11} wbInteger('Crime Type', itU32, wbCrimeTypeEnum),
+    {12} wbInteger('Critical Stage', itU32, wbCriticalStageEnum),
+    {13} wbInteger('Equip Type', itU32, wbEquipTypeEnum),
+    {14} wbInteger('Form Type', itU32, wbFormTypeEnum),
+    {15} wbInteger('Menu Mode', itU32, wbMenuModeEnum),
+    {16} wbInteger('Misc Stat', itU32, wbMiscStatEnum),
+    {17} wbInteger('Player Action', itU32, wbPlayerActionEnum),
+    {18} wbInteger('Sex', itU32, wbSexEnum),
+    {19} wbInteger('VATS Value Function', itU32, wbVATSValueFunctionEnum),
+
+    //FormIDs
+    {20} wbFormIDCkNoReach('Actor', [ACHR, ACRE, PLYR, TRGT], True),
+    {21} wbFormIDCkNoReach('Actor Base', [CREA, NPC_]),
+    {22} wbFormIDCkNoReach('Base Effect', [MGEF]),
+    {23} wbFormIDCkNoReach('Base Object', wbConditionBaseObjects + [FLST], wbConditionBaseObjects),
+    {24} wbFormIDCkNoReach('Cell', [CELL]),
+    {25} wbFormIDCkNoReach('Class', [CLAS]),
+    {26} wbFormIDCkNoReach('Effect Item', [ALCH, ENCH, INGR, SPEL]),
+    {27} wbFormIDCkNoReach('Encounter Zone', [ECZN]),
+    {28} wbFormIDCkNoReach('Faction', [FACT]),
+    {29} wbFormIDCkNoReach('Form List', [FLST]),
+    {30} wbFormIDCkNoReach('Furniture', [FLST, FURN], [FURN]),
+    {31} wbFormIDCkNoReach('Global', [GLOB]),
+    {32} wbFormIDCkNoReach('Idle', [IDLE]),
+    {33} wbFormIDCkNoReach('Inventory Object', [ALCH, AMMO, ARMO, BOOK, FLST, KEYM, MISC, NOTE, WEAP]),
+    {34} wbFormIDCkNoReach('Note', [NOTE]),
+    {35} wbFormIDCkNoReach('Owner', [FACT, NPC_]),
+    {36} wbFormIDCkNoReach('Package', [PACK]),
+    {37} wbFormIDCkNoReach('Perk', [PERK]),
+    {38} wbFormIDCkNoReach('Quest', [QUST]),
+    {39} wbFormIDCkNoReach('Race', [RACE]),
+    {40} wbFormIDCkNoReach('Reference', [ACHR, ACRE, PBEA, PGRE, PLYR, PMIS, REFR, TRGT], True),
+    {41} wbFormIDCkNoReach('Voice Type', [VTYP]),
+    {42} wbFormIDCkNoReach('Weapon', [WEAP]),
+    {43} wbFormIDCkNoReach('Weather', [WTHR]),
+    {44} wbFormIDCkNoReach('Worldspace', [WRLD])
+  ];
+
+  {>>> Record members <<<}
 
   wbAIDT :=
     wbStruct(AIDT, 'AI Data', [
@@ -3345,165 +3273,35 @@ begin
       ]).SetToStr(wbItemToStr).IncludeFlag(dfCollapsed, wbCollapseItems)
     );
 
-  wbCTDA :=
-    wbStructSK(CTDA, [3, 5, 6], 'Condition', [
-   {0}wbInteger('Type', itU8, wbConditionTypeToStr, wbConditionTypeToInt).SetAfterSet(wbConditionTypeAfterSet),
-   {1}wbUnused(3),
-   {2}wbUnion('Comparison Value', wbConditionCompValueDecider, [
-        wbFloat('Comparison Value - Float'),
-        wbFormIDCk('Comparison Value - Global', [GLOB])
-      ]),
-   {3}wbInteger('Function', itU16, wbCTDAFunctionToStr, wbCTDAFunctionToInt),   // Limited to itu16
-   {4}wbUnused(2),
-   {5}wbUnion('Parameter #1', wbCTDAParam1Decider, [
-        {00} wbByteArray('Unknown', 4),
-        {01} wbByteArray('None', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
-        {02} wbInteger('Integer', itS32),
-        {03} wbInteger('Variable Name (INVALID)', itS32).IncludeFlag(dfZeroSortKey),
-        {04} wbInteger('Sex', itU32, wbSexEnum),
-        {05} wbInteger('Actor Value', itS32, wbActorValueEnum),
-        {06} wbInteger('Crime Type', itU32, wbCrimeTypeEnum),
-        {07} wbInteger('Axis', itU32, wbAxisEnum),
-        {08} wbInteger('Quest Stage (INVALID)', itS32).IncludeFlag(dfZeroSortKey),
-        {09} wbInteger('Misc Stat', itU32, wbMiscStatEnum),
-        {10} wbInteger('Alignment', itU32, wbAlignmentEnum),
-        {11} wbInteger('Equip Type', itU32, wbEquipTypeEnum),
-        {12} wbInteger('Form Type', itU32, wbFormTypeEnum),
-        {13} wbInteger('Critical Stage', itU32, wbCriticalStageEnum),
-        {14} wbFormIDCkNoReach('Object Reference', [PLYR, REFR, ACHR, ACRE, PGRE, PMIS, PBEA, TRGT], True),
-        {16} wbFormIDCkNoReach('Inventory Object', [ARMO, BOOK, MISC, WEAP, AMMO, KEYM, ALCH, NOTE, FLST]),
-        {17} wbFormIDCkNoReach('Actor', [PLYR, ACHR, ACRE, TRGT], True),
-        {18} wbFormIDCkNoReach('Voice Type', [VTYP]),
-        {19} wbFormIDCkNoReach('Idle', [IDLE]),
-        {20} wbFormIDCkNoReach('Form List', [FLST]),
-        {21} wbFormIDCkNoReach('Note', [NOTE]),
-        {22} wbFormIDCkNoReach('Quest', [QUST]),
-        {23} wbFormIDCkNoReach('Faction', [FACT]),
-        {24} wbFormIDCkNoReach('Weapon', [WEAP]),
-        {25} wbFormIDCkNoReach('Cell', [CELL]),
-        {26} wbFormIDCkNoReach('Class', [CLAS]),
-        {27} wbFormIDCkNoReach('Race', [RACE]),
-        {28} wbFormIDCkNoReach('Actor Base', [NPC_, CREA, ACTI, TACT]),
-        {29} wbFormIDCkNoReach('Global', [GLOB]),
-        {30} wbFormIDCkNoReach('Weather', [WTHR]),
-        {31} wbFormIDCkNoReach('Package', [PACK]),
-        {32} wbFormIDCkNoReach('Encounter Zone', [ECZN]),
-        {33} wbFormIDCkNoReach('Perk', [PERK]),
-        {34} wbFormIDCkNoReach('Owner', [FACT, NPC_]),
-        {35} wbFormIDCkNoReach('Furniture', [FURN, FLST]),
-        {36} wbFormIDCkNoReach('Effect Item', [SPEL, ENCH, ALCH, INGR]),
-        {37} wbFormIDCkNoReach('Base Effect', [MGEF]),
-        {38} wbFormIDCkNoReach('Worldspace', [WRLD]),
-        {39} wbInteger('VATS Value Function', itU32, wbVATSValueFunctionEnum),
-        {40} wbInteger('VATS Value Param (INVALID)', itU32).IncludeFlag(dfZeroSortKey),
-        {41} wbInteger('Creature Type', itU32, wbCreatureTypeEnum),
-        {42} wbInteger('Menu Mode', itU32, wbMenuModeEnum),
-        {43} wbInteger('Player Action', itU32, wbPlayerActionEnum),
-        {44} wbInteger('Body Location', itS32, wbBodyLocationEnum),
-        {45} wbFormIDCkNoReach('Referenceable Object', [CREA, NPC_, PROJ, TREE, SOUN, ACTI, DOOR, STAT, FURN, CONT, ARMO, AMMO, MISC, WEAP, BOOK, KEYM, ALCH, LIGH, GRAS, ASPC, IDLM, ARMA, MSTT, NOTE, PWAT, SCOL, TACT, TERM, FLST, LVLC, LVLN],
-                                                [CREA, NPC_, PROJ, TREE, SOUN, ACTI, DOOR, STAT, FURN, CONT, ARMO, AMMO, MISC, WEAP, BOOK, KEYM, ALCH, LIGH, GRAS, ASPC, IDLM, ARMA, MSTT, NOTE, PWAT, SCOL, TACT, TERM, LVLC, LVLN])
-      ]),
-   {6}wbUnion('Parameter #2', wbCTDAParam2Decider, [
-        {00} wbByteArray('Unknown', 4),
-        {01} wbByteArray('None', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
-        {02} wbInteger('Integer', itS32),
-        {03} wbInteger('Variable Name', itS32, wbCTDAParam2VariableNameToStr, wbCTDAParam2VariableNameToInt),
-        {04} wbInteger('Sex', itU32, wbSexEnum),
-        {05} wbInteger('Actor Value', itS32, wbActorValueEnum),
-        {06} wbInteger('Crime Type', itU32, wbCrimeTypeEnum),
-        {07} wbInteger('Axis', itU32, wbAxisEnum),
-        {08} wbInteger('Quest Stage', itS32, wbCTDAParam2QuestStageToStr, wbCTDAParam2QuestStageToInt),
-        {09} wbInteger('Misc Stat', itU32, wbMiscStatEnum),
-        {10} wbInteger('Alignment', itU32, wbAlignmentEnum),
-        {11} wbInteger('Equip Type', itU32, wbEquipTypeEnum),
-        {12} wbInteger('Form Type', itU32, wbFormTypeEnum),
-        {13} wbInteger('Critical Stage', itU32, wbCriticalStageEnum),
-        {14} wbFormIDCkNoReach('Object Reference', [PLYR, REFR, PMIS, PBEA, ACHR, ACRE, PGRE, TRGT], True),
-        {16} wbFormIDCkNoReach('Inventory Object', [ARMO, BOOK, MISC, WEAP, AMMO, KEYM, ALCH, NOTE, FLST]),
-        {17} wbFormIDCkNoReach('Actor', [PLYR, ACHR, ACRE, TRGT], True),
-        {18} wbFormIDCkNoReach('Voice Type', [VTYP]),
-        {19} wbFormIDCkNoReach('Idle', [IDLE]),
-        {20} wbFormIDCkNoReach('Form List', [FLST]),
-        {21} wbFormIDCkNoReach('Note', [NOTE]),
-        {22} wbFormIDCkNoReach('Quest', [QUST]),
-        {23} wbFormIDCkNoReach('Faction', [FACT]),
-        {24} wbFormIDCkNoReach('Weapon', [WEAP]),
-        {25} wbFormIDCkNoReach('Cell', [CELL]),
-        {26} wbFormIDCkNoReach('Class', [CLAS]),
-        {27} wbFormIDCkNoReach('Race', [RACE]),
-        {28} wbFormIDCkNoReach('Actor Base', [NPC_, CREA, ACTI, TACT]),
-        {29} wbFormIDCkNoReach('Global', [GLOB]),
-        {30} wbFormIDCkNoReach('Weather', [WTHR]),
-        {31} wbFormIDCkNoReach('Package', [PACK]),
-        {32} wbFormIDCkNoReach('Encounter Zone', [ECZN]),
-        {33} wbFormIDCkNoReach('Perk', [PERK]),
-        {34} wbFormIDCkNoReach('Owner', [FACT, NPC_]),
-        {35} wbFormIDCkNoReach('Furniture', [FURN, FLST]),
-        {36} wbFormIDCkNoReach('Effect Item', [SPEL, ENCH, ALCH, INGR]),
-        {37} wbFormIDCkNoReach('Base Effect', [MGEF]),
-        {38} wbFormIDCkNoReach('Worldspace', [WRLD]),
-        {39} wbInteger('VATS Value Function (INVALID)', itU32),
-        {40} wbUnion('VATS Value Param', wbCTDAParam2VATSValueParam, [
-               wbFormIDCkNoReach('Weapon', [WEAP]),
-               wbFormIDCkNoReach('Weapon List', [FLST], [WEAP]),
-               wbFormIDCkNoReach('Target', [NPC_, CREA]),
-               wbFormIDCkNoReach('Target List', [FLST], [NPC_, CREA]),
-               wbUnused(4),
-               wbInteger('Target Part', itS32, wbActorValueEnum),
-               wbInteger('VATS Action', itU32, wbEnum([
-                 'Unarmed Attack',
-                 'One Hand Melee Attack',
-                 'Two Hand Melee Attack',
-                 'Fire Pistol',
-                 'Fire Rifle',
-                 'Fire Handle Weapon',
-                 'Fire Launcher',
-                 'Throw Grenade',
-                 'Place Mine',
-                 'Reload',
-                 'Crouch',
-                 'Stand',
-                 'Switch Weapon',
-                 'Toggle Weapon Drawn',
-                 'Heal',
-                 'Player Death'
-               ])),
-               wbUnused(4).IncludeFlag(dfZeroSortKey),
-               wbUnused(4).IncludeFlag(dfZeroSortKey),
-               wbFormIDCkNoReach('Critical Effect', [SPEL]),
-               wbFormIDCkNoReach('Critical Effect List', [FLST], [SPEL]),
-               wbUnused(4).IncludeFlag(dfZeroSortKey),
-               wbUnused(4).IncludeFlag(dfZeroSortKey),
-               wbUnused(4).IncludeFlag(dfZeroSortKey),
-               wbUnused(4).IncludeFlag(dfZeroSortKey),
-               wbInteger('Weapon Type', itU32, wbWeaponAnimTypeEnum),
-               wbUnused(4).IncludeFlag(dfZeroSortKey),
-               wbUnused(4).IncludeFlag(dfZeroSortKey)
-             ]),
-        {41} wbInteger('Creature Type', itU32, wbCreatureTypeEnum),
-        {42} wbInteger('Menu Mode', itU32, wbMenuModeEnum),
-        {43} wbInteger('Player Action', itU32, wbPlayerActionEnum),
-        {44} wbInteger('Body Location', itS32, wbBodyLocationEnum),
-        {45} wbFormIDCkNoReach('Referenceable Object', [CREA, NPC_, PROJ, TREE, SOUN, ACTI, DOOR, STAT, FURN, CONT, ARMO, AMMO, MISC, WEAP, BOOK, KEYM, ALCH, LIGH, GRAS, ASPC, IDLM, ARMA, MSTT, NOTE, PWAT, SCOL, TACT, TERM, FLST, LVLC, LVLN],
-                                                [CREA, NPC_, PROJ, TREE, SOUN, ACTI, DOOR, STAT, FURN, CONT, ARMO, AMMO, MISC, WEAP, BOOK, KEYM, ALCH, LIGH, GRAS, ASPC, IDLM, ARMA, MSTT, NOTE, PWAT, SCOL, TACT, TERM, LVLC, LVLN])
-      ]),
-   {7}wbInteger('Run On', itU32, wbEnum([
-        'Subject',
-        'Target',
-        'Reference',
-        'Combat Target',
-        'Linked Reference'
-      ])).SetAfterSet(wbCTDARunOnAfterSet),
-   {8}wbUnion('Reference', wbCTDAReferenceDecider, [
-        wbInteger('Unused', itU32, nil, cpIgnore),
-        wbFormIDCkNoReach('Reference', [PLYR, ACHR, ACRE, REFR, PMIS, PBEA, PGRE], True)
-      ])
-    ], cpNormal, False, nil, 7)
-      .SetAfterLoad(wbCTDAAfterLoad)
-      .SetToStr(wbConditionToStr)
-      .IncludeFlag(dfCollapsed, wbCollapseConditions);
-  wbCTDAs := wbRArray('Conditions', wbCTDA);
-  wbCTDAsReq := wbRArray('Conditions', wbCTDA).SetRequired;
+  wbConditions :=
+    wbRArray('Conditions',
+      wbStructSK(CTDA, [3, 5, 6], 'Condition', [
+      {0} wbInteger('Type', itU8, wbConditionTypeToStr, wbConditionTypeToInt).SetAfterSet(wbConditionTypeAfterSet),
+      {1} wbUnused(3),
+      {2} wbUnion('Comparison Value', wbConditionCompValueDecider, [
+            wbFloat('Comparison Value - Float'),
+            wbFormIDCk('Comparison Value - Global', [GLOB])
+          ]),
+      {3} wbInteger('Function', itU16, wbConditionFunctionToStr, wbConditionFunctionToInt),   // Limited to itu16
+      {4} wbUnused(2),
+      {5} wbUnion('Parameter #1', wbConditionParam1Decider, wbConditionParameters),
+      {6} wbUnion('Parameter #2', wbConditionParam2Decider, wbConditionParameters),
+      {7} wbInteger('Run On', itU32,
+            wbEnum([
+              {0} 'Subject',
+              {1} 'Target',
+              {2} 'Reference',
+              {3} 'Combat Target',
+              {4} 'Linked Reference'
+            ])).SetAfterSet(wbCTDARunOnAfterSet),
+      {8} wbUnion('Reference', wbCTDAReferenceDecider, [
+            wbInteger('Unused', itU32, nil, cpIgnore),
+            wbFormIDCkNoReach('Reference', [ACHR, ACRE, PBEA, PGRE, PLYR, PMIS, REFR], True)
+          ])
+      ], cpNormal, False, nil, 7)
+        .SetAfterLoad(wbConditionsfterLoad)
+        .SetToStr(wbConditionToStr)
+        .IncludeFlag(dfCollapsed, wbCollapseConditions));
 
   wbDEST :=
     wbRStruct('Destructible', [
@@ -3574,7 +3372,7 @@ begin
     wbRStruct('Effect', [
       wbEFID,
       wbEFIT,
-      wbCTDAs
+      wbConditions
     ]);
 
   wbEffects :=
@@ -4846,7 +4644,7 @@ begin
         wbFormIDCk(INAM, 'Display Note', [NOTE]),
         wbFormIDCk(TNAM, 'Sub Menu', [TERM]),
         wbEmbeddedScriptReq,
-        wbCTDAs
+        wbConditions
       ])
     )
   ]);
@@ -5649,7 +5447,7 @@ begin
     wbFULL,
     wbDESCReq,
     wbICON,
-    wbCTDAs,
+    wbConditions,
     wbStruct(DATA, 'Data', [
       wbInteger('Trait', itU8, wbBoolEnum),
       wbInteger('Min Level', itU8),
@@ -5719,7 +5517,7 @@ begin
         wbRArrayS('Perk Conditions',
           wbRStructSK([0], 'Perk Condition', [
             wbInteger(PRKC, 'Run On', itS8, wbPRKCToStr, wbPRKCToInt),
-            wbCTDAsReq
+            wbConditions.SetRequired
           ]).SetDontShow(wbPERKPRKCDontShow)),
         wbRStruct('Entry Point Function Parameters', [
           wbInteger(EPFT, 'Type', itU8, wbPerkEPFTToStr, wbPerkEPFTToInt, cpIgnore).SetAfterSet(wbPerkEPFTAfterSet),
@@ -5864,7 +5662,7 @@ begin
 
   wbRecord(CPTH, 'Camera Path', [
     wbEDIDReq,
-    wbCTDAs,
+    wbConditions,
     wbArray(ANAM, 'Related Camera Paths', wbFormIDCk('Related Camera Path', [CPTH, NULL]), ['Parent', 'Previous Sibling']).SetRequired,
     wbInteger(DATA, 'Camera Zoom', itU8, wbEnum([
       'Default',
@@ -5961,7 +5759,7 @@ begin
     wbRArray('Menu Buttons',
       wbRStruct('Menu Button', [
         wbStringKC(ITXT, 'Button Text', 0, cpTranslate),
-        wbCTDAs
+        wbConditions
       ]))
   ]).SetAfterLoad(wbMESGAfterLoad);
 
@@ -6118,7 +5916,7 @@ begin
   wbRecord(IDLE, 'Idle Animation', [
     wbEDID,
     wbGenericModel(True),
-    wbCTDAs,
+    wbConditions,
     wbArray(ANAM, 'Related Idle Animations', wbFormIDCk('Related Idle Animation', [IDLE, NULL]), ['Parent', 'Previous Sibling']).SetRequired,
     wbStruct(DATA, '', [
       wbInteger('Animation Group Section', itU8, wbIdleAnam),
@@ -6200,7 +5998,7 @@ begin
         wbFormIDCk(LNAM, 'Listener Animation', [IDLE])
       ])
     ),
-    wbCTDAs,
+    wbConditions,
     wbRArray('Choices', wbFormIDCk(TCLT, 'Choice', [DIAL])),
     wbRArray('Link From', wbFormIDCk(TCLF, 'Topic', [DIAL])),
     wbRStruct('Script (Begin)', [
@@ -6862,7 +6660,7 @@ begin
       wbInteger('Count / Distance', itS32),
       wbFloat('Unknown')
     ], cpNormal, False, nil, 3),
-    wbCTDAs,
+    wbConditions,
     wbRStruct('Idle Animations', [
       wbInteger(IDLF, 'Flags', itU8, wbFlags([
         'Run in Sequence',
@@ -7034,7 +6832,7 @@ begin
       wbUnused(2),
       wbFloat('Quest Delay')
     ], cpNormal, True, nil, 3),
-    wbCTDAs,
+    wbConditions,
     wbRArrayS('Stages', wbRStructSK([0], 'Stage', [
       wbInteger(INDX, 'Stage Index', itS16),
       wbRArray('Log Entries', wbRStruct('Log Entry', [
@@ -7042,7 +6840,7 @@ begin
           {0x01} 'Complete Quest',
           {0x02} 'Fail Quest'
         ])),
-        wbCTDAs,
+        wbConditions,
         wbStringKC(CNAM, 'Log Entry', 0, cpTranslate),
         wbEmbeddedScriptReq,
         wbFormIDCk(NAM0, 'Next Quest', [QUST])
@@ -7059,7 +6857,7 @@ begin
           ])),
           wbUnused(3)
         ]),
-        wbCTDAs
+        wbConditions
       ]))
     ]))
   ]);
