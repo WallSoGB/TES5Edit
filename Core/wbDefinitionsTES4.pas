@@ -511,7 +511,8 @@ begin
 
   var BaseRecord := MainRecord.BaseRecord;
   if Assigned(BaseRecord) then
-    MainRecord := BaseRecord.WinningOverride;
+    MainRecord := BaseRecord;
+  MainRecord := MainRecord.WinningOverride;
 
   var ScriptRef := MainRecord.RecordBySignature['SCRI'];
   if not Assigned(ScriptRef) then begin
@@ -597,7 +598,8 @@ begin
 
   var BaseRecord := MainRecord.BaseRecord;
   if Assigned(BaseRecord) then
-    MainRecord := BaseRecord.WinningOverride;
+    MainRecord := BaseRecord;
+  MainRecord := MainRecord.WinningOverride;
 
   var ScriptRef := MainRecord.RecordBySignature['SCRI'];
   if not Assigned(ScriptRef) then
