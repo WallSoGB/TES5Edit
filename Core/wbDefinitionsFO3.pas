@@ -2198,8 +2198,8 @@ procedure wbMGEFAfterLoad(const aElement: IwbElement);
 var
   Container     : IwbContainerElementRef;
   MainRecord    : IwbMainRecord;
-  OldActorValue : Integer;
-  NewActorValue : Integer;
+  OldActorValue : Int64;
+  NewActorValue : Int64;
 begin
   if wbBeginInternalEdit then try
     if not wbTryGetContainerWithValidMainRecord(aElement, Container, MainRecord) then
@@ -2802,7 +2802,7 @@ begin
       {71} 'Variable10',
       {72} 'Ignore Negative Effects'
     ], [
-      255, 'None'
+      -1, 'None'
     ]);
 
   wbFormTypeEnum :=
@@ -3069,7 +3069,7 @@ begin
 
   {>>> Common Defs <<<}
 
-  wbActorValue := wbInteger('Actor Value', itU32, wbActorValueEnum);
+  wbActorValue := wbInteger('Actor Value', itS32, wbActorValueEnum);
   wbBIPL := wbFormIDCk(BIPL, 'Biped Model List', [FLST]);
   wbDESC := wbStringKC(DESC, 'Description', 0, cpTranslate);
   wbDESCReq := wbStringKC(DESC, 'Description', 0, cpTranslate).SetRequired;
@@ -3108,7 +3108,7 @@ begin
     {2}  wbFormIDCkNoReach('Target', [CREA, NPC_]),
     {3}  wbFormIDCkNoReach('Target List', [FLST], [CREA, NPC_]),
     {4}  wbUnused(4),
-    {5}  wbInteger('Target Part', itU32, wbActorValueEnum),
+    {5}  wbInteger('Target Part', itS32, wbActorValueEnum),
     {6}  wbInteger('VATS Action', itU32, wbVatsActionEnum),
     {7}  wbUnused(4).IncludeFlag(dfZeroSortKey),
     {8}  wbUnused(4).IncludeFlag(dfZeroSortKey),
@@ -3133,7 +3133,7 @@ begin
     {5}  wbUnion('VATS Value Param', wbConditionVATSValueParam, wbConditionVATSValueParameters),
 
     //Enums
-    {6}  wbInteger('Actor Value', itU32, wbActorValueEnum),
+    {6}  wbInteger('Actor Value', itS32, wbActorValueEnum),
     {7}  wbInteger('Alignment', itU32, wbAlignmentEnum),
     {8}  wbInteger('Axis', itU32, wbAxisEnum),
     {9}  wbInteger('Body Location', itS32, wbBodyLocationEnum),
@@ -3828,7 +3828,7 @@ begin
     wbEDID,
     wbFULL,
     wbInteger(DATA, 'Flags', itU8,
-      wbFlags(wbSparseFlags([
+      wbFlags([
         {0} 'Is Interior Cell',
         {1} 'Has water',
         {2} 'Can Travel From Here',
@@ -3836,9 +3836,8 @@ begin
         {5} 'Public Area',
         {6} 'Hand changed',
         {7} 'Behave like exterior'
-      ], False, 8))
-    ).SetRequired
-     .IncludeFlag(dfCollapsed, wbCollapseFlags),
+      ])).SetRequired
+         .IncludeFlag(dfCollapsed, wbCollapseFlags),
     wbCellGrid,
     wbStruct(XCLL, 'Lighting', [
       wbByteColors('Ambient Color'),
@@ -3904,7 +3903,7 @@ begin
     wbDESCReq,
     wbICON,
     wbStruct(DATA, '', [
-      wbArray('Tag Skills', wbInteger('Tag Skill', itU32, wbActorValueEnum), 4),
+      wbArray('Tag Skills', wbInteger('Tag Skill', itS32, wbActorValueEnum), 4),
       wbInteger('Flags', itU32,
         wbFlags([
           {0} 'Playable',
@@ -3962,7 +3961,8 @@ begin
       wbInteger('Flags', itU8,
         wbFlags(wbSparseFlags([
           1, 'Respawns'
-        ]))).IncludeFlag(dfCollapsed, wbCollapseFlags),
+        ], False, 2)
+      )).IncludeFlag(dfCollapsed, wbCollapseFlags),
       wbFloat('Weight')
     ]).SetRequired,
     wbFormIDCk(SNAM, 'Sound - Open', [SOUN]),
@@ -4017,30 +4017,29 @@ begin
           29, 'Is Ghost',
           30, 'No Rotating To Head-track',
           31, 'Invulnerable'
-        ], False))
-          .SetFlagHasDontShow(0,  wbActorTemplateUseModelAnimation)
-          .SetFlagHasDontShow(1,  wbActorTemplateUseBaseData)
-          .SetFlagHasDontShow(3,  wbActorTemplateUseBaseData)
-          .SetFlagHasDontShow(4,  wbActorTemplateUseModelAnimation)
-          .SetFlagHasDontShow(5,  wbActorTemplateUseModelAnimation)
-          .SetFlagHasDontShow(6,  wbActorTemplateUseModelAnimation)
-          .SetFlagHasDontShow(7,  wbActorTemplateUseStats)
-          .SetFlagHasDontShow(9,  wbActorTemplateUseBaseData)
-          .SetFlagHasDontShow(10, wbActorTemplateUseModelAnimation)
-          .SetFlagHasDontShow(11, wbActorTemplateUseModelAnimation)
-          .SetFlagHasDontShow(15, wbActorTemplateUseModelAnimation)
-          .SetFlagHasDontShow(16, wbActorTemplateUseModelAnimation)
-          .SetFlagHasDontShow(17, wbActorTemplateUseModelAnimation)
-          .SetFlagHasDontShow(18, wbActorTemplateUseModelAnimation)
-          .SetFlagHasDontShow(19, wbActorTemplateUseModelAnimation)
-          .SetFlagHasDontShow(21, wbActorTemplateUseBaseData)
-          .SetFlagHasDontShow(22, wbActorTemplateUseBaseData)
-          .SetFlagHasDontShow(23, wbActorTemplateUseModelAnimation)
-          .SetFlagHasDontShow(24, wbActorTemplateUseModelAnimation)
-          .SetFlagHasDontShow(25, wbActorTemplateUseModelAnimation)
-          .SetFlagHasDontShow(27, wbActorTemplateUseModelAnimation)
-          .SetFlagHasDontShow(28, wbActorTemplateUseBaseData)
-          .SetFlagHasDontShow(30, wbActorTemplateUseModelAnimation)
+        ])).SetFlagHasDontShow(0,  wbActorTemplateUseModelAnimation)
+           .SetFlagHasDontShow(1,  wbActorTemplateUseBaseData)
+           .SetFlagHasDontShow(3,  wbActorTemplateUseBaseData)
+           .SetFlagHasDontShow(4,  wbActorTemplateUseModelAnimation)
+           .SetFlagHasDontShow(5,  wbActorTemplateUseModelAnimation)
+           .SetFlagHasDontShow(6,  wbActorTemplateUseModelAnimation)
+           .SetFlagHasDontShow(7,  wbActorTemplateUseStats)
+           .SetFlagHasDontShow(9,  wbActorTemplateUseBaseData)
+           .SetFlagHasDontShow(10, wbActorTemplateUseModelAnimation)
+           .SetFlagHasDontShow(11, wbActorTemplateUseModelAnimation)
+           .SetFlagHasDontShow(15, wbActorTemplateUseModelAnimation)
+           .SetFlagHasDontShow(16, wbActorTemplateUseModelAnimation)
+           .SetFlagHasDontShow(17, wbActorTemplateUseModelAnimation)
+           .SetFlagHasDontShow(18, wbActorTemplateUseModelAnimation)
+           .SetFlagHasDontShow(19, wbActorTemplateUseModelAnimation)
+           .SetFlagHasDontShow(21, wbActorTemplateUseBaseData)
+           .SetFlagHasDontShow(22, wbActorTemplateUseBaseData)
+           .SetFlagHasDontShow(23, wbActorTemplateUseModelAnimation)
+           .SetFlagHasDontShow(24, wbActorTemplateUseModelAnimation)
+           .SetFlagHasDontShow(25, wbActorTemplateUseModelAnimation)
+           .SetFlagHasDontShow(27, wbActorTemplateUseModelAnimation)
+           .SetFlagHasDontShow(28, wbActorTemplateUseBaseData)
+           .SetFlagHasDontShow(30, wbActorTemplateUseModelAnimation)
       ).IncludeFlag(dfCollapsed, wbCollapseFlags),
       {04} wbInteger('Fatigue', itU16).SetDontShow(wbActorTemplateUseStats),
       {06} wbInteger('Barter gold', itU16).SetDontShow(wbActorTemplateUseAIData),
@@ -4788,7 +4787,8 @@ begin
                7, 'Supersonic',
                8, 'Pins Limbs',
                9, 'Pass Through Small Transparent'
-             ]))).IncludeFlag(dfCollapsed, wbCollapseFlags),
+             ], False, 10)
+           )).IncludeFlag(dfCollapsed, wbCollapseFlags),
       {00} wbInteger('Type', itU16,
              wbEnum([], [
                1, 'Missile',
@@ -5544,7 +5544,7 @@ begin
           ])).IncludeFlag(dfCollapsed, wbCollapseFlags),
         wbInteger('Part Type', itS8, wbBodyLocationEnum),
         wbInteger('Health Percent', itU8),
-        wbInteger('Actor Value', itU8, wbActorValueEnum),
+        wbInteger('Actor Value', itS8, wbActorValueEnum),
         wbInteger('To Hit Chance', itU8),
         wbInteger('Explodable - Explosion Chance %', itU8),
         wbInteger('Explodable - Debris Count', itU16),
@@ -6277,7 +6277,7 @@ begin
              wbFormIDCk('Assoc. Creature', [CREA]) //Summon Creature
            ]).SetAfterSet(wbMGEFAssocItemAfterSet),
       {12} wbByteArray('Magic School (Unused)', 4),
-      {16} wbInteger('Resistance Type', itU32, wbActorValueEnum),
+      {16} wbInteger('Resistance Type', itS32, wbActorValueEnum),
       {20} wbInteger('Counter effect count', itU16),
       {22} wbUnused(2),
       {24} wbFormIDCk('Light', [LIGH, NULL]),
@@ -6361,16 +6361,17 @@ begin
           26, 'No Knockdowns',
           27, 'Not Pushable',
           30, 'No Rotating To Head-track'
-        ])).SetFlagHasDontShow(0,  wbActorTemplateUseTraits)
-           .SetFlagHasDontShow(1,  wbActorTemplateUseBaseData)
-           .SetFlagHasDontShow(3,  wbActorTemplateUseBaseData)
-           .SetFlagHasDontShow(4,  wbActorTemplateUseStats)
-           .SetFlagHasDontShow(7,  wbActorTemplateUseStats)
-           .SetFlagHasDontShow(9,  wbActorTemplateUseBaseData)
-           .SetFlagHasDontShow(11, wbActorTemplateUseModelAnimation)
-           .SetFlagHasDontShow(12, wbActorTemplateUseModelAnimation)
-           .SetFlagHasDontShow(27, wbActorTemplateUseModelAnimation)
-           .SetFlagHasDontShow(30, wbActorTemplateUseModelAnimation)
+        ], False, 31))
+          .SetFlagHasDontShow(0,  wbActorTemplateUseTraits)
+          .SetFlagHasDontShow(1,  wbActorTemplateUseBaseData)
+          .SetFlagHasDontShow(3,  wbActorTemplateUseBaseData)
+          .SetFlagHasDontShow(4,  wbActorTemplateUseStats)
+          .SetFlagHasDontShow(7,  wbActorTemplateUseStats)
+          .SetFlagHasDontShow(9,  wbActorTemplateUseBaseData)
+          .SetFlagHasDontShow(11, wbActorTemplateUseModelAnimation)
+          .SetFlagHasDontShow(12, wbActorTemplateUseModelAnimation)
+          .SetFlagHasDontShow(27, wbActorTemplateUseModelAnimation)
+          .SetFlagHasDontShow(30, wbActorTemplateUseModelAnimation)
       ).IncludeFlag(dfCollapsed, wbCollapseFlags),
       {04} wbInteger('Fatigue', itU16).SetDontShow(wbActorTemplateUseStats),
       {06} wbInteger('Barter gold', itU16).SetDontShow(wbActorTemplateUseAIData),
@@ -6668,8 +6669,9 @@ begin
         wbFlags(wbSparseFlags([
           0, 'Run in Sequence',
           2, 'Do Once'
-        ]))).SetRequired
-            .IncludeFlag(dfCollapsed, wbCollapseFlags),
+        ], False, 3))
+      ).SetRequired
+       .IncludeFlag(dfCollapsed, wbCollapseFlags),
       wbStruct(IDLC, '', [
         wbInteger( 'Animation Count', itU8),
         wbUnused(3)
@@ -6853,7 +6855,7 @@ begin
     wbFactionRelations,
     wbStruct(DATA, '', [
       wbArrayS('Skill Boosts', wbStructSK([0], 'Skill Boost', [
-        wbInteger('Skill', itU8, wbActorValueEnum),
+        wbInteger('Skill', itS8, wbActorValueEnum),
         wbInteger('Boost', itS8)
       ]).SetSummaryKey([1, 0])
         .SetSummaryMemberPrefixSuffix(1, '+', '')
@@ -7817,7 +7819,7 @@ begin
       {92} wbFloat('Reload Time'),
       {96} wbFloat('Jam Time'),
      {100} wbFloat('Aim Arc'),
-     {104} wbInteger('Skill', itU32, wbActorValueEnum),
+     {104} wbInteger('Skill', itS32, wbActorValueEnum),
      {108} wbInteger('Rumble - Pattern', itU32,
              wbEnum([
                {0} 'Constant',
@@ -7827,7 +7829,7 @@ begin
              ])),
      {112} wbFloat('Rumble - Wavelength'),
      {116} wbFloat('Limb Dmg Mult'),
-     {120} wbInteger('Resist Type', itU32, wbActorValueEnum),
+     {120} wbInteger('Resist Type', itS32, wbActorValueEnum),
      {124} wbFloat('Sight Usage'),
      {128} wbFloat('Semi-Automatic Fire Delay Min'),
      {132} wbFloat('Semi-Automatic Fire Delay Max')
