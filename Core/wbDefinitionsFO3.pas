@@ -3187,7 +3187,7 @@ begin
       wbInteger('Mood', itU8, wbMoodEnum),
       wbUnused(3),
       wbInteger('Buys/Sells and Services', itU32, wbServiceFlags),
-      wbInteger('Teaches', itU8, wbSkillEnum),
+      wbInteger('Teaches', itS8, wbSkillEnum),
       wbInteger('Maximum training level', itU8),
       wbInteger('Assistance', itS8, wbAssistanceEnum),
       wbInteger('Aggro Radius Behavior', itU8, wbBoolEnum),
@@ -3813,7 +3813,7 @@ begin
           {0} 'Scroll',
           {1} 'Can''t be Taken'
         ])).IncludeFlag(dfCollapsed, wbCollapseFlags),
-      wbInteger('Skill', itU8, wbSkillEnum),
+      wbInteger('Skill', itS8, wbSkillEnum),
       wbInteger('Value', itS32),
       wbFloat('Weight')
     ]).SetRequired
@@ -3911,7 +3911,7 @@ begin
         ], True)
       ).IncludeFlag(dfCollapsed, wbCollapseFlags),
       wbInteger('Buys/Sells and Services', itU32, wbServiceFlags),
-      wbInteger('Teaches', itU8, wbSkillEnum),
+      wbInteger('Teaches', itS8, wbSkillEnum),
       wbInteger('Maximum training level', itU8),
       wbUnused(2)
     ]).SetRequired,
