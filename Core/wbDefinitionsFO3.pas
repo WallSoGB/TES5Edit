@@ -2978,7 +2978,7 @@ begin
       {12} 'Throwing (unused)',
       {13} 'Unarmed'
     ], [
-      255, 'None'
+      -1, 'None'
     ]);
 
   wbSoundLevelEnum :=

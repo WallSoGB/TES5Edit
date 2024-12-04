@@ -1163,7 +1163,7 @@ begin
       {70} 'Darkness',
       {71} 'Resist Water Damage'
     ], [
-      255, 'None'
+      -1, 'None'
     ]);
 
   wbAttributeEnum :=
@@ -1241,6 +1241,7 @@ begin
 
   wbMajorSkillEnum :=
     wbEnum([], [
+      -1, 'None'
       12,  'Armoer',
       13,  'Athletics',
       14,  'Blade',
@@ -1261,8 +1262,7 @@ begin
       29,  'Mercantile',
       30,  'Security',
       31,  'Sneak',
-      32,  'Speechcraft',
-      255, 'None'
+      32,  'Speechcraft'
     ]);
 
   wbOBMEResolutionEnum :=
@@ -1297,7 +1297,7 @@ begin
       {19}  'Sneak',
       {20}  'Speechcraft'
     ], [
-      255, 'None'
+      -1, 'None'
     ]);
 
   wbSpecializationEnum :=
@@ -1351,7 +1351,7 @@ begin
     {4} wbInteger('Variable Name', itS32, wbConditionVariableNameToStr, wbConditionVariableNameToInt),
 
     //Enums
-	  {5} wbInteger('Actor Value', itU32, wbActorValueEnum),
+	  {5} wbInteger('Actor Value', itS32, wbActorValueEnum),
 	  {6} wbInteger('Axis', itU32, wbAxisEnum),
    	{7} wbInteger('Crime Type', itU32, wbCrimeTypeEnum),
     {8} wbInteger('Form Type', itU32, wbFormTypeEnum),
@@ -1531,7 +1531,7 @@ begin
             wbInteger('Area', itU32),
             wbInteger('Duration', itU32),
             wbInteger('Type', itU32, wbEffectTypeEnum),
-            wbInteger('Actor Value', itU32, wbActorValueEnum).SetDefaultNativeValue(8)
+            wbInteger('Actor Value', itS32, wbActorValueEnum).SetDefaultNativeValue(8)
           ]).SetAfterLoad(wbEFITAfterLoad)
             .SetRequired,
           wbRStructSK([0], 'Script Effect', [
@@ -1814,7 +1814,7 @@ begin
           {0} 'Scroll',
           {1} 'Can''t be taken'
         ])).IncludeFlag(dfCollapsed, wbCollapseFlags),
-      wbInteger('Teaches', itU8, wbSkillEnum).SetDefaultNativeValue(255),
+      wbInteger('Teaches', itS8, wbSkillEnum).SetDefaultNativeValue(255),
       wbInteger('Value', itU32),
       wbFloat('Weight')
     ]).SetRequired
@@ -1890,13 +1890,13 @@ begin
       ]),
       wbInteger('Specialization', itU32, wbSpecializationEnum),
       wbStruct('Major Skills', [
-        wbInteger('Skill #1', itU32, wbMajorSkillEnum).SetDefaultNativeValue(12),
-        wbInteger('Skill #2', itU32, wbMajorSkillEnum).SetDefaultNativeValue(13),
-        wbInteger('Skill #3', itU32, wbMajorSkillEnum).SetDefaultNativeValue(14),
-        wbInteger('Skill #4', itU32, wbMajorSkillEnum).SetDefaultNativeValue(15),
-        wbInteger('Skill #5', itU32, wbMajorSkillEnum).SetDefaultNativeValue(16),
-        wbInteger('Skill #6', itU32, wbMajorSkillEnum).SetDefaultNativeValue(17),
-        wbInteger('Skill #7', itU32, wbMajorSkillEnum).SetDefaultNativeValue(18)
+        wbInteger('Skill #1', itS32, wbMajorSkillEnum).SetDefaultNativeValue(12),
+        wbInteger('Skill #2', itS32, wbMajorSkillEnum).SetDefaultNativeValue(13),
+        wbInteger('Skill #3', itS32, wbMajorSkillEnum).SetDefaultNativeValue(14),
+        wbInteger('Skill #4', itS32, wbMajorSkillEnum).SetDefaultNativeValue(15),
+        wbInteger('Skill #5', itS32, wbMajorSkillEnum).SetDefaultNativeValue(16),
+        wbInteger('Skill #6', itS32, wbMajorSkillEnum).SetDefaultNativeValue(17),
+        wbInteger('Skill #7', itS32, wbMajorSkillEnum).SetDefaultNativeValue(18)
       ]),
       wbInteger('Flags', itU32,
         wbFlags([
@@ -1904,7 +1904,7 @@ begin
           {1} 'Guard'
         ])).IncludeFlag(dfCollapsed, wbCollapseFlags),
       wbInteger('Buys/Sells and Services', itU32, wbServiceFlags),
-      wbInteger('Teaches', itU8, wbSkillEnum),
+      wbInteger('Teaches', itS8, wbSkillEnum),
       wbInteger('Maximum training level', itU8),
       wbInteger('Unused', itU16)
     ], cpNormal, True, nil, 5)
@@ -2026,7 +2026,7 @@ begin
       wbInteger('Energy Level', itU8).SetDefaultNativeValue(50),
       wbInteger('Responsibility', itU8).SetDefaultNativeValue(50),
       wbInteger('Buys/Sells and Services', itU32, wbServiceFlags),
-      wbInteger('Teaches', itU8, wbSkillEnum),
+      wbInteger('Teaches', itS8, wbSkillEnum),
       wbInteger('Maximum training level', itU8),
       wbUnused(2)
     ]).SetRequired,
@@ -2756,7 +2756,7 @@ begin
         wbFormIDCk('Assoc. Weapon', [WEAP]),
         wbFormIDCk('Assoc. Armor', [ARMO, NULL{?}]),
         wbFormIDCk('Assoc. Creature', [CREA, LVLC, NPC_]),
-        wbInteger('Assoc. Actor Value', itU32, wbActorValueEnum)
+        wbInteger('Assoc. Actor Value', itS32, wbActorValueEnum)
       ]),
       wbInteger('Magic School', itU32, wbMagicSchoolEnum),
       wbInteger('Resist value', itS32,
@@ -2863,7 +2863,7 @@ begin
       wbInteger('Energy Level', itU8).SetDefaultNativeValue(50),
       wbInteger('Responsibility', itU8).SetDefaultNativeValue(50),
       wbInteger('Buys/Sells and Services', itU32, wbServiceFlags),
-      wbInteger('Teaches', itU8, wbSkillEnum),
+      wbInteger('Teaches', itS8, wbSkillEnum),
       wbInteger('Maximum training level', itU8),
       wbUnused(2)
     ]).SetRequired,
@@ -3099,7 +3099,7 @@ begin
     wbStruct(DATA, '', [
       wbArrayS('Skill Boosts',
         wbStructSK([0], 'Skill Boost', [
-          wbInteger('Skill', itU8, wbMajorSkillEnum).SetDefaultNativeValue(255),
+          wbInteger('Skill', itS8, wbMajorSkillEnum).SetDefaultNativeValue(255),
           wbInteger('Boost', itS8)
         ]).SetSummaryKey([1, 0])
           .SetSummaryMemberPrefixSuffix(1, '+', '')
@@ -3400,11 +3400,11 @@ begin
 
   wbRecord(SKIL, 'Skill', [
     wbEDID.SetRequired,
-    wbInteger(INDX, 'Skill', itU32, wbMajorSkillEnum).SetRequired,
+    wbInteger(INDX, 'Skill', itS32, wbMajorSkillEnum).SetRequired,
     wbDESC.SetRequired,
     wbICON.SetRequired,
     wbStruct(DATA, 'Skill Data', [
-      wbInteger('Action', itU32, wbMajorSkillEnum),
+      wbInteger('Action', itS32, wbMajorSkillEnum),
       wbInteger('Attribute', itU32, wbAttributeEnum),
       wbInteger('Specialization', itU32, wbSpecializationEnum),
       wbArray('Use Values', wbFloat('Use Value'), 2)
