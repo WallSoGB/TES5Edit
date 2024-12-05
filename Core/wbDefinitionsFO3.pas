@@ -1148,16 +1148,6 @@ begin
   end;
 end;
 
-procedure wbCounterEffectsAfterSet(const aElement: IwbElement; const aOldValue, aNewValue: Variant);
-begin
-  wbCounterByPathAfterSet('DATA - Data\Counter effect count', aElement);
-end;
-
-procedure wbMGEFAfterSet(const aElement: IwbElement; const aOldValue, aNewValue: Variant);
-begin
-  wbCounterContainerByPathAfterSet('DATA - Data\Counter effect count', 'Counter Effects', aElement);
-end;
-
 function wbNAVINVMIDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
 var
   Container     : IwbContainer;
@@ -6270,7 +6260,7 @@ begin
            ]).SetAfterSet(wbMGEFAssocItemAfterSet),
       {12} wbByteArray('Magic School (Unused)', 4),
       {16} wbInteger('Resistance Type', itS32, wbActorValueEnum),
-      {20} wbInteger('Counter effect count', itU16),
+      {20} wbInteger('Counter Effect Count', itU16),
       {22} wbUnused(2),
       {24} wbFormIDCk('Light', [LIGH, NULL]),
       {28} wbFloat('Projectile speed'),
@@ -6287,9 +6277,8 @@ begin
     ]).SetRequired,
     wbRArrayS('Counter Effects',
       wbFormIDCk(ESCE, 'Effect', [MGEF])
-    ).SetAfterSet(wbCounterEffectsAfterSet)
-  ]).SetAfterLoad(wbMGEFAfterLoad)
-    .SetAfterSet(wbMGEFAfterSet);
+    ).SetCountPath('DATA\Counter Effect Count')
+  ]).SetAfterLoad(wbMGEFAfterLoad);
 
   wbRecord(MISC, 'Misc. Item',
     wbFlags(wbFlagsList([
