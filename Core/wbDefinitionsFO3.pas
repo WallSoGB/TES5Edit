@@ -1043,14 +1043,6 @@ begin
       Result := 1;
 end;
 
-function wbIPDSDATACount(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
-begin
-  if Assigned(aBasePtr) and Assigned(aEndPtr) then
-    Result := (NativeUInt(aBasePtr) - NativeUInt(aBasePtr)) div 4
-  else
-    Result := 12;
-end;
-
 function wbNAVINAVMGetCount1(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
 var
   DataContainer : IwbDataContainer;
