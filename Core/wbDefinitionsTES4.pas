@@ -34,6 +34,7 @@ var
   wbFormTypeEnum: IwbEnumDef;
   wbMagicSchoolEnum: IwbEnumDef;
   wbMajorSkillEnum: IwbEnumDef;
+  wbMiscStatEnum: IwbEnumDef;
   wbOBMEResolutionEnum: IwbEnumDef;
   wbSkillEnum: IwbEnumDef;
   wbSpecializationEnum: IwbEnumDef;
@@ -70,32 +71,35 @@ type
     {4} ptVariableName,
 
     //Enums
-    {5} ptActorValue,    //wbActorValueEnum
-    {6} ptAxis,          //wbAxisEnum
-    {7} ptCrimeType,     //wbCrimeTypeEnum
-    {8} ptFormType,      //wbFormTypeEnum
-    {9} ptSex,           //wbSexEnum
+    {5}  ptActorValue, //wbActorValueEnum
+    {6}  ptAxis,       //wbAxisEnum
+    {7}  ptCrimeType,  //wbCrimeTypeEnum
+    {8}  ptFormType,   //wbFormTypeEnum
+    {9}  ptMenuMode,   //wbMenuModeEnum
+    {10} ptMiscStat,   //wbMiscStatEnum
+    {11} ptSex,        //wbSexEnum
 
     //FormIDs
-    {10} ptActor,              //ACHR, ACRE, PLYR, TRGT
-    {11} ptActorBase,          //CREA, NPC_
-    {12} ptBaseObject,         //ACTI, ALCH, AMMO, APPA, ARMO, BOOK, CLOT, CONT, CREA, DOOR, FLOR, FURN, GRAS, INGR, KEYM, LIGH, LVLC, MISC, NPC_, SBSP, SGST, SLGM, SOUN, STAT, TREE, WEAP
-    {13} ptBirthsign,          //BSGN
-    {14} ptCell,               //CELL
-    {15} ptClass,              //CLAS
-    {16} ptFaction,            //FACT
-    {17} ptFurniture,          //FURN
-    {18} ptGlobal,             //GLOB
-    {19} ptInventoryObject,    //ALCH, AMMO, APPA, ARMO, BOOK, CLOT, INGR, KEYM, LIGH, MISC, SGST, SLGM, WEAP
-    {20} ptMagicEffect,        //MGEF
-    {21} ptOwner,              //FACT, NPC_
-    {22} ptPackage,            //PACK
-    {23} ptQuest,              //QUST
-    {24} ptRace,               //RACE
-    {25} ptReference,          //ACHR, ACRE, PLYR, REFR, TRGT
-    {26} ptSpell,              //SPEL
-    {27} ptWeather,            //WTHR
-    {28} ptWorldspace          //WRLD
+    {12} ptActor,           //ACHR, ACRE, PLYR, TRGT
+    {13} ptActorBase,       //CREA, NPC_
+    {14} ptBaseObject,      //ACTI, ALCH, AMMO, APPA, ARMO, BOOK, CLOT, CONT, CREA, DOOR, FLOR, FURN, GRAS, INGR, KEYM, LIGH, LVLC, MISC, NPC_, SBSP, SGST, SLGM, SOUN, STAT, TREE, WEAP
+    {15} ptBirthsign,       //BSGN
+    {16} ptCell,            //CELL
+    {17} ptClass,           //CLAS
+    {18} ptFaction,         //FACT
+    {19} ptFurniture,       //FURN
+    {20} ptGlobal,          //GLOB
+    {21} ptInventoryObject, //ALCH, AMMO, APPA, ARMO, BOOK, CLOT, INGR, KEYM, LIGH, MISC, SGST, SLGM, WEAP
+    {22} ptMagicEffect,     //MGEF
+    {23} ptMagicItem,       //ALCH, ENCH, INGR, SPEL
+    {24} ptOwner,           //FACT, NPC_
+    {25} ptPackage,         //PACK
+    {26} ptQuest,           //QUST
+    {27} ptRace,            //RACE
+    {28} ptReference,       //ACHR, ACRE, PLYR, REFR, TRGT
+    {29} ptSpell,           //SPEL
+    {30} ptWeather,         //WTHR
+    {31} ptWorldspace       //WRLD
   );
 
   PConditionFunction = ^TConditionFunction;
@@ -121,7 +125,7 @@ const
     (Index:  27; Name: 'GetLineOfSight'; ParamType1: ptReference),
     (Index:  32; Name: 'GetInSameCell'; ParamType1: ptReference),
     (Index:  35; Name: 'GetDisabled'),
-    (Index:  36; Name: 'MenuMode'; ParamType1: ptInteger),
+    (Index:  36; Name: 'MenuMode'; ParamType1: ptMenuMode),
     (Index:  39; Name: 'GetDisease'),
     (Index:  40; Name: 'GetVampire'),
     (Index:  41; Name: 'GetClothingValue'),
@@ -222,7 +226,7 @@ const
     (Index: 203; Name: 'GetDestroyed'),
     (Index: 214; Name: 'HasMagicEffect'; ParamType1: ptMagicEffect),
     (Index: 215; Name: 'GetDoorDefaultOpen'),
-    (Index: 223; Name: 'IsSpellTarget'; ParamType1: ptSpell),
+    (Index: 223; Name: 'IsSpellTarget'; ParamType1: ptMagicItem),
     (Index: 224; Name: 'GetIsPlayerBirthsign'; ParamType1: ptBirthsign),
     (Index: 225; Name: 'GetPersuasionNumber'),
     (Index: 227; Name: 'HasVampireFed'),
@@ -259,7 +263,7 @@ const
     (Index: 306; Name: 'IsActorUsingATorch'),
     (Index: 309; Name: 'IsXBox'),
     (Index: 310; Name: 'GetInWorldspace'; ParamType1: ptWorldSpace),
-    (Index: 312; Name: 'GetPCMiscStat'; ParamType1: ptInteger),
+    (Index: 312; Name: 'GetPCMiscStat'; ParamType1: ptMiscStat),
     (Index: 313; Name: 'IsActorEvil'),
     (Index: 314; Name: 'IsActorAVictim'),
     (Index: 315; Name: 'GetTotalPersuasionNumber'),
@@ -279,11 +283,11 @@ const
     (Index: 365; Name: 'GetPlayerInSEWorld'),
 
     // Added by (x)OBSE:
-    (Index: 1107; Name: 'IsAmmo'; ParamType1: ptInteger),
+    (Index: 1107; Name: 'IsAmmo'; ParamType1: ptInventoryObject),
     (Index: 1122; Name: 'HasSpell'; ParamType1: ptSpell),
     (Index: 1124; Name: 'IsClassSkill'; ParamType1: ptActorValue; ParamType2: ptClass),
     (Index: 1254; Name: 'GetActorLightAmount'),
-    (Index: 1884; Name: 'GetPCTrainingSessionsUsed'; ParamType1: ptPackage),
+    (Index: 1884; Name: 'GetPCTrainingSessionsUsed'),
     (Index: 2213; Name: 'GetPackageOffersServices'; ParamType1: ptPackage),
     (Index: 2214; Name: 'GetPackageMustReachLocation'; ParamType1: ptPackage),
     (Index: 2215; Name: 'GetPackageMustComplete'; ParamType1: ptPackage),
@@ -1265,6 +1269,44 @@ begin
       32,  'Speechcraft'
     ]);
 
+  wbMiscStatEnum :=
+    wbEnum([
+      {0}  'Days In Prison',
+      {1}  'Days Passed',
+      {2}  'Skill Increases',
+      {3}  'Training Sessions',
+      {4}  'Largest Bounty',
+      {5}  'Creatures Killed',
+      {6}  'People Killed',
+      {7}  'Places Discovered',
+      {8}  'Locks Picked',
+      {9}  'Picks Broken',
+      {10} 'Souls Trapped',
+      {11} 'Ingredients Eaten',
+      {12} 'Potions Made',
+      {13} 'Oblivion Gates Shut',
+      {14} 'Horses Owned',
+      {15} 'Houses Owned',
+      {16} 'Stores Invested In',
+      {17} 'Books Read',
+      {18} 'Skill Books Read',
+      {19} 'Artifacts Found',
+      {20} 'Hours Slept',
+      {21} 'Hours Waited',
+      {22} 'Days As A Vampire',
+      {23} 'Last Day As Vampie',
+      {24} 'People Fed On',
+      {25} 'Jokes Told',
+      {26} 'Diseases Contracted',
+      {27} 'Nirnroots Found',
+      {28} 'Items Stolen',
+      {29} 'Items Pickpocketed',
+      {30} 'Trespasses',
+      {31} 'Assaults',
+      {32} 'Murders',
+      {33} 'Horses Stolen'
+    ]);
+
   wbOBMEResolutionEnum :=
     wbEnum([
       {0} 'None',
@@ -1351,32 +1393,35 @@ begin
     {4} wbInteger('Variable Name', itS32, wbConditionVariableNameToStr, wbConditionVariableNameToInt),
 
     //Enums
-	  {5} wbInteger('Actor Value', itS32, wbActorValueEnum),
-	  {6} wbInteger('Axis', itU32, wbAxisEnum),
-   	{7} wbInteger('Crime Type', itU32, wbCrimeTypeEnum),
-    {8} wbInteger('Form Type', itU32, wbFormTypeEnum),
-    {9} wbInteger('Sex', itU32, wbSexEnum),
+	  {5}  wbInteger('Actor Value', itS32, wbActorValueEnum),
+	  {6}  wbInteger('Axis', itU32, wbAxisEnum),
+   	{7}  wbInteger('Crime Type', itU32, wbCrimeTypeEnum),
+    {8}  wbInteger('Form Type', itU32, wbFormTypeEnum),
+    {9}  wbInteger('Menu Mode', itU32, wbMenuModeEnum),
+    {10} wbInteger('Misc Stat', itU32, wbMiscStatEnum),
+    {11} wbInteger('Sex', itU32, wbSexEnum),
 
     //FormIDs
-   	{10} wbFormIDCkNoReach('Actor', [ACHR, ACRE, PLYR, TRGT]),
-    {11} wbFormIDCkNoReach('Actor Base', [CREA, NPC_]),
-    {12} wbFormIDCkNoReach('Base Object', [ACTI, ALCH, AMMO, APPA, ARMO, BOOK, CLOT, CONT, CREA, DOOR, FLOR, FURN, GRAS, INGR, KEYM, LIGH, LVLC, MISC, NPC_, SBSP, SGST, SLGM, SOUN, STAT, TREE, WEAP]),
-    {13} wbFormIDCkNoReach('Birthsign', [BSGN]),
-    {14} wbFormIDCkNoReach('Cell', [CELL]),
-    {15} wbFormIDCkNoReach('Class', [CLAS]),
-    {16} wbFormIDCkNoReach('Faction', [FACT]),
-    {17} wbFormIDCkNoReach('Furniture', [FURN]),
-    {18} wbFormIDCkNoReach('Global', [GLOB]),
-    {19} wbFormIDCkNoReach('Inventory Object', [ALCH, AMMO, APPA, ARMO, BOOK, CLOT, INGR, KEYM, LIGH, MISC, SGST, SLGM, WEAP]),
-    {20} wbFormIDCkNoReach('Magic Effect', [MGEF]),
-    {21} wbFormIDCkNoReach('Owner', [FACT, NPC_]),
-    {22} wbFormIDCkNoReach('Package', [PACK]),
-    {23} wbFormIDCkNoReach('Quest', [QUST]),
-    {24} wbFormIDCkNoReach('Race', [RACE]),
-    {25} wbFormIDCkNoReach('Reference', [ACHR, ACRE, PLYR, REFR, TRGT]),
-    {26} wbFormIDCkNoReach('Spell', [SPEL]),
-    {27} wbFormIDCkNoReach('Weather', [WTHR]),
-    {28} wbFormIDCkNoReach('Worldspace', [WRLD])
+   	{12} wbFormIDCkNoReach('Actor', [ACHR, ACRE, PLYR, TRGT]),
+    {13} wbFormIDCkNoReach('Actor Base', [CREA, NPC_]),
+    {14} wbFormIDCkNoReach('Base Object', [ACTI, ALCH, AMMO, APPA, ARMO, BOOK, CLOT, CONT, CREA, DOOR, FLOR, FURN, GRAS, INGR, KEYM, LIGH, LVLC, LVLI, LVSP, MISC, NPC_, SBSP, SGST, SLGM, SOUN, STAT, TREE, WEAP]),
+    {15} wbFormIDCkNoReach('Birthsign', [BSGN]),
+    {16} wbFormIDCkNoReach('Cell', [CELL]),
+    {17} wbFormIDCkNoReach('Class', [CLAS]),
+    {18} wbFormIDCkNoReach('Faction', [FACT]),
+    {19} wbFormIDCkNoReach('Furniture', [FURN]),
+    {20} wbFormIDCkNoReach('Global', [GLOB]),
+    {21} wbFormIDCkNoReach('Inventory Object', [ALCH, AMMO, APPA, ARMO, BOOK, CLOT, INGR, KEYM, LIGH, LVLI, MISC, SGST, SLGM, WEAP]),
+    {22} wbFormIDCkNoReach('Magic Effect', [MGEF]),
+    {23} wbFormIDCkNoReach('Magic Item', [ALCH, ENCH, INGR, SPEL]),
+    {24} wbFormIDCkNoReach('Owner', [FACT, NPC_]),
+    {25} wbFormIDCkNoReach('Package', [PACK]),
+    {26} wbFormIDCkNoReach('Quest', [QUST]),
+    {27} wbFormIDCkNoReach('Race', [RACE]),
+    {28} wbFormIDCkNoReach('Reference', [ACHR, ACRE, PLYR, REFR, TRGT]),
+    {29} wbFormIDCkNoReach('Spell', [SPEL]),
+    {30} wbFormIDCkNoReach('Weather', [WTHR]),
+    {31} wbFormIDCkNoReach('Worldspace', [WRLD])
   ];
 
   wbConditionMembers := [
