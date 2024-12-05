@@ -2655,45 +2655,6 @@ begin
   Result := Container.ElementByName['Type'].NativeValue + 1;
 end;
 
-procedure wbIDLAsAfterSet(const aElement: IwbElement; const aOldValue, aNewValue: Variant);
-var
-  Element         : IwbElement;
-  Container       : IwbContainer;
-  SelfAsContainer : IwbContainer;
-begin
-  if wbBeginInternalEdit(True) then try
-//    if not wbCounterAfterSet('IDLC - Animation Count', aElement) then
-      if Supports(aElement.Container, IwbContainer, Container) then begin
-        Element := Container.ElementByPath['IDLC\Animation Count'];
-        if Assigned(Element) and Supports(aElement, IwbContainer, SelfAsContainer) and
-          (Element.GetNativeValue<>SelfAsContainer.GetElementCount) then
-          Element.SetNativeValue(SelfAsContainer.GetElementCount);
-      end;
-  finally
-    wbEndInternalEdit;
-  end;
-end;
-
-procedure wbAnimationsAfterSet(const aElement: IwbElement; const aOldValue, aNewValue: Variant);
-var
-  Element         : IwbElement;
-  Elems           : IwbElement;
-  Container       : IwbContainer;
-begin
-  if wbBeginInternalEdit(True) then try
-//    if not wbCounterContainerAfterSet('IDLC - Animation Count', 'IDLA - Animations', aElement) then
-      if Supports(aElement, IwbContainer, Container) then begin
-        Element := Container.ElementByPath['IDLC\Animation Count'];
-        Elems   := Container.ElementByName['IDLA - Animations'];
-        if Assigned(Element) and not Assigned(Elems) then
-          if Element.GetNativeValue<>0 then
-            Element.SetNativeValue(0);
-      end;
-  finally
-    wbEndInternalEdit;
-  end;
-end;
-
 procedure DefineFO3;
 begin
   DefineCommon;
@@ -4717,9 +4678,9 @@ begin
     wbFloat(IDLT, 'Idle Timer Setting').SetRequired,
     wbArray(IDLA, 'Animations',
       wbFormIDCk('Animation', [IDLE, NULL])
-    ).SetAfterSet(wbIDLAsAfterSet)
+    ).SetCountPathOnValue('IDLC\Animation Count')
      .SetRequired  // NULL looks valid if IDLS\Animation Count is 0
-  ]).SetAfterSet(wbAnimationsAfterSet);
+  ]);
 
   wbRecord(NOTE, 'Note', [
     wbEDIDReq,
@@ -6660,10 +6621,10 @@ begin
       wbFloat(IDLT, 'Idle Timer Setting').SetRequired,
       wbArray(IDLA, 'Animations',
         wbFormIDCk('Animation', [IDLE])
-      ).SetAfterSet(wbIDLAsAfterSet)
+      ).SetCountPathOnValue('IDLC\Animation Count')
        .SetRequired,
       wbByteArray(IDLB, 'Unused', 4, cpIgnore)
-    ]),//.SetAfterSet(wbAnimationsAfterSet),
+    ]),
     wbFormIDCk(CNAM, 'Combat Style', [CSTY]),
     wbEmpty(PKED, 'Eat Marker'),
     wbInteger(PKE2, 'Escort Distance', itU32),
