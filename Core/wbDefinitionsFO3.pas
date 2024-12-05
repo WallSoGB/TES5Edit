@@ -4678,7 +4678,7 @@ begin
     wbFloat(IDLT, 'Idle Timer Setting').SetRequired,
     wbArray(IDLA, 'Animations',
       wbFormIDCk('Animation', [IDLE, NULL])
-    ).SetCountPathOnValue('IDLC\Animation Count')
+    ).SetCountPathOnValue('IDLC\Animation Count', False)
      .SetRequired  // NULL looks valid if IDLS\Animation Count is 0
   ]);
 
@@ -6621,7 +6621,7 @@ begin
       wbFloat(IDLT, 'Idle Timer Setting').SetRequired,
       wbArray(IDLA, 'Animations',
         wbFormIDCk('Animation', [IDLE])
-      ).SetCountPathOnValue('IDLC\Animation Count')
+      ).SetCountPathOnValue('IDLC\Animation Count', False)
        .SetRequired,
       wbByteArray(IDLB, 'Unused', 4, cpIgnore)
     ]),
