@@ -1241,8 +1241,8 @@ begin
 
   wbMajorSkillEnum :=
     wbEnum([], [
-      -1, 'None'
-      12,  'Armoer',
+      -1, 'None',
+      12,  'Armorer',
       13,  'Athletics',
       14,  'Blade',
       15,  'Block',
