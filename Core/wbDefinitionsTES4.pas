@@ -695,7 +695,7 @@ begin
     if Supports(aElement, IwbContainer, Container) then begin
       if not Assigned(Container.ElementByName['Factions']) then begin
         Container.Add('Factions', True);
-        Container.ElementByPath['Factions\SNAM\Faction'].NativeValue := 13;
+        Container.ElementByPath['Factions\SNAM\Faction'].NativeValue := $13;
       end;
     end;
   finally
@@ -1783,7 +1783,7 @@ begin
     wbEDID,
     wbTexturedModel('Model', [MODL, MODB, MODT], []),
     wbFormIDCk(DATA, 'Idle Animation', [IDLE])
-      .SetDefaultNativeValue($3ECAB)
+      .SetDefaultNativeValue($0003ECAB)
       .SetRequired
   ]).SetSummaryKey([1, 2])
     .IncludeFlag(dfSummaryMembersNoName);
@@ -2915,7 +2915,7 @@ begin
     wbRArray('AI Packages', wbFormIDCk(PKID, 'AI Package', [PACK])),
     wbArrayS(KFFZ, 'Animations', wbString('Animation')),
     wbFormIDCk(CNAM, 'Class', [CLAS])
-      .SetDefaultNativeValue($230E6)
+      .SetDefaultNativeValue($000230E6)
       .SetRequired,
     wbStruct(DATA, 'Stats', [
       wbInteger('Armorer', itU8).SetDefaultNativeValue(5),
