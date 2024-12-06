@@ -6661,8 +6661,11 @@ begin
     wbEDID,
     wbGenericModel(True),
     wbCTDAs,
-    wbArray(ANAM, 'Related Idle Animations', wbFormIDCk('Related Idle Animation', [IDLE, NULL]), ['Parent', 'Previous Sibling'], cpNormal, True),
-    wbStruct(DATA, '', [
+    wbStruct(ANAM, 'Related Animations', [
+      wbFormIDCk('Parent', [IDLE, NULL]),
+      wbFormIDCk('Previous', [IDLE, NULL])
+    ]).SetRequired,
+    wbStruct(DATA, 'Data', [
       wbInteger('Animation Group Section', itU8, wbIdleAnam),
       wbStruct('Looping', [
         wbInteger('Min', itU8),
