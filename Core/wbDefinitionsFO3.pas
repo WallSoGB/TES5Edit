@@ -3208,20 +3208,21 @@ begin
       {4} wbUnused(2),
       {5} wbUnion('Parameter #1', wbConditionParam1Decider, wbConditionParameters),
       {6} wbUnion('Parameter #2', wbConditionParam2Decider, wbConditionParameters),
-      {7} wbInteger('Run On', itU32,
-            wbEnum([
-              {0} 'Subject',
-              {1} 'Target',
-              {2} 'Reference',
-              {3} 'Combat Target',
-              {4} 'Linked Reference'
-            ])).SetAfterSet(wbCTDARunOnAfterSet),
-      {8} wbUnion('Reference', wbCTDAReferenceDecider, [
-            wbInteger('Unused', itU32, nil, cpIgnore),
-            wbFormIDCkNoReach('Reference', [ACHR, ACRE, PBEA, PGRE, PLYR, PMIS, REFR], True)
-          ])
-      ], cpNormal, False, nil, 7)
-        .SetAfterLoad(wbConditionsfterLoad)
+      {7} wbFromVersion(2,
+            wbInteger('Run On', itU32,
+              wbEnum([
+                {0} 'Subject',
+                {1} 'Target',
+                {2} 'Reference',
+                {3} 'Combat Target',
+                {4} 'Linked Reference'
+              ])).SetAfterSet(wbCTDARunOnAfterSet)),
+      {8} wbFromVersion(2,
+            wbUnion('Reference', wbCTDAReferenceDecider, [
+              wbInteger('Unused', itU32, nil, cpIgnore),
+              wbFormIDCkNoReach('Reference', [ACHR, ACRE, PBEA, PGRE, PLYR, PMIS, REFR], True)
+            ]))
+      ]).SetAfterLoad(wbConditionsfterLoad)
         .SetToStr(wbConditionToStr)
         .IncludeFlag(dfCollapsed, wbCollapseConditions));
 
