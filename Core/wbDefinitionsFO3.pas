@@ -391,13 +391,13 @@ const
     (Index: 558; Name: 'HasLoaded3D'),
 
     // Added by FOSE:
-    (Index: 1024; Name: 'GetFOSEVersion'; ),
-    (Index: 1025; Name: 'GetFOSERevision'; ),
-    (Index: 1028; Name: 'GetWeight'; ParamType1: ptInventoryObject; ),
-    (Index: 1082; Name: 'IsKeyPressed'; ParamType1: ptInteger;),
-    (Index: 1165; Name: 'GetWeaponHasScope'; ParamType1: ptInventoryObject; ),
-    (Index: 1166; Name: 'IsControlPressed'; ParamType1: ptInteger; ),
-    (Index: 1213; Name: 'GetFOSEBeta'; )
+    (Index: 1024; Name: 'GetFOSEVersion'),
+    (Index: 1025; Name: 'GetFOSERevision'),
+    (Index: 1028; Name: 'GetWeight'; ParamType1: ptInventoryObject),
+    (Index: 1082; Name: 'IsKeyPressed'; ParamType1: ptInteger),
+    (Index: 1165; Name: 'GetWeaponHasScope'; ParamType1: ptInventoryObject),
+    (Index: 1166; Name: 'IsControlPressed'; ParamType1: ptInteger),
+    (Index: 1213; Name: 'GetFOSEBeta')
   );
 
 function wbConditionDescFromIndex(aIndex: Integer): PConditionFunction;
