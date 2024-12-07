@@ -127,22 +127,22 @@ type
     {4} ptQuestObjective,
     {5} ptQuestStage,
 	  {6} ptVariableName,
-	  {7} ptVATSValueFunction,
-    {8} ptVATSValueParam,
+	  {7} ptVATSValueParam,
 
-	  {9}  ptActorValue,    //wbActorValueEnum
-	  {10} ptAlignment,     //wbAlignmentEnum
-	  {11} ptAxis,          //wbAxisEnum
-	  {12} ptBodyLocation,  //wbBodyLocationEnum
-	  {13} ptCreatureType,  //wbCreatureTypeEnum
-	  {14} ptCrimeType,     //wbCrimeTypeEnum
-	  {15} ptCriticalStage, //wbCriticalStageEnum
-	  {16} ptEquipType,     //wbEquipTypeEnum
-	  {17} ptFormType,      //wbFormTypeEnum
-	  {18} ptMenuMode,      //wbMenuModeEnum
-	  {19} ptMiscStat,      //wbMiscStatEnum
-	  {20} ptPlayerAction,  //wbPlayerActionEnum
-	  {21} ptSex,           //wbSecEnum
+	  {8}  ptActorValue,        //wbActorValueEnum
+	  {9}  ptAlignment,         //wbAlignmentEnum
+	  {10} ptAxis,              //wbAxisEnum
+	  {11} ptBodyLocation,      //wbBodyLocationEnum
+	  {12} ptCreatureType,      //wbCreatureTypeEnum
+	  {13} ptCrimeType,         //wbCrimeTypeEnum
+	  {14} ptCriticalStage,     //wbCriticalStageEnum
+	  {15} ptEquipType,         //wbEquipTypeEnum
+	  {16} ptFormType,          //wbFormTypeEnum
+	  {17} ptMenuMode,          //wbMenuModeEnum
+	  {18} ptMiscStat,          //wbMiscStatEnum
+	  {19} ptPlayerAction,      //wbPlayerActionEnum
+	  {20} ptSex,               //wbSecEnum
+    {21} ptVATSValueFunction, //wbVATSValueFunctionEnum
 
     {22} ptForm,
     {23} ptActor,           //ACHR, ACRE
@@ -3940,23 +3940,23 @@ begin
     {4} wbInteger('Quest Objective', itS32, wbConditionQuestObjectiveToStr, wbCTDAParam2QuestObjectiveToInt),
     {5} wbInteger('Quest Stage', itS32, wbConditionQuestStageToStr, wbCTDAParam2QuestStageToInt),
     {6} wbInteger('Variable Name', itS32, wbConditionVariableNameToStr, wbConditionVariableNameToInt),
-    {7} wbInteger('VATS Value Function', itU32, wbVATSValueFunctionEnum),
-    {8} wbUnion('VATS Value Param', wbConditionVATSValueParam, wbConditionVATSValueParameters),
+    {7} wbUnion('VATS Value Param', wbConditionVATSValueParam, wbConditionVATSValueParameters),
 
     //Enums
-    {9}  wbInteger('Actor Value', itS32, wbActorValueEnum),
-    {10} wbInteger('Alignment', itU32, wbAlignmentEnum),
-    {11} wbInteger('Axis', itU32, wbAxisEnum),
-    {12} wbInteger('Body Location', itS32, wbBodyLocationEnum),
-    {13} wbInteger('Creature Type', itU32, wbCreatureTypeEnum),
-    {14} wbInteger('Crime Type', itU32, wbCrimeTypeEnum),
-    {15} wbInteger('Critical Stage', itU32, wbCriticalStageEnum),
-    {16} wbInteger('Equip Type', itU32, wbEquipTypeEnum),
-    {17} wbInteger('Form Type', itU32, wbFormTypeEnum),
-    {18} wbInteger('Menu Mode', itU32, wbMenuModeEnum),
-    {19} wbInteger('Misc Stat', itU32, wbMiscStatEnum),
-    {20} wbInteger('Player Action', itU32, wbPlayerActionEnum),
-    {21} wbInteger('Sex', itU32, wbSexEnum),
+    {8}  wbInteger('Actor Value', itS32, wbActorValueEnum),
+    {9} wbInteger('Alignment', itU32, wbAlignmentEnum),
+    {10} wbInteger('Axis', itU32, wbAxisEnum),
+    {11} wbInteger('Body Location', itS32, wbBodyLocationEnum),
+    {12} wbInteger('Creature Type', itU32, wbCreatureTypeEnum),
+    {13} wbInteger('Crime Type', itU32, wbCrimeTypeEnum),
+    {14} wbInteger('Critical Stage', itU32, wbCriticalStageEnum),
+    {15} wbInteger('Equip Type', itU32, wbEquipTypeEnum),
+    {16} wbInteger('Form Type', itU32, wbFormTypeEnum),
+    {17} wbInteger('Menu Mode', itU32, wbMenuModeEnum),
+    {18} wbInteger('Misc Stat', itU32, wbMiscStatEnum),
+    {19} wbInteger('Player Action', itU32, wbPlayerActionEnum),
+    {20} wbInteger('Sex', itU32, wbSexEnum),
+    {21} wbInteger('VATS Value Function', itU32, wbVATSValueFunctionEnum),
 
     //FormIDs
     {22} wbFormID('Form'),
