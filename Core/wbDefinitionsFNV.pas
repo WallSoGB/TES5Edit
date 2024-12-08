@@ -9192,6 +9192,41 @@ var  wbSoundTypeSoundsOld :=
     ], cpNormal, True)
   ]);
 
+  wbRecord(FLOR, 'Flora',
+    wbFlags(wbFlagsList([
+      6, 'Has Tree LOD',
+      9, 'On Local Map',
+     10, 'Quest Item',
+     15, 'Visible When Distant',
+     16, 'Random Anim Start',
+     17, 'Dangerous',
+     19, 'Has Platform Specific Textures',
+     25, 'Obstacle',
+     26, 'Navmesh - Filter',
+     27, 'Navmesh - Bounding Box',
+     29, 'Child Can Use',
+     30, 'Navmesh - Ground'
+    ])).SetFlagHasDontShow(26, wbFlagNavmeshFilterDontShow)
+       .SetFlagHasDontShow(27, wbFlagNavmeshBoundingBoxDontShow)
+       .SetFlagHasDontShow(30, wbFlagNavmeshGroundDontShow), [
+    wbEDIDReq,
+    wbOBND(True),
+    wbFULL,
+    wbGenericModel,
+    wbSCRI,
+    wbDEST,
+    wbFormIDCk(SNAM, 'Sound - Looping', [SOUN]),
+    wbFormIDCk(VNAM, 'Sound - Activation', [SOUN]),
+    wbStringKC(XATO, 'Activation Prompt'),
+    wbFormIDCk(PFIG, 'Ingredient', [ALCH, LVLI, MISC, NULL]),
+    wbStruct(PFPC, 'Ingredient Production', [
+      wbInteger('Spring', itU8),
+      wbInteger('Summer ', itU8),
+      wbInteger('Fall', itU8),
+      wbInteger('Winter', itU8)
+    ], cpNormal, True)
+  ]);
+
   wbRecord(IMOD, 'Item Mod', [
     wbEDIDReq,
     wbOBND(True),
@@ -10149,6 +10184,7 @@ var  wbSoundTypeSoundsOld :=
   wbAddGroupOrder(PWAT);
   wbAddGroupOrder(GRAS);
   wbAddGroupOrder(TREE);
+  wbAddGroupOrder(FLOR);
   wbAddGroupOrder(FURN);
   wbAddGroupOrder(WEAP);
   wbAddGroupOrder(AMMO);
