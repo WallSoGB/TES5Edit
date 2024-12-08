@@ -692,18 +692,13 @@ begin
         Result := '<Unknown: '+aInt.ToString+'>';
     end;
     ctEditInfo: begin
-      var wbConditionEditInfo : string;
-      Result := wbConditionEditInfo;
-      if Result = '' then begin
-        with TStringList.Create do try
-          for var i := Low(wbConditionFunctions) to High(wbConditionFunctions) do
-            Add(wbConditionFunctions[i].Name);
-          Sort;
-          Result := CommaText;
-        finally
-          Free;
-        end;
-        wbConditionEditInfo := Result;
+      with TStringList.Create do try
+        for var i := Low(wbConditionFunctions) to High(wbConditionFunctions) do
+          Add(wbConditionFunctions[i].Name);
+        Sort;
+        Result := CommaText;
+      finally
+        Free;
       end;
     end;
   end;
@@ -868,10 +863,10 @@ var
 begin
   Result := '';
   case aType of
-    ctToEditValue, ctToSummary: Result := aInt.ToString;
-    ctToStr: Result := aInt.ToString + ' <Warning: Could not resolve Parameter 1>';
     ctToSortKey: Exit(IntToHex64(aInt, 8));
+    ctToEditValue, ctToSummary: Result := aInt.ToString;
     ctCheck: Result := '<Warning: Could not resolve Parameter 1>';
+    ctToStr: Result := aInt.ToString + ' <Warning: Could not resolve Parameter 1>';
   end;
 
   if not wbTryGetContainerRefFromUnionOrValue(aElement, Container) then
@@ -884,8 +879,8 @@ begin
   if MainRecord.Signature <> QUST then
   begin
     case aType of
-      ctToStr: Result := aInt.ToString + ' <Warning: "' + MainRecord.ShortName + '" is not a Quest record>';
       ctCheck: Result := '<Warning: "' + MainRecord.ShortName + '" is not a Quest record>';
+      ctToStr: Result := aInt.ToString + ' <Warning: "' + MainRecord.ShortName + '" is not a Quest record>';
     end;
     Exit;
   end;
@@ -921,8 +916,8 @@ begin
     end;
 
     case aType of
-      ctToStr: Result := aInt.ToString + ' <Warning: Quest Stage not found in "' + MainRecord.Name + '">';
       ctCheck: Result := '<Warning: Quest Stage not found in "' + MainRecord.Name + '">';
+      ctToStr: Result := aInt.ToString + ' <Warning: Quest Stage not found in "' + MainRecord.Name + '">';
       ctEditInfo: begin
         EditInfos.Sort;
         Result := EditInfos.CommaText;

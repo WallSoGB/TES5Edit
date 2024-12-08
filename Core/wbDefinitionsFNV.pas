@@ -685,10 +685,16 @@ end;
 function wbConditionFunctionToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
 begin
   Result := '';
-
   var Desc := wbConditionDescFromIndex(aInt);
-
   case aType of
+    ctEditType: Result := 'ComboBox';
+    ctToSortKey: Result := IntToHex(aInt, 8);
+    ctCheck: begin
+      if Assigned(Desc) then
+        Result := ''
+      else
+        Result := '<Unknown: '+aInt.ToString+'>';
+    end;
     ctToStr, ctToSummary, ctToEditValue: begin
       if Assigned(Desc) then
         Result := Desc.Name
@@ -697,31 +703,15 @@ begin
       else
         Result := '<Unknown: '+aInt.ToString+'>';
     end;
-
-    ctToSortKey: Result := IntToHex(aInt, 8);
-
-    ctCheck: begin
-      if Assigned(Desc) then
-        Result := ''
-      else
-        Result := '<Unknown: '+aInt.ToString+'>';
-    end;
-
-    ctEditType: Result := 'ComboBox';
-
     ctEditInfo: begin
-      var wbConditionEditInfo: string;
-      if wbConditionEditInfo = '' then begin
-        with TStringList.Create do try
-          for var i := Low(wbConditionFunctions) to High(wbConditionFunctions) do
-            Add(wbConditionFunctions[i].Name);
-          Sort;
-          wbConditionEditInfo := CommaText;
-        finally
-          Free;
-        end;
+      with TStringList.Create do try
+        for var i := Low(wbConditionFunctions) to High(wbConditionFunctions) do
+          Add(wbConditionFunctions[i].Name);
+        Sort;
+        Result := CommaText;
+      finally
+        Free;
       end;
-      Result := wbConditionEditInfo;
     end;
   end;
 end;
@@ -771,11 +761,10 @@ var
   Objective  : IwbContainerElementRef;
 begin
   case aType of
-    ctToEditValue, ctToSummary: Result := aInt.ToString;
-    ctToStr: Result := aInt.ToString + ' <Warning: Could not resolve Parameter 1>';
     ctToSortKey: Exit(IntToHex64(aInt, 8));
+    ctToEditValue, ctToSummary: Result := aInt.ToString;
     ctCheck: Result := '<Warning: Could not resolve Parameter 1>';
-    ctEditInfo, ctEditType: Result := '';
+    ctToStr: Result := aInt.ToString + ' <Warning: Could not resolve Parameter 1>';
   end;
 
   if not wbTryGetContainerRefFromUnionOrValue(aElement, Container) then
@@ -787,8 +776,8 @@ begin
   MainRecord := MainRecord.WinningOverride;
   if MainRecord.Signature <> QUST then begin
     case aType of
-      ctToStr: Result := aInt.ToString + ' <Warning: "' + MainRecord.ShortName + '" is not a Quest record>';
       ctCheck: Result := '<Warning: "' + MainRecord.ShortName + '" is not a Quest record>';
+      ctToStr: Result := aInt.ToString + ' <Warning: "' + MainRecord.ShortName + '" is not a Quest record>';
     end;
     Exit;
   end;
@@ -824,8 +813,8 @@ begin
     end;
 
     case aType of
-      ctToStr: Result := aInt.ToString + ' <Warning: Quest Objective not found in "' + MainRecord.Name + '">';
       ctCheck: Result := '<Warning: Quest Objective not found in "' + MainRecord.Name + '">';
+      ctToStr: Result := aInt.ToString + ' <Warning: Quest Objective not found in "' + MainRecord.Name + '">';
       ctEditInfo: begin
         EditInfos.Sort;
         Result := EditInfos.CommaText;
@@ -844,12 +833,12 @@ var
   Stages     : IwbContainerElementRef;
   Stage      : IwbContainerElementRef;
 begin
+  Result := '';
   case aType of
-    ctToEditValue, ctToSummary: Result := aInt.ToString;
-    ctToStr: Result := aInt.ToString + ' <Warning: Could not resolve Parameter 1>';
     ctToSortKey: Exit(IntToHex64(aInt, 8));
+    ctToEditValue, ctToSummary: Result := aInt.ToString;
     ctCheck: Result := '<Warning: Could not resolve Parameter 1>';
-    ctEditInfo, ctEditType: Result := '';
+    ctToStr: Result := aInt.ToString + ' <Warning: Could not resolve Parameter 1>';
   end;
 
   if not wbTryGetContainerRefFromUnionOrValue(aElement, Container) then
@@ -861,8 +850,8 @@ begin
   MainRecord := MainRecord.WinningOverride;
   if MainRecord.Signature <> QUST then begin
     case aType of
-      ctToStr: Result := aInt.ToString + ' <Warning: "' + MainRecord.ShortName + '" is not a Quest record>';
       ctCheck: Result := '<Warning: "' + MainRecord.ShortName + '" is not a Quest record>';
+      ctToStr: Result := aInt.ToString + ' <Warning: "' + MainRecord.ShortName + '" is not a Quest record>';
     end;
     Exit;
   end;
@@ -898,8 +887,8 @@ begin
     end;
 
     case aType of
-      ctToStr: Result := aInt.ToString + ' <Warning: Quest Stage not found in "' + MainRecord.Name + '">';
       ctCheck: Result := '<Warning: Quest Stage not found in "' + MainRecord.Name + '">';
+      ctToStr: Result := aInt.ToString + ' <Warning: Quest Stage not found in "' + MainRecord.Name + '">';
       ctEditInfo: begin
         EditInfos.Sort;
         Result := EditInfos.CommaText;
@@ -919,12 +908,12 @@ var
   LocalVars  : IwbContainerElementRef;
   LocalVar   : IwbContainerElementRef;
 begin
+  Result := '';
   case aType of
-    ctToEditValue, ctToSummary: Result := aInt.ToString;
-    ctToStr: Result := aInt.ToString + ' <Warning: Could not resolve Parameter 1>';
     ctToSortKey: Exit(IntToHex64(aInt, 8));
+    ctToEditValue, ctToSummary: Result := aInt.ToString;
     ctCheck: Result := '<Warning: Could not resolve Parameter 1>';
-    ctEditInfo, ctEditType: Result := '';
+    ctToStr: Result := aInt.ToString + ' <Warning: Could not resolve Parameter 1>';
   end;
 
   if not wbTryGetContainerRefFromUnionOrValue(aElement, Container) then
@@ -941,16 +930,16 @@ begin
   var ScriptRef := MainRecord.RecordBySignature['SCRI'];
   if not Assigned(ScriptRef) then begin
     case aType of
-      ctToStr: Result := aInt.ToString + ' <Warning: "' + MainRecord.ShortName + '" does not contain a SCRI subrecord>';
       ctCheck: Result := '<Warning: "' + MainRecord.ShortName + '" does not contain a SCRI subrecord>';
+      ctToStr: Result := aInt.ToString + ' <Warning: "' + MainRecord.ShortName + '" does not contain a SCRI subrecord>';
     end;
     Exit;
   end;
 
   if not Supports(ScriptRef.LinksTo, IwbMainRecord, Script) then begin
     case aType of
-      ctToStr: Result := aInt.ToString + ' <Warning: "' + MainRecord.ShortName + '" does not have a valid script>';
       ctCheck: Result := '<Warning: "' + MainRecord.ShortName + '" does not have a valid script>';
+      ctToStr: Result := aInt.ToString + ' <Warning: "' + MainRecord.ShortName + '" does not have a valid script>';
     end;
     Exit;
   end;
@@ -983,8 +972,8 @@ begin
     end;
 
     case aType of
-      ctToStr: Result := aInt.ToString + ' <Warning: Variable Index not found in "' + Script.Name + '">';
       ctCheck: Result := '<Warning: Variable Index not found in "' + Script.Name + '">';
+      ctToStr: Result := aInt.ToString + ' <Warning: Variable Index not found in "' + Script.Name + '">';
       ctEditInfo: begin
         Variables.Sort;
         Result := Variables.CommaText;
@@ -1033,7 +1022,6 @@ begin
     raise Exception.Create('"' + MainRecord.ShortName + '" does not have a valid script');
 
   Script := Script.HighestOverrideOrSelf[aElement._File.LoadOrder];
-
   if Supports(Script.ElementByName['Local Variables'], IwbContainerElementRef, LocalVars) then begin
     for var i := 0 to Pred(LocalVars.ElementCount) do
       if Supports(LocalVars.Elements[i], IwbContainerElementRef, LocalVar) then begin
@@ -1054,6 +1042,7 @@ begin
   Result := 0;
   if not wbTryGetContainerFromUnion(aElement, Container) then
     Exit;
+
   Result := Container.ElementByName['Parameter #1'].NativeValue;
 end;
 
