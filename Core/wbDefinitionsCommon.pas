@@ -275,8 +275,9 @@ function wbVertexToInt1(const aString: string; const aElement: IwbElement): Int6
 function wbVertexToInt2(const aString: string; const aElement: IwbElement): Int64;
 function wbWeatherCloudSpeedToInt(const aString: string; const aElement: IwbElement): Int64;
 
-{>>> To String Callbacks <<<} //34
+{>>> To String Callbacks <<<} //35
 procedure wbABGRToStr(var aValue: string; aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement; aType: TwbCallbackType);
+function wbAliasToStr(aInt: Int64; const aQuestRef: IwbElement; aType: TwbCallbackType): string;
 procedure wbBGRAToStr(var aValue: string; aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement; aType: TwbCallbackType);
 function wbClmtMoonsPhaseLength(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
 function wbClmtTime(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
@@ -2049,6 +2050,151 @@ begin
     aValue := 'RGBA(' + R + ', ' + G + ', ' + B + ', ' + A.Summary + ')'
   else
     aValue := 'RGB(' + R + ', ' + G + ', ' + B + ')';
+end;
+
+function wbAliasToStr(aInt: Int64; const aQuestRef: IwbElement; aType: TwbCallbackType): string;
+var
+  MainRecord : IwbMainRecord;
+  EditInfos  : TStringList;
+  Aliases    : IwbContainerElementRef;
+  Alias      : IwbContainerElementRef;
+begin
+  Result := '';
+  case aType of
+    ctToStr, ctToSummary:
+      if aInt = -1 then
+        Result := 'None'
+      else if (aInt = -2) and not wbIsSkyrim then
+        Result := 'Player'
+      else if (aInt = -3) and wbIsStarfield then
+        Result := 'Non-Actor Track'
+      else if (aInt = -4) and wbIsStarfield then
+        Result := 'Play Audio At Player(Voice Note)'
+      else if (aInt = -5) and wbIsStarfield then
+        Result := 'Dialogue For Scene'
+      else begin
+        Result := aInt.ToString;
+        if aType = ctToStr then
+          Result := Result + ' <Warning: Could not resolve alias>';
+      end;
+           
+    ctToEditValue:
+      if aInt = -1 then
+        Result := 'None'
+      else
+        Result := aInt.ToString;
+
+    ctToSortKey: Exit(IntToHex64(aInt, 8));
+
+    ctCheck:
+      if  (aInt = -1)
+      or ((aInt = -2) and not wbIsSkyrim)
+      or ((aInt = -3) and wbIsStarfield)
+      or ((aInt = -4) and wbIsStarfield)
+      or ((aInt = -5) and wbIsStarfield) then
+        Result := ''
+      else
+        Result := '<Warning: Could not resolve alias [' + aInt.ToString + ']>';
+           
+    ctEditInfo, ctEditType: Result := '';
+  end;
+
+  if  (aInt = -1)
+  or ((aInt = -2) and not wbIsSkyrim)
+  or ((aInt = -3) and wbIsStarfield)
+  or ((aInt = -4) and wbIsStarfield)
+  or ((aInt = -5) and wbIsStarfield)
+  and (aType <> ctEditType)
+  and (aType <> ctEditInfo) then
+    Exit;
+
+  if not Assigned(aQuestRef) then
+    Exit;
+
+  // aQuestRef can be a QUST record or reference to QUST record
+  if not Supports(aQuestRef, IwbMainRecord, MainRecord) then
+    if not Supports(aQuestRef.LinksTo, IwbMainRecord, MainRecord) then
+      Exit;
+
+  if wbIsSkyrim then
+    MainRecord := MainRecord.WinningOverride
+  else
+    // get winning quest override except for partial forms
+    if MainRecord.WinningOverride.Flags._Flags and $00004000 = 0 then
+      MainRecord := MainRecord.WinningOverride
+    else if MainRecord.Flags._Flags and $00004000 <> 0 then
+      MainRecord := MainRecord.MasterOrSelf;
+
+  if MainRecord.Signature <> QUST then begin
+    case aType of
+      ctToStr, ctToSummary: begin
+        Result := aInt.ToString;
+        if aType = ctToStr then
+          Result := Result + ' <Warning: "' + MainRecord.ShortName + '" is not a Quest record>';
+      end;
+      ctCheck: Result := '<Warning: "' + MainRecord.ShortName + '" is not a Quest record>';
+    end;
+    Exit;
+  end;
+
+  case aType of
+    ctEditType: Exit('ComboBox');
+    ctEditInfo: EditInfos := TStringList.Create;
+  else
+    EditInfos := nil;
+  end;
+
+  try
+    if Supports(MainRecord.ElementByName['Aliases'], IwbContainerElementRef, Aliases) then begin
+      for var i := 0 to Pred(Aliases.ElementCount) do
+        if Supports(Aliases.Elements[i], IwbContainerElementRef, Alias) then begin
+          var lHasSignature: IwbHasSignature;
+          if Supports(Alias, IwbHasSignature, lHasSignature) and (lHasSignature.Signature = ALCS) then begin
+            var lALST := Alias.ElementBySignature[ALST];
+            if Assigned(lALST) then
+              if not Supports(lALST, IwbContainerElementRef, Alias) then
+                Continue;
+          end;
+
+          var j := Alias.Elements[0].NativeValue;
+          if Assigned(EditInfos) or (j = aInt) then begin
+            var s := Alias.ElementEditValues['ALID'];
+            var t := IntToStr(j);
+
+            while Length(t) < 3 do
+              t := '0' + t;
+            if s <> '' then
+              t := t + ' ' + s;
+            if Assigned(EditInfos) then
+              EditInfos.Add(t)
+
+            else if j = aInt then begin
+              case aType of
+                ctToStr, ctToSummary, ctToEditValue: Result := t;
+                ctCheck: Result := '';
+              end;
+              Exit;
+            end;
+          end;
+        end;
+    end;
+
+    case aType of
+      ctToStr, ctToSummary: begin
+        Result := aInt.ToString;
+        if aType = ctToStr then
+          Result := Result + ' <Warning: Quest Alias not found in "' + MainRecord.Name + '">';
+      end;
+      ctCheck: Result := '<Warning: Quest Alias [' + aInt.ToString + '] not found in "' + MainRecord.Name + '">';
+      ctEditInfo: begin
+        EditInfos.Add('None');
+        EditInfos.Sort;
+        Result := EditInfos.CommaText;
+      end;
+    end;
+  finally
+    FreeAndNil(EditInfos);
+  end;
 end;
 
 procedure wbBGRAToStr(var aValue: string; aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement; aType: TwbCallbackType);
