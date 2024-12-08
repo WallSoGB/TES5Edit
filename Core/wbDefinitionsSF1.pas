@@ -231,7 +231,7 @@ begin;
       ctToStr, ctToSummary: begin
         Result := aStageIndex.ToString;
         if aType = ctToStr then
-          Result := Result + ' <Warning: Quest Stage not found in "' + aQuest.Name + '">';
+          Result := Result + ' <Warning: Quest Stage [' + aStageIndex.ToString + '] not found in "' + aQuest.Name + '">';
       end;
       ctCheck: Result := '<Warning: Quest Stage [' + aStageIndex.ToString + '] not found in "' + aQuest.Name + '">';
       ctEditInfo: begin
@@ -13940,9 +13940,9 @@ end;
                 ctToStr, ctToSummary: begin
                   Result := aFaceDialIndex.ToString;
                   if aType = ctToStr then
-                    Result := Result + ' <Warning: Face Dial not found in "' + lRaceMainRecord.Name + '">';
+                    Result := Result + ' <Warning: Face Dial [' + aFaceDialIndex.ToString + '] not found in "' + lRaceMainRecord.Name + '">';
                 end;
-                ctCheck: Result := '<Warning: Face Dial not found in "' + lRaceMainRecord.Name + '">';
+                ctCheck: Result := '<Warning: Face Dial [' + aFaceDialIndex.ToString + '] not found in "' + lRaceMainRecord.Name + '">';
                 ctEditInfo: begin
                   lEditInfos.Sort;
                   Result := lEditInfos.CommaText;
@@ -14115,9 +14115,9 @@ end;
                   ctToStr, ctToSummary: begin
                     Result := aFaceMorphIndex.ToString;
                     if aType = ctToStr then
-                      Result := Result + ' <Warning: Face Morph Phenotype not found in "' + lRaceMainRecord.Name + '">';
+                      Result := Result + ' <Warning: Face Morph Phenotype [' + aFaceMorphIndex.ToString + '] not found in "' + lRaceMainRecord.Name + '">';
                   end;
-                  ctCheck: Result := '<Warning: Face Morph Phenotype not found in "' + lRaceMainRecord.Name + '">';
+                  ctCheck: Result := '<Warning: Face Morph Phenotype [' + aFaceMorphIndex.ToString + '] not found in "' + lRaceMainRecord.Name + '">';
                   ctEditInfo: begin
                     lEditInfos.Sort;
                     Result := lEditInfos.CommaText;

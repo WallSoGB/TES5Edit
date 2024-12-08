@@ -2183,7 +2183,7 @@ begin
       ctToStr, ctToSummary: begin
         Result := aInt.ToString;
         if aType = ctToStr then
-          Result := Result + ' <Warning: Quest Alias not found in "' + MainRecord.Name + '">';
+          Result := Result + ' <Warning: Quest Alias [' + aInt.ToString + '] not found in "' + MainRecord.Name + '">';
       end;
       ctCheck: Result := '<Warning: Quest Alias [' + aInt.ToString + '] not found in "' + MainRecord.Name + '">';
       ctEditInfo: begin
@@ -2804,7 +2804,7 @@ begin
    or Supports(MainRecord.ElementByPath['NVNM\Triangles'], IwbContainerElementRef, Triangles)
      ) then
     if aInt >= Triangles.ElementCount then
-      Result := '<Warning: Navmesh triangle not found in "' + MainRecord.Name + '">';
+      Result := '<Warning: Navmesh triangle [' + aInt.ToString + '] not found in "' + MainRecord.Name + '">';
 end;
 
 procedure wbRGBAToStr(var aValue: string; aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement; aType: TwbCallbackType);

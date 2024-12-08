@@ -916,8 +916,8 @@ begin
     end;
 
     case aType of
-      ctCheck: Result := '<Warning: Quest Stage not found in "' + MainRecord.Name + '">';
-      ctToStr: Result := aInt.ToString + ' <Warning: Quest Stage not found in "' + MainRecord.Name + '">';
+      ctCheck: Result := '<Warning: Quest Stage [' + aInt.ToString + '] not found in "' + MainRecord.Name + '">';
+      ctToStr: Result := aInt.ToString + ' <Warning: Quest Stage [' + aInt.ToString + '] not found in "' + MainRecord.Name + '">';
       ctEditInfo: begin
         EditInfos.Sort;
         Result := EditInfos.CommaText;
@@ -1100,8 +1100,8 @@ begin
     end;
 
     case aType of
-      ctToStr: Result := aInt.ToString + ' <Warning: Quest Stage not found in "' + MainRecord.Name + '">';
-      ctCheck: Result := '<Warning: Quest Stage not found in "' + MainRecord.Name + '">';
+      ctToStr: Result := aInt.ToString + ' <Warning: Quest Stage [' + aInt.ToString + '] not found in "' + MainRecord.Name + '">';
+      ctCheck: Result := '<Warning: Quest Stage [' + aInt.ToString + '] not found in "' + MainRecord.Name + '">';
       ctEditInfo: begin
         EditInfos.Sort;
         Result := EditInfos.CommaText;
@@ -2639,12 +2639,12 @@ begin
       else begin
         Result := aInt.ToString;
         if aType = ctToStr then
-          Result := Result + ' <Tint layer index not found in ' + Race.Name + '>';
+          Result := Result + ' <Tint Layer Index [' + aInt.ToString + '] not found in ' + Race.Name + '>';
       end;
     end;
     ctCheck: begin
       if EntryName = '' then
-        Result := '<Tint layer index ' + aInt.ToString + ' not found in ' + Race.Name + '>'
+        Result := '<Tint Layer Index [' + aInt.ToString + '] not found in ' + Race.Name + '>'
       else
         Result := '';
     end;

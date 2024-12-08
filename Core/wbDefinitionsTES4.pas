@@ -470,8 +470,8 @@ begin
     end;
 
     case aType of
-      ctCheck: Result := '<Warning: Quest Stage not found in "' + MainRecord.Name + '">';
-      ctToStr: Result := aInt.ToString + ' <Warning: Quest Stage not found in "' + MainRecord.Name + '">';
+      ctCheck: Result := '<Warning: Quest Stage [' + aInt.ToString + '] not found in "' + MainRecord.Name + '">';
+      ctToStr: Result := aInt.ToString + ' <Warning: Quest Stage [' + aInt.ToString + '] not found in "' + MainRecord.Name + '">';
       ctEditInfo: begin
         EditInfos.Sort;
         Result := EditInfos.CommaText;
@@ -555,8 +555,8 @@ begin
     end;
 
     case aType of
-      ctCheck: Result := '<Warning: Variable Index not found in "' + Script.Name + '">';
-      ctToStr: Result := aInt.ToString + ' <Warning: Variable Index not found in "' + Script.Name + '">';
+      ctCheck: Result := '<Warning: Variable Index [' + aInt.ToString + '] not found in "' + Script.Name + '">';
+      ctToStr: Result := aInt.ToString + ' <Warning: Variable Index [' + aInt.ToString + '] not found in "' + Script.Name + '">';
       ctEditInfo: begin
         Variables.Sort;
         Result := Variables.CommaText;

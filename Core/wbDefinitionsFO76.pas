@@ -551,9 +551,9 @@ begin
       ctToStr, ctToSummary: begin
         Result := aInt.ToString;
         if aType = ctToStr then
-          Result := Result + ' <Warning: Quest Stage/Objective not found in "' + MainRecord.Name + '">';
+          Result := Result + ' <Warning: Quest Stage/Objective [' + aInt.ToString + '] not found in "' + MainRecord.Name + '">';
       end;
-      ctCheck: Result := '<Warning: Quest Stage/Objective not found in "' + MainRecord.Name + '">';
+      ctCheck: Result := '<Warning: Quest Stage/Objective [' + aInt.ToString + '] not found in "' + MainRecord.Name + '">';
       ctEditInfo: begin
         EditInfos.Sort;
         Result := EditInfos.CommaText;
@@ -685,9 +685,9 @@ begin
       ctToStr, ctToSummary: begin
         Result := aInt.ToString;
         if aType = ctToStr then
-          Result := Result + ' <Warning: Quest Stage/Objective not found in "' + MainRecord.Name + '">';
+          Result := Result + ' <Warning: Quest Stage/Objective [' + aInt.ToString + '] not found in "' + MainRecord.Name + '">';
       end;
-      ctCheck: Result := '<Warning: Quest Stage/Objective not found in "' + MainRecord.Name + '">';
+      ctCheck: Result := '<Warning: Quest Stage/Objective [' + aInt.ToString + '] not found in "' + MainRecord.Name + '">';
       ctEditInfo: begin
         EditInfos.Sort;
         Result := EditInfos.CommaText;
@@ -809,9 +809,9 @@ begin
       ctToStr, ctToSummary: begin
         Result := aInt.ToString;
         if aType = ctToStr then
-          Result := Result + ' <Warning: Quest Stage/Objective not found in "' + MainRecord.Name + '">';
+          Result := Result + ' <Warning: Quest Stage/Objective [' + aInt.ToString + '] not found in "' + MainRecord.Name + '">';
       end;
-      ctCheck: Result := '<Warning: Quest Stage/Objective not found in "' + MainRecord.Name + '">';
+      ctCheck: Result := '<Warning: Quest Stage/Objective [' + aInt.ToString + '] not found in "' + MainRecord.Name + '">';
       ctEditInfo: begin
         EditInfos.Sort;
         Result := EditInfos.CommaText;
@@ -4709,12 +4709,12 @@ begin
       else begin
         Result := IntToHex64(aInt, 8);
         if aType = ctToStr then
-          Result := Result + ' <Morph index not found in ' + Race.Name + '>';
+          Result := Result + ' <Morph Index [' + IntToHex(aInt, 8) + '] not found in ' + Race.Name + '>';
       end;
     end;
     ctCheck: begin
       if EntryName = '' then
-        Result := '<Morph index ' + IntToHex(aInt, 8) + ' not found in ' + Race.Name + '>'
+        Result := '<Morph Index [' + IntToHex(aInt, 8) + '] not found in ' + Race.Name + '>'
       else
         Result := '';
     end;
@@ -4851,12 +4851,12 @@ begin
       else begin
         Result := IntToHex64(aInt, 8);
         if aType = ctToStr then
-          Result := Result + ' <Face morph index not found in ' + Race.Name + '>';
+          Result := Result + ' <Face Morph Index [' + IntToHex(aInt, 8) + '] not found in ' + Race.Name + '>';
       end;
     end;
     ctCheck: begin
       if EntryName = '' then
-        Result := '<Face morph index ' + IntToHex(aInt, 8) + ' not found in ' + Race.Name + '>'
+        Result := '<Face Morph Index [' + IntToHex(aInt, 8) + '] not found in ' + Race.Name + '>'
       else
         Result := '';
     end;
@@ -5001,12 +5001,12 @@ begin
       else begin
         Result := aInt.ToString;
         if aType = ctToStr then
-          Result := Result + ' <Tint layer index not found in ' + Race.Name + '>';
+          Result := Result + ' <Tint Layer Index [' + aInt.ToString + '] not found in ' + Race.Name + '>';
       end;
     end;
     ctCheck: begin
       if EntryName = '' then
-        Result := '<Tint layer index ' + aInt.ToString + ' not found in ' + Race.Name + '>'
+        Result := '<Tint Layer Index [' + aInt.ToString + '] not found in ' + Race.Name + '>'
       else
         Result := '';
     end;
