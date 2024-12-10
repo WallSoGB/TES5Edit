@@ -123,10 +123,7 @@ var
   wbMO5C: IwbSubRecordDef;
   wbComponent: IwbValueDef;
   wbComponents: IwbSubRecordDef;
-  wbCTDA: IwbRecordMemberDef;
-  wbCTDAs: IwbSubRecordArrayDef;
-  wbCTDAsReq: IwbSubRecordArrayDef;
-  wbCTDAsCount: IwbSubRecordArrayDef;
+  wbConditions: IwbRecordMemberDef;
   wbXESP: IwbSubRecordDef;
   wbICON: IwbSubRecordDef;
   wbMICO: IwbSubRecordDef;
@@ -206,6 +203,945 @@ var
   wbBlendOperationEnum: IwbEnumDef;
   a, b, c : TVarRecs;
 
+type
+  TConditionParameterType = (
+    //Misc
+	  {1} ptNone,
+    {2} ptFloat,
+	  {3} ptInteger,
+	  {4} ptString,
+	  {5} ptAlias,
+	  {6} ptEvent,
+	  {7} ptPackdata,
+	  {8} ptQuestStage,
+
+	  //Enums
+    {9}  ptAlignment,     //wbAlignmentEnum
+	  {10} ptAxis,          //wbAxisEnum
+	  {11} ptCastingSource, //wbCastingSourceEnum
+	  {12} ptCrimeType,     //wbCrimeTypeEnum
+	  {13} ptCriticalStage, //wbCriticalStageEnum
+	  {14} ptFormType,      //wbFormTypeEnum
+	  {15} ptMiscStat,      //wbMiscStatEnum
+	  {16} ptSex,           //wbSexEnum
+	  {17} ptWardState,     //wbWardStateEnum
+
+	  //FormIDs
+	  {18} ptActor,           //ACHR
+    {19} ptActorBase,       //NPC_
+    {20} ptActorValue,      //AVIF
+	  {21} ptAssociationType, //ASTP
+	  {22} ptBaseEffect,      //MGEF
+	  {23} ptBaseObject,      //SigBaseObjects
+	  {24} ptCell,            //CELL
+	  {25} ptClass,           //CLAS
+    {26} ptDamageType,      //DMGT
+	  {27} ptEffectItem,      //ALCH, ENCH, INGR, SCRL, SPEL
+	  {28} ptEncounterZone,   //ECZN
+    {29} ptEquipType,       //EQUP
+    {30} ptEventData,       //LCTN, KYWD or FLST
+    {31} ptFaction,         //FACT
+	  {32} ptFormList,        //FLST
+    {33} ptFurniture,       //FURN
+    {34} ptGlobal,          //GLOB
+    {35} ptIdleForm,        //IDLE
+    {36} ptKeyword,         //KYWD
+    {37} ptLocation,        //LCTN
+    {38} ptLocationRefType, //LCRT
+  	{39} ptOwner,           //FACT, NPC_
+	  {40} ptPackage,         //PACK
+	  {41} ptPerk,            //PERK
+	  {42} ptQuest,           //QUST
+	  {43} ptRace,            //RACE
+	  {44} ptReference,       //REFR, ACHR
+    {45} ptRegion,          //REGN
+    {46} ptScene,           //SCEN
+    {47} ptVoiceType,       //VTYP
+    {48} ptWeather,         //WTHR
+    {49} ptWorldspace       //WRLD
+  );
+
+  PConditionFunction = ^TConditionFunction;
+  TConditionFunction = record
+    Index: Integer;
+    Name: string;
+    Desc: string;
+    ParamType1: TConditionParameterType;
+    ParamType2: TConditionParameterType;
+    ParamType3: TConditionParameterType;
+  end;
+
+const
+  wbConditionFunctions : array[0..478] of TConditionFunction = (
+    (Index:   0; Name: 'GetWantBlocking'),
+    (Index:   1; Name: 'GetDistance'; ParamType1: ptReference),
+    (Index:   5; Name: 'GetLocked'),
+    (Index:   6; Name: 'GetPos'; Paramtype1: ptAxis),
+    (Index:   8; Name: 'GetAngle'; Paramtype1: ptAxis),
+    (Index:  10; Name: 'GetStartingPos'; Paramtype1: ptAxis),
+    (Index:  11; Name: 'GetStartingAngle'; Paramtype1: ptAxis),
+    (Index:  12; Name: 'GetSecondsPassed'),
+    (Index:  14; Name: 'GetValue'; Paramtype1: ptActorValue),
+    (Index:  18; Name: 'GetCurrentTime'),
+    (Index:  24; Name: 'GetScale'),
+    (Index:  25; Name: 'IsMoving'),
+    (Index:  26; Name: 'IsTurning'),
+    (Index:  27; Name: 'GetLineOfSight'; ParamType1: ptReference),
+    (Index:  32; Name: 'GetInSameCell'; ParamType1: ptReference),
+    (Index:  35; Name: 'GetDisabled'),
+    (Index:  36; Name: 'MenuMode'; Paramtype1: ptInteger),
+    (Index:  39; Name: 'GetDisease'),
+    (Index:  41; Name: 'GetClothingValue'),
+    (Index:  42; Name: 'SameFaction'; Paramtype1: ptActor),
+    (Index:  43; Name: 'SameRace'; Paramtype1: ptActor),
+    (Index:  44; Name: 'SameSex'; Paramtype1: ptActor),
+    (Index:  45; Name: 'GetDetected'; Paramtype1: ptActor),
+    (Index:  46; Name: 'GetDead'),
+    (Index:  47; Name: 'GetItemCount'; ParamType1: ptBaseObject),
+    (Index:  48; Name: 'GetGold'),
+    (Index:  49; Name: 'GetSleeping'),
+    (Index:  50; Name: 'GetTalkedToPC'),
+    (Index:  56; Name: 'GetQuestRunning'; Paramtype1: ptQuest),
+    (Index:  58; Name: 'GetStage'; Paramtype1: ptQuest),
+    (Index:  59; Name: 'GetStageDone'; ParamType1: ptQuest; ParamType2: ptQuestStage),
+    (Index:  60; Name: 'GetFactionRankDifference'; Paramtype1: ptFaction; Paramtype2: ptActor),
+    (Index:  61; Name: 'GetAlarmed'),
+    (Index:  62; Name: 'IsRaining'),
+    (Index:  63; Name: 'GetAttacked'),
+    (Index:  64; Name: 'GetIsCreature'),
+    (Index:  65; Name: 'GetLockLevel'),
+    (Index:  66; Name: 'GetShouldAttack'; Paramtype1: ptActor),
+    (Index:  67; Name: 'GetInCell'; Paramtype1: ptCell),
+    (Index:  68; Name: 'GetIsClass'; Paramtype1: ptClass),
+    (Index:  69; Name: 'GetIsRace'; Paramtype1: ptRace),
+    (Index:  70; Name: 'GetIsSex'; Paramtype1: ptSex),
+    (Index:  71; Name: 'GetInFaction'; Paramtype1: ptFaction),
+    (Index:  72; Name: 'GetIsID'; ParamType1: ptBaseObject),
+    (Index:  73; Name: 'GetFactionRank'; Paramtype1: ptFaction),
+    (Index:  74; Name: 'GetGlobalValue'; Paramtype1: ptGlobal),
+    (Index:  75; Name: 'IsSnowing'),
+    (Index:  77; Name: 'GetRandomPercent'),
+    (Index:  79; Name: 'WouldBeStealing'; ParamType1: ptReference),
+    (Index:  80; Name: 'GetLevel'),
+    (Index:  81; Name: 'IsRotating'),
+    (Index:  84; Name: 'GetDeadCount'; ParamType1: ptActorBase),
+    (Index:  91; Name: 'GetIsAlerted'),
+    (Index:  98; Name: 'GetPlayerControlsDisabled'; Paramtype1: ptInteger; Paramtype2: ptInteger; Paramtype3: ptInteger),
+    (Index:  99; Name: 'GetHeadingAngle'; ParamType1: ptReference),
+    (Index: 101; Name: 'IsWeaponMagicOut'),
+    (Index: 102; Name: 'IsTorchOut'),
+    (Index: 103; Name: 'IsShieldOut'),
+    (Index: 106; Name: 'IsFacingUp'),
+    (Index: 107; Name: 'GetKnockedState'),
+    (Index: 108; Name: 'GetWeaponAnimType'),
+    (Index: 109; Name: 'IsWeaponSkillType'; ParamType1: ptActorValue),
+    (Index: 110; Name: 'GetCurrentAIPackage'),
+    (Index: 111; Name: 'IsWaiting'),
+    (Index: 112; Name: 'IsIdlePlaying'),
+    (Index: 116; Name: 'IsIntimidatedbyPlayer'),
+    (Index: 117; Name: 'IsPlayerInRegion'; Paramtype1: ptRegion),
+    (Index: 118; Name: 'GetActorAggroRadiusViolated'),
+    (Index: 122; Name: 'GetCrime'; ParamType1: ptActor; ParamType2: ptCrimeType),
+    (Index: 123; Name: 'IsGreetingPlayer'),
+    (Index: 125; Name: 'IsGuard'),
+    (Index: 127; Name: 'HasBeenEaten'),
+    (Index: 128; Name: 'GetStaminaPercentage'),
+    (Index: 129; Name: 'HasBeenRead'),
+    (Index: 130; Name: 'GetDying'),
+    (Index: 131; Name: 'GetSceneActionPercent'; ParamType1: ptScene; ParamType2: ptInteger),
+    (Index: 132; Name: 'WouldRefuseCommand'; ParamType1: ptReference),
+    (Index: 133; Name: 'SameFactionAsPC'),
+    (Index: 134; Name: 'SameRaceAsPC'),
+    (Index: 135; Name: 'SameSexAsPC'),
+    (Index: 136; Name: 'GetIsReference'; ParamType1: ptReference),
+    (Index: 141; Name: 'IsTalking'),
+    (Index: 142; Name: 'GetComponentCount'; ParamType1: ptBaseObject),
+    (Index: 143; Name: 'GetCurrentAIProcedure'),
+    (Index: 144; Name: 'GetTrespassWarningLevel'),
+    (Index: 145; Name: 'IsTrespassing'),
+    (Index: 146; Name: 'IsInMyOwnedCell'),
+    (Index: 147; Name: 'GetWindSpeed'),
+    (Index: 148; Name: 'GetCurrentWeatherPercent'),
+    (Index: 149; Name: 'GetIsCurrentWeather'; ParamType1: ptWeather),
+    (Index: 150; Name: 'IsContinuingPackagePCNear'),
+    (Index: 152; Name: 'GetIsCrimeFaction'; Paramtype1: ptFaction),
+    (Index: 153; Name: 'CanHaveFlames'),
+    (Index: 154; Name: 'HasFlames'),
+    (Index: 157; Name: 'GetOpenState'),
+    (Index: 159; Name: 'GetSitting'),
+    (Index: 161; Name: 'GetIsCurrentPackage'; Paramtype1: ptPackage),
+    (Index: 162; Name: 'IsCurrentFurnitureRef'; ParamType1: ptReference),
+    (Index: 163; Name: 'IsCurrentFurnitureObj'; Paramtype1: ptFurniture),
+    (Index: 170; Name: 'GetDayOfWeek'),
+    (Index: 172; Name: 'GetTalkedToPCParam'; Paramtype1: ptActor),
+    (Index: 175; Name: 'IsPCSleeping'),
+    (Index: 176; Name: 'IsPCAMurderer'),
+    (Index: 180; Name: 'HasSameEditorLocationAsRef'; ParamType1: ptReference; ParamType2: ptKeyword),
+    (Index: 181; Name: 'HasSameEditorLocationAsRefAlias'; ParamType1: ptAlias; ParamType2: ptKeyword),
+    (Index: 182; Name: 'GetEquipped'; ParamType1: ptBaseObject),
+    (Index: 185; Name: 'IsSwimming'),
+    (Index: 190; Name: 'GetAmountSoldStolen'),
+    (Index: 192; Name: 'GetIgnoreCrime'),
+    (Index: 193; Name: 'GetPCExpelled'; Paramtype1: ptFaction),
+    (Index: 195; Name: 'GetPCFactionMurder'; Paramtype1: ptFaction),
+    (Index: 197; Name: 'GetPCEnemyofFaction'; Paramtype1: ptFaction),
+    (Index: 199; Name: 'GetPCFactionAttack'; Paramtype1: ptFaction),
+    (Index: 203; Name: 'GetDestroyed'),
+    (Index: 214; Name: 'HasMagicEffect'; ParamType1: ptBaseEffect),
+    (Index: 215; Name: 'GetDefaultOpen'),
+    (Index: 223; Name: 'IsSpellTarget'; ParamType1: ptEffectItem),
+    (Index: 224; Name: 'GetVATSMode'),
+    (Index: 225; Name: 'GetPersuasionNumber'),
+    (Index: 226; Name: 'GetVampireFeed'),
+    (Index: 227; Name: 'GetCannibal'),
+    (Index: 228; Name: 'GetIsClassDefault'; Paramtype1: ptClass),
+    (Index: 229; Name: 'GetClassDefaultMatch'),
+    (Index: 230; Name: 'GetInCellParam'; ParamType1: ptCell; ParamType2: ptReference),
+    (Index: 231; Name: 'GetPlayerDialogueInput'),
+    (Index: 235; Name: 'GetVatsTargetHeight'),
+    (Index: 237; Name: 'GetIsGhost'),
+    (Index: 242; Name: 'GetUnconscious'),
+    (Index: 244; Name: 'GetRestrained'),
+    (Index: 246; Name: 'GetIsUsedItem'; ParamType1: ptBaseObject),
+    (Index: 247; Name: 'GetIsUsedItemType'; ParamType1: ptFormType),
+    (Index: 248; Name: 'IsScenePlaying'; Paramtype1: ptScene),
+    (Index: 249; Name: 'IsInDialogueWithPlayer'),
+    (Index: 250; Name: 'GetLocationCleared'; Paramtype1: ptLocation),
+    (Index: 254; Name: 'GetIsPlayableRace'),
+    (Index: 255; Name: 'GetOffersServicesNow'),
+    (Index: 258; Name: 'HasAssociationType'; Paramtype1: ptActor; Paramtype2: ptAssociationType),
+    (Index: 259; Name: 'HasFamilyRelationship'; Paramtype1: ptActor),
+    (Index: 261; Name: 'HasParentRelationship'; Paramtype1: ptActor),
+    (Index: 262; Name: 'IsWarningAbout'; ParamType1: ptFormList),
+    (Index: 263; Name: 'IsWeaponOut'),
+    (Index: 264; Name: 'HasSpell'; ParamType1: ptEffectItem),
+    (Index: 265; Name: 'IsTimePassing'),
+    (Index: 266; Name: 'IsPleasant'),
+    (Index: 267; Name: 'IsCloudy'),
+    (Index: 274; Name: 'IsSmallBump'),
+    (Index: 277; Name: 'GetBaseValue'; ParamType1: ptActorValue),
+    (Index: 278; Name: 'IsOwner'; ParamType1: ptOwner),
+    (Index: 280; Name: 'IsCellOwner'; ParamType1: ptCell; ParamType2: ptOwner),
+    (Index: 282; Name: 'IsHorseStolen'),
+    (Index: 285; Name: 'IsLeftUp'),
+    (Index: 286; Name: 'IsSneaking'),
+    (Index: 287; Name: 'IsRunning'),
+    (Index: 288; Name: 'GetFriendHit'),
+    (Index: 289; Name: 'IsInCombat'; ParamType1: ptInteger),
+    (Index: 300; Name: 'IsInInterior'),
+    (Index: 304; Name: 'IsWaterObject'),
+    (Index: 305; Name: 'GetPlayerAction'),
+    (Index: 306; Name: 'IsActorUsingATorch'),
+    (Index: 309; Name: 'IsXBox'),
+    (Index: 310; Name: 'GetInWorldspace'; Paramtype1: ptWorldSpace),
+    (Index: 312; Name: 'GetPCMiscStat'; ParamType1: ptMiscStat),
+    (Index: 313; Name: 'GetPairedAnimation'),
+    (Index: 314; Name: 'IsActorAVictim'),
+    (Index: 315; Name: 'GetTotalPersuasionNumber'),
+    (Index: 318; Name: 'GetIdleDoneOnce'),
+    (Index: 320; Name: 'GetNoRumors'),
+    (Index: 323; Name: 'GetCombatState'),
+    (Index: 325; Name: 'GetWithinPackageLocation'; ParamType1: ptPackdata),
+    (Index: 327; Name: 'IsRidingMount'),
+    (Index: 329; Name: 'IsFleeing'),
+    (Index: 332; Name: 'IsInDangerousWater'),
+    (Index: 338; Name: 'GetIgnoreFriendlyHits'),
+    (Index: 339; Name: 'IsPlayersLastRiddenMount'),
+    (Index: 353; Name: 'IsActor'),
+    (Index: 354; Name: 'IsEssential'),
+    (Index: 358; Name: 'IsPlayerMovingIntoNewSpace'),
+    (Index: 359; Name: 'GetInCurrentLocation'; Paramtype1: ptLocation),
+    (Index: 360; Name: 'GetInCurrentLocationAlias'; ParamType1: ptAlias),
+    (Index: 361; Name: 'GetTimeDead'),
+    (Index: 362; Name: 'HasLinkedRef'; Paramtype1: ptKeyword),
+    (Index: 365; Name: 'IsChild'),
+    (Index: 366; Name: 'GetStolenItemValueNoCrime'; Paramtype1: ptFaction),
+    (Index: 367; Name: 'GetLastPlayerAction'),
+    (Index: 368; Name: 'IsPlayerActionActive'; Paramtype1: ptInteger),
+    (Index: 370; Name: 'IsTalkingActivatorActor'; Paramtype1: ptActor),
+    (Index: 372; Name: 'IsInList'; ParamType1: ptFormList),
+    (Index: 373; Name: 'GetStolenItemValue'; Paramtype1: ptFaction),
+    (Index: 375; Name: 'GetCrimeGoldViolent'; ParamType1: ptFaction),
+    (Index: 376; Name: 'GetCrimeGoldNonviolent'; ParamType1: ptFaction),
+    (Index: 378; Name: 'IsOwnedBy'; Paramtype1: ptActor),
+    (Index: 380; Name: 'GetCommandDistance'),
+    (Index: 381; Name: 'GetCommandLocationDistance'),
+    (Index: 390; Name: 'GetHitLocation'),
+    (Index: 391; Name: 'IsPC1stPerson'),
+    (Index: 396; Name: 'GetCauseofDeath'),
+    (Index: 397; Name: 'IsLimbGone'; Paramtype1: ptInteger),
+    (Index: 398; Name: 'IsWeaponInList'; ParamType1: ptFormList),
+    (Index: 402; Name: 'IsBribedbyPlayer'),
+    (Index: 403; Name: 'GetRelationshipRank'; Paramtype1: ptActor),
+    (Index: 407; Name: 'GetVATSValue'; ParamType1: ptInteger; ParamType2: ptInteger),
+    (Index: 408; Name: 'IsKiller'; Paramtype1: ptActor),
+    (Index: 409; Name: 'IsKillerObject'; ParamType1: ptFormList),
+    (Index: 410; Name: 'GetFactionCombatReaction'; Paramtype1: ptFaction; Paramtype2: ptFaction),
+    (Index: 414; Name: 'Exists'; ParamType1: ptReference),
+    (Index: 415; Name: 'GetGroupMemberCount'),
+    (Index: 416; Name: 'GetGroupTargetCount'),
+    (Index: 426; Name: 'GetIsVoiceType'; Paramtype1: ptVoiceType),
+    (Index: 427; Name: 'GetPlantedExplosive'),
+    (Index: 429; Name: 'IsScenePackageRunning'),
+    (Index: 430; Name: 'GetHealthPercentage'),
+    (Index: 432; Name: 'GetIsObjectType'; ParamType1: ptFormType),
+    (Index: 434; Name: 'PlayerVisualDetection'),
+    (Index: 435; Name: 'PlayerAudioDetection'),
+    (Index: 437; Name: 'GetIsCreatureType'; Paramtype1: ptInteger),
+    (Index: 438; Name: 'HasKey'; ParamType1: ptReference),
+    (Index: 439; Name: 'IsFurnitureEntryType'; ParamType1: ptBaseObject),
+    (Index: 444; Name: 'GetInCurrentLocationFormList'; ParamType1: ptFormList),
+    (Index: 445; Name: 'GetInZone'; Paramtype1: ptEncounterZone),
+    (Index: 446; Name: 'GetVelocity'; Paramtype1: ptAxis),
+    (Index: 447; Name: 'GetGraphVariableFloat'; Paramtype1: ptString),
+    (Index: 448; Name: 'HasPerk'; Paramtype1: ptPerk),
+    (Index: 449; Name: 'GetFactionRelation'; Paramtype1: ptActor),
+    (Index: 450; Name: 'IsLastIdlePlayed'; ParamType1: ptIdleForm),
+    (Index: 453; Name: 'GetPlayerTeammate'),
+    (Index: 454; Name: 'GetPlayerTeammateCount'),
+    (Index: 458; Name: 'GetActorCrimePlayerEnemy'),
+    (Index: 459; Name: 'GetCrimeGold'; ParamType1: ptFaction),
+    (Index: 463; Name: 'IsPlayerGrabbedRef'; ParamType1: ptReference),
+    (Index: 465; Name: 'GetKeywordItemCount'; Paramtype1: ptKeyword),
+    (Index: 470; Name: 'GetDestructionStage'),
+    (Index: 473; Name: 'GetIsAlignment'; Paramtype1: ptAlignment),
+    (Index: 476; Name: 'IsProtected'),
+    (Index: 477; Name: 'GetThreatRatio'; Paramtype1: ptActor),
+    (Index: 479; Name: 'GetIsUsedItemEquipType'; Paramtype1: ptEquipType),
+    (Index: 483; Name: 'GetPlayerActivated'),
+    (Index: 485; Name: 'GetFullyEnabledActorsInHigh'),
+    (Index: 487; Name: 'IsCarryable'),
+    (Index: 488; Name: 'GetConcussed'),
+    (Index: 491; Name: 'GetMapMarkerVisible'),
+    (Index: 493; Name: 'PlayerKnows'; ParamType1: ptBaseObject),
+    (Index: 494; Name: 'GetPermanentValue'; ParamType1: ptActorValue),
+    (Index: 495; Name: 'GetKillingBlowLimb'),
+    (Index: 497; Name: 'CanPayCrimeGold'; ParamType1: ptFaction),
+    (Index: 499; Name: 'GetDaysInJail'),
+    (Index: 500; Name: 'EPAlchemyGetMakingPoison'),
+    (Index: 501; Name: 'EPAlchemyEffectHasKeyword'; Paramtype1: ptKeyword),
+    (Index: 503; Name: 'GetAllowWorldInteractions'),
+    (Index: 506; Name: 'DialogueGetAv'; ParamType1: ptActorValue),
+    (Index: 507; Name: 'DialogueHasPerk'; Paramtype1: ptPerk),
+    (Index: 508; Name: 'GetLastHitCritical'),
+    (Index: 510; Name: 'DialogueGetItemCount'; ParamType1: ptBaseObject),
+    (Index: 511; Name: 'LastCrippledCondition'; ParamType1: ptActorValue),
+    (Index: 512; Name: 'HasSharedPowerGrid'; ParamType1: ptReference),
+    (Index: 513; Name: 'IsCombatTarget'; Paramtype1: ptActor),
+    (Index: 515; Name: 'GetVATSRightAreaFree'; ParamType1: ptReference),
+    (Index: 516; Name: 'GetVATSLeftAreaFree'; ParamType1: ptReference),
+    (Index: 517; Name: 'GetVATSBackAreaFree'; ParamType1: ptReference),
+    (Index: 518; Name: 'GetVATSFrontAreaFree'; ParamType1: ptReference),
+    (Index: 519; Name: 'GetIsLockBroken'),
+    (Index: 520; Name: 'IsPS3'),
+    (Index: 521; Name: 'IsWindowsPC'),
+    (Index: 522; Name: 'GetVATSRightTargetVisible'; ParamType1: ptReference),
+    (Index: 523; Name: 'GetVATSLeftTargetVisible'; ParamType1: ptReference),
+    (Index: 524; Name: 'GetVATSBackTargetVisible'; ParamType1: ptReference),
+    (Index: 525; Name: 'GetVATSFrontTargetVisible'; ParamType1: ptReference),
+    (Index: 528; Name: 'IsInCriticalStage'; Paramtype1: ptCriticalStage),
+    (Index: 530; Name: 'GetXPForNextLevel'),
+    (Index: 533; Name: 'GetInfamy'; ParamType1: ptFaction),
+    (Index: 534; Name: 'GetInfamyViolent'; ParamType1: ptFaction),
+    (Index: 535; Name: 'GetInfamyNonViolent'; ParamType1: ptFaction),
+    (Index: 536; Name: 'GetTypeCommandPerforming'),
+    (Index: 543; Name: 'GetQuestCompleted'; Paramtype1: ptQuest),
+    (Index: 544; Name: 'GetSpeechChallengeSuccessLevel'),
+    (Index: 547; Name: 'IsGoreDisabled'),
+    (Index: 550; Name: 'IsSceneActionComplete'; ParamType1: ptScene; ParamType2: ptInteger),
+    (Index: 552; Name: 'GetSpellUsageNum'; ParamType1: ptEffectItem),
+    (Index: 554; Name: 'GetActorsInHigh'),
+    (Index: 555; Name: 'HasLoaded3D'),
+    (Index: 560; Name: 'HasKeyword'; Paramtype1: ptKeyword),
+    (Index: 561; Name: 'HasRefType'; Paramtype1: ptLocationRefType),
+    (Index: 562; Name: 'LocationHasKeyword'; Paramtype1: ptKeyword),
+    (Index: 563; Name: 'LocationHasRefType'; Paramtype1: ptLocationRefType),
+    (Index: 565; Name: 'GetIsEditorLocation'; Paramtype1: ptLocation),
+    (Index: 566; Name: 'GetIsAliasRef'; ParamType1: ptAlias),
+    (Index: 567; Name: 'GetIsEditorLocationAlias'; ParamType1: ptAlias),
+    (Index: 568; Name: 'IsSprinting'),
+    (Index: 569; Name: 'IsBlocking'),
+    (Index: 570; Name: 'HasEquippedSpell'; ParamType1: ptCastingSource),
+    (Index: 571; Name: 'GetCurrentCastingType'; ParamType1: ptCastingSource),
+    (Index: 572; Name: 'GetCurrentDeliveryType'; ParamType1: ptCastingSource),
+    (Index: 574; Name: 'GetAttackState'),
+    (Index: 576; Name: 'GetEventData'; ParamType1: ptEvent; ParamType2: ptEventData),
+    (Index: 577; Name: 'IsCloserToAThanB'; ParamType1: ptReference; ParamType2: ptReference),
+    (Index: 578; Name: 'LevelMinusPCLevel'),
+    (Index: 580; Name: 'IsBleedingOut'),
+    (Index: 584; Name: 'GetRelativeAngle'; ParamType1: ptReference; ParamType2: ptAxis),
+    (Index: 589; Name: 'GetMovementDirection'),
+    (Index: 590; Name: 'IsInScene'),
+    (Index: 591; Name: 'GetRefTypeDeadCount'; Paramtype1: ptLocation; Paramtype2: ptLocationRefType),
+    (Index: 592; Name: 'GetRefTypeAliveCount'; Paramtype1: ptLocation; Paramtype2: ptLocationRefType),
+    (Index: 594; Name: 'GetIsFlying'),
+    (Index: 595; Name: 'IsCurrentSpell'; ParamType1: ptEffectItem; ParamType2: ptCastingSource),
+    (Index: 596; Name: 'SpellHasKeyword'; ParamType1: ptCastingSource; ParamType2: ptKeyword),
+    (Index: 597; Name: 'GetEquippedItemType'; ParamType1: ptCastingSource),
+    (Index: 598; Name: 'GetLocationAliasCleared'; ParamType1: ptAlias),
+    (Index: 600; Name: 'GetLocationAliasRefTypeDeadCount'; ParamType1: ptAlias; ParamType2: ptLocationRefType),
+    (Index: 601; Name: 'GetLocationAliasRefTypeAliveCount'; ParamType1: ptAlias; ParamType2: ptLocationRefType),
+    (Index: 602; Name: 'IsWardState'; ParamType1: ptWardState),
+    (Index: 603; Name: 'IsInSameCurrentLocationAsRef'; ParamType1: ptReference; ParamType2: ptKeyword),
+    (Index: 604; Name: 'IsInSameCurrentLocationAsRefAlias'; ParamType1: ptAlias; ParamType2: ptKeyword),
+    (Index: 605; Name: 'LocationAliasIsLocation'; ParamType1: ptAlias; ParamType2: ptLocation),
+    (Index: 606; Name: 'GetKeywordDataForLocation'; Paramtype1: ptLocation; Paramtype2: ptKeyword),
+    (Index: 608; Name: 'GetKeywordDataForAlias'; ParamType1: ptAlias; ParamType2: ptKeyword),
+    (Index: 610; Name: 'LocationAliasHasKeyword'; ParamType1: ptAlias; ParamType2: ptKeyword),
+    (Index: 611; Name: 'IsNullPackageData'; ParamType1: ptPackdata),
+    (Index: 612; Name: 'GetNumericPackageData'; ParamType1: ptPackdata),
+    (Index: 613; Name: 'IsPlayerRadioOn'),
+    (Index: 614; Name: 'GetPlayerRadioFrequency'),
+    (Index: 615; Name: 'GetHighestRelationshipRank'),
+    (Index: 616; Name: 'GetLowestRelationshipRank'),
+    (Index: 617; Name: 'HasAssociationTypeAny'; Paramtype1: ptAssociationType),
+    (Index: 618; Name: 'HasFamilyRelationshipAny'),
+    (Index: 619; Name: 'GetPathingTargetOffset'; Paramtype1: ptAxis),
+    (Index: 620; Name: 'GetPathingTargetAngleOffset'; Paramtype1: ptAxis),
+    (Index: 621; Name: 'GetPathingTargetSpeed'),
+    (Index: 622; Name: 'GetPathingTargetSpeedAngle'; Paramtype1: ptAxis),
+    (Index: 623; Name: 'GetMovementSpeed'),
+    (Index: 624; Name: 'GetInContainer'; ParamType1: ptReference),
+    (Index: 625; Name: 'IsLocationLoaded'; Paramtype1: ptLocation),
+    (Index: 626; Name: 'IsLocationAliasLoaded'; ParamType1: ptAlias),
+    (Index: 627; Name: 'IsDualCasting'),
+    (Index: 629; Name: 'GetVMQuestVariable'; ParamType1: ptQuest; ParamType2: ptString),
+    (Index: 630; Name: 'GetCombatAudioDetection'),
+    (Index: 631; Name: 'GetCombatVisualDetection'),
+    (Index: 632; Name: 'IsCasting'),
+    (Index: 633; Name: 'GetFlyingState'),
+    (Index: 635; Name: 'IsInFavorState'),
+    (Index: 636; Name: 'HasTwoHandedWeaponEquipped'),
+    (Index: 637; Name: 'IsFurnitureExitType'; ParamType1: ptBaseObject),
+    (Index: 638; Name: 'IsInFriendStatewithPlayer'),
+    (Index: 639; Name: 'GetWithinDistance'; ParamType1: ptReference; ParamType2: ptFloat),
+    (Index: 640; Name: 'GetValuePercent'; ParamType1: ptActorValue),
+    (Index: 641; Name: 'IsUnique'),
+    (Index: 642; Name: 'GetLastBumpDirection'),
+    (Index: 644; Name: 'GetInfoChallangeSuccess'),
+    (Index: 645; Name: 'GetIsInjured'),
+    (Index: 646; Name: 'GetIsCrashLandRequest'),
+    (Index: 647; Name: 'GetIsHastyLandRequest'),
+    (Index: 650; Name: 'IsLinkedTo'; ParamType1: ptReference; ParamType2: ptKeyword),
+    (Index: 651; Name: 'GetKeywordDataForCurrentLocation'; Paramtype1: ptKeyword),
+    (Index: 652; Name: 'GetInSharedCrimeFaction'; ParamType1: ptReference),
+    (Index: 654; Name: 'GetBribeSuccess'),
+    (Index: 655; Name: 'GetIntimidateSuccess'),
+    (Index: 656; Name: 'GetArrestedState'),
+    (Index: 657; Name: 'GetArrestingActor'),
+    (Index: 659; Name: 'HasVMScript'; ParamType1: ptString),
+    (Index: 660; Name: 'GetVMScriptVariable'; ParamType1: ptString; ParamType2: ptString),
+    (Index: 661; Name: 'GetWorkshopResourceDamage'; ParamType1: ptActorValue),
+    (Index: 664; Name: 'HasValidRumorTopic'; ParamType1: ptQuest),
+    (Index: 672; Name: 'IsAttacking'),
+    (Index: 673; Name: 'IsPowerAttacking'),
+    (Index: 674; Name: 'IsLastHostileActor'),
+    (Index: 675; Name: 'GetGraphVariableInt'; ParamType1: ptString),
+    (Index: 678; Name: 'ShouldAttackKill'; Paramtype1: ptActor),
+    (Index: 680; Name: 'GetActivationHeight'),
+    (Index: 682; Name: 'WornHasKeyword'; Paramtype1: ptKeyword),
+    (Index: 683; Name: 'GetPathingCurrentSpeed'),
+    (Index: 684; Name: 'GetPathingCurrentSpeedAngle'; Paramtype1: ptAxis),
+    (Index: 691; Name: 'GetWorkshopObjectCount'; ParamType1: ptBaseObject),
+    (Index: 693; Name: 'EPMagic_SpellHasKeyword'; Paramtype1: ptKeyword),
+    (Index: 694; Name: 'GetNoBleedoutRecovery'),
+    (Index: 696; Name: 'EPMagic_SpellHasSkill'; ParamType1: ptActorValue),
+    (Index: 697; Name: 'IsAttackType'; Paramtype1: ptKeyword),
+    (Index: 698; Name: 'IsAllowedToFly'),
+    (Index: 699; Name: 'HasMagicEffectKeyword'; Paramtype1: ptKeyword),
+    (Index: 700; Name: 'IsCommandedActor'),
+    (Index: 701; Name: 'IsStaggered'),
+    (Index: 702; Name: 'IsRecoiling'),
+    (Index: 703; Name: 'HasScopeWeaponEquipped'),
+    (Index: 704; Name: 'IsPathing'),
+    (Index: 705; Name: 'GetShouldHelp'; Paramtype1: ptActor),
+    (Index: 706; Name: 'HasBoundWeaponEquipped'; ParamType1: ptCastingSource),
+    (Index: 707; Name: 'GetCombatTargetHasKeyword'; Paramtype1: ptKeyword),
+    (Index: 709; Name: 'GetCombatGroupMemberCount'),
+    (Index: 710; Name: 'IsIgnoringCombat'),
+    (Index: 711; Name: 'GetLightLevel'),
+    (Index: 713; Name: 'SpellHasCastingPerk'; Paramtype1: ptPerk),
+    (Index: 714; Name: 'IsBeingRidden'),
+    (Index: 715; Name: 'IsUndead'),
+    (Index: 716; Name: 'GetRealHoursPassed'),
+    (Index: 718; Name: 'IsUnlockedDoor'),
+    (Index: 719; Name: 'IsHostileToActor'; Paramtype1: ptActor),
+    (Index: 720; Name: 'GetTargetHeight'; ParamType1: ptReference),
+    (Index: 721; Name: 'IsPoison'),
+    (Index: 722; Name: 'WornApparelHasKeywordCount'; Paramtype1: ptKeyword),
+    (Index: 723; Name: 'GetItemHealthPercent'),
+    (Index: 724; Name: 'EffectWasDualCast'),
+    (Index: 725; Name: 'GetKnockStateEnum'),
+    (Index: 726; Name: 'DoesNotExist'),
+    (Index: 728; Name: 'GetPlayerWalkAwayFromDialogueScene'),
+    (Index: 729; Name: 'GetActorStance'),
+    (Index: 734; Name: 'CanProduceForWorkshop'),
+    (Index: 735; Name: 'CanFlyHere'),
+    (Index: 736; Name: 'EPIsDamageType'; ParamType1: ptDamageType),
+    (Index: 738; Name: 'GetActorGunState'),
+    (Index: 739; Name: 'GetVoiceLineLength'),
+    (Index: 741; Name: 'ObjectTemplateItem_HasKeyword'; Paramtype1: ptKeyword),
+    (Index: 742; Name: 'ObjectTemplateItem_HasUniqueKeyword'; Paramtype1: ptKeyword),
+    (Index: 743; Name: 'ObjectTemplateItem_GetLevel'),
+    (Index: 744; Name: 'MovementIdleMatches'; ParamType1: ptInteger; ParamType2: ptInteger),
+    (Index: 745; Name: 'GetActionData'),
+    (Index: 746; Name: 'GetActionDataShort'; Paramtype1: ptInteger),
+    (Index: 747; Name: 'GetActionDataByte'; Paramtype1: ptInteger),
+    (Index: 748; Name: 'GetActionDataFlag'; Paramtype1: ptInteger),
+    (Index: 749; Name: 'ModdedItemHasKeyword'; Paramtype1: ptKeyword),
+    (Index: 750; Name: 'GetAngryWithPlayer'),
+    (Index: 751; Name: 'IsCameraUnderWater'),
+    (Index: 753; Name: 'IsActorRefOwner'; ParamType1: ptActor),
+    (Index: 754; Name: 'HasActorRefOwner'; ParamType1: ptActor),
+    (Index: 756; Name: 'GetLoadedAmmoCount'),
+    (Index: 757; Name: 'IsTimeSpanSunrise'),
+    (Index: 758; Name: 'IsTimeSpanMorning'),
+    (Index: 759; Name: 'IsTimeSpanAfternoon'),
+    (Index: 760; Name: 'IsTimeSpanEvening'),
+    (Index: 761; Name: 'IsTimeSpanSunset'),
+    (Index: 762; Name: 'IsTimeSpanNight'),
+    (Index: 763; Name: 'IsTimeSpanMidnight'),
+    (Index: 764; Name: 'IsTimeSpanAnyDay'),
+    (Index: 765; Name: 'IsTimeSpanAnyNight'),
+    (Index: 766; Name: 'CurrentFurnitureHasKeyword'; Paramtype1: ptKeyword),
+    (Index: 767; Name: 'GetWeaponEquipIndex'),
+    (Index: 769; Name: 'IsOverEncumbered'),
+    (Index: 770; Name: 'IsPackageRequestingBlockedIdles'),
+    (Index: 771; Name: 'GetActionDataInt'),
+    (Index: 772; Name: 'GetVATSRightMinusLeftAreaFree'; ParamType1: ptReference),
+    (Index: 773; Name: 'GetInIronSights'; ParamType1: ptReference),
+    (Index: 774; Name: 'GetActorStaggerDirection'),
+    (Index: 775; Name: 'GetActorStaggerMagnitude'),
+    (Index: 776; Name: 'WornCoversBipedSlot'; Paramtype1: ptInteger),
+    (Index: 777; Name: 'GetInventoryValue'),
+    (Index: 778; Name: 'IsPlayerInConversation'),
+    (Index: 779; Name: 'IsInDialogueCamera'),
+    (Index: 780; Name: 'IsMyDialogueTargetPlayer'),
+    (Index: 781; Name: 'IsMyDialogueTargetActor'),
+    (Index: 782; Name: 'GetMyDialogueTargetDistance'),
+    (Index: 783; Name: 'IsSeatOccupied'; Paramtype1: ptKeyword),
+    (Index: 784; Name: 'IsPlayerRiding'),
+    (Index: 785; Name: 'IsTryingEventCamera'),
+    (Index: 786; Name: 'UseLeftSideCamera'),
+    (Index: 787; Name: 'GetNoteType'),
+    (Index: 788; Name: 'LocationHasPlayerOwnedWorkshop'),
+    (Index: 789; Name: 'IsStartingAction'),
+    (Index: 790; Name: 'IsMidAction'),
+    (Index: 791; Name: 'IsWeaponChargeAttack'),
+    (Index: 792; Name: 'IsInWorkshopMode'),
+    (Index: 793; Name: 'IsWeaponChargingHoldAttack'),
+    (Index: 794; Name: 'IsEncounterAbovePlayerLevel'),
+    (Index: 795; Name: 'IsMeleeAttacking'),
+    (Index: 796; Name: 'GetVATSQueuedTargetsUnique'),
+    (Index: 797; Name: 'GetCurrentLocationCleared'),
+    (Index: 798; Name: 'IsPowered'),
+    (Index: 799; Name: 'GetTransmitterDistance'),
+    (Index: 800; Name: 'GetCameraPlaybackTime'),
+    (Index: 801; Name: 'IsInWater'),
+    (Index: 802; Name: 'GetWithinActivateDistance'; ParamType1: ptReference),
+    (Index: 803; Name: 'IsUnderWater'),
+    (Index: 804; Name: 'IsInSameSpace'; ParamType1: ptReference),
+    (Index: 805; Name: 'LocationAllowsReset'),
+    (Index: 806; Name: 'GetVATSBackRightAreaFree'; ParamType1: ptReference),
+    (Index: 807; Name: 'GetVATSBackLeftAreaFree'; ParamType1: ptReference),
+    (Index: 808; Name: 'GetVATSBackRightTargetVisible'; ParamType1: ptReference),
+    (Index: 809; Name: 'GetVATSBackLeftTargetVisible'; ParamType1: ptReference),
+    (Index: 810; Name: 'GetVATSTargetLimbVisible'; ParamType1: ptReference),
+    (Index: 811; Name: 'IsPlayerListening'; Paramtype1: ptFloat),
+    (Index: 812; Name: 'GetPathingRequestedQuickTurn'),
+    (Index: 813; Name: 'EPIsCalculatingBaseDamage'),
+    (Index: 814; Name: 'GetReanimating'),
+    (Index: 817; Name: 'IsInRobotWorkbench')
+  );
+
+function wbConditionDescFromIndex(aIndex: Integer): PConditionFunction;
+begin
+  Result := nil;
+
+  var L := Low(wbConditionFunctions);
+  var H := High(wbConditionFunctions);
+  while L <= H do begin
+    var I := (L + H) shr 1;
+    var C := CmpW32(wbConditionFunctions[I].Index, aIndex);
+    if C < 0 then
+      L := I + 1
+    else begin
+      H := I - 1;
+      if C = 0 then begin
+        L := I;
+        Result := @wbConditionFunctions[L];
+      end;
+    end;
+  end;
+end;
+
+function wbConditionFunctionToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
+begin
+  Result := '';
+  var Desc := wbConditionDescFromIndex(aInt);
+  case aType of
+    ctEditType: Result := 'ComboBox';
+    ctToSortKey: Result := IntToHex(aInt, 8);
+    ctCheck: if not Assigned(Desc) then Result := '<Unknown: '+aInt.ToString+'>';
+    ctEditInfo: begin
+      with TStringList.Create do try
+        for var i := Low(wbConditionFunctions) to High(wbConditionFunctions) do
+          Add(wbConditionFunctions[i].Name);
+        Sort;
+        Result := CommaText;
+      finally
+        Free;
+      end;
+    end;
+  end;
+
+  if Assigned(Desc) then begin
+    case aType of
+      ctToEditValue, ctToStr, ctToSummary: Result := Desc.Name;
+    end;
+  end else begin
+    case aType of
+      ctToEditValue, ctToSummary: Result := aInt.ToString;
+      ctToStr: Result := '<Unknown: '+aInt.ToString+'>';
+    end;
+  end;
+end;
+
+function wbConditionFunctionToInt(const aString: string; const aElement: IwbElement): Int64;
+begin
+  for var i := Low(wbConditionFunctions) to High(wbConditionFunctions) do
+    with wbConditionFunctions[i] do
+      if SameText(Name, aString) then begin
+        Result := Index;
+        Exit;
+      end;
+
+  Result := StrToInt64(aString);
+end;
+
+function wbConditionParam1Decider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+var
+  Container: IwbContainer;
+begin
+  Result := 0;
+  if not wbTryGetContainerFromUnion(aElement, Container) then
+    Exit;
+
+  var Desc := wbConditionDescFromIndex(Container.ElementByName['Function'].NativeValue);
+  if not Assigned(Desc) then
+    Exit;
+
+  var ParamType := Desc.ParamType1;
+  var ParamFlag := Container.ElementByName['Type'].NativeValue;
+
+  if ParamType in [ptReference, ptActor, ptPackage] then begin
+    if ParamFlag and $02 > 0 then begin
+      // except for this func when Run On = Quest Alias, then alias is param3 and package is param1
+      // [INFO:00020D3C]
+      if not ((Container.ElementByName['Run On'].NativeValue = 5) and (Desc.Name = 'GetIsCurrentPackage')) then
+        ParamType := ptAlias    {>>> 'use aliases' is set <<<}
+      end
+      else if ParamFlag and $08 > 0 then
+        ParamType := ptPackdata;  {>>> 'use packdata' is set <<<}
+  end;
+
+  Result := Succ(Integer(ParamType));
+end;
+
+function wbConditionParam2Decider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+var
+  Container: IwbContainer;
+begin
+  Result := 0;
+  if not wbTryGetContainerFromUnion(aElement, Container) then
+    Exit;
+
+  var Desc := wbConditionDescFromIndex(Container.ElementByName['Function'].NativeValue);
+  if not Assigned(Desc) then
+    Exit;
+
+  var ParamType := Desc.ParamType2;
+  var ParamFlag := Container.ElementByName['Type'].NativeValue;
+
+  if ParamType in [ptReference, ptActor, ptPackage] then begin
+    if ParamFlag and $02 > 0 then ParamType := ptAlias else {>>> 'use aliases' is set <<<}
+    if ParamFlag and $08 > 0 then ParamType := ptPackdata;  {>>> 'use packdata' is set <<<}
+  end;
+
+  Result := Succ(Integer(ParamType));
+end;
+
+function wbConditionStringToString(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
+begin
+  case aType of
+    ctToStr, ctToSummary, ctToSortKey, ctToEditValue, ctToNativeValue: begin
+      Result := '';
+
+      if not Assigned(aElement) then
+        Exit;
+
+      var Container := GetContainerFromUnion(aElement) as IwbContainerElementRef;
+      if not Assigned(Container) then
+        Exit;
+
+      if Container = Container.Container.Elements[5] then begin
+        case aType of
+          ctToSummary: Result := Container.ElementEditValues['..\CIS1'];
+          ctToEditValue, ctToNativeValue: Result := Container.ElementEditValues['..\CIS1'];
+        else
+          Result := Container.ElementValues['..\CIS1'];
+        end;
+      end;
+
+      if Container = Container.Container.Elements[6] then begin
+        case aType of
+          ctToSummary: Result := Container.ElementEditValues['..\CIS2'];
+          ctToEditValue, ctToNativeValue: Result := Container.ElementEditValues['..\CIS2'];
+        else
+          Result := Container.ElementValues['..\CIS2'];
+        end;
+      end;
+    end;
+    ctCheck, ctEditType, ctEditInfo, ctLinksTo:
+      Result := '';
+  else
+    Result := aInt.ToString;
+  end;
+end;
+
+function wbConditionStringToInt(const aString: string; const aElement: IwbElement): Int64;
+begin
+  Result := 0;
+
+  if not Assigned(aElement) then
+    Exit;
+
+  var Container := GetContainerFromUnion(aElement) as IwbContainerElementRef;
+  if not Assigned(Container) then
+    Exit;
+
+  if Container = Container.Container.Elements[5] then
+    Container.ElementEditValues['..\CIS1'] := aString;
+
+  if Container = Container.Container.Elements[6] then
+    Container.ElementEditValues['..\CIS2'] := aString;
+end;
+
+function wbConditionAliasToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
+var
+  Container  : IwbContainer;
+  MainRecord : IwbMainRecord;
+  GroupRecord : IwbGroupRecord;
+begin
+  Result := '';
+  case aType of
+    ctToSortKey: Result := IntToHex64(aInt, 8);
+    ctToStr, ctToSummary, ctToEditValue: Result := aInt.ToString;
+  end;
+
+  if wbResolveAlias then begin
+    if not wbTryGetContainerFromUnion(aElement, Container) then
+      Exit;
+
+    while Assigned(Container) and (Container.ElementType <> etMainRecord) do
+      Container := Container.Container;
+
+    if not Assigned(Container) then
+      Exit;
+
+    if not Supports(Container, IwbMainRecord, MainRecord) then
+      Exit;
+
+    if MainRecord.Signature = QUST then
+      Result := wbAliasToStr(aInt, Container, aType)
+    else if MainRecord.Signature = SCEN then
+      Result := wbAliasToStr(aInt, Container.ElementBySignature['PNAM'], aType)
+    else if MainRecord.Signature = PACK then
+      Result := wbAliasToStr(aInt, Container.ElementBySignature['QNAM'], aType)
+    else if MainRecord.Signature = INFO then begin
+      // get DIAL for INFO
+      if Supports(MainRecord.Container, IwbGroupRecord, GroupRecord) then
+        if Supports(GroupRecord.ChildrenOf, IwbMainRecord, MainRecord) then
+          Result := wbAliasToStr(aInt, MainRecord.ElementBySignature['QNAM'], aType);
+    end;
+  end;
+end;
+
+function wbConditionEventToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
+begin
+  Result := '';
+  var EventFunction := aInt and $FFFF;
+  var EventMember := aInt shr 16;
+  case aType of
+    ctEditType: Result := 'ComboBox';
+    ctToSortKey: Result := IntToHex(aInt, 8);
+    ctToStr, ctToSummary, ctToEditValue: begin
+      Result := wbEventFunctionEnum.ToEditValue(EventFunction, nil);
+      Result := Result + ':' + wbEventMemberEnum.ToEditValue(EventMember, nil);
+    end;
+    ctCheck: begin
+      var s1 := wbEventFunctionEnum.Check(EventFunction, nil);
+      if s1 <> '' then
+        s1 := 'EventFunction' + s1;
+      var s2 := wbEventMemberEnum.Check(EventMember, nil);
+      if s2 <> '' then
+        s2 := 'EventMember' + s2;
+      if (s1 <> '') or (s2 <> '') then
+        Result := s1 + ':' + s2;
+    end;
+    ctEditInfo: begin
+      var slMember := TStringList.Create;
+      slMember.AddStrings(wbEventMemberEnum.EditInfo[nil]);
+      with TStringList.Create do try
+        for var i := 0 to Pred(wbEventFunctionEnum.NameCount) do
+          for var j := 0 to Pred(slMember.Count) do
+            Add(wbEventFunctionEnum.Names[i] + ':' + slMember[j]);
+        Sort;
+        Result := CommaText;
+      finally
+        Free;
+      end;
+    end;
+  end;
+end;
+
+function wbConditionEventToInt(const aString: string; const aElement: IwbElement): Int64;
+var
+  EventFunction, EventMember: Integer;
+begin
+  var i := Pos(':', aString);
+  if i > 0 then begin
+    EventFunction := wbEventFunctionEnum.FromEditValue(Copy(aString, 1, i-1), nil);
+    EventMember := wbEventMemberEnum.FromEditValue(Copy(aString, i+1, Length(aString)), nil);
+  end
+  else begin
+    EventFunction := 0;
+    EventMember := 0;
+  end;
+  Result := EventMember shl 16 + EventFunction;
+end;
+
+function wbConditionQuestStageToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
+var
+  Container  : IwbContainerElementRef;
+  MainRecord : IwbMainRecord;
+  EditInfos  : TStringList;
+  Stages     : IwbContainerElementRef;
+  Stage      : IwbContainerElementRef;
+begin
+  Result := '';
+  case aType of
+    ctToSortKey: Exit(IntToHex64(aInt, 8));
+    ctToEditValue, ctToSummary: Result := aInt.ToString;
+    ctCheck: Result := '<Warning: Could not resolve Parameter 1>';
+    ctToStr: Result := aInt.ToString + ' <Warning: Could not resolve Parameter 1>';
+  end;
+
+  if not wbTryGetContainerRefFromUnionOrValue(aElement, Container) then
+    Exit;
+
+  if not wbTryGetMainRecord(Container.ElementByName['Parameter #1'], MainRecord) then
+    Exit;
+
+  // get winning quest override except for partial forms
+  if MainRecord.WinningOverride.Flags._Flags and $00004000 = 0 then
+    MainRecord := MainRecord.WinningOverride
+  else if MainRecord.Flags._Flags and $00004000 <> 0 then
+    MainRecord := MainRecord.MasterOrSelf;
+
+  if MainRecord.Signature <> QUST then begin
+    case aType of
+      ctCheck: Result := '<Warning: "' + MainRecord.ShortName + '" is not a Quest record>';
+      ctToStr: Result := aInt.ToString + ' <Warning: "' + MainRecord.ShortName + '" is not a Quest record>';
+    end;
+    Exit;
+  end;
+
+  case aType of
+    ctEditType: Exit('ComboBox');
+    ctEditInfo: EditInfos := TStringList.Create;
+  else
+    EditInfos := nil;
+  end;
+
+  try
+    if Supports(MainRecord.ElementByName['Stages'], IwbContainerElementRef, Stages) then begin
+      for var i := 0 to Pred(Stages.ElementCount) do
+        if Supports(Stages.Elements[i], IwbContainerElementRef, Stage) then begin
+          var j := Stage.ElementNativeValues['INDX\Stage Index'];
+          var s := Trim(Stage.ElementValues['Log Entries\Log Entry\CNAM']);
+          var t := IntToStr(j);
+          while Length(t) < 3 do
+            t := '0' + t;
+          if s <> '' then
+            t := t + ' ' + s;
+          if Assigned(EditInfos) then
+            EditInfos.AddObject(t, TObject(Integer(j)))
+          else if j = aInt then begin
+            case aType of
+              ctToStr, ctToSummary, ctToEditValue: Result := t;
+              ctCheck: Result := '';
+            end;
+            Exit;
+          end;
+        end;
+    end;
+
+    case aType of
+      ctCheck: Result := '<Warning: Quest Stage [' + aInt.ToString + '] not found in "' + MainRecord.Name + '">';
+      ctToStr: Result := aInt.ToString + ' <Warning: Quest Stage [' + aInt.ToString + '] not found in "' + MainRecord.Name + '">';
+      ctEditInfo: begin
+        EditInfos.Sort;
+        Result := EditInfos.CommaText;
+      end;
+    end;
+  finally
+    FreeAndNil(EditInfos);
+  end;
+end;
+
+function wbConditionQuestOverlay(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): Int64;
+
+  procedure ResolveOverlay;
+  var
+    MainRecord : IwbMainRecord;
+    GroupRecord: IwbGroupRecord;
+    Element    : IwbElement;
+  begin
+    if not Assigned(aElement) then
+      Exit;
+    MainRecord := aElement.ContainingMainRecord;
+    if not Assigned(MainRecord) then
+      Exit;
+
+    if MainRecord.Signature = QUST then
+      Result := MainRecord.FixedFormID.ToCardinal
+    else if MainRecord.Signature = SCEN then begin
+      Element := MainRecord.ElementBySignature[PNAM];
+      if Assigned(Element) then
+        Result := Element.NativeValue;
+    end else if MainRecord.Signature = PACK then begin
+      Element := MainRecord.ElementBySignature[QNAM];
+      if Assigned(Element) then
+        Result := Element.NativeValue;
+    end else if MainRecord.Signature = INFO then begin
+      // get DIAL for INFO
+      if Supports(MainRecord.Container, IwbGroupRecord, GroupRecord) then
+        if Supports(GroupRecord.ChildrenOf, IwbMainRecord, MainRecord) then
+          if MainRecord.Signature = DIAL then begin
+            Element := MainRecord.ElementBySignature[QNAM];
+            if Assigned(Element) then
+              Result := Element.NativeValue;
+          end;
+    end;
+  end;
+
+begin
+  Result := aInt;
+  if (aInt = 0) and (aType in [ctCheck, ctToStr, ctToSummary, ctToSortKey, ctLinksTo]) then
+    ResolveOverlay;
+end;
+
 function wbGenericModel(aRequired: Boolean = False; aDontShow: TwbDontShowCallback = nil): IwbRecordMemberDef;
 begin
   Result :=
@@ -249,108 +1185,6 @@ begin
   AsFloat := wbActorValueEnum.FromEditValue(aString, aElement);
   PSingle(@AsCardinal)^ := AsFloat;
   Result := AsCardinal;
-end;
-
-function wbCTDAParam2QuestStageToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
-var
-  Container  : IwbContainerElementRef;
-  Param1     : IwbElement;
-  MainRecord : IwbMainRecord;
-  EditInfos  : TStringList;
-  Stages     : IwbContainerElementRef;
-  Stage      : IwbContainerElementRef;
-  i, j       : Integer;
-  s, t       : string;
-begin
-  case aType of
-    ctToStr, ctToSummary: begin
-      Result := aInt.ToString;
-      if aType = ctToStr then
-        Result := Result + ' <Warning: Could not resolve Parameter 1>';
-    end;
-    ctToEditValue: Result := aInt.ToString;
-    ctToSortKey: begin
-      Result := IntToHex64(aInt, 8);
-      Exit;
-    end;
-    ctCheck: Result := '<Warning: Could not resolve Parameter 1>';
-    ctEditType: Result := '';
-    ctEditInfo: Result := '';
-  end;
-
-  if not wbTryGetContainerRefFromUnionOrValue(aElement, Container) then
-    Exit;
-
-  Param1 := Container.ElementByName['Parameter #1'];
-  if not wbTryGetMainRecord(Param1, MainRecord) then
-    Exit;
-
-  // get winning quest override except for partial forms
-  if MainRecord.WinningOverride.Flags._Flags and $00004000 = 0 then
-    MainRecord := MainRecord.WinningOverride
-  else if MainRecord.Flags._Flags and $00004000 <> 0 then
-    MainRecord := MainRecord.MasterOrSelf;
-
-  if MainRecord.Signature <> QUST then begin
-    case aType of
-      ctToStr, ctToSummary: begin
-        Result := aInt.ToString;
-        if aType = ctToStr then
-          Result := Result + ' <Warning: "'+MainRecord.ShortName+'" is not a Quest record>';
-      end;
-      ctCheck: Result := '<Warning: "'+MainRecord.ShortName+'" is not a Quest record>';
-    end;
-    Exit;
-  end;
-
-  case aType of
-    ctEditType: begin
-      Result := 'ComboBox';
-      Exit;
-    end;
-    ctEditInfo:
-      EditInfos := TStringList.Create;
-  else
-    EditInfos := nil;
-  end;
-  try
-    if Supports(MainRecord.ElementByName['Stages'], IwbContainerElementRef, Stages) then begin
-      for i := 0 to Pred(Stages.ElementCount) do
-        if Supports(Stages.Elements[i], IwbContainerElementRef, Stage) then begin
-          j := Stage.ElementNativeValues['INDX\Stage Index'];
-          s := Trim(Stage.ElementValues['Log Entries\Log Entry\CNAM']);
-          t := IntToStr(j);
-          while Length(t) < 3 do
-            t := '0' + t;
-          if s <> '' then
-            t := t + ' ' + s;
-          if Assigned(EditInfos) then
-            EditInfos.AddObject(t, TObject(j))
-          else if j = aInt then begin
-            case aType of
-              ctToStr, ctToSummary, ctToEditValue: Result := t;
-              ctCheck: Result := '';
-            end;
-            Exit;
-          end;
-        end;
-    end;
-
-    case aType of
-      ctToStr, ctToSummary: begin
-        Result := aInt.ToString;
-        if aType = ctToStr then
-          Result := Result + ' <Warning: Quest Stage [' + aInt.ToString + '] not found in "' + MainRecord.Name + '">';
-      end;
-      ctCheck: Result := '<Warning: Quest Stage [' + aInt.ToString + '] not found in "' + MainRecord.Name + '">';
-      ctEditInfo: begin
-        EditInfos.Sort;
-        Result := EditInfos.CommaText;
-      end;
-    end;
-  finally
-    FreeAndNil(EditInfos);
-  end;
 end;
 
 function wbPerkDATAQuestStageToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
@@ -467,48 +1301,6 @@ begin
   s := Copy(s, 1, Pred(i));
 
   Result := StrToInt(s);
-end;
-
-function wbCTDAParamQuestOverlay(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): Int64;
-
-  procedure ResolveOverlay;
-  var
-    MainRecord : IwbMainRecord;
-    GroupRecord: IwbGroupRecord;
-    Element    : IwbElement;
-  begin
-    if not Assigned(aElement) then
-      Exit;
-    MainRecord := aElement.ContainingMainRecord;
-    if not Assigned(MainRecord) then
-      Exit;
-
-    if MainRecord.Signature = QUST then
-      Result := MainRecord.FixedFormID.ToCardinal
-    else if MainRecord.Signature = SCEN then begin
-      Element := MainRecord.ElementBySignature[PNAM];
-      if Assigned(Element) then
-        Result := Element.NativeValue;
-    end else if MainRecord.Signature = PACK then begin
-      Element := MainRecord.ElementBySignature[QNAM];
-      if Assigned(Element) then
-        Result := Element.NativeValue;
-    end else if MainRecord.Signature = INFO then begin
-      // get DIAL for INFO
-      if Supports(MainRecord.Container, IwbGroupRecord, GroupRecord) then
-        if Supports(GroupRecord.ChildrenOf, IwbMainRecord, MainRecord) then
-          if MainRecord.Signature = DIAL then begin
-            Element := MainRecord.ElementBySignature[QNAM];
-            if Assigned(Element) then
-              Result := Element.NativeValue;
-          end;
-    end;
-  end;
-
-begin
-  Result := aInt;
-  if (aInt = 0) and (aType in [ctCheck, ctToStr, ctToSummary, ctToSortKey, ctLinksTo]) then
-    ResolveOverlay;
 end;
 
 function wbStringToInt(const aString: string; const aElement: IwbElement): Int64;
@@ -635,219 +1427,6 @@ begin
     Exit;
 
   Result := wbAliasToStr(aInt, Container.ElementBySignature['ALEQ'] , aType);
-end;
-
-function wbCTDAParam1StringToInt(const aString: string; const aElement: IwbElement): Int64;
-var
-  Container  : IwbContainerElementRef;
-begin
-  Result := 0;
-
-  if not Assigned(aElement) then
-    Exit;
-
-  Container := GetContainerFromUnion(aElement) as IwbContainerElementRef;
-  if not Assigned(Container) then
-    Exit;
-
-  Container.ElementEditValues['..\CIS1'] := aString
-end;
-
-function wbCTDAParam1StringToString(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
-var
-  Container  : IwbContainerElementRef;
-begin
-  case aType of
-    ctToStr, ctToSummary, ctToSortKey, ctToEditValue, ctToNativeValue: begin
-      Result := '';
-
-      if not Assigned(aElement) then
-        Exit;
-
-      Container := GetContainerFromUnion(aElement) as IwbContainerElementRef;
-      if not Assigned(Container) then
-        Exit;
-
-      case aType of
-        ctToSummary:
-          Result := Container.ElementEditValues['..\CIS1'];
-        ctToEditValue, ctToNativeValue:
-          Result := Container.ElementEditValues['..\CIS1'];
-      else
-        Result := Container.ElementValues['..\CIS1'];
-      end;
-    end;
-    ctCheck, ctEditType, ctEditInfo, ctLinksTo:
-      Result := '';
-  else
-    Result := aInt.ToString;
-  end;
-end;
-
-function wbCTDAParam2StringToInt(const aString: string; const aElement: IwbElement): Int64;
-var
-  Container  : IwbContainerElementRef;
-begin
-  Result := 0;
-
-  if not Assigned(aElement) then
-    Exit;
-
-  Container := GetContainerFromUnion(aElement) as IwbContainerElementRef;
-  if not Assigned(Container) then
-    Exit;
-
-  Container.ElementEditValues['..\CIS2'] := aString
-end;
-
-function wbCTDAParam2StringToString(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
-var
-  Container  : IwbContainerElementRef;
-begin
-  case aType of
-    ctToStr, ctToSummary, ctToSortKey, ctToEditValue, ctToNativeValue: begin
-      Result := '';
-
-      if not Assigned(aElement) then
-        Exit;
-
-      Container := GetContainerFromUnion(aElement) as IwbContainerElementRef;
-      if not Assigned(Container) then
-        Exit;
-
-      case aType of
-        ctToSummary:
-          Result := Container.ElementSummaries['..\CIS2'];
-        ctToEditValue, ctToNativeValue:
-          Result := Container.ElementEditValues['..\CIS2'];
-      else
-        Result := Container.ElementValues['..\CIS2'];
-      end;
-    end;
-    ctCheck, ctEditType, ctEditInfo, ctLinksTo:
-      Result := '';
-  else
-    Result := aInt.ToString;
-  end;
-end;
-
-function wbConditionAliasToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
-var
-  Container  : IwbContainer;
-  MainRecord : IwbMainRecord;
-  GroupRecord : IwbGroupRecord;
-begin
-  if not wbResolveAlias then begin
-    case aType of
-      ctToStr, ctToSummary, ctToEditValue: Result := aInt.ToString;
-      ctToSortKey: Result := IntToHex64(aInt, 8);
-    else
-      Result := '';
-    end;
-    Exit;
-  end;
-
-  if not wbTryGetContainerFromUnion(aElement, Container) then
-    Exit;
-
-  while Assigned(Container) and (Container.ElementType <> etMainRecord) do
-    Container := Container.Container;
-
-  if not Assigned(Container) then
-    Exit;
-
-  if not Supports(Container, IwbMainRecord, MainRecord) then
-    Exit;
-
-  if MainRecord.Signature = QUST then
-    Result := wbAliasToStr(aInt, Container, aType)
-  else if MainRecord.Signature = SCEN then
-    Result := wbAliasToStr(aInt, Container.ElementBySignature['PNAM'], aType)
-  else if MainRecord.Signature = PACK then
-    Result := wbAliasToStr(aInt, Container.ElementBySignature['QNAM'], aType)
-  else if MainRecord.Signature = INFO then begin
-    // get DIAL for INFO
-    if Supports(MainRecord.Container, IwbGroupRecord, GroupRecord) then
-      if Supports(GroupRecord.ChildrenOf, IwbMainRecord, MainRecord) then
-        Result := wbAliasToStr(aInt, MainRecord.ElementBySignature['QNAM'], aType);
-  end else
-  // this should never be called since aliases in conditions can be in the forms above only
-  // but just in case
-  case aType of
-    ctToStr, ctToSummary, ctToEditValue: Result := aInt.ToString;
-    ctToSortKey: Result := IntToHex64(aInt, 8);
-  else
-    Result := '';
-  end;
-end;
-
-var
-  wbEventFunctionAndMemberEditInfo: string;
-
-function wbEventFunctionAndMemberToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
-var
-  EventFunction, EventMember: Integer;
-  i, j: Integer;
-  s1, s2: string;
-  slMember: TStringList;
-begin
-  Result := '';
-  EventFunction := aInt and $FFFF;
-  EventMember := aInt shr 16;
-  case aType of
-    ctToStr, ctToSummary, ctToEditValue: begin
-      Result := wbEventFunctionEnum.ToEditValue(EventFunction, nil);
-      Result := Result + ':' + wbEventMemberEnum.ToEditValue(EventMember, nil);
-    end;
-    ctToSortKey: Result := IntToHex(aInt, 8);
-    ctCheck: begin
-      s1 := wbEventFunctionEnum.Check(EventFunction, nil);
-      if s1 <> '' then
-        s1 := 'EventFunction' + s1;
-      s2 := wbEventMemberEnum.Check(EventMember, nil);
-      if s2 <> '' then
-        s2 := 'EventMember' + s2;
-      if (s1 <> '') or (s2 <> '') then
-        Result := s1 + ':' + s2;
-    end;
-    ctEditType:
-      Result := 'ComboBox';
-    ctEditInfo: begin
-      Result := wbEventFunctionAndMemberEditInfo;
-      if Result = '' then try
-        slMember := TStringList.Create;
-        slMember.AddStrings(wbEventMemberEnum.EditInfo[nil]);
-        with TStringList.Create do try
-          for i := 0 to Pred(wbEventFunctionEnum.NameCount) do
-            for j := 0 to Pred(slMember.Count) do
-              Add(wbEventFunctionEnum.Names[i] + ':' + slMember[j]);
-          Sort;
-          Result := CommaText;
-        finally
-          Free;
-        end;
-        wbEventFunctionAndMemberEditInfo := Result;
-      finally
-        FreeAndNil(slMember);
-      end
-    end;
-  end;
-end;
-
-function wbEventFunctionAndMemberToInt(const aString: string; const aElement: IwbElement): Int64;
-var
-  EventFunction, EventMember, i: Integer;
-begin
-  i := Pos(':', aString);
-  if i > 0 then begin
-    EventFunction := wbEventFunctionEnum.FromEditValue(Copy(aString, 1, i-1), nil);
-    EventMember := wbEventMemberEnum.FromEditValue(Copy(aString, i+1, Length(aString)), nil);
-  end
-  else begin
-    EventFunction := 0;
-    EventMember := 0;
-  end;
-  Result := EventMember shl 16 + EventFunction;
 end;
 
 function wbOBTEAddonIndexToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
@@ -1637,713 +2216,6 @@ begin
     Result := 3
   else
     Result := 0;
-end;
-
-type
-  TCTDAFunctionParamType = (
-    { 0} ptNone,
-    { 1} ptString,
-    { 2} ptInteger,
-    { 3} ptFloat,
-    { 4} ptActor,              // ACHR
-    { 5} ptActorBase,          // NPC_
-    { 6} ptActorValue,         // AVIF?
-    { 7} ptAdvanceAction,      // ?? Enum
-    { 8} ptAlias,              // index into QUST quest aliases
-    { 9} ptAlignment,          // ?? Enum
-    {10} ptAssociationType,    // ASTP
-    {11} ptAxis,               // ?? Char
-    {12} ptCastingSource,      // ?? Enum
-    {13} ptCell,               // CELL
-    {14} ptClass,              // CLAS
-    {15} ptCrimeType,          // ?? Enum
-    {16} ptCriticalStage,      // ?? Enum
-    {17} ptEncounterZone,      // ECZN
-    {18} ptEquipType,          // ?? Enum
-    {19} ptEvent,              // Struct
-    {20} ptEventData,          // LCTN, KYWD or FLST
-    {21} ptFaction,            // FACT
-    {22} ptFormList,           // FLST
-    {23} ptFormType,           // ?? Enum
-    {24} ptFurniture,          // FURN
-    {25} ptFurnitureAnim,      // enum
-    {26} ptFurnitureEntry,     // flags
-    {27} ptGlobal,             // GLOB
-    {28} ptIdleForm,           // IDLE
-    {29} ptInventoryObject,    // ARMO, BOOK, MISC, WEAP, AMMO, KEYM, ALCH, ARMA, LIGH, LVLI, COBJ
-    {30} ptKeyword,            // KYWD
-    {31} ptLocation,           // LCTN
-    {32} ptMagicEffect,        // MGEF
-    {33} ptMagicItem,          // SPEL
-    {34} ptMiscStat,           // ?? Enum
-    {35} ptObjectReference,    // REFR, ACHR
-    {36} ptOwner,              // FACT, NPC_
-    {37} ptPackage,            // PACK
-    {38} ptPackdata,           // index into PACK package data inputs
-    {39} ptPerk,               // PERK
-    {40} ptQuest,              // QUST
-    {41} ptQuestStage,         // ?? Integer
-    {42} ptRace,               // RACE
-    {43} ptReferencableObject,
-    {44} ptRefType,            // LCRT
-    {45} ptRegion,             // REGN
-    {46} ptScene,              // SCEN
-    {47} ptSex,                // Enum: Male, Female
-    {48} ptShout,              // SHOU
-    {49} ptVariableName,       // Integer
-    {50} ptVATSValueFunction,  //
-    {51} ptVATSValueParam,
-    {52} ptVoiceType,          // VTYP
-    {53} ptWardState,          // enum
-    {54} ptWeather,            // WTHR
-    {55} ptWorldspace,         // WRLD
-    {56} ptDamageType,         // DMGT
-    {57} ptFactionOpt          // FACT
-  );
-
-  PCTDAFunction = ^TCTDAFunction;
-  TCTDAFunction = record
-    Index: Integer;
-    Name: string;
-    Desc: string;
-    ParamType1: TCTDAFunctionParamType;
-    ParamType2: TCTDAFunctionParamType;
-    ParamType3: TCTDAFunctionParamType;
-  end;
-
-const
-  wbCTDAFunctions : array[0..478] of TCTDAFunction = (
-    (Index:   0; Name: 'GetWantBlocking'),    //   0
-    (Index:   1; Name: 'GetDistance'; ParamType1: ptObjectReference),
-    (Index:   5; Name: 'GetLocked'),    //   2
-    (Index:   6; Name: 'GetPos'; Paramtype1: ptAxis),    //   3
-    (Index:   8; Name: 'GetAngle'; Paramtype1: ptAxis),    //   4
-    (Index:  10; Name: 'GetStartingPos'; Paramtype1: ptAxis),    //   5
-    (Index:  11; Name: 'GetStartingAngle'; Paramtype1: ptAxis),    //   6
-    (Index:  12; Name: 'GetSecondsPassed'),    //   7
-    (Index:  14; Name: 'GetValue'; Paramtype1: ptActorValue),    //   8
-    (Index:  18; Name: 'GetCurrentTime'),    //   9
-    (Index:  24; Name: 'GetScale'),    //  10
-    (Index:  25; Name: 'IsMoving'),    //  11
-    (Index:  26; Name: 'IsTurning'),    //  12
-    (Index:  27; Name: 'GetLineOfSight'; ParamType1: ptObjectReference),
-    (Index:  32; Name: 'GetInSameCell'; ParamType1: ptObjectReference),
-    (Index:  35; Name: 'GetDisabled'),    //  15
-    (Index:  36; Name: 'MenuMode'; Paramtype1: ptInteger),
-    (Index:  39; Name: 'GetDisease'),    //  17
-    (Index:  41; Name: 'GetClothingValue'),    //  18
-    (Index:  42; Name: 'SameFaction'; Paramtype1: ptActor),    //  19
-    (Index:  43; Name: 'SameRace'; Paramtype1: ptActor),    //  20
-    (Index:  44; Name: 'SameSex'; Paramtype1: ptActor),    //  21
-    (Index:  45; Name: 'GetDetected'; Paramtype1: ptActor),    //  22
-    (Index:  46; Name: 'GetDead'),    //  23
-    (Index:  47; Name: 'GetItemCount'; ParamType1: ptReferencableObject),
-    (Index:  48; Name: 'GetGold'),    //  25
-    (Index:  49; Name: 'GetSleeping'),    //  26
-    (Index:  50; Name: 'GetTalkedToPC'),    //  27
-    (Index:  56; Name: 'GetQuestRunning'; Paramtype1: ptQuest),    //  28
-    (Index:  58; Name: 'GetStage'; Paramtype1: ptQuest),    //  29
-    (Index:  59; Name: 'GetStageDone'; ParamType1: ptQuest; ParamType2: ptQuestStage),
-    (Index:  60; Name: 'GetFactionRankDifference'; Paramtype1: ptFaction; Paramtype2: ptActor),    //  31
-    (Index:  61; Name: 'GetAlarmed'),    //  32
-    (Index:  62; Name: 'IsRaining'),    //  33
-    (Index:  63; Name: 'GetAttacked'),    //  34
-    (Index:  64; Name: 'GetIsCreature'),    //  35
-    (Index:  65; Name: 'GetLockLevel'),    //  36
-    (Index:  66; Name: 'GetShouldAttack'; Paramtype1: ptActor),    //  37
-    (Index:  67; Name: 'GetInCell'; Paramtype1: ptCell),    //  38
-    (Index:  68; Name: 'GetIsClass'; Paramtype1: ptClass),    //  39
-    (Index:  69; Name: 'GetIsRace'; Paramtype1: ptRace),    //  40
-    (Index:  70; Name: 'GetIsSex'; Paramtype1: ptSex),    //  41
-    (Index:  71; Name: 'GetInFaction'; Paramtype1: ptFaction),    //  42
-    (Index:  72; Name: 'GetIsID'; ParamType1: ptReferencableObject),
-    (Index:  73; Name: 'GetFactionRank'; Paramtype1: ptFaction),    //  44
-    (Index:  74; Name: 'GetGlobalValue'; Paramtype1: ptGlobal),    //  45
-    (Index:  75; Name: 'IsSnowing'),    //  46
-    (Index:  77; Name: 'GetRandomPercent'),    //  47
-    (Index:  79; Name: 'WouldBeStealing'; ParamType1: ptObjectReference),
-    (Index:  80; Name: 'GetLevel'),    //  49
-    (Index:  81; Name: 'IsRotating'),    //  50
-    (Index:  84; Name: 'GetDeadCount'; ParamType1: ptActorBase),
-    (Index:  91; Name: 'GetIsAlerted'),    //  52
-    (Index:  98; Name: 'GetPlayerControlsDisabled'; Paramtype1: ptInteger; Paramtype2: ptInteger; Paramtype3: ptInteger),
-    (Index:  99; Name: 'GetHeadingAngle'; ParamType1: ptObjectReference),
-    (Index: 101; Name: 'IsWeaponMagicOut'),    //  55
-    (Index: 102; Name: 'IsTorchOut'),    //  56
-    (Index: 103; Name: 'IsShieldOut'),    //  57
-    (Index: 106; Name: 'IsFacingUp'),    //  58
-    (Index: 107; Name: 'GetKnockedState'),    //  59
-    (Index: 108; Name: 'GetWeaponAnimType'),    //  60
-    (Index: 109; Name: 'IsWeaponSkillType'; ParamType1: ptActorValue),
-    (Index: 110; Name: 'GetCurrentAIPackage'),    //  62
-    (Index: 111; Name: 'IsWaiting'),    //  63
-    (Index: 112; Name: 'IsIdlePlaying'),    //  64
-    (Index: 116; Name: 'IsIntimidatedbyPlayer'),    //  65
-    (Index: 117; Name: 'IsPlayerInRegion'; Paramtype1: ptRegion),    //  66
-    (Index: 118; Name: 'GetActorAggroRadiusViolated'),    //  67
-    (Index: 122; Name: 'GetCrime'; ParamType1: ptActor; ParamType2: ptCrimeType),
-    (Index: 123; Name: 'IsGreetingPlayer'),    //  69
-    (Index: 125; Name: 'IsGuard'),    //  70
-    (Index: 127; Name: 'HasBeenEaten'),    //  71
-    (Index: 128; Name: 'GetStaminaPercentage'),    //  72
-    (Index: 129; Name: 'HasBeenRead'),    //  73
-    (Index: 130; Name: 'GetDying'),    //  74
-    (Index: 131; Name: 'GetSceneActionPercent'; ParamType1: ptScene; ParamType2: ptInteger),
-    (Index: 132; Name: 'WouldRefuseCommand'; ParamType1: ptObjectReference),
-    (Index: 133; Name: 'SameFactionAsPC'),    //  77
-    (Index: 134; Name: 'SameRaceAsPC'),    //  78
-    (Index: 135; Name: 'SameSexAsPC'),    //  79
-    (Index: 136; Name: 'GetIsReference'; ParamType1: ptObjectReference),
-    (Index: 141; Name: 'IsTalking'),    //  81
-    (Index: 142; Name: 'GetComponentCount'; ParamType1: ptReferencableObject),
-    (Index: 143; Name: 'GetCurrentAIProcedure'),    //  83
-    (Index: 144; Name: 'GetTrespassWarningLevel'),    //  84
-    (Index: 145; Name: 'IsTrespassing'),    //  85
-    (Index: 146; Name: 'IsInMyOwnedCell'),    //  86
-    (Index: 147; Name: 'GetWindSpeed'),    //  87
-    (Index: 148; Name: 'GetCurrentWeatherPercent'),    //  88
-    (Index: 149; Name: 'GetIsCurrentWeather'; ParamType1: ptWeather),
-    (Index: 150; Name: 'IsContinuingPackagePCNear'),    //  90
-    (Index: 152; Name: 'GetIsCrimeFaction'; Paramtype1: ptFaction),    //  91
-    (Index: 153; Name: 'CanHaveFlames'),    //  92
-    (Index: 154; Name: 'HasFlames'),    //  93
-    (Index: 157; Name: 'GetOpenState'),    //  94
-    (Index: 159; Name: 'GetSitting'),    //  95
-    (Index: 161; Name: 'GetIsCurrentPackage'; Paramtype1: ptPackage),    //  96
-    (Index: 162; Name: 'IsCurrentFurnitureRef'; ParamType1: ptObjectReference),
-    (Index: 163; Name: 'IsCurrentFurnitureObj'; Paramtype1: ptFurniture),    //  98
-    (Index: 170; Name: 'GetDayOfWeek'),    //  99
-    (Index: 172; Name: 'GetTalkedToPCParam'; Paramtype1: ptActor),    // 100
-    (Index: 175; Name: 'IsPCSleeping'),    // 101
-    (Index: 176; Name: 'IsPCAMurderer'),    // 102
-    (Index: 180; Name: 'HasSameEditorLocationAsRef'; ParamType1: ptObjectReference; ParamType2: ptKeyword),
-    (Index: 181; Name: 'HasSameEditorLocationAsRefAlias'; ParamType1: ptAlias; ParamType2: ptKeyword),
-    (Index: 182; Name: 'GetEquipped'; ParamType1: ptReferencableObject),
-    (Index: 185; Name: 'IsSwimming'),    // 106
-    (Index: 190; Name: 'GetAmountSoldStolen'),    // 107
-    (Index: 192; Name: 'GetIgnoreCrime'),    // 108
-    (Index: 193; Name: 'GetPCExpelled'; Paramtype1: ptFaction),    // 109
-    (Index: 195; Name: 'GetPCFactionMurder'; Paramtype1: ptFaction),    // 110
-    (Index: 197; Name: 'GetPCEnemyofFaction'; Paramtype1: ptFaction),    // 111
-    (Index: 199; Name: 'GetPCFactionAttack'; Paramtype1: ptFaction),    // 112
-    (Index: 203; Name: 'GetDestroyed'),    // 113
-    (Index: 214; Name: 'HasMagicEffect'; ParamType1: ptMagicEffect),
-    (Index: 215; Name: 'GetDefaultOpen'),    // 115
-    (Index: 223; Name: 'IsSpellTarget'; ParamType1: ptMagicItem),
-    (Index: 224; Name: 'GetVATSMode'),    // 117
-    (Index: 225; Name: 'GetPersuasionNumber'),    // 118
-    (Index: 226; Name: 'GetVampireFeed'),    // 119
-    (Index: 227; Name: 'GetCannibal'),    // 120
-    (Index: 228; Name: 'GetIsClassDefault'; Paramtype1: ptClass),    // 121
-    (Index: 229; Name: 'GetClassDefaultMatch'),    // 122
-    (Index: 230; Name: 'GetInCellParam'; ParamType1: ptCell; ParamType2: ptObjectReference),
-    (Index: 231; Name: 'GetPlayerDialogueInput'),    // 124
-    (Index: 235; Name: 'GetVatsTargetHeight'),    // 125
-    (Index: 237; Name: 'GetIsGhost'),    // 126
-    (Index: 242; Name: 'GetUnconscious'),    // 127
-    (Index: 244; Name: 'GetRestrained'),    // 128
-    (Index: 246; Name: 'GetIsUsedItem'; ParamType1: ptReferencableObject),
-    (Index: 247; Name: 'GetIsUsedItemType'; ParamType1: ptFormType),
-    (Index: 248; Name: 'IsScenePlaying'; Paramtype1: ptScene),    // 131
-    (Index: 249; Name: 'IsInDialogueWithPlayer'),    // 132
-    (Index: 250; Name: 'GetLocationCleared'; Paramtype1: ptLocation),    // 133
-    (Index: 254; Name: 'GetIsPlayableRace'),    // 134
-    (Index: 255; Name: 'GetOffersServicesNow'),    // 135
-    (Index: 258; Name: 'HasAssociationType'; Paramtype1: ptActor; Paramtype2: ptAssociationType),    // 136
-    (Index: 259; Name: 'HasFamilyRelationship'; Paramtype1: ptActor),    // 137
-    (Index: 261; Name: 'HasParentRelationship'; Paramtype1: ptActor),    // 138
-    (Index: 262; Name: 'IsWarningAbout'; ParamType1: ptFormList),
-    (Index: 263; Name: 'IsWeaponOut'),    // 140
-    (Index: 264; Name: 'HasSpell'; ParamType1: ptMagicItem),
-    (Index: 265; Name: 'IsTimePassing'),    // 142
-    (Index: 266; Name: 'IsPleasant'),    // 143
-    (Index: 267; Name: 'IsCloudy'),    // 144
-    (Index: 274; Name: 'IsSmallBump'),    // 145
-    (Index: 277; Name: 'GetBaseValue'; ParamType1: ptActorValue),
-    (Index: 278; Name: 'IsOwner'; ParamType1: ptOwner),
-    (Index: 280; Name: 'IsCellOwner'; ParamType1: ptCell; ParamType2: ptOwner),
-    (Index: 282; Name: 'IsHorseStolen'),    // 149
-    (Index: 285; Name: 'IsLeftUp'),    // 150
-    (Index: 286; Name: 'IsSneaking'),    // 151
-    (Index: 287; Name: 'IsRunning'),    // 152
-    (Index: 288; Name: 'GetFriendHit'),    // 153
-    (Index: 289; Name: 'IsInCombat'; ParamType1: ptInteger),
-    (Index: 300; Name: 'IsInInterior'),    // 155
-    (Index: 304; Name: 'IsWaterObject'),    // 156
-    (Index: 305; Name: 'GetPlayerAction'),    // 157
-    (Index: 306; Name: 'IsActorUsingATorch'),    // 158
-    (Index: 309; Name: 'IsXBox'),    // 159
-    (Index: 310; Name: 'GetInWorldspace'; Paramtype1: ptWorldSpace),    // 160
-    (Index: 312; Name: 'GetPCMiscStat'; ParamType1: ptMiscStat),
-    (Index: 313; Name: 'GetPairedAnimation'),    // 162
-    (Index: 314; Name: 'IsActorAVictim'),    // 163
-    (Index: 315; Name: 'GetTotalPersuasionNumber'),    // 164
-    (Index: 318; Name: 'GetIdleDoneOnce'),    // 165
-    (Index: 320; Name: 'GetNoRumors'),    // 166
-    (Index: 323; Name: 'GetCombatState'),    // 167
-    (Index: 325; Name: 'GetWithinPackageLocation'; ParamType1: ptPackdata),
-    (Index: 327; Name: 'IsRidingMount'),    // 169
-    (Index: 329; Name: 'IsFleeing'),    // 170
-    (Index: 332; Name: 'IsInDangerousWater'),    // 171
-    (Index: 338; Name: 'GetIgnoreFriendlyHits'),    // 172
-    (Index: 339; Name: 'IsPlayersLastRiddenMount'),    // 173
-    (Index: 353; Name: 'IsActor'),    // 174
-    (Index: 354; Name: 'IsEssential'),    // 175
-    (Index: 358; Name: 'IsPlayerMovingIntoNewSpace'),    // 176
-    (Index: 359; Name: 'GetInCurrentLocation'; Paramtype1: ptLocation),    // 177
-    (Index: 360; Name: 'GetInCurrentLocationAlias'; ParamType1: ptAlias),
-    (Index: 361; Name: 'GetTimeDead'),    // 179
-    (Index: 362; Name: 'HasLinkedRef'; Paramtype1: ptKeyword),    // 180
-    (Index: 365; Name: 'IsChild'),    // 181
-    (Index: 366; Name: 'GetStolenItemValueNoCrime'; Paramtype1: ptFaction),    // 182
-    (Index: 367; Name: 'GetLastPlayerAction'),    // 183
-    (Index: 368; Name: 'IsPlayerActionActive'; Paramtype1: ptInteger),    // 184
-    (Index: 370; Name: 'IsTalkingActivatorActor'; Paramtype1: ptActor),    // 185
-    (Index: 372; Name: 'IsInList'; ParamType1: ptFormList),
-    (Index: 373; Name: 'GetStolenItemValue'; Paramtype1: ptFaction),    // 187
-    (Index: 375; Name: 'GetCrimeGoldViolent'; ParamType1: ptFactionOpt),
-    (Index: 376; Name: 'GetCrimeGoldNonviolent'; ParamType1: ptFactionOpt),
-    (Index: 378; Name: 'IsOwnedBy'; Paramtype1: ptActor),    // 190
-    (Index: 380; Name: 'GetCommandDistance'),    // 191
-    (Index: 381; Name: 'GetCommandLocationDistance'),    // 192
-    (Index: 390; Name: 'GetHitLocation'),    // 193
-    (Index: 391; Name: 'IsPC1stPerson'),    // 194
-    (Index: 396; Name: 'GetCauseofDeath'),    // 195
-    (Index: 397; Name: 'IsLimbGone'; Paramtype1: ptInteger),    // 196
-    (Index: 398; Name: 'IsWeaponInList'; ParamType1: ptFormList),
-    (Index: 402; Name: 'IsBribedbyPlayer'),    // 198
-    (Index: 403; Name: 'GetRelationshipRank'; Paramtype1: ptActor),    // 199
-    (Index: 407; Name: 'GetVATSValue'; ParamType1: ptInteger; ParamType2: ptInteger),
-    (Index: 408; Name: 'IsKiller'; Paramtype1: ptActor),    // 201
-    (Index: 409; Name: 'IsKillerObject'; ParamType1: ptFormList),
-    (Index: 410; Name: 'GetFactionCombatReaction'; Paramtype1: ptFaction; Paramtype2: ptFaction),    // 203
-    (Index: 414; Name: 'Exists'; ParamType1: ptObjectReference),
-    (Index: 415; Name: 'GetGroupMemberCount'),    // 205
-    (Index: 416; Name: 'GetGroupTargetCount'),    // 206
-    (Index: 426; Name: 'GetIsVoiceType'; Paramtype1: ptVoiceType),    // 207
-    (Index: 427; Name: 'GetPlantedExplosive'),    // 208
-    (Index: 429; Name: 'IsScenePackageRunning'),    // 209
-    (Index: 430; Name: 'GetHealthPercentage'),    // 210
-    (Index: 432; Name: 'GetIsObjectType'; ParamType1: ptFormType),
-    (Index: 434; Name: 'PlayerVisualDetection'),    // 212
-    (Index: 435; Name: 'PlayerAudioDetection'),    // 213
-    (Index: 437; Name: 'GetIsCreatureType'; Paramtype1: ptInteger),    // 214
-    (Index: 438; Name: 'HasKey'; ParamType1: ptObjectReference),
-    (Index: 439; Name: 'IsFurnitureEntryType'; ParamType1: ptReferencableObject),
-    (Index: 444; Name: 'GetInCurrentLocationFormList'; ParamType1: ptFormList),
-    (Index: 445; Name: 'GetInZone'; Paramtype1: ptEncounterZone),    // 218
-    (Index: 446; Name: 'GetVelocity'; Paramtype1: ptAxis),    // 219
-    (Index: 447; Name: 'GetGraphVariableFloat'; Paramtype1: ptString),    // 220
-    (Index: 448; Name: 'HasPerk'; Paramtype1: ptPerk),    // 221
-    (Index: 449; Name: 'GetFactionRelation'; Paramtype1: ptActor),    // 222
-    (Index: 450; Name: 'IsLastIdlePlayed'; ParamType1: ptIdleForm),
-    (Index: 453; Name: 'GetPlayerTeammate'),    // 224
-    (Index: 454; Name: 'GetPlayerTeammateCount'),    // 225
-    (Index: 458; Name: 'GetActorCrimePlayerEnemy'),    // 226
-    (Index: 459; Name: 'GetCrimeGold'; ParamType1: ptFactionOpt),
-    (Index: 463; Name: 'IsPlayerGrabbedRef'; ParamType1: ptObjectReference),
-    (Index: 465; Name: 'GetKeywordItemCount'; Paramtype1: ptKeyword),    // 229
-    (Index: 470; Name: 'GetDestructionStage'),    // 230
-    (Index: 473; Name: 'GetIsAlignment'; Paramtype1: ptAlignment),    // 231
-    (Index: 476; Name: 'IsProtected'),    // 232
-    (Index: 477; Name: 'GetThreatRatio'; Paramtype1: ptActor),    // 233
-    (Index: 479; Name: 'GetIsUsedItemEquipType'; Paramtype1: ptEquipType),    // 234
-    (Index: 483; Name: 'GetPlayerActivated'),    // 235
-    (Index: 485; Name: 'GetFullyEnabledActorsInHigh'),    // 236
-    (Index: 487; Name: 'IsCarryable'),    // 237
-    (Index: 488; Name: 'GetConcussed'),    // 238
-    (Index: 491; Name: 'GetMapMarkerVisible'),    // 239
-    (Index: 493; Name: 'PlayerKnows'; ParamType1: ptReferencableObject),
-    (Index: 494; Name: 'GetPermanentValue'; ParamType1: ptActorValue),
-    (Index: 495; Name: 'GetKillingBlowLimb'),    // 242
-    (Index: 497; Name: 'CanPayCrimeGold'; ParamType1: ptFaction),
-    (Index: 499; Name: 'GetDaysInJail'),    // 244
-    (Index: 500; Name: 'EPAlchemyGetMakingPoison'),    // 245
-    (Index: 501; Name: 'EPAlchemyEffectHasKeyword'; Paramtype1: ptKeyword),    // 246
-    (Index: 503; Name: 'GetAllowWorldInteractions'),    // 247
-    (Index: 506; Name: 'DialogueGetAv'; ParamType1: ptActorValue),
-    (Index: 507; Name: 'DialogueHasPerk'; Paramtype1: ptPerk),    // 249
-    (Index: 508; Name: 'GetLastHitCritical'),    // 250
-    (Index: 510; Name: 'DialogueGetItemCount'; ParamType1: ptReferencableObject),
-    (Index: 511; Name: 'LastCrippledCondition'; ParamType1: ptActorValue),
-    (Index: 512; Name: 'HasSharedPowerGrid'; ParamType1: ptObjectReference),
-    (Index: 513; Name: 'IsCombatTarget'; Paramtype1: ptActor),    // 254
-    (Index: 515; Name: 'GetVATSRightAreaFree'; ParamType1: ptObjectReference),
-    (Index: 516; Name: 'GetVATSLeftAreaFree'; ParamType1: ptObjectReference),
-    (Index: 517; Name: 'GetVATSBackAreaFree'; ParamType1: ptObjectReference),
-    (Index: 518; Name: 'GetVATSFrontAreaFree'; ParamType1: ptObjectReference),
-    (Index: 519; Name: 'GetIsLockBroken'),    // 259
-    (Index: 520; Name: 'IsPS3'),    // 260
-    (Index: 521; Name: 'IsWindowsPC'),    // 261
-    (Index: 522; Name: 'GetVATSRightTargetVisible'; ParamType1: ptObjectReference),
-    (Index: 523; Name: 'GetVATSLeftTargetVisible'; ParamType1: ptObjectReference),
-    (Index: 524; Name: 'GetVATSBackTargetVisible'; ParamType1: ptObjectReference),
-    (Index: 525; Name: 'GetVATSFrontTargetVisible'; ParamType1: ptObjectReference),
-    (Index: 528; Name: 'IsInCriticalStage'; Paramtype1: ptCriticalStage),    // 266
-    (Index: 530; Name: 'GetXPForNextLevel'),    // 267
-    (Index: 533; Name: 'GetInfamy'; ParamType1: ptFaction),
-    (Index: 534; Name: 'GetInfamyViolent'; ParamType1: ptFaction),
-    (Index: 535; Name: 'GetInfamyNonViolent'; ParamType1: ptFaction),
-    (Index: 536; Name: 'GetTypeCommandPerforming'),    // 271
-    (Index: 543; Name: 'GetQuestCompleted'; Paramtype1: ptQuest),    // 272
-    (Index: 544; Name: 'GetSpeechChallengeSuccessLevel'),    // 273
-    (Index: 547; Name: 'IsGoreDisabled'),    // 274
-    (Index: 550; Name: 'IsSceneActionComplete'; ParamType1: ptScene; ParamType2: ptInteger),
-    (Index: 552; Name: 'GetSpellUsageNum'; ParamType1: ptMagicItem),
-    (Index: 554; Name: 'GetActorsInHigh'),    // 277
-    (Index: 555; Name: 'HasLoaded3D'),    // 278
-    (Index: 560; Name: 'HasKeyword'; Paramtype1: ptKeyword),    // 279
-    (Index: 561; Name: 'HasRefType'; Paramtype1: ptRefType),    // 280
-    (Index: 562; Name: 'LocationHasKeyword'; Paramtype1: ptKeyword),    // 281
-    (Index: 563; Name: 'LocationHasRefType'; Paramtype1: ptRefType),    // 282
-    (Index: 565; Name: 'GetIsEditorLocation'; Paramtype1: ptLocation),    // 283
-    (Index: 566; Name: 'GetIsAliasRef'; ParamType1: ptAlias),
-    (Index: 567; Name: 'GetIsEditorLocationAlias'; ParamType1: ptAlias),
-    (Index: 568; Name: 'IsSprinting'),    // 286
-    (Index: 569; Name: 'IsBlocking'),    // 287
-    (Index: 570; Name: 'HasEquippedSpell'; ParamType1: ptCastingSource),
-    (Index: 571; Name: 'GetCurrentCastingType'; ParamType1: ptCastingSource),
-    (Index: 572; Name: 'GetCurrentDeliveryType'; ParamType1: ptCastingSource),
-    (Index: 574; Name: 'GetAttackState'),    // 291
-    (Index: 576; Name: 'GetEventData'; ParamType1: ptEvent; ParamType2: ptEventData; ParamType3: ptString),  // fireundubh: Event Function, Event Member, Data (FO4)
-    (Index: 577; Name: 'IsCloserToAThanB'; ParamType1: ptObjectReference; ParamType2: ptObjectReference),
-    (Index: 578; Name: 'LevelMinusPCLevel'),    // 294
-    (Index: 580; Name: 'IsBleedingOut'),    // 295
-    (Index: 584; Name: 'GetRelativeAngle'; ParamType1: ptObjectReference; ParamType2: ptAxis),
-    (Index: 589; Name: 'GetMovementDirection'),    // 297
-    (Index: 590; Name: 'IsInScene'),    // 298
-    (Index: 591; Name: 'GetRefTypeDeadCount'; Paramtype1: ptLocation; Paramtype2: ptRefType),    // 299
-    (Index: 592; Name: 'GetRefTypeAliveCount'; Paramtype1: ptLocation; Paramtype2: ptRefType),    // 300
-    (Index: 594; Name: 'GetIsFlying'),    // 301
-    (Index: 595; Name: 'IsCurrentSpell'; ParamType1: ptMagicItem; ParamType2: ptCastingSource),
-    (Index: 596; Name: 'SpellHasKeyword'; ParamType1: ptCastingSource; ParamType2: ptKeyword),
-    (Index: 597; Name: 'GetEquippedItemType'; ParamType1: ptCastingSource),
-    (Index: 598; Name: 'GetLocationAliasCleared'; ParamType1: ptAlias),
-    (Index: 600; Name: 'GetLocationAliasRefTypeDeadCount'; ParamType1: ptAlias; ParamType2: ptRefType),
-    (Index: 601; Name: 'GetLocationAliasRefTypeAliveCount'; ParamType1: ptAlias; ParamType2: ptRefType),
-    (Index: 602; Name: 'IsWardState'; ParamType1: ptWardState),
-    (Index: 603; Name: 'IsInSameCurrentLocationAsRef'; ParamType1: ptObjectReference; ParamType2: ptKeyword),
-    (Index: 604; Name: 'IsInSameCurrentLocationAsRefAlias'; ParamType1: ptAlias; ParamType2: ptKeyword),
-    (Index: 605; Name: 'LocationAliasIsLocation'; ParamType1: ptAlias; ParamType2: ptLocation),
-    (Index: 606; Name: 'GetKeywordDataForLocation'; Paramtype1: ptLocation; Paramtype2: ptKeyword),    // 312
-    (Index: 608; Name: 'GetKeywordDataForAlias'; ParamType1: ptAlias; ParamType2: ptKeyword),
-    (Index: 610; Name: 'LocationAliasHasKeyword'; ParamType1: ptAlias; ParamType2: ptKeyword),
-    (Index: 611; Name: 'IsNullPackageData'; ParamType1: ptPackdata),
-    (Index: 612; Name: 'GetNumericPackageData'; ParamType1: ptPackdata),
-    (Index: 613; Name: 'IsPlayerRadioOn'),    // 317
-    (Index: 614; Name: 'GetPlayerRadioFrequency'),    // 318
-    (Index: 615; Name: 'GetHighestRelationshipRank'),    // 319
-    (Index: 616; Name: 'GetLowestRelationshipRank'),    // 320
-    (Index: 617; Name: 'HasAssociationTypeAny'; Paramtype1: ptAssociationType),    // 321
-    (Index: 618; Name: 'HasFamilyRelationshipAny'),    // 322
-    (Index: 619; Name: 'GetPathingTargetOffset'; Paramtype1: ptAxis),    // 323
-    (Index: 620; Name: 'GetPathingTargetAngleOffset'; Paramtype1: ptAxis),    // 324
-    (Index: 621; Name: 'GetPathingTargetSpeed'),    // 325
-    (Index: 622; Name: 'GetPathingTargetSpeedAngle'; Paramtype1: ptAxis),    // 326
-    (Index: 623; Name: 'GetMovementSpeed'),    // 327
-    (Index: 624; Name: 'GetInContainer'; ParamType1: ptObjectReference),
-    (Index: 625; Name: 'IsLocationLoaded'; Paramtype1: ptLocation),    // 329
-    (Index: 626; Name: 'IsLocationAliasLoaded'; ParamType1: ptAlias),
-    (Index: 627; Name: 'IsDualCasting'),    // 331
-    (Index: 629; Name: 'GetVMQuestVariable'; ParamType1: ptQuest; ParamType2: ptString),
-    (Index: 630; Name: 'GetCombatAudioDetection'),    // 333
-    (Index: 631; Name: 'GetCombatVisualDetection'),    // 334
-    (Index: 632; Name: 'IsCasting'),    // 335
-    (Index: 633; Name: 'GetFlyingState'),    // 336
-    (Index: 635; Name: 'IsInFavorState'),    // 337
-    (Index: 636; Name: 'HasTwoHandedWeaponEquipped'),    // 338
-    (Index: 637; Name: 'IsFurnitureExitType'; ParamType1: ptReferencableObject),
-    (Index: 638; Name: 'IsInFriendStatewithPlayer'),    // 340
-    (Index: 639; Name: 'GetWithinDistance'; ParamType1: ptObjectReference; ParamType2: ptFloat),
-    (Index: 640; Name: 'GetValuePercent'; ParamType1: ptActorValue),
-    (Index: 641; Name: 'IsUnique'),    // 343
-    (Index: 642; Name: 'GetLastBumpDirection'),    // 344
-    (Index: 644; Name: 'GetInfoChallangeSuccess'),    // 345
-    (Index: 645; Name: 'GetIsInjured'),    // 346
-    (Index: 646; Name: 'GetIsCrashLandRequest'),    // 347
-    (Index: 647; Name: 'GetIsHastyLandRequest'),    // 348
-    (Index: 650; Name: 'IsLinkedTo'; ParamType1: ptObjectReference; ParamType2: ptKeyword),
-    (Index: 651; Name: 'GetKeywordDataForCurrentLocation'; Paramtype1: ptKeyword),    // 350
-    (Index: 652; Name: 'GetInSharedCrimeFaction'; ParamType1: ptObjectReference),
-    (Index: 654; Name: 'GetBribeSuccess'),    // 352
-    (Index: 655; Name: 'GetIntimidateSuccess'),    // 353
-    (Index: 656; Name: 'GetArrestedState'),    // 354
-    (Index: 657; Name: 'GetArrestingActor'),    // 355
-    (Index: 659; Name: 'HasVMScript'; ParamType1: ptString),
-    (Index: 660; Name: 'GetVMScriptVariable'; ParamType1: ptString; ParamType2: ptString),
-    (Index: 661; Name: 'GetWorkshopResourceDamage'; ParamType1: ptActorValue),
-    (Index: 664; Name: 'HasValidRumorTopic'; Paramtype1: ptQuest),    // 359
-    (Index: 672; Name: 'IsAttacking'),    // 360
-    (Index: 673; Name: 'IsPowerAttacking'),    // 361
-    (Index: 674; Name: 'IsLastHostileActor'),    // 362
-    (Index: 675; Name: 'GetGraphVariableInt'; ParamType1: ptString),
-    (Index: 678; Name: 'ShouldAttackKill'; Paramtype1: ptActor),    // 364
-    (Index: 680; Name: 'GetActivationHeight'),    // 365
-    (Index: 682; Name: 'WornHasKeyword'; Paramtype1: ptKeyword),    // 366
-    (Index: 683; Name: 'GetPathingCurrentSpeed'),    // 367
-    (Index: 684; Name: 'GetPathingCurrentSpeedAngle'; Paramtype1: ptAxis),    // 368
-    (Index: 691; Name: 'GetWorkshopObjectCount'; ParamType1: ptReferencableObject),
-    (Index: 693; Name: 'EPMagic_SpellHasKeyword'; Paramtype1: ptKeyword),    // 370
-    (Index: 694; Name: 'GetNoBleedoutRecovery'),    // 371
-    (Index: 696; Name: 'EPMagic_SpellHasSkill'; ParamType1: ptActorValue),
-    (Index: 697; Name: 'IsAttackType'; Paramtype1: ptKeyword),    // 373
-    (Index: 698; Name: 'IsAllowedToFly'),    // 374
-    (Index: 699; Name: 'HasMagicEffectKeyword'; Paramtype1: ptKeyword),    // 375
-    (Index: 700; Name: 'IsCommandedActor'),    // 376
-    (Index: 701; Name: 'IsStaggered'),    // 377
-    (Index: 702; Name: 'IsRecoiling'),    // 378
-    (Index: 703; Name: 'HasScopeWeaponEquipped'),    // 379
-    (Index: 704; Name: 'IsPathing'),    // 380
-    (Index: 705; Name: 'GetShouldHelp'; Paramtype1: ptActor),    // 381
-    (Index: 706; Name: 'HasBoundWeaponEquipped'; ParamType1: ptCastingSource),
-    (Index: 707; Name: 'GetCombatTargetHasKeyword'; Paramtype1: ptKeyword),    // 383
-    (Index: 709; Name: 'GetCombatGroupMemberCount'),    // 384
-    (Index: 710; Name: 'IsIgnoringCombat'),    // 385
-    (Index: 711; Name: 'GetLightLevel'),    // 386
-    (Index: 713; Name: 'SpellHasCastingPerk'; Paramtype1: ptPerk),    // 387
-    (Index: 714; Name: 'IsBeingRidden'),    // 388
-    (Index: 715; Name: 'IsUndead'),    // 389
-    (Index: 716; Name: 'GetRealHoursPassed'),    // 390
-    (Index: 718; Name: 'IsUnlockedDoor'),    // 391
-    (Index: 719; Name: 'IsHostileToActor'; Paramtype1: ptActor),    // 392
-    (Index: 720; Name: 'GetTargetHeight'; ParamType1: ptObjectReference),
-    (Index: 721; Name: 'IsPoison'),    // 394
-    (Index: 722; Name: 'WornApparelHasKeywordCount'; Paramtype1: ptKeyword),    // 395
-    (Index: 723; Name: 'GetItemHealthPercent'),    // 396
-    (Index: 724; Name: 'EffectWasDualCast'),    // 397
-    (Index: 725; Name: 'GetKnockStateEnum'),    // 398
-    (Index: 726; Name: 'DoesNotExist'),    // 399
-    (Index: 728; Name: 'GetPlayerWalkAwayFromDialogueScene'),    // 400
-    (Index: 729; Name: 'GetActorStance'),    // 401
-    (Index: 734; Name: 'CanProduceForWorkshop'),    // 402
-    (Index: 735; Name: 'CanFlyHere'),    // 403
-    (Index: 736; Name: 'EPIsDamageType'; ParamType1: ptDamageType),
-    (Index: 738; Name: 'GetActorGunState'),    // 405
-    (Index: 739; Name: 'GetVoiceLineLength'),    // 406
-    (Index: 741; Name: 'ObjectTemplateItem_HasKeyword'; Paramtype1: ptKeyword),    // 407
-    (Index: 742; Name: 'ObjectTemplateItem_HasUniqueKeyword'; Paramtype1: ptKeyword),    // 408
-    (Index: 743; Name: 'ObjectTemplateItem_GetLevel'),    // 409
-    (Index: 744; Name: 'MovementIdleMatches'; ParamType1: ptInteger; ParamType2: ptInteger), // TODO: determine correct param types (2)
-    (Index: 745; Name: 'GetActionData'),    // 411
-    (Index: 746; Name: 'GetActionDataShort'; Paramtype1: ptInteger),    // 412
-    (Index: 747; Name: 'GetActionDataByte'; Paramtype1: ptInteger),    // 413
-    (Index: 748; Name: 'GetActionDataFlag'; Paramtype1: ptInteger),    // 414
-    (Index: 749; Name: 'ModdedItemHasKeyword'; Paramtype1: ptKeyword),    // 415
-    (Index: 750; Name: 'GetAngryWithPlayer'),    // 416
-    (Index: 751; Name: 'IsCameraUnderWater'),    // 417
-    (Index: 753; Name: 'IsActorRefOwner'; ParamType1: ptActor),
-    (Index: 754; Name: 'HasActorRefOwner'; ParamType1: ptActor),
-    (Index: 756; Name: 'GetLoadedAmmoCount'),    // 420
-    (Index: 757; Name: 'IsTimeSpanSunrise'),    // 421
-    (Index: 758; Name: 'IsTimeSpanMorning'),    // 422
-    (Index: 759; Name: 'IsTimeSpanAfternoon'),    // 423
-    (Index: 760; Name: 'IsTimeSpanEvening'),    // 424
-    (Index: 761; Name: 'IsTimeSpanSunset'),    // 425
-    (Index: 762; Name: 'IsTimeSpanNight'),    // 426
-    (Index: 763; Name: 'IsTimeSpanMidnight'),    // 427
-    (Index: 764; Name: 'IsTimeSpanAnyDay'),    // 428
-    (Index: 765; Name: 'IsTimeSpanAnyNight'),    // 429
-    (Index: 766; Name: 'CurrentFurnitureHasKeyword'; Paramtype1: ptKeyword),    // 430
-    (Index: 767; Name: 'GetWeaponEquipIndex'),    // 431
-    (Index: 769; Name: 'IsOverEncumbered'),    // 432
-    (Index: 770; Name: 'IsPackageRequestingBlockedIdles'),    // 433
-    (Index: 771; Name: 'GetActionDataInt'),    // 434
-    (Index: 772; Name: 'GetVATSRightMinusLeftAreaFree'; ParamType1: ptObjectReference),
-    (Index: 773; Name: 'GetInIronSights'; ParamType1: ptObjectReference),
-    (Index: 774; Name: 'GetActorStaggerDirection'),    // 437
-    (Index: 775; Name: 'GetActorStaggerMagnitude'),    // 438
-    (Index: 776; Name: 'WornCoversBipedSlot'; Paramtype1: ptInteger),    // 439
-    (Index: 777; Name: 'GetInventoryValue'),    // 440
-    (Index: 778; Name: 'IsPlayerInConversation'),    // 441
-    (Index: 779; Name: 'IsInDialogueCamera'),    // 442
-    (Index: 780; Name: 'IsMyDialogueTargetPlayer'),    // 443
-    (Index: 781; Name: 'IsMyDialogueTargetActor'),    // 444
-    (Index: 782; Name: 'GetMyDialogueTargetDistance'),    // 445
-    (Index: 783; Name: 'IsSeatOccupied'; Paramtype1: ptKeyword),    // 446
-    (Index: 784; Name: 'IsPlayerRiding'),    // 447
-    (Index: 785; Name: 'IsTryingEventCamera'),    // 448
-    (Index: 786; Name: 'UseLeftSideCamera'),    // 449
-    (Index: 787; Name: 'GetNoteType'),    // 450
-    (Index: 788; Name: 'LocationHasPlayerOwnedWorkshop'),    // 451
-    (Index: 789; Name: 'IsStartingAction'),    // 452
-    (Index: 790; Name: 'IsMidAction'),    // 453
-    (Index: 791; Name: 'IsWeaponChargeAttack'),    // 454
-    (Index: 792; Name: 'IsInWorkshopMode'),    // 455
-    (Index: 793; Name: 'IsWeaponChargingHoldAttack'),    // 456
-    (Index: 794; Name: 'IsEncounterAbovePlayerLevel'),    // 457
-    (Index: 795; Name: 'IsMeleeAttacking'),    // 458
-    (Index: 796; Name: 'GetVATSQueuedTargetsUnique'),    // 459
-    (Index: 797; Name: 'GetCurrentLocationCleared'),    // 460
-    (Index: 798; Name: 'IsPowered'),    // 461
-    (Index: 799; Name: 'GetTransmitterDistance'),    // 462
-    (Index: 800; Name: 'GetCameraPlaybackTime'),    // 463
-    (Index: 801; Name: 'IsInWater'),    // 464
-    (Index: 802; Name: 'GetWithinActivateDistance'; ParamType1: ptObjectReference),
-    (Index: 803; Name: 'IsUnderWater'),    // 466
-    (Index: 804; Name: 'IsInSameSpace'; ParamType1: ptObjectReference),
-    (Index: 805; Name: 'LocationAllowsReset'),    // 468
-    (Index: 806; Name: 'GetVATSBackRightAreaFree'; ParamType1: ptObjectReference),
-    (Index: 807; Name: 'GetVATSBackLeftAreaFree'; ParamType1: ptObjectReference),
-    (Index: 808; Name: 'GetVATSBackRightTargetVisible'; ParamType1: ptObjectReference),
-    (Index: 809; Name: 'GetVATSBackLeftTargetVisible'; ParamType1: ptObjectReference),
-    (Index: 810; Name: 'GetVATSTargetLimbVisible'; ParamType1: ptObjectReference),
-    (Index: 811; Name: 'IsPlayerListening'; Paramtype1: ptFloat),    // 474
-    (Index: 812; Name: 'GetPathingRequestedQuickTurn'),    // 475
-    (Index: 813; Name: 'EPIsCalculatingBaseDamage'),    // 476
-    (Index: 814; Name: 'GetReanimating'),    // 477
-    (Index: 817; Name: 'IsInRobotWorkbench')    // 478
-  );
-
-var
-  wbCTDAFunctionEditInfo: string;
-
-function wbCTDAParamDescFromIndex(aIndex: Integer): PCTDAFunction;
-var
-  L, H, I, C: Integer;
-begin
-  Result := nil;
-
-  L := Low(wbCTDAFunctions);
-  H := High(wbCTDAFunctions);
-  while L <= H do begin
-    I := (L + H) shr 1;
-    C := CmpW32(wbCTDAFunctions[I].Index, aIndex);
-    if C < 0 then
-      L := I + 1
-    else begin
-      H := I - 1;
-      if C = 0 then begin
-        L := I;
-        Result := @wbCTDAFunctions[L];
-      end;
-    end;
-  end;
-end;
-
-function wbCTDAParam1Decider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
-var
-  Desc: PCTDAFunction;
-  Container: IwbContainer;
-  ParamFlag: Byte;
-  ParamType: TCTDAFunctionParamType;
-begin
-  Result := 0;
-  if not wbTryGetContainerFromUnion(aElement, Container) then
-    Exit;
-
-  Desc := wbCTDAParamDescFromIndex(Container.ElementByName['Function'].NativeValue);
-  if not Assigned(Desc) then
-    Exit;
-
-  ParamType := Desc.ParamType1;
-  ParamFlag := Container.ElementByName['Type'].NativeValue;
-
-  if ParamType in [ptObjectReference, ptActor, ptPackage] then begin
-    if ParamFlag and $02 > 0 then begin
-      // except for this func when Run On = Quest Alias, then alias is param3 and package is param1
-      // [INFO:00020D3C]
-      if not ((Container.ElementByName['Run On'].NativeValue = 5) and (Desc.Name = 'GetIsCurrentPackage')) then
-        ParamType := ptAlias    {>>> 'use aliases' is set <<<}
-      end
-      else if ParamFlag and $08 > 0 then
-        ParamType := ptPackdata;  {>>> 'use packdata' is set <<<}
-  end;
-
-  Result := Succ(Integer(ParamType));
-end;
-
-function wbCTDAParam2Decider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
-var
-  Desc: PCTDAFunction;
-  Container: IwbContainer;
-  ParamFlag: Byte;
-  ParamType: TCTDAFunctionParamType;
-begin
-  Result := 0;
-  if not wbTryGetContainerFromUnion(aElement, Container) then
-    Exit;
-
-  Desc := wbCTDAParamDescFromIndex(Container.ElementByName['Function'].NativeValue);
-  if not Assigned(Desc) then
-    Exit;
-
-  ParamType := Desc.ParamType2;
-  ParamFlag := Container.ElementByName['Type'].NativeValue;
-
-  if ParamType in [ptObjectReference, ptActor, ptPackage] then begin
-    if ParamFlag and $02 > 0 then ParamType := ptAlias else {>>> 'use aliases' is set <<<}
-    if ParamFlag and $08 > 0 then ParamType := ptPackdata;  {>>> 'use packdata' is set <<<}
-  end;
-
-  Result := Succ(Integer(ParamType));
-end;
-
-function wbCTDAParam2VATSValueParamDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
-var
-  Container : IwbContainer;
-begin
-  Result := 0;
-  if not wbTryGetContainerFromUnion(aElement, Container) then
-    Exit;
-
-  Result := Container.ElementByName['Parameter #1'].NativeValue;
-end;
-
-function wbCTDAFunctionToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
-var
-  Desc : PCTDAFunction;
-  i    : Integer;
-begin
-  Result := '';
-  case aType of
-    ctToStr, ctToSummary, ctToEditValue: begin
-      Desc := wbCTDAParamDescFromIndex(aInt);
-      if Assigned(Desc) then
-        Result := Desc.Name
-      else if aType in [ctToSummary, ctToEditValue] then
-        Result := aInt.ToString
-      else
-        Result := '<Unknown: '+aInt.ToString+'>';
-    end;
-    ctToSortKey: Result := IntToHex(aInt, 8);
-    ctCheck: begin
-      Desc := wbCTDAParamDescFromIndex(aInt);
-      if Assigned(Desc) then
-        Result := ''
-      else
-        Result := '<Unknown: '+aInt.ToString+'>';
-    end;
-    ctEditType:
-      Result := 'ComboBox';
-    ctEditInfo: begin
-      Result := wbCTDAFunctionEditInfo;
-      if Result = '' then begin
-        with TStringList.Create do try
-          for i := Low(wbCTDAFunctions) to High(wbCTDAFunctions) do
-            Add(wbCTDAFunctions[i].Name);
-          Sort;
-          Result := CommaText;
-        finally
-          Free;
-        end;
-        wbCTDAFunctionEditInfo := Result;
-      end;
-    end;
-  end;
-end;
-
-function wbCTDAFunctionToInt(const aString: string; const aElement: IwbElement): Int64;
-var
-  i: Integer;
-begin
-  for i := Low(wbCTDAFunctions) to High(wbCTDAFunctions) do
-    with wbCTDAFunctions[i] do
-      if SameText(Name, aString) then begin
-        Result := Index;
-        Exit;
-      end;
-
-  Result := StrToInt64(aString);
 end;
 
 function wbMESGTNAMDontShow(const aElement: IwbElement): Boolean;
@@ -4175,7 +4047,7 @@ function wbTintTemplateGroups(const aName: string): IwbSubRecordArrayDef;
           'Chargen Detail',
           'Takes Skin Tone'
         ])),
-        wbCTDAs,
+        wbConditions,
         wbRArray('Textures', wbString(TTET, 'Texture')),
         wbInteger(TTEB, 'Blend Operation', itU32, wbBlendOperationEnum),
         wbArray(TTEC, 'Template Colors', wbStruct('Template Color', [
@@ -6128,327 +6000,102 @@ begin
       wbInteger('Duration', itU32)
     ], cpNormal, True, nil, -1, wbEFITAfterLoad);
 
-  wbCTDA :=
-    wbRStructSK([0], 'Condition', [
-      wbStructSK(CTDA, [3, 5, 6], '', [
-     {0}wbInteger('Type', itU8, wbConditionTypeToStr, wbConditionTypeToInt).SetAfterSet(wbConditionTypeAfterSet),
-     {1}wbUnused(3),
-     {2}wbUnion('Comparison Value', wbConditionCompValueDecider, [
-          wbFloat('Comparison Value - Float'),
-          wbFormIDCk('Comparison Value - Global', [GLOB])
-        ]),
-     {3}wbInteger('Function', itU16, wbCTDAFunctionToStr, wbCTDAFunctionToInt),
-     {4}wbUnused(2),
-     {5}wbUnion('Parameter #1', wbCTDAParam1Decider, [
-          { unknown }
-          wbByteArray('Unknown', 4).IncludeFlag(dfZeroSortKey),
-          { 0 ptNone}
-          wbByteArray('None', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
-          { 1 ptString}
-          wbInteger('String', itU32, wbCTDAParam1StringToString, wbCTDAParam1StringToInt),
-          { 2 ptInteger}
-          wbInteger('Integer', itS32),
-          { 3 ptFloat}
-          wbFloat('Float'),
-          { 4 ptActor}
-          wbFormIDCkNoReach('Actor', [NULL, PLYR, ACHR, REFR]),
-          { 5 ptActorBase}
-          wbFormIDCkNoReach('Actor Base', [NPC_]),
-          { 6 ptActorValue}
-          wbActorValue,
-          { 7 ptAdvanceAction}
-          wbInteger('Player Action', itU32, wbAdvanceActionEnum),
-          { 8 ptAlias}
-          wbInteger('Alias', itS32, wbConditionAliasToStr, wbStrToAlias),
-          { 9 ptAlignment}
-          wbInteger('Alignment', itU32, wbAlignmentEnum),
-          {10 ptAssociationType}
-          wbFormIDCk('Association Type', [ASTP]),
-          {11 ptAxis}
-          wbInteger('Axis', itU32, wbAxisEnum),
-          {12 ptCastingSource}
-          wbInteger('Casting Type', itU32, wbCastingSourceEnum),
-          {13 ptCell}
-          wbFormIDCkNoReach('Cell', [CELL]),
-          {14 ptClass}
-          wbFormIDCkNoReach('Class', [CLAS]),
-          {15 ptCrimeType}
-          wbInteger('Crime Type', itU32, wbCrimeTypeEnum),
-          {16 ptCriticalStage}
-          wbInteger('Critical Stage', itU32, wbCriticalStageEnum),
-          {17 ptEncounterZone}
-          wbFormIDCkNoReach('Encounter Zone', [ECZN]),
-          {18 ptEquipType}
-          wbFormIDCkNoReach('Equip Type', [EQUP]),
-          {19 ptEvent}
-          wbInteger('Event', itU32, wbEventFunctionAndMemberToStr, wbEventFunctionAndMemberToInt),
-          {20 ptEventData}
-          wbFormID('Event Data'),
-          {21 ptFaction}
-          wbFormIDCkNoReach('Faction', [FACT]),
-          {22 ptFormList}
-          wbFormIDCkNoReach('Form List', [FLST]),
-          {23 ptFormType}
-          wbInteger('Form Type', itU32, wbFormTypeEnum),
-          {24 ptFurniture}
-          wbFormIDCkNoReach('Furniture', [FURN, FLST]),
-          {25 ptFurnitureAnim}
-          wbInteger('Furniture Anim', itU32, wbFurnitureAnimTypeEnum),
-          {26 ptFurnitureEntry}
-          wbInteger('Furniture Entry', itU32, wbEnum([], [$010000, 'Front', $020000, 'Behind', $040000, 'Right', $80000, 'Left', $100000, 'Up'])),
-          {27 ptGlobal}
-          wbFormIDCkNoReach('Global', [GLOB]),
-          {28 ptIdleForm}
-          wbFormIDCkNoReach('Idle', [IDLE]),
-          {29 ptInventoryObject}
-          wbFormIDCkNoReach('Inventory Object', sigBaseObjects),
-          {30 ptKeyword}
-          wbFormIDCkNoReach('Keyword', [KYWD, FLST, NULL]),
-          {31 ptLocation}
-          wbFormIDCkNoReach('Location', [LCTN]),
-          {32 ptMagicEffect}
-          wbFormIDCkNoReach('Base Effect', [MGEF]),
-          {33 ptMagicItem}
-          wbFormIDCkNoReach('Effect Item', [SPEL, ENCH, ALCH, INGR, SCRL]),
-          {34 ptMiscStat}
-          wbInteger('Misc Stat', itU32, wbMiscStatEnum),
-          {35 ptObjectReference}
-          wbFormIDCkNoReach('Object Reference', sigReferences),
-          {36 ptOwner}
-          wbFormIDCkNoReach('Owner', [NULL, FACT, NPC_]),
-          {37 ptPackage}
-          wbFormIDCkNoReach('Package', [PACK]),
-          {38 ptPackdata}
-          wbInteger('Packdata ID', itU32),
-          {39 ptPerk}
-          wbFormIDCkNoReach('Perk', [PERK]),
-          {40 ptQuest}
-          wbFormIDCkNoReach('Quest', [QUST]).AddOverlay(wbCTDAParamQuestOverlay),
-          {41 ptQuestStage}
-          wbInteger('Quest Stage', itU32, wbCTDAParam2QuestStageToStr, wbQuestStageToInt),
-          {42 ptRace}
-          wbFormIDCkNoReach('Race', [RACE]),
-          {43 ptReferencableObject}
-          wbFormIDCkNoReach('Referenceable Object', sigBaseObjects),
-          {44 ptRefType}
-          wbFormIDCkNoReach('Location Ref Type', [LCRT]),
-          {45 ptRegion}
-          wbFormIDCkNoReach('Region', [REGN]),
-          {46 ptScene}
-          wbFormIDCk('Scene', [NULL, SCEN]),
-          {47 ptSex}
-          wbInteger('Sex', itU32, wbSexEnum),
-          {48 ptShout}
-          wbFormIDCkNoReach('Shout', [SHOU]),
-          {49 ptVariableName}
-          wbByteArray('Variable Name (unused)', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
-          {50 ptVATSValueFunction}
-          wbInteger('VATS Value Function', itU32, wbVATSValueFunctionEnum),
-          {51 ptVATSValueParam}
-          wbInteger('VATS Value Param (unused)', itU32).IncludeFlag(dfZeroSortKey),
-          {52 ptVoiceType}
-          wbFormIDCkNoReach('Voice Type', [VTYP, FLST]),
-          {53 ptWardState}
-          wbInteger('Ward State', itU32, wbWardStateEnum),
-          {54 ptWeather}
-          wbFormIDCkNoReach('Weather', [WTHR]),
-          {55 ptWorldspace}
-          wbFormIDCkNoReach('Worldspace', [WRLD, FLST]),
-          {56 ptDamageType}
-          wbFormIDCkNoReach('Damage Type', [DMGT, FLST]),
-          {57 ptFactionOpt}
-          wbFormIDCkNoReach('Faction', [NULL, FACT])
-        ]),
+  var wbConditionParameters := [
+    //Misc
+    {0} wbByteArray('Unknown', 4).IncludeFlag(dfZeroSortKey),
+    {1} wbByteArray('None', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
+    {2} wbFloat('Float'),
+    {3} wbInteger('Integer', itS32),
+    {4} wbInteger('String', itU32, wbConditionStringToString, wbConditionStringToInt),
+    {5} wbInteger('Alias', itS32, wbConditionAliasToStr, wbStrToAlias),
+    {6} wbInteger('Event', itU32, wbConditionEventToStr, wbConditionEventToInt),
+    {7} wbInteger('Packdata ID', itU32),
+    {8} wbInteger('Quest Stage', itU32, wbConditionQuestStageToStr, wbQuestStageToInt),
 
-        wbUnion('Parameter #2', wbCTDAParam2Decider, [
-          { unknown }
-          wbByteArray('Unknown', 4).IncludeFlag(dfZeroSortKey),
-          { 0 ptNone}
-          wbByteArray('None', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
-          { 1 ptString}
-          wbInteger('String', itU32, wbCTDAParam2StringToString, wbCTDAParam2StringToInt),
-          { 2 ptInteger}
-          wbInteger('Integer', itS32),
-          { 3 ptFloat}
-          wbFloat('Float'),
-          { 4 ptActor}
-          wbFormIDCkNoReach('Actor', [NULL, PLYR, ACHR, REFR]),
-          { 5 ptActorBase}
-          wbFormIDCkNoReach('Actor Base', [NPC_]),
-          { 6 ptActorValue}
-          wbActorValue,
-          { 7 ptAdvanceAction}
-          wbInteger('Player Action', itU32, wbAdvanceActionEnum),
-          { 8 ptAlias}
-          wbInteger('Alias', itS32, wbConditionAliasToStr, wbStrToAlias),
-          { 9 ptAlignment}
-          wbInteger('Alignment', itU32, wbAlignmentEnum),
-          {10 ptAssociationType}
-          wbFormIDCk('Association Type', [ASTP]),
-          {11 ptAxis}
-          wbInteger('Axis', itU32, wbAxisEnum),
-          {12 ptCastingSource}
-          wbInteger('Casting Type', itU32, wbCastingSourceEnum),
-          {13 ptCell}
-          wbFormIDCkNoReach('Cell', [CELL]),
-          {14 ptClass}
-          wbFormIDCkNoReach('Class', [CLAS]),
-          {15 ptCrimeType}
-          wbInteger('Crime Type', itU32, wbCrimeTypeEnum),
-          {16 ptCriticalStage}
-          wbInteger('Critical Stage', itU32, wbCriticalStageEnum),
-          {17 ptEncounterZone}
-          wbFormIDCkNoReach('Encounter Zone', [ECZN]),
-          {18 ptEquipType}
-          wbFormIDCkNoReach('Equip Type', [EQUP]),
-          {19 ptEvent}
-          wbInteger('Event', itU32, wbEventFunctionAndMemberToStr, wbEventFunctionAndMemberToInt),
-          {20 ptEventData}
-          wbFormID('Event Data'),
-          {21 ptFaction}
-          wbFormIDCkNoReach('Faction', [FACT]),
-          {22 ptFormList}
-          wbFormIDCkNoReach('Form List', [FLST]),
-          {23 ptFormType}
-          wbInteger('Form Type', itU32, wbFormTypeEnum),
-          {24 ptFurniture}
-          wbFormIDCkNoReach('Furniture', [FURN, FLST]),
-          {25 ptFurnitureAnim}
-          wbInteger('Furniture Anim', itU32, wbFurnitureAnimTypeEnum),
-          {26 ptFurnitureEntry}
-          wbInteger('Furniture Entry', itU32, wbEnum([], [$010000, 'Front', $020000, 'Behind', $040000, 'Right', $80000, 'Left', $100000, 'Up'])),
-          {27 ptGlobal}
-          wbFormIDCkNoReach('Global', [GLOB]),
-          {28 ptIdleForm}
-          wbFormIDCkNoReach('Idle', [IDLE]),
-          {29 ptInventoryObject}
-          wbFormIDCkNoReach('Inventory Object', sigBaseObjects),
-          {30 ptKeyword}
-          wbFormIDCkNoReach('Keyword', [KYWD, FLST, NULL]),
-          {31 ptLocation}
-          wbFormIDCkNoReach('Location', [LCTN]),
-          {32 ptMagicEffect}
-          wbFormIDCkNoReach('Base Effect', [MGEF]),
-          {33 ptMagicItem}
-          wbFormIDCkNoReach('Effect Item', [SPEL, ENCH, ALCH, INGR, SCRL]),
-          {34 ptMiscStat}
-          wbInteger('Misc Stat', itU32, wbMiscStatEnum),
-          {35 ptObjectReference}
-          wbFormIDCkNoReach('Object Reference', sigReferences),
-          {36 ptOwner}
-          wbFormIDCkNoReach('Owner', [NULL, FACT, NPC_]),
-          {37 ptPackage}
-          wbFormIDCkNoReach('Package', [PACK]),
-          {38 ptPackdata}
-          wbInteger('Packdata ID', itU32),
-          {39 ptPerk}
-          wbFormIDCkNoReach('Perk', [PERK]),
-          {40 ptQuest}
-          wbFormIDCkNoReach('Quest', [QUST]),
-          {41 ptQuestStage}
-          wbInteger('Quest Stage', itU32, wbCTDAParam2QuestStageToStr, wbQuestStageToInt),
-          {42 ptRace}
-          wbFormIDCkNoReach('Race', [RACE]),
-          {43 ptReferencableObject}
-          wbFormIDCkNoReach('Referenceable Object', sigBaseObjects),
-          {44 ptRefType}
-          wbFormIDCkNoReach('Location Ref Type', [LCRT]),
-          {45 ptRegion}
-          wbFormIDCkNoReach('Region', [REGN]),
-          {46 ptScene}
-          wbFormIDCk('Scene', [NULL, SCEN]),
-          {47 ptSex}
-          wbInteger('Sex', itU32, wbSexEnum),
-          {48 ptShout}
-          wbFormIDCkNoReach('Shout', [SHOU]),
-          {49 ptVariableName}
-          wbByteArray('Variable Name (unused)', 4, cpIgnore),
-          {50 ptVATSValueFunction}
-          wbInteger('VATS Value Function', itU32, wbVATSValueFunctionEnum),
-          {51 ptVATSValueParam}
-          wbUnion('VATS Value Param', wbCTDAParam2VATSValueParamDecider, [
-           { 0} wbFormIDCkNoReach('Weapon', [WEAP]),
-           { 1} wbFormIDCkNoReach('Weapon List', [FLST], [WEAP]),
-           { 2} wbFormIDCkNoReach('Target', [NPC_]),
-           { 3} wbFormIDCkNoReach('Target List', [FLST], [NPC_]),
-           { 4} wbByteArray('Unknown', 4, cpIgnore),
-           { 5} wbInteger('Target Part', itS32, wbActorValueEnum),
-           { 6} wbInteger('VATS Action', itU32, wbEnum([
-                  'Unarmed Attack',
-                  'One Hand Melee Attack',
-                  'Two Hand Melee Attack',
-                  'Magic Attack',
-                  'Ranged Attack',
-                  'Reload',
-                  'Crouch',
-                  'Stand',
-                  'Switch Weapon',
-                  'Toggle Weapon Drawn',
-                  'Heal',
-                  'Player Death'
-            ])),
-           { 7} wbByteArray('Unknown', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
-           { 8} wbByteArray('Unknown', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
-           { 9} wbFormIDCkNoReach('Critical Effect', [SPEL]),
-           {10} wbFormIDCkNoReach('Critical Effect List', [FLST], [SPEL]),
-           {11} wbByteArray('Unknown', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
-           {12} wbByteArray('Unknown', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
-           {13} wbByteArray('Unknown', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
-           {14} wbByteArray('Unknown', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
-           {15} wbInteger('Weapon Type', itU32, wbWeaponAnimTypeEnum),
-           {16} wbByteArray('Unknown', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
-           {17} wbByteArray('Unknown', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
-           {18} wbInteger('Projectile Type', itU32, wbEnum([
-                  'Missile',
-                  'Lobber',
-                  'Beam',
-                  'Flame',
-                  'Cone',
-                  'Barrier',
-                  'Arrow'
-                ])),
-           {19} wbInteger('Delivery Type', itU32, wbTargetEnum),
-           {20} wbInteger('Casting Type', itU32, wbCastEnum)
+    //Enums
+    {9}  wbInteger('Alignment', itU32, wbAlignmentEnum),
+    {10} wbInteger('Axis', itU32, wbAxisEnum),
+    {11} wbInteger('Casting Type', itU32, wbCastingSourceEnum),
+    {12} wbInteger('Crime Type', itU32, wbCrimeTypeEnum),
+    {13} wbInteger('Critical Stage', itU32, wbCriticalStageEnum),
+    {14} wbInteger('Form Type', itU32, wbFormTypeEnum),
+    {15} wbInteger('Misc Stat', itU32, wbMiscStatEnum),
+    {16} wbInteger('Sex', itU32, wbSexEnum),
+    {17} wbInteger('Ward State', itU32, wbWardStateEnum),
+
+    //FormIDs
+    {18} wbFormIDCkNoReach('Actor', [ACHR,PLYR,REFR,TRGT], True),
+    {19} wbFormIDCkNoReach('Actor Base', [NPC_]),
+    {20} wbFormIDCkNoReach('Actor Value', [AVIF]),
+    {21} wbFormIDCkNoReach('Association Type', [ASTP]),
+    {22} wbFormIDCkNoReach('Base Effect', [MGEF]),
+    {23} wbFormIDCkNoReach('Base Object', sigBaseObjects),
+    {24} wbFormIDCkNoReach('Cell', [CELL]),
+    {25} wbFormIDCkNoReach('Class', [CLAS]),
+    {26} wbFormIDCkNoReach('Damage Type', [DMGT,FLST]),
+    {27} wbFormIDCkNoReach('Effect Item', [ALCH,ENCH,INGR,SCRL,SPEL]),
+    {28} wbFormIDCkNoReach('Encounter Zone', [ECZN]),
+    {29} wbFormIDCkNoReach('Equip Type', [EQUP]),
+    {30} wbFormIDCkNoReach('Event Data', [FLST,KYWD,LCTN]),
+    {31} wbFormIDCkNoReach('Faction', [FACT]),
+    {32} wbFormIDCkNoReach('Form List', [FLST]),
+    {33} wbFormIDCkNoReach('Furniture', [FLST,FURN]),
+    {34} wbFormIDCkNoReach('Global', [GLOB]),
+    {35} wbFormIDCkNoReach('Idle', [IDLE]),
+    {36} wbFormIDCkNoReach('Keyword', [FLST,KYWD,NULL]),
+    {37} wbFormIDCkNoReach('Location', [LCTN]),
+    {38} wbFormIDCkNoReach('Location Ref Type', [LCRT]),
+    {39} wbFormIDCkNoReach('Owner', [FACT,NPC_]),
+    {40} wbFormIDCkNoReach('Package', [PACK]),
+    {41} wbFormIDCkNoReach('Perk', [PERK]),
+    {42} wbFormIDCkNoReach('Quest', [QUST]).AddOverlay(wbConditionQuestOverlay),
+    {43} wbFormIDCkNoReach('Race', [RACE]),
+    {44} wbFormIDCkNoReach('Reference', [ACHR,PARW,PBAR,PBEA,PCON,PFLA,PGRE,PHZD,PLYR,PMIS,REFR,TRGT], True),
+    {45} wbFormIDCkNoReach('Region', [REGN]),
+    {46} wbFormIDCkNoReach('Scene', [SCEN]),
+    {47} wbFormIDCkNoReach('Voice Type', [VTYP,FLST], [VTYP]),
+    {48} wbFormIDCkNoReach('Weather', [WTHR]),
+    {49} wbFormIDCkNoReach('Worldspace', [WRLD,FLST], [WRLD])
+  ];
+
+  wbConditions :=
+    wbRArray('Conditions',
+      wbRStructSK([0], 'Condition', [
+        wbStructSK(CTDA, [3, 5, 6], '', [
+       {0}wbInteger('Type', itU8, wbConditionTypeToStr, wbConditionTypeToInt).SetAfterSet(wbConditionTypeAfterSet),
+       {1}wbUnused(3),
+       {2}wbUnion('Comparison Value', wbConditionCompValueDecider, [
+            wbFloat('Comparison Value - Float'),
+            wbFormIDCk('Comparison Value - Global', [GLOB])
           ]),
-          {52 ptVoiceType}
-          wbFormIDCkNoReach('Voice Type', [VTYP, FLST]),
-          {53 ptWardState}
-          wbInteger('Ward State', itU32, wbWardStateEnum),
-          {54 ptWeather}
-          wbFormIDCkNoReach('Weather', [WTHR]),
-          {55 ptWorldspace}
-          wbFormIDCkNoReach('Worldspace', [WRLD, FLST]),
-          {56 ptDamageType}
-          wbFormIDCkNoReach('Damage Type', [DMGT, FLST]),
-          {57 ptFactionOpt}
-          wbFormIDCkNoReach('Faction', [NULL, FACT])
+       {3}wbInteger('Function', itU16, wbConditionFunctionToStr, wbConditionFunctionToInt),
+       {4}wbUnused(2),
+       {5}wbUnion('Parameter #1', wbConditionParam1Decider, wbConditionParameters),
+          wbUnion('Parameter #2', wbConditionParam2Decider, wbConditionParameters),
+          wbInteger('Run On', itU32, wbEnum([
+            {0}  'Subject',
+            {1}  'Target',
+            {2}  'Reference',
+            {3}  'Combat Target',
+            {4}  'Linked Reference',
+            {5}  'Quest Alias',
+            {6}  'Package Data',
+            {7}  'Event Data',
+            {9}  'Command Target',
+            {10} 'Event Camera Ref',
+            {11} 'My Killer'
+          ])).SetAfterSet(wbCTDARunOnAfterSet),
+          wbUnion('Reference', wbCTDAReferenceDecider, [
+            wbInteger('Unused', itU32, nil, cpIgnore),
+            wbFormIDCkNoReach('Reference', sigReferences)
+          ]),
+          wbInteger('Parameter #3', itS32).SetDefaultNativeValue(-1)
         ]),
-        wbInteger('Run On', itU32, wbEnum([
-          { 0} 'Subject',
-          { 1} 'Target',
-          { 2} 'Reference',
-          { 3} 'Combat Target',
-          { 4} 'Linked Reference',
-          { 5} 'Quest Alias',
-          { 6} 'Package Data',
-          { 7} 'Event Data',
-          { 9} 'Command Target',
-          {10} 'Event Camera Ref',
-          {11} 'My Killer'
-        ]), cpNormal, False, nil, wbCTDARunOnAfterSet),
-        wbUnion('Reference', wbCTDAReferenceDecider, [
-          wbInteger('Unused', itU32, nil, cpIgnore),
-          wbFormIDCkNoReach('Reference', sigReferences, False)
-        ]),
-        wbInteger('Parameter #3', itS32, nil, cpNormal, False, nil, nil, -1)
-      ], cpNormal, False{, nil, 0, wbCTDAAfterLoad}),
-      wbString(CIS1, 'Parameter #1'),
-      wbString(CIS2, 'Parameter #2')
-    ], [], cpNormal).SetToStr(wbConditionToStr).IncludeFlag(dfCollapsed, wbCollapseConditions);
-
-  wbCTDAs := wbRArray('Conditions', wbCTDA, cpNormal, False);
-  wbCTDAsCount := wbRArray('Conditions', wbCTDA, cpNormal, False, nil, wbCTDAsAfterSet);
-  wbCTDAsReq := wbRArray('Conditions', wbCTDA, cpNormal, True);
+        wbString(CIS1, 'Parameter #1'),
+        wbString(CIS2, 'Parameter #2')
+      ]).SetToStr(wbConditionToStr)
+        .IncludeFlag(dfCollapsed, wbCollapseConditions)
+    ).SetCountPath(CITC);
 
   wbICON := wbString(ICON, 'Inventory Image');
   wbMICO := wbString(MICO, 'Message Icon');
@@ -6797,7 +6444,7 @@ begin
     wbRStruct('Effect', [
       wbEFID,
       wbEFIT,
-      wbCTDAs
+      wbConditions
     ], [], cpNormal, True)
     .SetSummaryKey([0,2])
     .IncludeFlag(dfSummaryMembersNoName);
@@ -6862,7 +6509,7 @@ begin
       wbInteger('No Signal Static', itU8, wbBoolEnum)
     ], cpNormal, False, nil, 4),
     wbCITC,
-    wbCTDAs,
+    wbConditions,
     wbNVNM
   ]);
 
@@ -7998,7 +7645,7 @@ begin
     ]),
     wbPLVD,
     wbCITC,
-    wbCTDAsCount
+    wbConditions
   ], False, nil, cpNormal, False, nil {wbFACTAfterLoad}, wbConditionsAfterSet);
 
   wbRecord(FURN, 'Furniture',
@@ -8033,7 +7680,7 @@ begin
       {0x0002} 'Ignored By Sandbox'
     ])),
     wbCITC,
-    wbCTDAsCount,
+    wbConditions,
     wbCOCT,
     wbCNTOs,
     wbMNAMFurnitureMarker,
@@ -8192,7 +7839,7 @@ begin
     wbFormIDCk(TNAM, 'Texture Set', [TXST]),
     wbFormIDCk(CNAM, 'Color', [CLFM]),
     wbFormIDCk(RNAM, 'Valid Races', [FLST]),
-    wbCTDAs
+    wbConditions
   ]);
 
   wbRecord(ASPC, 'Acoustic Space', [
@@ -8741,7 +8388,7 @@ begin
   var wbPerkConditions :=
     wbRStructSK([0], 'Perk Condition', [
       wbInteger(PRKC, 'Run On (Tab Index)', itS8{, wbPRKCToStr, wbPRKCToInt}),
-      wbCTDAsReq
+      wbConditions.SetRequired
     ], [], cpNormal, False{, nil, nil, wbPERKPRKCDontShow});
 
   var wbPerkEffect :=
@@ -8843,7 +8490,7 @@ begin
     wbFULL,
     wbDESCReq,
     wbString(ICON, 'Image'),
-    wbCTDAs,
+    wbConditions,
     wbStruct(DATA, 'Data', [
       wbInteger('Trait', itU8, wbBoolEnum),
       wbInteger('Level', itU8),
@@ -9028,7 +8675,7 @@ begin
   wbRecord(CAMS, 'Camera Shot', [
     wbEDID,
     wbGenericModel,
-    wbCTDAs,
+    wbConditions,
     wbStruct(DATA, 'Data', [
       wbInteger('Action', itU32, wbEnum([
         {0} 'Shoot',
@@ -9076,7 +8723,7 @@ begin
 
   wbRecord(CPTH, 'Camera Path', [
     wbEDID,
-    wbCTDAs,
+    wbConditions,
     wbArray(ANAM, 'Related Camera Paths', wbFormIDCk('Related Camera Path', [CPTH, NULL]), ['Parent', 'Previous Sibling'], cpNormal, True),
     wbInteger(DATA, 'Camera Zoom / Flags', itU8, wbFlags([
       {0x01} 'Disable',
@@ -9283,7 +8930,7 @@ begin
   var wbMenuButton :=
     wbRStruct('Menu Button', [
       wbLStringKC(ITXT, 'Button Text', 0, cpTranslate),
-      wbCTDAs
+      wbConditions
     ]);
 
   wbRecord(MESG, 'Message', [
@@ -9801,7 +9448,7 @@ begin
     wbFormIDCkNoReach(PNAM, 'Parent Node', [SMQN, SMBN, SMEN, NULL]),
     wbFormIDCkNoReach(SNAM, 'Previous Node', [SMQN, SMBN, SMEN, NULL], False, cpBenign),
     wbCITCReq,
-    wbCTDAsCount,
+    wbConditions,
     wbInteger(DNAM, 'Flags', itU32,
       wbFlags([
         'Random',
@@ -9816,7 +9463,7 @@ begin
     wbFormIDCkNoReach(PNAM, 'Parent Node', [SMQN, SMBN, SMEN, NULL]),
     wbFormIDCkNoReach(SNAM, 'Previous Node', [SMQN, SMBN, SMEN, NULL], False, cpBenign),
     wbCITCReq,
-    wbCTDAsCount,
+    wbConditions,
     wbInteger(DNAM, 'Flags', itU32,
       wbFlags(wbSparseFlags([
         0, 'Random',
@@ -9843,7 +9490,7 @@ begin
     wbFormIDCkNoReach(PNAM, 'Parent Node', [SMQN, SMBN, SMEN, NULL]),
     wbFormIDCkNoReach(SNAM, 'Previous Node', [SMQN, SMBN, SMEN, NULL], False, cpBenign),
     wbCITCReq,
-    wbCTDAsCount,
+    wbConditions,
     wbInteger(DNAM, 'Flags', itU32,
       wbFlags([
         'Random',
@@ -9888,7 +9535,7 @@ begin
     ]),
     wbArray(FNAM, 'Cue Points', wbFloat('Point')).IncludeFlag(dfNotAlignable),
     wbCITC,
-    wbCTDAsCount,
+    wbConditions,
     wbArray(SNAM, 'Tracks', wbFormIDCk('Track', [MUST, NULL]))
   ], False, nil, cpNormal, False, nil, wbConditionsAfterSet);
 
@@ -9972,9 +9619,9 @@ begin
       wbRStruct('Phase', [
         wbEmpty(HNAM, 'Marker Phase Start', cpNormal, True),
         wbString(NAM0, 'Name', 0, cpNormal, True),
-        wbRStruct('Start Conditions', [wbCTDAs]),
+        wbRStruct('Start Conditions', [wbConditions]),
         wbEmpty(NEXT, 'Marker Start Conditions', cpNormal, True),
-        wbRStruct('Completion Conditions', [wbCTDAs]),
+        wbRStruct('Completion Conditions', [wbConditions]),
         wbEmpty(NEXT, 'Marker Completion Conditions', cpNormal, True),
         wbInteger(WNAM, 'Editor Width', itU32, nil, cpNormal, True, false, nil, nil, 350),
         wbInteger(FNAM, 'Flags', itU16, wbFlags([
@@ -10147,7 +9794,7 @@ begin
             wbInteger(INTT, 'Phase Index', itU16),
             wbString(SSPN, 'Start Phase for Scene'),
             wbCITC,
-            wbCTDAs
+            wbConditions
           ])),
           wbEmpty(HTID, 'End Scene Say Greeting')
         ])
@@ -10201,7 +9848,7 @@ begin
     wbFloat(ACTV, 'Dialogue Distance Override'),
     wbFloat(CRIS, 'FOV Override'),
     wbKeywords,
-    wbCTDAs,
+    wbConditions,
     wbStruct(SCQS, 'Set Parent Quest Stage', [
       wbInteger('On Begin', itS16),
       wbInteger('On End', itS16)
@@ -10493,7 +10140,7 @@ begin
     wbFormIDCk(SNAM, 'Alternate Sound For', [SNDR]),
     wbSoundDescriptorSounds,
     wbFormIDCk(ONAM, 'Output Model', [SOPM]),
-    wbCTDAs,
+    wbConditions,
     wbStruct(LNAM, 'Values', [
       wbByteArray('Unknown', 1),
       wbInteger('Looping', itU8, wbEnum([], [
@@ -10656,7 +10303,7 @@ begin
       'Remapping Index',
       'Extended LUT'
     ]), cpNormal, True),
-    wbCTDAs
+    wbConditions
   ]);
 
   wbRecord(REVB, 'Reverb Parameters', [
@@ -10714,7 +10361,7 @@ begin
 
   wbRecord(IDLE, 'Idle Animation', [
     wbEDID,
-    wbCTDAs,
+    wbConditions,
     wbString(DNAM, 'Behavior Graph'),
     wbString(ENAM, 'Animation Event'),
     wbArray(ANAM, 'Related Idle Animations', wbFormIDCk('Related Idle Animation', [AACT, IDLE, NULL]),
@@ -10813,7 +10460,7 @@ begin
       wbEmpty(WZMD, 'Stop on Scene End')
     ])),
 
-    wbCTDAs,
+    wbConditions,
     wbLStringKC(RNAM, 'Prompt', 0, cpTranslate),
     wbFormIDCk(ANAM, 'Speaker', [NPC_]),
     wbFormIDCk(TSCE, 'Start Scene', [SCEN]),
@@ -11007,7 +10654,7 @@ begin
     ])), [
     wbEDID,
     wbDESCReq,
-    wbCTDAs,
+    wbConditions,
     wbFormIDCk(NNAM, 'Loading Screen NIF', [STAT, SCOL, NULL], False, cpNormal, True),
     wbFormIDCk(TNAM, 'Transform', [TRNS]),
     wbStruct(ONAM, 'Rotation', [
@@ -11263,7 +10910,7 @@ begin
     wbRArrayS('Counter Effects', wbFormIDCk(ESCE, 'Effect', [MGEF]), cpNormal, False, nil, wbCounterEffectsAfterSet),
     wbMagicEffectSounds,
     wbLStringKC(DNAM, 'Magic Item Description', 0, cpTranslate),
-    wbCTDAs
+    wbConditions
   ], False, nil, cpNormal, False, nil {wbMGEFAfterLoad}, wbMGEFAfterSet);
 
   wbRecord(MISC, 'Misc. Item',
@@ -11310,7 +10957,7 @@ begin
     wbZNAM,
     wbComponents,
     wbDESC,
-    wbCTDAs,
+    wbConditions,
     wbFormIDCk(CNAM, 'Created Object', sigBaseObjects),
     wbFormIDCkNoReach(BNAM, 'Workbench Keyword', [KYWD]),
     wbByteArray(NAM1, 'Unused', 0, cpIgnore, False, False, wbNeverShow), // co_PA_FusionCore01
@@ -11610,7 +11257,7 @@ begin
       wbInteger('Duration (minutes)', itS32)
     ], cpNormal, True),
 
-    wbCTDAs,
+    wbConditions,
 
     wbRStruct('Idle Animations', [
       wbInteger(IDLF, 'Flags', itU8, wbEnum([], [
@@ -11657,7 +11304,7 @@ begin
       wbRArray('Branches', wbRStruct('Branch', [
         wbString(ANAM, 'Branch Type'),
         wbCITCReq,
-        wbCTDAsCount,
+        wbConditions,
         wbStruct(PRCB, 'Root', [
           wbInteger('Branch Count', itU32),
           wbInteger('Flags', itU32, wbFlags([
@@ -11787,9 +11434,9 @@ begin
     wbFormIDCk(XNAM, 'Quest Completion XP', [GLOB]),
     wbRArray('Text Display Globals', wbFormIDCk(QTGL, 'Global', [GLOB])),
     wbFLTR,
-    wbRStruct('Quest Dialogue Conditions', [wbCTDAs], [], cpNormal, False),
+    wbRStruct('Quest Dialogue Conditions', [wbConditions]),
     wbEmpty(NEXT, 'Marker', cpNormal, True),
-    wbCTDAs, {>>> Unknown, doesn't show up in CK <<<}
+    wbRStruct('Story Manager Conditions', [wbConditions]),
     wbRArrayS('Stages', wbRStructSK([0], 'Stage', [
       wbStructSK(INDX, [0], 'Stage Index', [
         wbInteger('Stage Index', itU16),
@@ -11806,7 +11453,7 @@ begin
           {0x01} 'Complete Quest',
           {0x02} 'Fail Quest'
         ])),
-        wbCTDAs,
+        wbConditions,
         wbString(NAM2, 'Note'),
         wbLStringKC(CNAM, 'Log Entry', 0, cpTranslate),
         wbFormIDCk(NAM0, 'Next Quest', [QUST])
@@ -11829,7 +11476,7 @@ begin
           ])),
           wbFromVersion(82, wbFormIDCk('Keyword', [KYWD, NULL]))
         ]),
-        wbCTDAs
+        wbConditions
       ]))
     ])),
 
@@ -11885,7 +11532,7 @@ begin
             wbInteger(ALFD, 'Event Data', itU32, wbEventMemberEnum)
           ]),
           wbInteger(ALCC, 'Closest To Alias', itS32, wbQuestAliasToStr, wbStrToAlias),
-          wbCTDAs,
+          wbConditions,
           wbKeywords,
           wbCOCT,
           wbCNTOs,
@@ -11926,7 +11573,7 @@ begin
             wbInteger(ALFE, 'From Event', itU32, wbQuestEventEnum),
             wbInteger(ALFD, 'Event Data', itU32, wbEventMemberEnum)
           ]),
-          wbCTDAs,
+          wbConditions,
           wbInteger(ALCC, 'Closest To Alias', itS32, wbQuestAliasToStr, wbStrToAlias),
           wbEmpty(ALED, 'Alias End', cpNormal, True)
         ]),
@@ -13667,7 +13314,7 @@ begin
     wbRArray('Body Text',
       wbRStruct('Item', [
         wbLStringKC(BTXT, 'Text', 0, cpTranslate),
-        wbCTDAs
+        wbConditions
       ])
         .SetSummaryKey([0, 1])
         .SetSummaryMemberPrefixSuffix(1, '{', '}')
@@ -13704,7 +13351,7 @@ begin
         wbLStringKC(UNAM, 'Display Text', 0, cpTranslate),
         wbString(VNAM, 'Show Image'),
         wbFormIDCk(TNAM, 'Submenu', [TERM]),
-        wbCTDAs
+        wbConditions
       ])
         .SetSummaryKey([3, 2, 0, 7])
         .SetSummaryMemberPrefixSuffix(3, '[', ']')
