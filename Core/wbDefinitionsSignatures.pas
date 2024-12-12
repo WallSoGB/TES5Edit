@@ -217,6 +217,7 @@ const
   BOID : TwbSignature = 'BOID'; { New To Starfield }
   BOLV : TwbSignature = 'BOLV'; { New To Starfield }
   BOOK : TwbSignature = 'BOOK';
+  BPAB : TwbSignature = 'BPAB'; { New To Fallout 76 }
   BPD2 : TwbSignature = 'BPD2'; { New To Starfield }
   BPND : TwbSignature = 'BPND';
   BPNI : TwbSignature = 'BPNI';

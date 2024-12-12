@@ -6573,64 +6573,69 @@ begin
     wbRArrayS('Effects', wbPerkEffect)
   ]);
 
-  var wbBodyPartPart :=
-    wbRStructSK([2], 'Body Part', [
-      wbLString(BPTN, 'Part Name', 0, cpTranslate, True),
-      wbString(PNAM, 'Pose Matching', 0, cpNormal, False),
-      wbString(BPNN, 'Part Node', 0, cpNormal, True),
-      wbString(BPNT, 'VATS Target', 0, cpNormal, True),
-      wbString(BPNI, 'IK Data - Start Node', 0, cpNormal, True),
-      wbStruct(BPND, '', [
-        {00} wbFloat('Damage Mult'),
-        {04} wbInteger('Flags', itU8, wbFlags([
-          'Severable',
-          'IK Data',
-          'IK Data - Biped Data',
-          'Explodable',
-          'IK Data - Is Head',
-          'IK Data - Headtracking',
-          'To Hit Chance - Absolute'
-        ])),
-        {05} wbInteger('Part Type', itU8, wbEnum([
-               'Torso',
-               'Head',
-               'Eye',
-               'LookAt',
-               'Fly Grab',
-               'Saddle'
-             ])),
-        {06} wbInteger('Health Percent', itU8),
-        {07} wbInteger('Actor Value', itS8, wbActorValueEnum),
-        {08} wbInteger('To Hit Chance', itU8),
-        {09} wbInteger('Explodable - Explosion Chance %', itU8),
-        {10} wbInteger('Explodable - Debris Count', itU16),
-        {12} wbFormIDCk('Explodable - Debris', [DEBR, NULL]),
-        {16} wbFormIDCk('Explodable - Explosion', [EXPL, NULL]),
-        {20} wbFloat('Tracking Max Angle'),
-        {24} wbFloat('Explodable - Debris Scale'),
-        {28} wbInteger('Severable - Debris Count', itS32),
-        {32} wbFormIDCk('Severable - Debris', [DEBR, NULL]),
-        {36} wbFormIDCk('Severable - Explosion', [EXPL, NULL]),
-        {40} wbFloat('Severable - Debris Scale'),
-        {44} wbVec3PosRot('Gore Effects Positioning'),
-        {68} wbFormIDCk('Severable - Impact DataSet', [IPDS, NULL]),
-        {72} wbFormIDCk('Explodable - Impact DataSet', [IPDS, NULL]),
-        {28} wbInteger('Severable - Decal Count', itU8),
-        {28} wbInteger('Explodable - Decal Count', itU8),
-        {76} wbByteArray('Unknown', 2),
-        {80} wbFloat('Limb Replacement Scale')
-      ], cpNormal, True),
-      wbString(NAM1, 'Limb Replacement Model', 0, cpNormal, True),
-      wbString(NAM4, 'Gore Effects - Target Bone', 0, cpNormal, True),
-      wbModelInfo(NAM5)
-    ], [], cpNormal, True
-  ).SetSummaryKey([1, 2]).IncludeFlag(dfSummaryMembersNoName);
-
   wbRecord(BPTD, 'Body Part Data', [
     wbEDID,
     wbGenericModel,
-    wbRArrayS('Body Parts', wbBodyPartPart)
-  ]).SetSummaryKey([1, 2]).IncludeFlag(dfSummaryNoName);
+    wbRArrayS('Body Parts',
+      wbRStructSK([2], 'Body Part', [
+        wbLString(BPTN, 'Part Name', 0, cpTranslate),
+        wbString(PNAM, 'Pose Matching'),
+        wbString(BPNN, 'Part Node').SetRequired,
+        wbString(BPNT, 'VATS Target').SetRequired,
+        wbString(BPNI, 'IK Data - Start Node').SetRequired,
+        wbStruct(BPND, 'Node Data', [
+          wbFloat('Damage Mult'),
+          wbInteger('Flags', itU8,
+            wbFlags([
+              {0} 'Severable',
+              {1} 'IK Data',
+              {2} 'IK Data - Biped Data',
+              {3} 'Explodable',
+              {4} 'IK Data - Is Head',
+              {5} 'IK Data - Headtracking',
+              {6} 'To Hit Chance - Absolute'
+            ])).IncludeFlag(dfCollapsed, wbCollapseFlags),
+          wbInteger('Part Type', itU8,
+            wbEnum([
+              {0} 'Torso',
+              {1} 'Head',
+              {2} 'Eye',
+              {3} 'LookAt',
+              {4} 'Fly Grab',
+              {5} 'Saddle'
+            ])),
+          wbInteger('Health Percent', itU8),
+          wbInteger('Actor Value', itS8, wbActorValueEnum),
+          wbInteger('To Hit Chance', itU8),
+          wbInteger('Explodable - Explosion Chance %', itU8),
+          wbInteger('Explodable - Debris Count', itU16),
+          wbFormIDCk('Explodable - Debris', [DEBR, NULL]),
+          wbFormIDCk('Explodable - Explosion', [EXPL, NULL]),
+          wbFloat('Tracking Max Angle'),
+          wbFloat('Explodable - Debris Scale'),
+          wbInteger('Severable - Debris Count', itS32),
+          wbFormIDCk('Severable - Debris', [DEBR, NULL]),
+          wbFormIDCk('Severable - Explosion', [EXPL, NULL]),
+          wbFloat('Severable - Debris Scale'),
+          wbVec3PosRot('Gore Effects Positioning'),
+          wbFormIDCk('Severable - Impact DataSet', [IPDS, NULL]),
+          wbFormIDCk('Explodable - Impact DataSet', [IPDS, NULL]),
+          wbInteger('Severable - Decal Count', itU8),
+          wbInteger('Explodable - Decal Count', itU8),
+          wbByteArray('Unknown', 2),
+          wbFloat('Limb Replacement Scale')
+        ]).SetRequired,
+        wbString(NAM1, 'Limb Replacement Model').SetRequired,
+        wbString(NAM4, 'Gore Effects - Target Bone').SetRequired,
+        wbModelInfo(NAM5)
+      ]).SetSummaryKey([2])
+        .IncludeFlag(dfAllowAnyMember)
+        .IncludeFlag(dfSummaryMembersNoName)
+        .IncludeFlag(dfSummaryNoSortKey)
+        .IncludeFlag(dfStructFirstNotRequired)
+    ).SetRequired
+  ]).SetSummaryKey([1])
+    .IncludeFlag(dfSummaryMembersNoName);
 
   wbRecord(ADDN, 'Addon Node', [
     wbEDID,

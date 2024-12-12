@@ -5460,51 +5460,58 @@ begin
   wbRecord(BPTD, 'Body Part Data', [
     wbEDIDReq,
     wbGenericModel(True),
-    wbRStructS('Body Parts', 'Body Part', [
-      wbString(BPTN, 'Part Name').SetRequired,
-      wbString(BPNN, 'Part Node').SetRequired,
-      wbString(BPNT, 'VATS Target').SetRequired,
-      wbString(BPNI, 'IK Data - Start Node').SetRequired,
-      wbStruct(BPND, '', [
-        wbFloat('Damage Mult'),
-        wbInteger('Flags', itU8,
-          wbFlags([
-            {0} 'Severable',
-            {1} 'IK Data',
-            {2} 'IK Data - Biped Data',
-            {3} 'Explodable',
-            {4} 'IK Data - Is Head',
-            {5} 'IK Data - Headtracking',
-            {6} 'To Hit Chance - Absolute'
-          ])).IncludeFlag(dfCollapsed, wbCollapseFlags),
-        wbInteger('Part Type', itS8, wbBodyLocationEnum),
-        wbInteger('Health Percent', itU8),
-        wbInteger('Actor Value', itS8, wbActorValueEnum),
-        wbInteger('To Hit Chance', itU8),
-        wbInteger('Explodable - Explosion Chance %', itU8),
-        wbInteger('Explodable - Debris Count', itU16),
-        wbFormIDCk('Explodable - Debris', [DEBR, NULL]),
-        wbFormIDCk('Explodable - Explosion', [EXPL, NULL]),
-        wbFloat('Tracking Max Angle'),
-        wbFloat('Explodable - Debris Scale'),
-        wbInteger('Severable - Debris Count', itS32),
-        wbFormIDCk('Severable - Debris', [DEBR, NULL]),
-        wbFormIDCk('Severable - Explosion', [EXPL, NULL]),
-        wbFloat('Severable - Debris Scale'),
-        wbVec3PosRot('Gore Effects Positioning'),
-        wbFormIDCk('Severable - Impact DataSet', [IPDS, NULL]),
-        wbFormIDCk('Explodable - Impact DataSet', [IPDS, NULL]),
-        wbInteger('Severable - Decal Count', itU8),
-        wbInteger('Explodable - Decal Count', itU8),
-        wbUnused(2),
-        wbFloat('Limb Replacement Scale')
-      ]).SetRequired,
-      wbString(NAM1, 'Limb Replacement Model').SetRequired,
-      wbString(NAM4, 'Gore Effects - Target Bone').SetRequired,
-      wbModelInfo(NAM5)
-    ]).SetRequired,
+    wbRArrayS('Body Parts',
+      wbRStructSK([1], 'Body Part', [
+        wbString(BPTN, 'Part Name'),
+        wbString(BPNN, 'Part Node').SetRequired,
+        wbString(BPNT, 'VATS Target').SetRequired,
+        wbString(BPNI, 'IK Data - Start Node').SetRequired,
+        wbStruct(BPND, 'Node Data', [
+          wbFloat('Damage Mult'),
+          wbInteger('Flags', itU8,
+            wbFlags([
+              {0} 'Severable',
+              {1} 'IK Data',
+              {2} 'IK Data - Biped Data',
+              {3} 'Explodable',
+              {4} 'IK Data - Is Head',
+              {5} 'IK Data - Headtracking',
+              {6} 'To Hit Chance - Absolute'
+            ])).IncludeFlag(dfCollapsed, wbCollapseFlags),
+          wbInteger('Part Type', itS8, wbBodyLocationEnum),
+          wbInteger('Health Percent', itU8),
+          wbInteger('Actor Value', itS8, wbActorValueEnum),
+          wbInteger('To Hit Chance', itU8),
+          wbInteger('Explodable - Explosion Chance %', itU8),
+          wbInteger('Explodable - Debris Count', itU16),
+          wbFormIDCk('Explodable - Debris', [DEBR, NULL]),
+          wbFormIDCk('Explodable - Explosion', [EXPL, NULL]),
+          wbFloat('Tracking Max Angle'),
+          wbFloat('Explodable - Debris Scale'),
+          wbInteger('Severable - Debris Count', itS32),
+          wbFormIDCk('Severable - Debris', [DEBR, NULL]),
+          wbFormIDCk('Severable - Explosion', [EXPL, NULL]),
+          wbFloat('Severable - Debris Scale'),
+          wbVec3PosRot('Gore Effects Positioning'),
+          wbFormIDCk('Severable - Impact DataSet', [IPDS, NULL]),
+          wbFormIDCk('Explodable - Impact DataSet', [IPDS, NULL]),
+          wbInteger('Severable - Decal Count', itU8),
+          wbInteger('Explodable - Decal Count', itU8),
+          wbUnused(2),
+          wbFloat('Limb Replacement Scale')
+        ]).SetRequired,
+        wbString(NAM1, 'Limb Replacement Model').SetRequired,
+        wbString(NAM4, 'Gore Effects - Target Bone').SetRequired,
+        wbModelInfo(NAM5)
+      ]).SetSummaryKey([1])
+        .IncludeFlag(dfAllowAnyMember)
+        .IncludeFlag(dfSummaryMembersNoName)
+        .IncludeFlag(dfSummaryNoSortKey)
+        .IncludeFlag(dfStructFirstNotRequired)
+    ).SetRequired,
     wbFormIDCk(RAGA, 'Ragdoll', [RGDL])
-  ]);
+  ]).SetSummaryKey([1])
+    .IncludeFlag(dfSummaryMembersNoName);
 
   wbRecord(ADDN, 'Addon Node', [
     wbEDIDReq,

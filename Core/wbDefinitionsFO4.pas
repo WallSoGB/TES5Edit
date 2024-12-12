@@ -8509,10 +8509,10 @@ begin
     wbGenericModel,
     wbRArrayS('Body Parts',
       wbRStructSK([1], 'Body Part', [
-        wbLString(BPTN, 'Part Name', 0, cpTranslate), // optional
-        wbString(BPNN, 'Part Node', 0, cpNormal, True),
-        wbString(BPNT, 'VATS Target', 0, cpNormal, True),
-        wbStruct(BPND, '', [
+        wbLString(BPTN, 'Part Name', 0, cpTranslate),
+        wbString(BPNN, 'Part Node').SetRequired,
+        wbString(BPNT, 'VATS Target').SetRequired,
+        wbStruct(BPND, 'Node Data', [
           wbFloat('Damage Mult'),
           wbFormIDCk('Explodable - Debris', [DEBR, NULL]),
           wbFormIDCk('Explodable - Explosion', [EXPL, NULL]),
@@ -8529,44 +8529,46 @@ begin
           wbFormIDCk('Severable - Impact DataSet', [IPDS, NULL]),
           wbFormIDCk('Explodable - Impact DataSet', [IPDS, NULL]),
           wbFloat('Explodable - Limb Replacement Scale'),
-          wbInteger('Flags', itU8, wbFlags([
-            {0x01} 'Severable',
-            {0x02} 'Hit Reaction',
-            {0x04} 'Hit Reaction - Default',
-            {0x08} 'Explodable',
-            {0x10} 'Cut - Meat Cap Sever',
-            {0x20} 'On Cripple',
-            {0x40} 'Explodable - Absolute Chance',
-            {0x80} 'Show Cripple Geometry'
-          ])),
-          wbInteger('Part Type', itU8, wbEnum([
-            { 0} 'Torso',
-            { 1} 'Head1',
-            { 2} 'Eye',
-            { 3} 'LookAt',
-            { 4} 'Fly Grab',
-            { 5} 'Head2',
-            { 6} 'LeftArm1',
-            { 7} 'LeftArm2',
-            { 8} 'RightArm1',
-            { 9} 'RightArm2',
-            {10} 'LeftLeg1',
-            {11} 'LeftLeg2',
-            {12} 'LeftLeg3',
-            {13} 'RightLeg1',
-            {14} 'RightLeg2',
-            {15} 'RightLeg3',
-            {16} 'Brain',
-            {17} 'Weapon',
-            {18} 'Root',
-            {19} 'COM',
-            {20} 'Pelvis',
-            {21} 'Camera',
-            {22} 'Offset Root',
-            {23} 'Left Foot',
-            {24} 'Right Foot',
-            {25} 'Face Target Source'
-          ])),
+          wbInteger('Flags', itU8,
+            wbFlags([
+              {0} 'Severable',
+              {1} 'Hit Reaction',
+              {2} 'Hit Reaction - Default',
+              {3} 'Explodable',
+              {4} 'Cut - Meat Cap Sever',
+              {5} 'On Cripple',
+              {6} 'Explodable - Absolute Chance',
+              {7} 'Show Cripple Geometry'
+          ])).IncludeFlag(dfCollapsed, wbCollapseFlags),
+          wbInteger('Part Type', itU8,
+            wbEnum([
+              {0}  'Torso',
+              {1}  'Head1',
+              {2}  'Eye',
+              {3}  'LookAt',
+              {4}  'Fly Grab',
+              {5}  'Head2',
+              {6}  'LeftArm1',
+              {7}  'LeftArm2',
+              {8}  'RightArm1',
+              {9}  'RightArm2',
+              {10} 'LeftLeg1',
+              {11} 'LeftLeg2',
+              {12} 'LeftLeg3',
+              {13} 'RightLeg1',
+              {14} 'RightLeg2',
+              {15} 'RightLeg3',
+              {16} 'Brain',
+              {17} 'Weapon',
+              {18} 'Root',
+              {19} 'COM',
+              {20} 'Pelvis',
+              {21} 'Camera',
+              {22} 'Offset Root',
+              {23} 'Left Foot',
+              {24} 'Right Foot',
+              {25} 'Face Target Source'
+            ])),
           wbInteger('Health Percent', itU8),
           wbFormIDCk('Actor Value', [AVIF, NULL]),
           wbInteger('To Hit Chance', itU8),
@@ -8584,9 +8586,9 @@ begin
           wbFloat('On Cripple - Debris Scale'),
           wbInteger('On Cripple - Debris Count', itU8),
           wbInteger('On Cripple - Decal Count', itU8)
-        ], cpNormal, True),
-        wbString(NAM1, 'Limb Replacement Model', 0, cpNormal, True),
-        wbString(NAM4, 'Gore Effects - Target Bone', 0, cpNormal, True),
+        ]).SetRequired,
+        wbString(NAM1, 'Limb Replacement Model').SetRequired,
+        wbString(NAM4, 'Gore Effects - Target Bone').SetRequired,
         wbModelInfo(NAM5),
         wbString(ENAM, 'Hit Reaction - Start'),
         wbString(FNAM, 'Hit Reaction - End'),
@@ -8596,9 +8598,14 @@ begin
         wbFormIDCk(CNAM, 'Meat Cap TextureSet', [TXST]),
         wbFormIDCk(NAM2, 'Collar TextureSet', [TXST]),
         wbString(DNAM, 'Twist Variable Prefix')
-      ], [], cpNormal, False, nil, True)
-    )
-  ]);
+      ]).SetSummaryKey([1])
+        .IncludeFlag(dfAllowAnyMember)
+        .IncludeFlag(dfSummaryMembersNoName)
+        .IncludeFlag(dfSummaryNoSortKey)
+        .IncludeFlag(dfStructFirstNotRequired)
+    ).SetRequired
+  ]).SetSummaryKey([1])
+    .IncludeFlag(dfSummaryMembersNoName);
 
   wbRecord(ADDN, 'Addon Node', [
     wbEDID,
