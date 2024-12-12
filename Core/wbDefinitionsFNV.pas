@@ -3960,36 +3960,35 @@ begin
         {4}wbUnused(2),
         {5}wbUnion('Parameter #1', wbConditionParam1Decider, wbConditionParameters),
         {6}wbUnion('Parameter #2', wbConditionParam2Decider, wbConditionParameters),
-        {7}wbFromVersion(2,
-             wbUnion('Run On', wbConditionRunOnDecider, [
-               wbInteger('Run On', itU32,
-                 wbEnum([
-                   {0} 'Subject',
-                   {1} 'Target',
-                   {2} 'Reference',
-                   {3} 'Combat Target',
-                   {4} 'Linked Reference'
-                 ])).SetAfterSet(wbCTDARunOnAfterSet),
-               wbInteger('Run On', itU32,
-                 wbEnum([], [
-                   0, 'Idle',
-                   1, 'Movement',
-                   2, 'Left Arm',
-                   3, 'Left Hand',
-                   4, 'Weapon',
-                   5, 'Weapon Up',
-                   6, 'Weapon Down',
-                   7, 'Special Idle',
-                   20, 'Whole Body',
-                   21, 'Upper Body'
-                 ]))
-               ])),
-        {8}wbFromVersion(2,
-             wbUnion('Reference', wbCTDAReferenceDecider, [
-               wbInteger('Unused', itU32, nil, cpIgnore),
-               wbFormIDCkNoReach('Reference', [PLYR, ACHR, ACRE, REFR, PMIS, PBEA, PGRE, NULL], True)    // Can end up NULL if the original function requiring a reference is replaced by another who has no Run on prerequisite
-             ]))
-      ]).SetAfterLoad(wbConditionAfterLoad)
+        {7}wbUnion('Run On', wbConditionRunOnDecider, [
+             wbInteger('Run On', itU32,
+               wbEnum([
+                 {0} 'Subject',
+                 {1} 'Target',
+                 {2} 'Reference',
+                 {3} 'Combat Target',
+                 {4} 'Linked Reference'
+               ])).SetAfterSet(wbCTDARunOnAfterSet),
+             wbInteger('Run On', itU32,
+               wbEnum([], [
+                 0, 'Idle',
+                 1, 'Movement',
+                 2, 'Left Arm',
+                 3, 'Left Hand',
+                 4, 'Weapon',
+                 5, 'Weapon Up',
+                 6, 'Weapon Down',
+                 7, 'Special Idle',
+                 20, 'Whole Body',
+                 21, 'Upper Body'
+               ]))
+             ]),
+        {8}wbUnion('Reference', wbCTDAReferenceDecider, [
+             wbInteger('Unused', itU32, nil, cpIgnore),
+             wbFormIDCkNoReach('Reference', [PLYR, ACHR, ACRE, REFR, PMIS, PBEA, PGRE, NULL], True)    // Can end up NULL if the original function requiring a reference is replaced by another who has no Run on prerequisite
+           ])
+      ], cpNormal, False, nil, 7)
+        .SetAfterLoad(wbConditionAfterLoad)
         .SetToStr(wbConditionToStr)
         .IncludeFlag(dfCollapsed, wbCollapseConditions));
 
