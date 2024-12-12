@@ -1389,36 +1389,6 @@ begin
       Result := 1;
 end;
 
-function wbNAVINAVMGetCount1(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
-var
-  DataContainer : IwbDataContainer;
-begin
-  Result := 0;
-  if not Supports(aElement, IwbDataContainer, DataContainer) then
-    Exit;
-
-  if DataContainer.ElementType = etArray then
-    if not Supports(DataContainer.Container, IwbDataContainer, DataContainer) then
-      Exit;
-  Assert(DataContainer.Name = 'Data');
-  Result := PWord(NativeUInt(DataContainer.DataBasePtr) + 3*3*4)^;
-end;
-
-function wbNAVINAVMGetCount2(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
-var
-  DataContainer : IwbDataContainer;
-begin
-  Result := 0;
-  if not Supports(aElement, IwbDataContainer, DataContainer) then
-    Exit;
-
-  if DataContainer.ElementType = etArray then
-    if not Supports(DataContainer.Container, IwbDataContainer, DataContainer) then
-      Exit;
-  Assert(DataContainer.Name = 'Data');
-  Result := PWord(NativeUInt(DataContainer.DataBasePtr) + 3*3*4 + 2)^;
-end;
-
 function wbMGEFFAssocItemDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
 var
   Container     : IwbContainer;
@@ -1504,17 +1474,14 @@ end;
 
 function wbNAVINVMIDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
 var
-  Container     : IwbContainer;
+  Container: IwbContainer;
 begin
   Result := 0;
   if not wbTryGetContainerFromUnion(aElement, Container) then
     Exit;
 
-  case Integer(Container.ElementNativeValues['Type']) of
-    $00: Result :=1;
-    $20: Result :=2;
-    $30: Result :=3;
-  end;
+  If (Container.ElementNativeValues['Flags'] and $20) = 32 then
+    Exit(1);
 end;
 
 function wbCreaLevelDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
@@ -5353,45 +5320,64 @@ begin
   wbRecord(NAVI, 'Navmesh Info Map', [
     wbEDID,
     wbInteger(NVER, 'Version', itU32),
-    wbRArray('Navmesh Infos',
-      wbStruct(NVMI, 'Navmesh Info', [
-        wbByteArray('Unknown', 4),
-        wbFormIDCk('Navmesh', [NAVM]),
+    wbRArrayS('Navmesh Infos',
+      wbStructSK(NVMI, [1], 'Navmesh Info', [
+        wbInteger('Flags', itU32,
+          wbFlags(wbSparseFlags([
+            4, 'Initially Disabled',
+            5, 'Is Island'
+          ], False, 6))),
+        wbFormIDCk('Navmesh', [NAVM]).IncludeFlag(dfSummaryNoName),
         wbFormIDCk('Location', [CELL, WRLD]),
-        wbStruct('Grid', [
-          wbInteger('X', itS16),
-          wbInteger('Y', itS16)
-        ]),
+        wbStruct('Coordinates', [
+          wbInteger('Grid Y', itS16),
+          wbInteger('Grid X', itS16)
+        ]).SetSummaryKey([1, 0])
+          .SetSummaryMemberPrefixSuffix(0, 'Y: ', '>')
+          .SetSummaryMemberPrefixSuffix(1, '<X: ', '')
+          .SetSummaryDelimiter(', ')
+          .IncludeFlag(dfCollapsed)
+          .IncludeFlag(dfSummaryMembersNoName),
+        wbVec3,
+        wbUnion('Island Data', wbNAVINVMIDecider, [
+          wbStruct('Unused', [wbEmpty('Unused')]).IncludeFlag(dfCollapsed),
+          wbStruct('Island Data', [
+            wbVec3('Min'),
+            wbVec3('Max'),
+            wbInteger('Vertex Count', itU16),
+            wbInteger('Triangle Count', itU16),
+            wbArray('Vertices',
+              wbVec3('Vertex')
+            ).SetCountPath('Vertex Count', True)
+             .IncludeFlag(dfCollapsed)
+             .IncludeFlag(dfNotAlignable),
+            wbArray('Triangles',
+              wbStruct('Triangle', [
+                wbInteger('Vertex 0', itU16),
+                wbInteger('Vertex 1', itU16),
+                wbInteger('Vertex 2', itU16)
+              ]).IncludeFlag(dfCollapsed)
+            ).SetCountPath('Triangle Count', True)
+             .IncludeFlag(dfCollapsed)
+             .IncludeFlag(dfNotAlignable)
+          ]).SetSummaryKey([5])
+            .IncludeFlag(dfCollapsed)
+        ]).IncludeFlag(dfCollapsed),
         wbUnknown
-{        wbUnion('Data', wbNAVINVMIDecider, [
-          wbStruct('Data', [
-            wbUnknown
-          ]),
-          wbStruct('Data', [
-            wbArray('Unknown', wbFloat('Unknown'), 3),
-            wbByteArray('Unknown', 4)
-          ]),
-          wbStruct('Data', [
-            wbArray('Unknown', wbArray('Unknown', wbFloat('Unknown'), 3), 3),
-            wbInteger('Count 1', itU16),
-            wbInteger('Count 2', itU16),
-            wbArray('Unknown', wbArray('Unknown', wbFloat('Unknown'), 3), [], wbNAVINAVMGetCount1),
-            wbUnknown
-          ]),
-          wbStruct('Data', [
-            wbUnknown
-          ])
-        ])}
-      ])
-    ),
-    wbRArray('Navmesh Connection Infos',
-      wbStruct(NVCI, 'Navmesh Connection Info', [
+      ]).SetSummaryKeyOnValue([1,2,5])
+        .SetSummaryPrefixSuffixOnValue(1, '', '')
+        .SetSummaryPrefixSuffixOnValue(2, 'in ', '')
+        .SetSummaryPrefixSuffixOnValue(5, 'is island with ', '')
+        .IncludeFlag(dfCollapsed)
+    ).IncludeFlag(dfCollapsed),
+    wbRArrayS('Navmesh Connections',
+      wbStructSK(NVCI, [0], 'Connection', [
         wbFormIDCk('Navmesh', [NAVM]),
-        wbArray('Unknown', wbFormIDCk('Navmesh', [NAVM]), -1),
-        wbArray('Unknown', wbFormIDCk('Navmesh', [NAVM]), -1),
-        wbArray('Door Links', wbFormIDCk('Door', [REFR]), -1)
-      ])
-    )
+        wbArrayS('Standard', wbFormIDCk('Navmesh', [NAVM]), -1).IncludeFlag(dfCollapsed),
+        wbArrayS('Preferred', wbFormIDCk('Navmesh', [NAVM]), -1).IncludeFlag(dfCollapsed),
+        wbArrayS('Door Links', wbFormIDCk('Door', [REFR]), -1).IncludeFlag(dfCollapsed)
+      ]).IncludeFlag(dfCollapsed)
+    ).IncludeFlag(dfCollapsed)
   ]);
 
   wbRecord(NAVM, 'Navmesh',
