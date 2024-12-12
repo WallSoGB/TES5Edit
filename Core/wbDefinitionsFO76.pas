@@ -10403,36 +10403,28 @@ begin
     wbInteger(NVER, 'Version', itU32),
     wbRArrayS('Navmesh Infos',
       wbStructSK(NVMI, [0], 'Navmesh Info', [
-        wbFormIDCk('Navmesh', [NAVM])
-          .IncludeFlag(dfSummaryNoName),
+        wbFormIDCk('Navmesh', [NAVM]).IncludeFlag(dfSummaryNoName),
         wbInteger('Category', itU32,
           wbEnum([], [
             0, 'Is Edited',
            32, 'Is Island',
            64, 'Not Edited'
-          ])
-        ),
+          ])),
         wbArray('Unknown', wbFloat, 4),
-        wbArrayS('Edge Links',
-          wbFormIDCk('Navmesh', [NAVM]),
-        -1).IncludeFlag(dfCollapsed),
-        wbArrayS('Preferred Edge Links',
-          wbFormIDCk('Navmesh', [NAVM]),
-        -1).IncludeFlag(dfCollapsed),
+        wbArrayS('Edge Links', wbFormIDCk('Navmesh', [NAVM]), -1).IncludeFlag(dfCollapsed),
+        wbArrayS('Preferred Edge Links', wbFormIDCk('Navmesh', [NAVM]), -1).IncludeFlag(dfCollapsed),
         wbArrayS('Door Links',
           wbStructSK([1], 'Door Link', [
-            wbInteger('CRC Hash', itU32, wbCRCValuesEnum)
-              .SetDefaultEditValue('PathingDoor'),
+            wbInteger('CRC Hash', itU32, wbCRCValuesEnum).SetDefaultEditValue('PathingDoor'),
             wbFormIDCk('Door Ref', [REFR])
           ]).SetSummaryKey([1])
             .IncludeFlag(dfCollapsed)
             .IncludeFlag(dfSummaryMembersNoName),
         -1).IncludeFlag(dfCollapsed),
         wbStruct('Optional Island Data', [
-          wbInteger('Has Island Data', itU8, wbBoolEnum)
-            .SetAfterSet(wbUpdateSameParentUnions),
+          wbInteger('Has Island Data', itU8, wbBoolEnum).SetAfterSet(wbUpdateSameParentUnions),
           wbUnion('Island Data', wbNAVIIslandDataDecider, [
-            wbEmpty('Island Data'),
+            wbStruct('Unused', [wbEmpty('Unused')]).IncludeFlag(dfCollapsed),
             wbStruct('Island Data', [
               wbVec3('Min'),
               wbVec3('Max'),
@@ -10456,17 +10448,15 @@ begin
           .IncludeFlag(dfCollapsed)
           .IncludeFlag(dfSummaryMembersNoName),
         wbStruct('Pathing Cell', [
-          wbInteger('CRC Hash', itU32, wbCRCValuesEnum)
-            .SetDefaultEditValue('PathingCell'),
-          wbFormIDCk('Parent World', [WRLD, NULL])
-            .IncludeFlag(dfSummaryExcludeNull),
+          wbInteger('CRC Hash', itU32, wbCRCValuesEnum).SetDefaultEditValue('PathingCell'),
+          wbFormIDCk('Parent World', [WRLD, NULL]).IncludeFlag(dfSummaryExcludeNull),
           wbUnion('', wbNAVIParentDecider, [
             wbStruct('Coordinates', [
               wbInteger('Grid Y', itS16),
               wbInteger('Grid X', itS16)
-            ]).SetSummaryKey([0, 1])
-              .SetSummaryMemberPrefixSuffix(0, '<X: ', '')
-              .SetSummaryMemberPrefixSuffix(1, 'Y: ', '>')
+            ]).SetSummaryKey([1, 0])
+              .SetSummaryMemberPrefixSuffix(0, 'Y: ', '>')
+              .SetSummaryMemberPrefixSuffix(1, '<X: ', '')
               .SetSummaryDelimiter(', ')
               .IncludeFlag(dfCollapsed)
               .IncludeFlag(dfSummaryMembersNoName),
@@ -10496,9 +10486,7 @@ begin
         ]).IncludeFlag(dfCollapsed),
       -1).IncludeFlag(dfCollapsed)
     ]).IncludeFlag(dfCollapsed),
-    wbArrayS(NVSI, 'Deleted Navmeshes',
-      wbFormIDCk('Navmesh', [NAVM])
-    ).IncludeFlag(dfCollapsed)
+    wbArrayS(NVSI, 'Deleted Navmeshes', wbFormIDCk('Navmesh', [NAVM]) ).IncludeFlag(dfCollapsed)
   ]);
 
    wbRecord(EXPL, 'Explosion', [
