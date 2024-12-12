@@ -9128,14 +9128,14 @@ begin
     wbRStruct('Parent Worldspace', [
       wbFormIDCk(WNAM, 'World', [WRLD]),
       wbInteger(PNAM, 'Flags', itU16,
-        wbFlags(wbSparseFlags([
-          0, 'Use Land Data',
-          1, 'Use LOD Data',
-          2, 'Use Map Data',
-          3, 'Use Water Data',
-          4, 'Use Climate Data',
-          5, 'Use Image Space Data'
-        ], False, 6))
+        wbFlags([
+          {0} 'Use Land Data',
+          {1} 'Use LOD Data',
+          {2} 'Use Map Data',
+          {3} 'Use Water Data',
+          {4} 'Use Climate Data',
+          {5} 'Use Image Space Data'
+        ], True)
       ).SetRequired
        .IncludeFlag(dfCollapsed, wbCollapseFlags)
     ]),
