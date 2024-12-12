@@ -8225,7 +8225,10 @@ begin
     wbFormID(PLYR, 'Player', cpNormal, True).SetDefaultNativeValue($7)
   ]).IncludeFlag(dfInternalEditOnly);
 
-  wbRecord(TREE, 'Tree', [
+  wbRecord(TREE, 'Tree',
+    wbFlags(wbFlagsList([
+      6, 'Has Tree LOD'
+    ])), [
     wbEDIDReq,
     wbOBND(True),
     wbGenericModel(True),
