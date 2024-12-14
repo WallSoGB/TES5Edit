@@ -8,112 +8,34 @@
 
 unit wbDefinitionsTES3;
 
-interface
+{$I wbDefines.inc}
 
-uses
-  wbInterface;
+interface
 
 procedure DefineTES3;
 
 implementation
 
 uses
-  Types,
-  Classes,
   SysUtils,
-  Math,
-  Variants,
   wbDefinitionsCommon,
-  wbDefinitionsSignatures;
+  wbDefinitionsSignatures,
+  wbInterface;
 
 var
-  wbAttributeEnum: IwbEnumDef;
-  wbBipedObjectEnum: IwbEnumDef;
-  wbDialogTypeEnum: IwbEnumDef;
-  wbMagicEffectEnum: IwbEnumDef;
-  wbRangeEnum: IwbEnumDef;
-  wbSkillEnum: IwbEnumDef;
+  wbAttributeEnum,
+  wbBipedObjectEnum,
+  wbDialogTypeEnum,
+  wbMagicEffectEnum,
+  wbSkillEnum,
   wbSpecializationEnum: IwbEnumDef;
 
   wbLeveledFlags: IwbFlagsDef;
 
-  wbAIDT: IwbRecordMemberDef;
-  wbENAM: IwbRecordMemberDef;
-  wbBipedObjects: IwbRecordMemberDef;
+  wbAIDT,
+  wbENAM,
+  wbBipedObjects,
   wbTravelServices: IwbRecordMemberDef;
-
-function wbNPCDataDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
-var
-  SubRecord: IwbSubRecord;
-begin
-  Result := 0;
-  if Assigned(aElement) and Supports(aElement.Container, IwbSubRecord, SubRecord) then
-    if SubRecord.SubRecordHeaderSize = 12 then
-      Result := 1;
-end;
-
-function wbGLOBUnionDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
-var
-  rValue: IwbRecord;
-  s: string;
-begin
-  Result := 0;
-  if not Assigned(aElement) then
-    Exit;
-  rValue := aElement.Container.RecordBySignature[FNAM];
-  if Assigned(rValue) then begin
-    s := rValue.Value;
-    if Length(s) > 0 then
-      case s[1] of
-        'S': Result := 0;
-        'L': Result := 1;
-        'F': Result := 2;
-      end;
-  end;
-end;
-
-function GridCellToFormID(aFormIDBase: Byte; const aGridCell: TwbGridCell; out aFormID: TwbFormID): Boolean;
-begin
-  Result := False;
-  with aGridCell do begin
-    if (x < -512) or (x > 511) or (y < -512) or (y > 511) then
-      Exit;
-    aFormID := TwbFormID.FromCardinal((Cardinal(x + 512) shl 10) + Cardinal(y + 512) + (Cardinal(aFormIDBase) shl 16));
-    Result := True;
-  end;
-end;
-
-function wbFRMRToString(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
-begin
-  if aType in [ctToStr, ctToSummary, ctToSortKey, ctToEditValue] then begin
-    Result := IntToHex(aInt, 8);
-    if aType = ctToEditValue then
-      Result := '$' + Result;
-  end else
-    Result := '';
-end;
-
-//Copied from TES4 and modified to work for TES3.
-function wbCalcPGRCSize(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Cardinal;
-var
-  Index: Integer;
-  function ExtractCountFromLabel(const aElement: IwbElement; aCount: Integer): Integer;
-  var
-    i: Integer;
-  begin
-    i := Pos('#', aElement.Name);
-    if i = 0 then
-      Result := aCount
-    else try
-      Result := StrToInt(Trim(Copy(aElement.Name, i+1, Length(aElement.Name))))+1;
-    except
-      Result := aCount;
-    end;
-  end;
-begin
-  Index := ExtractCountFromLabel(aElement, aElement.Container.ElementCount);
-  Result := ((aElement.Container.Container as IwbMainRecord).RecordBySignature['PGRP'].Elements[Pred(Index)] as IwbContainer).Elements[2].NativeValue;
-end;
 
 const
   wbKnownSubRecordSignaturesNoFNAM : TwbKnownSubRecordSignatures = (
@@ -172,15 +94,154 @@ const
     '____'
   );
 
+function wbCalcPGRCSize(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Cardinal;
+  function ExtractCountFromLabel(const aElement: IwbElement; aCount: Integer): Integer;
+  begin
+    var i := Pos('#', aElement.Name);
+    if i = 0 then
+      Result := aCount
+    else try
+      Result := StrToInt(Trim(Copy(aElement.Name, i+1, Length(aElement.Name))))+1;
+    except
+      Result := aCount;
+    end;
+  end;
+begin
+  var Index := ExtractCountFromLabel(aElement, aElement.Container.ElementCount);
+  Result := ((aElement.Container.Container as IwbMainRecord).RecordBySignature['PGRP'].Elements[Pred(Index)] as IwbContainer).Elements[2].NativeValue;
+end;
+
+function wbFRMRToString(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
+begin
+  Result := '';
+  if aType in [ctToStr, ctToSummary, ctToSortKey, ctToEditValue] then begin
+    Result := IntToHex(aInt, 8);
+    if aType = ctToEditValue then
+      Result := '$' + Result;
+  end;
+end;
+
+function wbGLOBUnionDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+begin
+  Result := 0;
+  if not Assigned(aElement) then
+    Exit;
+  var rValue := aElement.Container.RecordBySignature[FNAM];
+  if Assigned(rValue) then begin
+    var s := rValue.Value;
+    if Length(s) > 0 then
+      case s[1] of
+        'S': Result := 0;
+        'L': Result := 1;
+        'F': Result := 2;
+      end;
+  end;
+end;
+
+function GridCellToFormID(aFormIDBase: Byte; const aGridCell: TwbGridCell; out aFormID: TwbFormID): Boolean;
+begin
+  Result := False;
+  with aGridCell do begin
+    if (x < -512) or (x > 511) or (y < -512) or (y > 511) then
+      Exit;
+    aFormID := TwbFormID.FromCardinal((Cardinal(x + 512) shl 10) + Cardinal(y + 512) + (Cardinal(aFormIDBase) shl 16));
+    Result := True;
+  end;
+end;
+
+function wbNPCDataDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+var
+  SubRecord: IwbSubRecord;
+begin
+  Result := 0;
+  if Assigned(aElement) and Supports(aElement.Container, IwbSubRecord, SubRecord) then
+    if SubRecord.SubRecordHeaderSize = 12 then
+      Result := 1;
+end;
+
 procedure DefineTES3;
 begin
   DefineCommon;
   wbHeaderSignature := 'TES3';
 
+  wbRecordFlags :=
+    wbInteger('Record Flags', itU32,
+      wbFlags(wbSparseFlags([
+        0,  'ESM',
+        5,  'Deleted',
+        10, 'Persistent Reference',
+        13, 'Blocked'
+      ], False, 14)));
+
+  wbMainRecordHeader := wbStruct('Record Header', [
+    wbString('Signature', 4, cpCritical),
+    wbInteger('Data Size', itU32, nil, cpIgnore),
+    wbByteArray('Version Control Info', 4, cpIgnore).SetToStr(wbVCI1ToStrBeforeFO4),
+    wbRecordFlags
+  ]);
+
+  wbSizeOfMainRecordStruct := 16;
+
   wbKnownSubRecordSignatures[ksrEditorID] := 'NAME';
   wbKnownSubRecordSignatures[ksrFullName] := 'FNAM';
   wbKnownSubRecordSignatures[ksrBaseRecord] := '____';
   wbKnownSubRecordSignatures[ksrGridCell] := 'DATA';
+
+  {>>> Enums <<<}
+
+  wbAttributeEnum :=
+    wbEnum([
+      {0} 'Strength',
+      {1} 'Intelligence',
+      {2} 'Willpower',
+      {3} 'Agility',
+      {4} 'Speed',
+      {5} 'Endurance',
+      {6} 'Personality',
+      {7} 'Luck'
+    ], [
+      -1, 'None'
+    ]);
+
+  wbBipedObjectEnum :=
+    wbEnum ([
+      {0}  'Head',
+      {1}  'Hair',
+      {2}  'Neck',
+      {3}  'Chest',
+      {4}  'Groin',
+      {5}  'Skirt',
+      {6}  'Right Hand',
+      {7}  'Left Hand',
+      {8}  'Right Wrist',
+      {9}  'Left Wrist',
+      {10} 'Shield',
+      {11} 'Right Forearm',
+      {12} 'Left Forearm',
+      {13} 'Right Upper Arm',
+      {14} 'Left Upper Arm',
+      {15} 'Right Foot',
+      {16} 'Left Foot',
+      {17} 'Right Ankle',
+      {18} 'Left Ankle',
+      {19} 'Right Knee',
+      {20} 'Left Knee',
+      {21} 'Right Upper Leg',
+      {22} 'Left Upper Leg',
+      {23} 'Right Pauldron',
+      {24} 'Left Pauldron',
+      {25} 'Weapon',
+      {26} 'Tail'
+    ]);
+
+  wbDialogTypeEnum :=
+    wbEnum([
+      {0} 'Regular Topic',
+      {1} 'Voice',
+      {2} 'Greeting',
+      {3} 'Persuasion',
+      {4} 'Journal'
+    ]);
 
   wbMagicEffectEnum :=
     wbEnum([
@@ -331,39 +392,18 @@ begin
        -1, 'None'
     ]);
 
-  wbRangeEnum :=
-    wbEnum([
-      {0} 'Self',
-      {1} 'Touch',
-      {2} 'Target'
-    ]);
-
-  wbAttributeEnum :=
-    wbEnum([
-      {0} 'Strength',
-      {1} 'Intelligence',
-      {2} 'Willpower',
-      {3} 'Agility',
-      {4} 'Speed',
-      {5} 'Endurance',
-      {6} 'Personality',
-      {7} 'Luck'
-    ], [
-      -1, 'None'
-    ]);
-
   wbSkillEnum :=
     wbEnum([
-      { 0} 'Block',
-      { 1} 'Armorer',
-      { 2} 'Medium Armor',
-      { 3} 'Heavy Armor',
-      { 4} 'Blunt Weapon',
-      { 5} 'Long Blade',
-      { 6} 'Axe',
-      { 7} 'Spear',
-      { 8} 'Athletics',
-      { 9} 'Enchant',
+      {0}  'Block',
+      {1}  'Armorer',
+      {2}  'Medium Armor',
+      {3}  'Heavy Armor',
+      {4}  'Blunt Weapon',
+      {5}  'Long Blade',
+      {6}  'Axe',
+      {7}  'Spear',
+      {8}  'Athletics',
+      {9}  'Enchant',
       {10} 'Destruction',
       {11} 'Alteration',
       {12} 'Illusion',
@@ -392,102 +432,15 @@ begin
       {2} 'Stealth'
     ]);
 
-  wbBipedObjectEnum :=
-    wbEnum ([
-      { 0} 'Head',
-      { 1} 'Hair',
-      { 2} 'Neck',
-      { 3} 'Chest',
-      { 4} 'Groin',
-      { 5} 'Skirt',
-      { 6} 'Right Hand',
-      { 7} 'Left Hand',
-      { 8} 'Right Wrist',
-      { 9} 'Left Wrist',
-      {10} 'Shield',
-      {11} 'Right Forearm',
-      {12} 'Left Forearm',
-      {13} 'Right Upper Arm',
-      {14} 'Left Upper Arm',
-      {15} 'Right Foot',
-      {16} 'Left Foot',
-      {17} 'Right Ankle',
-      {18} 'Left Ankle',
-      {19} 'Right Knee',
-      {20} 'Left Knee',
-      {21} 'Right Upper Leg',
-      {22} 'Left Upper Leg',
-      {23} 'Right Pauldron',
-      {24} 'Left Pauldron',
-      {25} 'Weapon',
-      {26} 'Tail'
-    ]);
-
-  wbDialogTypeEnum :=
-    wbEnum([
-      {0} 'Regular Topic',
-      {1} 'Voice',
-      {2} 'Greeting',
-      {3} 'Persuasion',
-      {4} 'Journal'
-    ]);
-
-  wbRecordFlags :=
-    wbInteger('Record Flags', itU32, wbFlags([
-      {0x00000001}'ESM',
-      {0x00000002}'',
-      {0x00000004}'',
-      {0x00000008}'',
-      {0x00000010}'',
-      {0x00000020}'Deleted',
-      {0x00000040}'',
-      {0x00000080}'',
-      {0x00000100}'',
-      {0x00000200}'',
-      {0x00000400}'Persistent Reference',
-      {0x00000800}'',
-      {0x00001000}'',
-      {0x00002000}'Blocked'
-    ]));
+  {>>> Flags <<<}
 
   wbLeveledFlags :=
     wbFlags([
-      {0x00000001} 'Calculate from all levels <= player''s level',
-      {0x00000002} 'Calculate for each item in count'
+      {0} 'Calculate from all levels <= player''s level',
+      {1} 'Calculate for each item in count'
     ]);
 
-  wbMainRecordHeader := wbStruct('Record Header', [
-    wbString('Signature', 4, cpCritical),
-    wbInteger('Data Size', itU32, nil, cpIgnore),
-    wbByteArray('Version Control Info', 4, cpIgnore).SetToStr(wbVCI1ToStrBeforeFO4),
-    wbRecordFlags
-  ]);
-
-  wbSizeOfMainRecordStruct := 16;
-
-  {Any definition with a //[] after it is the appropriate form types for that
-  definition. For possible future use.}
-
-  wbENAM :=
-    wbRArray('Effects',
-      wbStruct(ENAM, 'Effect', [
-        wbInteger('Magic Effect', itU16, wbMagicEffectEnum), //[MGEF]
-        wbInteger('Skill', itS8, wbSkillEnum), //[SKIL]
-        wbInteger('Attribute', itS8, wbAttributeEnum),
-        wbInteger('Range', itS32, wbRangeEnum),
-        wbInteger('Area', itS32),
-        wbInteger('Duration', itS32),
-        wbInteger('Magnitude Minimum', itS32),
-        wbInteger('Magnitude Maximum', itS32)
-      ], cpNormal, True));
-
-  wbBipedObjects :=
-    wbRArray('Biped Objects',
-      wbRStruct('Biped Object', [
-        wbInteger(INDX, 'Body Part', itU8, wbBipedObjectEnum),
-        wbString(BNAM, 'Male Armor'), //[BODY]
-        wbString(CNAM, 'Female Armor') //[BODY]
-      ], [], cpNormal, True));
+  {>>> Record Members <<<}
 
   wbAIDT :=
     wbStruct(AIDT, 'AI Data', [
@@ -497,7 +450,33 @@ begin
       wbInteger('Alarm', itU8),
       wbUnused(3),
       wbInteger('Service Flags', itU32, wbServiceFlags)
-    ], cpNormal, True);
+    ]).SetRequired;
+
+  wbBipedObjects :=
+    wbRArray('Biped Objects',
+      wbRStruct('Biped Object', [
+        wbInteger(INDX, 'Body Part', itU8, wbBipedObjectEnum),
+        wbString(BNAM, 'Male Armor'), //[BODY]
+        wbString(CNAM, 'Female Armor') //[BODY]
+      ]).SetRequired);
+
+  wbENAM :=
+    wbRArray('Effects',
+      wbStruct(ENAM, 'Effect', [
+        wbInteger('Magic Effect', itU16, wbMagicEffectEnum), //[MGEF]
+        wbInteger('Skill', itS8, wbSkillEnum), //[SKIL]
+        wbInteger('Attribute', itS8, wbAttributeEnum),
+        wbInteger('Range', itU32,
+          wbEnum([
+            {0} 'Self',
+            {1} 'Touch',
+            {2} 'Target'
+          ])),
+        wbInteger('Area', itS32),
+        wbInteger('Duration', itS32),
+        wbInteger('Magnitude Minimum', itS32),
+        wbInteger('Magnitude Maximum', itS32)
+      ]).SetRequired);
 
   wbTravelServices :=
     wbRArray('Travel Services',
@@ -505,9 +484,11 @@ begin
         wbStruct(DODT, 'Destination', [
           wbVec3('Position'),
           wbVec3('Rotation')
-        ], cpNormal, True),
+        ]).SetRequired,
         wbStringForward(DNAM, 'Cell', 64)
       ]));
+
+  {>>> Records <<<}
 
   wbRecord(TES3, 'Main File Header', [
     wbStruct(HEDR, 'Header', [
@@ -516,22 +497,23 @@ begin
       wbString('Author', 32),
       wbString('Description', 256),
       wbInteger('Number of Records', itU32)
-    ], cpNormal, True),
+    ]).SetRequired,
     wbRArray('Master Files',
       wbRStruct('Master File', [
-        wbStringForward(MAST, 'Filename', 0, cpNormal, True),
+        wbStringForward(MAST, 'Filename').SetRequired,
         wbInteger(DATA, 'Master Size', itU64, nil, cpIgnore, True)
-    ])).IncludeFlag(dfInternalEditOnly, not wbAllowMasterFilesEdit)], False, nil, cpNormal, True)
-           .SetGetFormIDCallback(function(const aMainRecord: IwbMainRecord; out aFormID: TwbFormID): Boolean begin
-             Result := True;
-             aFormID := TwbFormID.Null;
-           end);
+    ])).IncludeFlag(dfInternalEditOnly, not wbAllowMasterFilesEdit)
+  ], False, nil, cpNormal, True)
+    .SetGetFormIDCallback(function(const aMainRecord: IwbMainRecord; out aFormID: TwbFormID): Boolean begin
+       Result := True;
+       aFormID := TwbFormID.Null;
+     end);
 
   wbRecord(ACTI, 'Activator', [
     wbString(NAME, 'Editor ID'),
     wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'])),
     wbString(MODL, 'Model Filename'),
-    wbString(FNAM, 'Full Name'),
+    wbString(FNAM, 'Name'),
     wbString(SCRI, 'Script') //[SCPT]
   ]).SetFormIDBase($40);
 
@@ -543,10 +525,10 @@ begin
     wbString(SCRI, 'Script'), //[SCPT]
     wbString(FNAM, 'Full Name'),
     wbStruct(ALDT, 'Alchemy Data', [
-      wbFloat('Weight'),
+      wbFloat('Weight', cpNormal, False, 1, 2),
       wbInteger('Value', itS32),
       wbInteger('Auto Calculate Value', itU32, wbBoolEnum)
-    ], cpNormal, True),
+    ]).SetRequired,
     wbENAM
   ]).SetFormIDBase($40);
 
@@ -554,19 +536,20 @@ begin
     wbString(NAME, 'Editor ID'),
     wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'])),
     wbString(MODL, 'Model Filename'),
-    wbString(FNAM, 'Full Name'),
+    wbString(FNAM, 'Name'),
     wbString(SCRI, 'Script'), //[SCPT]
-    wbStruct(AADT, 'Apparatus Data', [
-      wbInteger('Type', itU32, wbEnum([
-        {0} 'Mortar and Pestle',
-        {1} 'Alembic',
-        {2} 'Calcinator',
-        {3} 'Retort'
-      ])),
-      wbFloat('Quality'),
-      wbFloat('Weight'),
+    wbStruct(AADT, 'Data', [
+      wbInteger('Type', itU32,
+        wbEnum([
+          {0} 'Mortar & Pestle',
+          {1} 'Alembic',
+          {2} 'Calcinator',
+          {3} 'Retort'
+        ])),
+      wbFloat('Quality', cpNormal, False, 1, 2),
+      wbFloat('Weight', cpNormal, False, 1, 2),
       wbInteger('Value', itS32)
-    ], cpNormal, True),
+    ]).SetRequired,
     wbString(ITEX, 'Icon Filename')
   ]).SetFormIDBase($40);
 
@@ -574,28 +557,29 @@ begin
     wbString(NAME, 'Editor ID'),
     wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'])),
     wbString(MODL, 'Model Filename'),
-    wbString(FNAM, 'Full Name'),
+    wbString(FNAM, 'Name'),
     wbString(SCRI, 'Script'), //[SCPT]
-    wbStruct(AODT, 'Armor Data', [
-      wbInteger('Type', itU32, wbEnum([
-        { 0} 'Helmet',
-        { 1} 'Cuirass',
-        { 2} 'Left Pauldron',
-        { 3} 'Right Pauldron',
-        { 4} 'Greaves',
-        { 5} 'Boots',
-        { 6} 'Left Gauntlet',
-        { 7} 'Right Gauntlet',
-        { 8} 'Shield',
-        { 9} 'Left Bracer',
-        {10} 'Right Bracer'
-      ])),
-      wbFloat('Weight'),
+    wbStruct(AODT, 'Data', [
+      wbInteger('Type', itU32,
+        wbEnum([
+          {0}  'Helmet',
+          {1}  'Cuirass',
+          {2}  'Left Pauldron',
+          {3}  'Right Pauldron',
+          {4}  'Greaves',
+          {5}  'Boots',
+          {6}  'Left Gauntlet',
+          {7}  'Right Gauntlet',
+          {8}  'Shield',
+          {9}  'Left Bracer',
+          {10} 'Right Bracer'
+        ])),
+      wbFloat('Weight', cpNormal, False, 1, 2),
       wbInteger('Value', itS32),
       wbInteger('Health', itS32),
       wbInteger('Enchanting Charge', itS32),
       wbInteger('Armor Rating', itS32)
-    ], cpNormal, True),
+    ]).SetRequired,
     wbString(ITEX, 'Icon Filename'),
     wbBipedObjects,
     wbString(ENAM, 'Enchantment') //[ENCH]
@@ -606,52 +590,56 @@ begin
     wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'])),
     wbString(MODL, 'Model Filename'),
     wbString(FNAM, 'Skin Race'), //[RACE]
-    wbStruct(BYDT, 'Body Part Data', [
-      wbInteger('Part', itU8, wbEnum([
-        { 0} 'Head',
-        { 1} 'Hair',
-        { 2} 'Neck',
-        { 3} 'Chest',
-        { 4} 'Groin',
-        { 5} 'Hand',
-        { 6} 'Wrist',
-        { 7} 'Forearm',
-        { 8} 'Upperarm',
-        { 9} 'Foot',
-        {10} 'Ankle',
-        {11} 'Knee',
-        {12} 'Upperleg',
-        {13} 'Clavicle',
-        {14} 'Tail'
-      ])),
-      wbInteger('Skin Type', itU8, wbEnum([
-        {0} 'Normal',
-        {1} 'Vampire'
-      ])),
-      wbInteger('Body Part Flags', itU8, wbFlags([
-        {0x01} 'Female',
-        {0x02} 'Not Playable'
-      ])),
-      wbInteger('Part Type', itU8, wbEnum([
-        {0} 'Skin',
-        {1} 'Clothing',
-        {2} 'Armor'
-      ]))
-    ], cpNormal, True)
+    wbStruct(BYDT, 'Data', [
+      wbInteger('Part', itU8,
+        wbEnum([
+          {0} 'Head',
+          {1} 'Hair',
+          {2} 'Neck',
+          {3} 'Chest',
+          {4} 'Groin',
+          {5} 'Hand',
+          {6} 'Wrist',
+          {7} 'Forearm',
+          {8} 'Upperarm',
+          {9} 'Foot',
+          {10} 'Ankle',
+          {11} 'Knee',
+          {12} 'Upperleg',
+          {13} 'Clavicle',
+          {14} 'Tail'
+        ])),
+      wbInteger('Skin Type', itU8,
+        wbEnum([
+          {0} 'Normal',
+          {1} 'Vampire'
+        ])),
+      wbInteger('Flags', itU8,
+        wbFlags([
+          {0} 'Female',
+          {1} 'Not Playable'
+        ])),
+      wbInteger('Part Type', itU8,
+        wbEnum([
+          {0} 'Skin',
+          {1} 'Clothing',
+          {2} 'Armor'
+        ]))
+    ]).SetRequired
   ]).SetFormIDBase($20);
 
   wbRecord(BOOK, 'Book', [
     wbString(NAME, 'Editor ID'),
     wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'])),
     wbString(MODL, 'Model Filename'),
-    wbString(FNAM, 'Full Name'),
+    wbString(FNAM, 'Name'),
     wbStruct(BKDT, 'Book Data', [
-      wbFloat('Weight'),
+      wbFloat('Weight', cpNormal, False, 1, 2),
       wbInteger('Value', itS32),
       wbInteger('Is Scroll', itU32, wbBoolEnum),
       wbInteger('Teaches', itS32, wbSkillEnum), //[SKIL]
       wbInteger('Enchanting Charge', itS32)
-    ], cpNormal, True),
+    ]).SetRequired,
     wbString(SCRI, 'Script'), //[SCPT]
     wbString(ITEX, 'Icon Filename'),
     wbLStringKC(TEXT, 'Book Text'),
@@ -661,62 +649,39 @@ begin
   wbRecord(BSGN, 'Birthsign', [
     wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'])),
     wbString(NAME, 'Editor ID'),
-    wbString(FNAM, 'Full Name'),
+    wbString(FNAM, 'Name'),
     wbString(TNAM, 'Constellation Image'),
     wbString(DESC, 'Description'),
-    wbRArray('Spells',
-      wbStringForward(NPCS, 'Spell', 32)) //[SPEL]
+    wbRArray('Spells', wbStringForward(NPCS, 'Spell', 32)) //[SPEL]
   ]).SetFormIDBase($10);
 
   wbRecord(CELL, 'Cell', [
     wbString(NAME, 'Editor ID'),
     wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'])),
-    wbStruct(DATA, 'Cell Data', [
-      wbInteger('Flags', itU32, wbFlags([
-        {0x00000001} 'Is Interior Cell',
-        {0x00000002} 'Has Water',
-        {0x00000004} 'Illegal to Sleep Here',
-        {0x00000008} '',
-        {0x00000010} '',
-        {0x00000020} '',
-        {0x00000040} 'Has Map Color',
-        {0x00000080} 'Behave Like Exterior'
-      ])),
+    wbStruct(DATA, 'Data', [
+      wbInteger('Flags', itU32,
+        wbFlags(wbSparseFlags([
+          0, 'Is Interior Cell',
+          1, 'Has Water',
+          2, 'Illegal to Sleep Here',
+          6, 'Has Map Color',
+          7, 'Behave Like Exterior'
+        ], False, 8))),
       wbStruct('Grid', [
         wbInteger('X', itS32),
         wbInteger('Y', itS32)
       ])
-    ], cpNormal, True),
+    ]).SetRequired,
     wbInteger(INTV, 'Water Height (Old Format)', itS32),
     wbString(RGNN, 'Region'),  //[REGN]
-    wbStruct(NAM5, 'Map Color', [
-        wbInteger('Red', itU8),
-        wbInteger('Green', itU8),
-        wbInteger('Blue', itU8),
-        wbInteger('Alpha (Unused)', itU8, nil, cpIgnore)
-    ], cpNormal, True),
+    wbByteColors(NAM5, 'Map Color'),
     wbFloat(WHGT, 'Water Height'),
     wbStruct(AMBI, 'Ambience', [
-        wbStruct('Ambient Color', [
-          wbInteger('Red', itU8),
-          wbInteger('Green', itU8),
-          wbInteger('Blue', itU8),
-          wbInteger('Alpha (Unused)', itU8, nil, cpIgnore)
-        ]),
-        wbStruct('Sunlight Color', [
-          wbInteger('Red', itU8),
-          wbInteger('Green', itU8),
-          wbInteger('Blue', itU8),
-          wbInteger('Alpha (Unused)', itU8, nil, cpIgnore)
-        ]),
-        wbStruct('Fog Color', [
-          wbInteger('Red', itU8),
-          wbInteger('Green', itU8),
-          wbInteger('Blue', itU8),
-          wbInteger('Alpha (Unused)', itU8, nil, cpIgnore)
-        ]),
-        wbFloat('Fog Density')
-    ], cpNormal, True)
+      wbByteColors('Ambient Color'),
+      wbByteColors('Sunlight Color'),
+      wbByteColors('Fog Color'),
+      wbFloat('Fog Density', cpNormal, False, 1, 2)
+    ])
   ]).SetFormIDBase($B0)
     .SetGetGridCellCallback(function(const aSubRecord: IwbSubRecord; out aGridCell: TwbGridCell): Boolean begin
       with aGridCell, aSubRecord do begin
@@ -739,219 +704,11 @@ begin
         Result := aMainRecord.EditorID;
     end);
 
-  //Standardized.
-  {The arrays for VNML and VCLR were set too large, leading to expecting 1 byte
-  errors. 66 -> 65.}
-  wbRecord(LAND, 'Landscape', @wbKnownSubRecordSignaturesLAND, [
-    wbStruct(INTV, 'Grid', [
-      wbInteger('X', itS32),
-      wbInteger('Y', itS32)
-    ], cpCritical, True),
-    {Flags are pretty much the same as the other games, except 0x00000008 only
-    appears on LAND that is not native to the official masters or is edited.}
-    wbInteger(DATA, 'Flags', itU32, wbFlags([
-      {0x00000001} 'Has Vertex Normals/Height Map',
-      {0x00000002} 'Has Vertex Colors',
-      {0x00000004} 'Has Landscape Textures',
-      {0x00000008} 'User Created/Edited'
-    ])),
-    IfThen(wbSimpleRecords,
-      wbByteArray(VNML, 'Vertex Normals'),
-      wbArray(VNML, 'Vertex Normals',
-        wbArray('Row',
-          wbStruct('Column', [
-            wbInteger('X', itS8),
-            wbInteger('Y', itS8),
-            wbInteger('Z', itS8)
-          ]),
-        65),
-      65)
-    ),
-    IfThen(wbSimpleRecords,
-      wbByteArray(VHGT, 'Vertex Height Map'),
-      wbStruct(VHGT, 'Vertex Height Map', [
-        wbFloat('Offset'),
-        wbUnused(1),
-        wbArray('Height Map',
-          wbArray('Row',
-            wbInteger('Column', itS8),
-          65),
-        65),
-        {This is some sort of editor specific stamp/tag. It changes
-        randomly whenever the plugin is saved in the CS and is the
-        same value for all LAND forms. Any new LAND forms will have
-        their tag locked regardless of how many times the plugin is
-        saved, but any overwrites of official master LAND forms will
-        have their tag changed with each save.}
-        wbByteArray('Editor Tag', 2, cpIgnore)
-      ])
-    ),
-    {I originally thought this was related to sea level as negative
-    values were consistent with landscape being submerged by water.
-    Then I loaded the game to test something and remembered it has a
-    map. A map that pulls the WNAM to paint the map screen shades of
-    blue and brown to represent height.}
-    IfThen(wbSimpleRecords,
-      wbByteArray(WNAM, 'World Map'),
-      wbArray(WNAM, 'World Map Painting',
-        wbArray('Row',
-          wbInteger('Column', itS8),
-        9),
-      9)
-    ),
-    IfThen(wbSimpleRecords,
-      wbByteArray(VCLR, 'Vertex Colors'),
-      wbArray(VCLR, 'Vertex Colors',
-        wbArray('Row',
-          wbStruct('Column', [
-            wbInteger('Red', itU8),
-            wbInteger('Green', itU8),
-            wbInteger('Blue', itU8)
-          ]),
-        65),
-      65)
-    ),
-    IfThen(wbSimpleRecords,
-      wbByteArray(VTXT, 'Textures'),
-      wbArray(VTEX, 'Textures',
-        wbArray('Row',
-          wbInteger('Column', itU16), //[LTEX]
-        16),
-      16)
-    )
-  ]).SetFormIDBase($D0)
-    .SetFormIDNameBase($B0)
-    .SetGetFormIDCallback(function(const aMainRecord: IwbMainRecord; out aFormID: TwbFormID): Boolean begin
-      var GridCell: TwbGridCell;
-      Result := aMainRecord.GetGridCell(GridCell) and GridCellToFormID($C0, GridCell, aFormID);
-    end)
-    .SetIdentityCallback(function(const aMainRecord: IwbMainRecord): string begin
-      var GridCell: TwbGridCell;
-      if aMainRecord.GetGridCell(GridCell) then
-        Result := GridCell.SortKey
-      else
-        Result := '';
-    end);
-
-  //Standardized.
-  {PGAG doesn't appear to be a valid signature in Morrowind.
-  Adding one will cause the Construction Set to throw and
-  error about unrecognized subrecord and crash. So I removed
-  it. It's in Oblivion, but not found anywhere in Morrowind's
-  official plugins.}
-  wbRecord(PGRD, 'Path Grid', [
-    wbStruct(DATA, 'Data', [
-      wbStruct('Grid', [
-        wbInteger('X', itS32),
-        wbInteger('Y', itS32)
-      ], cpCritical, True),
-      wbInteger('Granularity', itU16),
-      wbInteger('Grid Point Count', itU16)
-    ], cpNormal, True),
-    wbString(NAME, 'ID'),
-    IfThen(wbSimpleRecords,
-      wbArray(PGRP, 'Grid Points',
-        wbByteArray('Grid Point', 16)
-      ).SetCountPathOnValue('DATA\Grid Point Count', False),
-      wbArray(PGRP, 'Grid Points',
-        wbStruct('Grid Point', [
-          wbStruct('Position', [
-            {Why are these integers? Todd? Why?}
-            wbInteger('X', itS32),
-            wbInteger('Y', itS32),
-            wbInteger('Z', itS32)
-          ]),
-          wbInteger('User Created Point', itU8, wbBoolEnum),
-          wbInteger('Number of Connections', itU8),
-          {This looks like another editor specific stamp/tag but it's
-          not consistent. It changes randomly whenever the plugin is
-          saved but only for auto-generated points or the final point
-          in the array, which either case can end up being 00 00.
-          Unlike the LAND's tag, these are never the same across all
-          points or PGRD.}
-          wbByteArray('Editor Tag?', 2, cpIgnore)
-        ])
-      ).SetCountPathOnValue('DATA\Grid Point Count', False)
-    ),
-    IfThen(wbSimpleRecords,
-      wbByteArray(PGRC, 'Grid Connections'),
-      wbArray(PGRC, 'Grid Point Connections',
-        wbArrayS('Grid Point Connection',
-          wbInteger('Point', itU32),
-        wbCalcPGRCSize)
-      )
-    )
-  ]).SetFormIDBase($F0)
-    {Updated the path for the Grid position.}
-    .SetFormIDNameBase($B0).SetGetGridCellCallback(function(const aSubRecord: IwbSubRecord; out aGridCell: TwbGridCell): Boolean begin
-      with aGridCell, aSubRecord do begin
-        X := ElementNativeValues['Grid\X'];
-        Y := ElementNativeValues['Grid\Y'];
-        Result := not ((X = 0) and (Y = 0));
-      end;
-    end)
-    .SetGetFormIDCallback(function(const aMainRecord: IwbMainRecord; out aFormID: TwbFormID): Boolean begin
-      var GridCell: TwbGridCell;
-      Result := aMainRecord.GetGridCell(GridCell) and GridCellToFormID($E0, GridCell, aFormID);
-    end)
-    .SetIdentityCallback(function(const aMainRecord: IwbMainRecord): string begin
-      var GridCell: TwbGridCell;
-      if aMainRecord.GetGridCell(GridCell) then
-        Result := '<Exterior>' + GridCell.SortKey
-      else
-        Result := aMainRecord.EditorID;
-    end);
-
-  wbRecord(REFR, 'Reference', @wbKnownSubRecordSignaturesREFR, [
-    wbInteger(FRMR, 'Object Index', itU32, wbFRMRToString, nil, cpIgnore, True).IncludeFlag(dfInternalEditOnly),
-    wbString(NAME, 'Base Object'), //[ACTI, ALCH, APPA, ARMO, BODY, BOOK, CLOT, CONT, CREA, DOOR, INGR, LEVC, LOCK, MISC, NPC_, PROB, REPA, STAT, WEAP]
-    wbInteger(UNAM, 'Reference Blocked', itU8, wbEnum(['Blocked'])),
-    wbFloat(XSCL, 'Scale'),
-    wbRStructSK([], 'Owner Data', [
-      wbString(ANAM, 'Owner'), //[NPC_]
-      wbString(BNAM, 'Global Variable'), //[GLOB]
-      wbString(CNAM, 'Faction Owner'), //[FACT]
-      wbInteger(INDX, 'Faction Rank', itS32)
-    ], [], cpNormal, False, nil, True),
-    wbFloat(XCHG, 'Enchanting Charge'),
-    wbString(XSOL, 'Soul'), //[CREA]
-    wbInteger(INTV, 'Health', itS32),
-    wbInteger(NAM9, 'Count', itS32),
-    wbRStructSK([], 'Teleport Data', [
-      wbStruct(DODT, 'Teleport Destination', [
-        wbVec3('Position'),
-        wbVec3('Rotation')
-      ]),
-      wbString(DNAM, 'Teleport Cell') //[CELL]
-    ]),
-    wbRStructSK([], 'Lock Data', [
-      wbInteger(FLTV, 'Lock Level', itU32),
-      wbString(KNAM, 'Key'), //[MISC]
-      wbString(TNAM, 'Trap') //[ENCH]
-    ], [], cpNormal, False, nil, True),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum([],[
-      $00482C64, 'Deleted',
-      $11842014, 'Deleted (Door Reference)'
-    ])).SetDefaultNativeValue(4729956),
-    wbStruct(DATA, 'Reference Data', [
-      wbVec3('Position'),
-      wbVec3('Rotation')
-    ])
-  ]).SetGetFormIDCallback(function(const aMainRecord: IwbMainRecord; out aFormID: TwbFormID): Boolean begin
-      var lFRMR := aMainRecord.RecordBySignature[FRMR];
-      Result := Assigned(lFRMR);
-      if Result then begin
-        aFormID := TwbFormID.FromCardinal(lFRMR.NativeValue);
-        if aFormID.FileID.FullSlot = 0 then
-          aFormID.FileID := TwbFileID.CreateFull($FF);
-      end;
-    end);
-
   wbRecord(CLAS, 'Class', [
     wbString(NAME, 'Editor ID'),
     wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'])),
-    wbString(FNAM, 'Full Name'),
-    wbStruct(CLDT, 'Class Data', [
+    wbString(FNAM, 'Name'),
+    wbStruct(CLDT, 'Data', [
       wbArray('Primary Attributes',
         wbInteger('Primary Attribute', itS32, wbAttributeEnum),
       2),
@@ -964,13 +721,13 @@ begin
       5),
       wbInteger('Playable', itU32, wbBoolEnum),
       wbInteger('Service Flags', itU32, wbServiceFlags)
-    ], cpNormal, True),
+    ]).SetRequired,
     wbString(DESC, 'Description')
   ]).SetFormIDBase($18);
 
   wbRecord(CLOT, 'Clothing', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'])),
     wbString(MODL, 'Model Filename'),
     wbString(FNAM, 'Name'),
     wbStruct(CTDT, 'Data', [
@@ -989,7 +746,7 @@ begin
       wbFloat('Weight', cpNormal, False, 1.0, 2),
       wbInteger('Value', itU16),
       wbInteger('Enchanting Charge', itU16)
-    ], cpNormal, True),
+    ]).SetRequired,
     wbString(SCRI, 'Script'), //[SCPT]
     wbString(ITEX, 'Icon Filename'),
     wbBipedObjects,
@@ -998,39 +755,39 @@ begin
 
   wbRecord(CONT, 'Container', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'])),
     wbString(MODL, 'Model Filename'),
     wbString(FNAM, 'Name'),
     wbFloat(CNDT, 'Weight', cpNormal, False, 1.0, 2),
-    wbInteger(FLAG, 'Flags', itU32, wbFlags([
-      {0x00000001} 'Organic',
-      {0x00000002} 'Respawns',
-      {0x00000004} '',
-      {0x00000008} 'Can Hold Items'
-    ])),
+    wbInteger(FLAG, 'Flags', itU32,
+      wbFlags(wbSparseFlags([
+        0, 'Organic',
+        1, 'Respawns',
+        3, 'Can Hold Items'
+      ], False, 4))),
     wbString(SCRI, 'Script'), //[SCPT]
     wbRArray('Item Entries',
       wbStruct(NPCO, 'Item Entry', [
         wbInteger('Count', itS32),
         wbString('Item', 32) //[ALCH, APPA, ARMO, BOOK, CLOT, INGR, LEVI, LIGH, LOCK, MISC, PROB, REPA, WEAP]
-      ])
-    )
+      ]))
   ]).SetFormIDBase($40);
 
   wbRecord(CREA, 'Creature', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'])),
     wbString(MODL, 'Model Filename'),
     wbString(CNAM, 'Sound Generator Creature'), //[CREA]
     wbString(FNAM, 'Name'),
     wbString(SCRI, 'Script'), //[SCPT]
     wbStruct(NPDT, 'Data', [
-      wbInteger('Type', itU32, wbEnum([
-        {0} 'Creature',
-        {1} 'Daedra',
-        {2} 'Undead',
-        {3} 'Humanoid'
-      ])),
+      wbInteger('Type', itU32,
+        wbEnum([
+          {0} 'Creature',
+          {1} 'Daedra',
+          {2} 'Undead',
+          {3} 'Humanoid'
+        ])),
       wbInteger('Level', itS32),
       wbStruct('Attributes', [
         wbInteger('Strength', itS32),
@@ -1058,40 +815,37 @@ begin
         ]),
       3),
       wbInteger('Barter Gold', itU32)
-    ], cpNormal, True),
-    wbInteger(FLAG, 'Flags', itU32, wbFlags([
-        {0x00000001} 'Biped',
-        {0x00000002} 'Respawn',
-        {0x00000004} 'Weapon & Shield',
-        {0x00000008} 'Can Hold Items',
-        {0x00000010} 'Swims',
-        {0x00000020} 'Flies',
-        {0x00000040} 'Walks',
-        {0x00000080} 'Essential',
-        {0x00000100} '',
-        {0x00000200} '',
-        {0x00000400} 'Skeleton Blood',
-        {0x00000800} 'Metal Blood'
-      ])),
+    ]).SetRequired,
+    wbInteger(FLAG, 'Flags', itU32,
+      wbFlags(wbSparseFlags([
+        0, 'Biped',
+        1, 'Respawn',
+        2, 'Weapon & Shield',
+        3, 'Can Hold Items',
+        4, 'Swims',
+        5, 'Flies',
+        6, 'Walks',
+        7, 'Essential',
+        10, 'Skeleton Blood',
+        11, 'Metal Blood'
+      ], False, 12))
+    ).IncludeFlag(dfCollapsed, wbCollapseFlags),
     wbFloat(XSCL, 'Scale', cpNormal, False, 1.0, 2),
     wbRArray('Item Entries',
       wbStruct(NPCO, 'Item Entry', [
         wbInteger('Count', itS32),
         wbString('Item', 32) //[ALCH, APPA, ARMO, BOOK, CLOT, INGR, LEVI, LIGH, LOCK, MISC, PROB, REPA, WEAP]
-      ])
-    ),
-    wbRArray('Spells',
-      wbString(NPCS, 'Spell', 32) //[SPEL]
-    ),
+      ])),
+    wbRArray('Spells', wbString(NPCS, 'Spell', 32)), //[SPEL]
     wbAIDT,
     wbTravelServices,
     wbRArray('AI Packages',
       wbRUnion('AI Packages', [
         wbStruct(AI_T, 'AI Travel', [
           wbVec3('Position'),
-          wbInteger('Repeat', itU8, wbBoolEnum),
+          wbInteger('Reset', itU8, wbBoolEnum),
           wbUnused(3)
-        ], cpNormal, True),
+        ]).SetRequired,
         wbStruct(AI_W, 'AI Wander', [
           wbInteger('Distance', itU16),
           wbInteger('Duration In Hours', itU16),
@@ -1107,14 +861,14 @@ begin
             wbInteger('Idle 9', itU8)
           ]),
           wbInteger('Reset', itU8, wbBoolEnum)
-        ], cpNormal, True),
+        ]).SetRequired,
         wbRStruct('AI Escort', [
           wbStruct(AI_E, 'AI Escort', [
             wbVec3('Position'),
             wbInteger('Duration In Hours', itU16),
             wbString(True, 'Target', 32), //[CREA, NPC_]
             wbInteger('Reset', itU16, wbBoolEnum)
-          ], cpNormal, True),
+          ]).SetRequired,
           wbString(CNDT, 'Escort To Cell') //[CELL]
         ]),
         wbRStruct('AI Follow', [
@@ -1123,170 +877,28 @@ begin
             wbInteger('Duration In Hours', itU16),
             wbString(True, 'Target', 32), //[CREA, NPC_]
             wbInteger('Reset', itU16, wbBoolEnum)
-          ], cpNormal, True),
+          ]).SetRequired,
           wbString(CNDT, 'Follow To Cell') //[CELL]
         ]),
         wbStruct(AI_A, 'AI Activate', [
           wbString(True, 'Target', 32), //[ACTI, ALCH, APPA, ARMO, BODY, BOOK, CLOT, CONT, CREA, DOOR, ENCH, INGR, LIGH, LEVC, LEVI, LOCK, MISC, NPC_, PROB, REPA, SPEL, STAT, WEAP]
           wbInteger('Reset', itU8, wbBoolEnum)
-        ], cpNormal, True)
+        ]).SetRequired
       ]))
   ]).SetFormIDBase($40);
 
   wbRecord(DIAL, 'Dialog Topic', [
     wbString(NAME, 'Editor ID'),
     wbStruct(DATA, 'Data', [
-        wbInteger('Dialog Type', itU8, wbDialogTypeEnum, cpNormal, True),
-        wbUnused(3) //Padding Bytes
+        wbInteger('Dialog Type', itU8, wbDialogTypeEnum),
+        wbUnused(3)
     ]),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0)
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted']))
   ]).SetFormIDBase($80);
-
-  wbRecord(INFO, 'Dialog Response', @wbKnownSubRecordSignaturesINFO, [
-    wbString(INAM, 'Response ID'),
-    wbString(PNAM, 'Previous Response ID'),
-    wbString(NNAM, 'Next Response ID'),
-    wbStruct(DATA, 'Data', [
-      wbInteger('Dialog Type', itU32, wbDialogTypeEnum),
-      wbInteger('Disposition/Index', itU32),
-      wbInteger('Speaker Faction Rank', itS8),
-      wbInteger('Gender', itS8, wbSexEnum),
-      wbInteger('Player Faction Rank', itS8),
-      wbUnused(1) //Padding Byte
-    ], cpNormal, True),
-    wbString(ONAM, 'Speaker'), //[NPC_]
-    wbString(RNAM, 'Speaker Race'), //[RACE]
-    wbString(CNAM, 'Speaker Class'), //[CLAS]
-    wbString(FNAM, 'Speaker In Faction'), //[FACT]
-    wbString(ANAM, 'Speaker In Cell'), //[CELL]
-    wbString(DNAM, 'Player Faction'), //[FACT]
-    wbString(SNAM, 'Sound Filename'),
-    wbString(NAME, 'Response'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])),
-    wbRStruct('Quest Data', [
-      wbInteger(QSTN, 'Quest Name', itU8, wbEnum([], [1, 'Quest Name'])).SetDefaultNativeValue(1),
-      wbInteger(QSTF, 'Quest Finished', itU8, wbEnum([], [1, 'Quest Finished'])).SetDefaultNativeValue(1),
-      wbInteger(QSTR, 'Quest Restarted', itU8, wbEnum([], [1, 'Quest Restarted'])).SetDefaultNativeValue(1)
-    ], [], cpNormal, False, nil, True),
-    wbRArray('Conditions',
-      wbRStructSK([], 'Condition', [
-        wbStruct(SCVR, 'Condition Breakdown', [
-          wbInteger('Position', itU8, wbEnum([], [
-            $30, '1st', //0
-            $31, '2nd', //1
-            $32, '3rd', //2
-            $33, '4th', //3
-            $34, '5th', //4
-            $35, '6th' //5
-          ])),
-          wbInteger('Function', itU24, wbEnum([], [
-            $313030, 'Reaction Low', //100
-            $313031, 'Reaction High', //101
-            $313032, 'Rank Requirement', //102
-            $313033, 'Reputation', //103
-            $313034, 'Health Percent', //104
-            $313035, 'PC Reputation', //105
-            $313036, 'PC Level', //106
-            $313037, 'PC Health Percent', //107
-            $313038, 'PC Magicka', //108
-            $313039, 'PC Fatigue', //109
-            $313130, 'PC Strength', //110
-            $313131, 'PC Block', //111
-            $313132, 'PC Armorer', //112
-            $313133, 'PC Medium Armor', //113
-            $313134, 'PC Heavy Armor', //114
-            $313135, 'PC Blunt Weapon', //115
-            $313136, 'PC Long Blade', //116
-            $313137, 'PC Axe', //117
-            $313138, 'PC Spear', //118
-            $313139, 'PC Athletics', //119
-            $313230, 'PC Enchant', //120
-            $313231, 'PC Destruction', //121
-            $313232, 'PC Alteration', //122
-            $313233, 'PC Illusion', //123
-            $313234, 'PC Conjuration', //124
-            $313235, 'PC Mysticism', //125
-            $313236, 'PC Restoration', //126
-            $313237, 'PC Alchemy', //127
-            $313238, 'PC Unarmored', //128
-            $313239, 'PC Security', //129
-            $313330, 'PC Sneak', //130
-            $313331, 'PC Acrobatics', //131
-            $313332, 'PC Light Armor', //132
-            $313333, 'PC Short Blade', //133
-            $313334, 'PC Marksman', //134
-            $313335, 'PC Mercantile', //135
-            $313336, 'PC Speechcraft', //136
-            $313337, 'PC Hand To Hand', //137
-            $313338, 'PC Sex', //138
-            $313339, 'PC Expelled', //139
-            $313430, 'PC Common Disease', //140
-            $313431, 'PC Blight Disease', //141
-            $313432, 'Clothing Modifier', //142
-            $313433, 'PC Crime Level', //143
-            $313434, 'Same Sex', //144
-            $313435, 'Same Race', //145
-            $313436, 'Same Faction', //146
-            $313437, 'Faction Rank Difference', //147
-            $313438, 'Detected', //148
-            $313439, 'Alarmed', //149
-            $313530, 'Choice', //150
-            $313531, 'PC Intelligence', //151
-            $313532, 'PC Willpower', //152
-            $313533, 'PC Agility', //153
-            $313534, 'PC Speed', //154
-            $313535, 'PC Endurance', //155
-            $313536, 'PC Personality', //156
-            $313537, 'PC Luck', //157
-            $313538, 'PC Corpus', //158
-            $313539, 'Weather', //159
-            $313630, 'PC Vampire', //160
-            $313631, 'Level', //161
-            $313632, 'Attacked', //162
-            $313633, 'Talked To PC', //163
-            $313634, 'PC Health', //164
-            $313635, 'Creature Target', //165
-            $313636, 'Friend Hit', //166
-            $313637, 'Fight', //167
-            $313638, 'Hello', //168
-            $313639, 'Alarm', //169
-            $313730, 'Flee', //170
-            $313731, 'Should Attack', //171
-            $313732, 'Werewolf', //172
-            $313733, 'PC Werewolf Kills', //173
-            $327358, 'Global', //2sX //[GLOB]
-            $337358, 'Local', //3sX
-            $344A58, 'Journal', //4JX //[DIAL]
-            $354958, 'Item', //5IX //[ALCH, APPA, ARMO, BOOK, CLOT, INGR, LIGH, LOCK, MISC, PROB, REPA, WEAP]
-            $364458, 'Dead', //6DX //[CREA, NPC_]
-            $375858, 'Not ID', //7XX //[NPC_]
-            $384658, 'Not Faction', //8FX //[FACT]
-            $394358, 'Not Class', //9CX //[CLAS]
-            $415258, 'Not Race', //ARX //[RACE]
-            $424C58, 'Not Cell', //BLX //[CELL]
-            $437358, 'Not Local' //CsX),
-          ])),
-          wbInteger('Operator', itU8, wbEnum([], [
-            $30, 'Equal To', //0
-            $31, 'Not Equal To', //1
-            $32, 'Less Than', //2
-            $33, 'Less Than or Equal To', //3
-            $34, 'Greater Than', //4
-            $35, 'Greater Than or Equal To' //5
-          ])),
-          wbString('Variable/Object')
-        ]),
-        wbRUnion('Value', [
-          wbInteger(INTV, 'Value', itS32),
-          wbFloat(FLTV, 'Value')
-        ])
-      ])),
-    wbString(BNAM, 'Result')
-  ]).SetFormIDBase($90);
 
   wbRecord(DOOR, 'Door', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'])),
     wbString(MODL, 'Model Filename'),
     wbString(FNAM, 'Name'),
     wbString(SCRI, 'Script'), //[SCPT]
@@ -1296,32 +908,33 @@ begin
 
   wbRecord(ENCH, 'Enchantment', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
-    wbStruct(ENDT, 'Enchantment Data', [
-      wbInteger('Cast Type', itU32, wbEnum([
-        {0} 'Cast Once',
-        {1} 'Cast Strikes',
-        {2} 'Cast When Used',
-        {3} 'Constant Effect'
-      ])),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'])),
+    wbStruct(ENDT, 'Data', [
+      wbInteger('Cast Type', itU32,
+        wbEnum([
+          {0} 'Cast Once',
+          {1} 'Cast Strikes',
+          {2} 'Cast When Used',
+          {3} 'Constant Effect'
+        ])),
       wbInteger('Enchantment Cost', itS32),
       wbInteger('Charge Amount', itS32),
-      wbInteger('Auto Calculate', itU32, wbEnum([
-        'False',
-        'True'], [
-        $0000FFFE, 'N/A - Constant Effect'
+      wbInteger('Auto Calculate', itU32,
+        wbEnum([
+          {0} 'False',
+          {1} 'True'
+        ], [
+          $0000FFFE, 'N/A - Constant Effect'
       ]))
-    ], cpNormal, True),
+    ]).SetRequired,
     wbENAM
   ]).SetFormIDBase($04);
 
   wbRecord(FACT, 'Faction', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'])),
     wbString(FNAM, 'Name'),
-    wbRArray('Ranks',
-      wbStringForward(RNAM, 'Rank', 32)
-    ),
+    wbRArray('Ranks', wbStringForward(RNAM, 'Rank', 32)),
     wbStruct(FADT, 'Data', [
       wbArray('Attributes',
         wbInteger('Attribute', itS32, wbAttributeEnum),
@@ -1340,7 +953,7 @@ begin
         wbInteger('Skill', itS32, wbSkillEnum),
       7),
       wbInteger('Hidden From Player', itU32, wbBoolEnum)
-    ], cpNormal, True),
+    ]).SetRequired,
     wbRArray('Relations',
       wbRStructSK([], 'Relation', [
         wbString(ANAM, 'Faction'), //[FACT]
@@ -1350,12 +963,13 @@ begin
 
   wbRecord(GLOB, 'Global', @wbKnownSubRecordSignaturesNoFNAM,  [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
-    wbInteger(FNAM, 'Variable Type', itU8, wbEnum([], [
-      $66, 'Float',
-      $6C, 'Long',
-      $73, 'Short'
-    ])),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'])),
+    wbInteger(FNAM, 'Variable Type', itU8,
+      wbEnum([], [
+        $66, 'Float',
+        $6C, 'Long',
+        $73, 'Short'
+      ])),
     wbUnion(FLTV, 'Value', wbGLOBUnionDecider, [
       wbFloat('Value - Short'),
       wbFloat('Value - Long'),
@@ -1373,9 +987,160 @@ begin
   ]).SetFormIDBase($50)
     .IncludeFlag(dfIndexEditorID);
 
+  wbRecord(INFO, 'Dialog Response', @wbKnownSubRecordSignaturesINFO, [
+    wbString(INAM, 'Response ID'),
+    wbString(PNAM, 'Previous Response ID'),
+    wbString(NNAM, 'Next Response ID'),
+    wbStruct(DATA, 'Data', [
+      wbInteger('Dialog Type', itU32, wbDialogTypeEnum),
+      wbInteger('Disposition/Index', itU32),
+      wbInteger('Speaker Faction Rank', itS8),
+      wbInteger('Gender', itS8, wbSexEnum),
+      wbInteger('Player Faction Rank', itS8),
+      wbUnused(1)
+    ]).SetRequired,
+    wbString(ONAM, 'Speaker'), //[NPC_]
+    wbString(RNAM, 'Speaker Race'), //[RACE]
+    wbString(CNAM, 'Speaker Class'), //[CLAS]
+    wbString(FNAM, 'Speaker In Faction'), //[FACT]
+    wbString(ANAM, 'Speaker In Cell'), //[CELL]
+    wbString(DNAM, 'Player Faction'), //[FACT]
+    wbString(SNAM, 'Sound Filename'),
+    wbString(NAME, 'Response'),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'])),
+    wbRStruct('Quest Data', [
+      wbInteger(QSTN, 'Quest Name', itU8,
+        wbEnum([], [1, 'Quest Name'])
+      ).SetDefaultNativeValue(1),
+      wbInteger(QSTF, 'Quest Finished', itU8,
+        wbEnum([], [1, 'Quest Finished'])
+      ).SetDefaultNativeValue(1),
+      wbInteger(QSTR, 'Quest Restarted', itU8,
+        wbEnum([], [1, 'Quest Restarted'])
+      ).SetDefaultNativeValue(1)
+    ], [], cpNormal, False, nil, True),
+    wbRArray('Conditions',
+      wbRStructSK([], 'Condition', [
+        wbStruct(SCVR, 'Condition Breakdown', [
+          wbInteger('Position', itU8,
+            wbEnum([], [
+              $30, '1st', //0
+              $31, '2nd', //1
+              $32, '3rd', //2
+              $33, '4th', //3
+              $34, '5th', //4
+              $35, '6th' //5
+            ])),
+          wbInteger('Function', itU24,
+            wbEnum([], [
+              $313030, 'Reaction Low', //100
+              $313031, 'Reaction High', //101
+              $313032, 'Rank Requirement', //102
+              $313033, 'Reputation', //103
+              $313034, 'Health Percent', //104
+              $313035, 'PC Reputation', //105
+              $313036, 'PC Level', //106
+              $313037, 'PC Health Percent', //107
+              $313038, 'PC Magicka', //108
+              $313039, 'PC Fatigue', //109
+              $313130, 'PC Strength', //110
+              $313131, 'PC Block', //111
+              $313132, 'PC Armorer', //112
+              $313133, 'PC Medium Armor', //113
+              $313134, 'PC Heavy Armor', //114
+              $313135, 'PC Blunt Weapon', //115
+              $313136, 'PC Long Blade', //116
+              $313137, 'PC Axe', //117
+              $313138, 'PC Spear', //118
+              $313139, 'PC Athletics', //119
+              $313230, 'PC Enchant', //120
+              $313231, 'PC Destruction', //121
+              $313232, 'PC Alteration', //122
+              $313233, 'PC Illusion', //123
+              $313234, 'PC Conjuration', //124
+              $313235, 'PC Mysticism', //125
+              $313236, 'PC Restoration', //126
+              $313237, 'PC Alchemy', //127
+              $313238, 'PC Unarmored', //128
+              $313239, 'PC Security', //129
+              $313330, 'PC Sneak', //130
+              $313331, 'PC Acrobatics', //131
+              $313332, 'PC Light Armor', //132
+              $313333, 'PC Short Blade', //133
+              $313334, 'PC Marksman', //134
+              $313335, 'PC Mercantile', //135
+              $313336, 'PC Speechcraft', //136
+              $313337, 'PC Hand To Hand', //137
+              $313338, 'PC Sex', //138
+              $313339, 'PC Expelled', //139
+              $313430, 'PC Common Disease', //140
+              $313431, 'PC Blight Disease', //141
+              $313432, 'Clothing Modifier', //142
+              $313433, 'PC Crime Level', //143
+              $313434, 'Same Sex', //144
+              $313435, 'Same Race', //145
+              $313436, 'Same Faction', //146
+              $313437, 'Faction Rank Difference', //147
+              $313438, 'Detected', //148
+              $313439, 'Alarmed', //149
+              $313530, 'Choice', //150
+              $313531, 'PC Intelligence', //151
+              $313532, 'PC Willpower', //152
+              $313533, 'PC Agility', //153
+              $313534, 'PC Speed', //154
+              $313535, 'PC Endurance', //155
+              $313536, 'PC Personality', //156
+              $313537, 'PC Luck', //157
+              $313538, 'PC Corpus', //158
+              $313539, 'Weather', //159
+              $313630, 'PC Vampire', //160
+              $313631, 'Level', //161
+              $313632, 'Attacked', //162
+              $313633, 'Talked To PC', //163
+              $313634, 'PC Health', //164
+              $313635, 'Creature Target', //165
+              $313636, 'Friend Hit', //166
+              $313637, 'Fight', //167
+              $313638, 'Hello', //168
+              $313639, 'Alarm', //169
+              $313730, 'Flee', //170
+              $313731, 'Should Attack', //171
+              $313732, 'Werewolf', //172
+              $313733, 'PC Werewolf Kills', //173
+              $327358, 'Global', //2sX //[GLOB]
+              $337358, 'Local', //3sX
+              $344A58, 'Journal', //4JX //[DIAL]
+              $354958, 'Item', //5IX //[ALCH, APPA, ARMO, BOOK, CLOT, INGR, LIGH, LOCK, MISC, PROB, REPA, WEAP]
+              $364458, 'Dead', //6DX //[CREA, NPC_]
+              $375858, 'Not ID', //7XX //[NPC_]
+              $384658, 'Not Faction', //8FX //[FACT]
+              $394358, 'Not Class', //9CX //[CLAS]
+              $415258, 'Not Race', //ARX //[RACE]
+              $424C58, 'Not Cell', //BLX //[CELL]
+              $437358, 'Not Local' //CsX),
+            ])),
+          wbInteger('Operator', itU8,
+            wbEnum([], [
+              $30, 'Equal To', //0
+              $31, 'Not Equal To', //1
+              $32, 'Less Than', //2
+              $33, 'Less Than or Equal To', //3
+              $34, 'Greater Than', //4
+              $35, 'Greater Than or Equal To' //5
+            ])),
+          wbString('Variable/Object')
+        ]),
+        wbRUnion('Value', [
+          wbInteger(INTV, 'Value', itS32),
+          wbFloat(FLTV, 'Value')
+        ])
+      ])),
+    wbString(BNAM, 'Result')
+  ]).SetFormIDBase($90);
+
   wbRecord(INGR, 'Ingredient', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'])),
     wbString(MODL, 'Model Filename'),
     wbString(FNAM, 'Name'),
     wbStruct(IRDT, 'Data', [
@@ -1386,61 +1151,136 @@ begin
           wbInteger('Magic Effect', itS32, wbMagicEffectEnum),
         4),
         wbArray('Skills',
-          wbInteger('Skill', itS32, wbEnum([
-            { 0} 'Block (None for Attribute based Magic Effects)',
-            { 1} 'Armorer',
-            { 2} 'Medium Armor',
-            { 3} 'Heavy Armor',
-            { 4} 'Blunt Weapon',
-            { 5} 'Long Blade',
-            { 6} 'Axe',
-            { 7} 'Spear',
-            { 8} 'Athletics',
-            { 9} 'Enchant',
-            {10} 'Destruction',
-            {11} 'Alteration',
-            {12} 'Illusion',
-            {13} 'Conjuration',
-            {14} 'Mysticism',
-            {15} 'Restoration',
-            {16} 'Alchemy',
-            {17} 'Unarmored',
-            {18} 'Security',
-            {19} 'Sneak',
-            {20} 'Acrobatics',
-            {21} 'Light Armor',
-            {22} 'Short Blade',
-            {23} 'Marksman',
-            {24} 'Mercantile',
-            {25} 'Speechcraft',
-            {26} 'Hand-To-Hand'
-          ], [
-            -1, 'None'
-          ])),
+          wbInteger('Skill', itS32,
+            wbEnum([
+              {0}  'Block (None for Attribute based Magic Effects)',
+              {1}  'Armorer',
+              {2}  'Medium Armor',
+              {3}  'Heavy Armor',
+              {4}  'Blunt Weapon',
+              {5}  'Long Blade',
+              {6}  'Axe',
+              {7}  'Spear',
+              {8}  'Athletics',
+              {9}  'Enchant',
+              {10} 'Destruction',
+              {11} 'Alteration',
+              {12} 'Illusion',
+              {13} 'Conjuration',
+              {14} 'Mysticism',
+              {15} 'Restoration',
+              {16} 'Alchemy',
+              {17} 'Unarmored',
+              {18} 'Security',
+              {19} 'Sneak',
+              {20} 'Acrobatics',
+              {21} 'Light Armor',
+              {22} 'Short Blade',
+              {23} 'Marksman',
+              {24} 'Mercantile',
+              {25} 'Speechcraft',
+              {26} 'Hand-To-Hand'
+            ], [
+              -1, 'None'
+            ])),
         4),
         wbArray('Attributes',
-          wbInteger('Attribute', itS32, wbEnum([
-            {0} 'Strength (None for Skill based Magic Effects)',
-            {1} 'Intelligence',
-            {2} 'Willpower',
-            {3} 'Agility',
-            {4} 'Speed',
-            {5} 'Endurance',
-            {6} 'Personality',
-            {7} 'Luck'
-          ], [
-            -1, 'None'
-          ])),
+          wbInteger('Attribute', itS32,
+            wbEnum([
+              {0} 'Strength (None for Skill based Magic Effects)',
+              {1} 'Intelligence',
+              {2} 'Willpower',
+              {3} 'Agility',
+              {4} 'Speed',
+              {5} 'Endurance',
+              {6} 'Personality',
+              {7} 'Luck'
+            ], [
+              -1, 'None'
+            ])),
         4)
       ])
-    ], cpNormal, True),
+    ]).SetRequired,
     wbString(SCRI, 'Script'), //[SCPT]
     wbString(ITEX, 'Icon Filename')
   ]).SetFormIDBase($40);
 
+  wbRecord(LAND, 'Landscape', @wbKnownSubRecordSignaturesLAND, [
+    wbStruct(INTV, 'Grid', [
+      wbInteger('X', itS32),
+      wbInteger('Y', itS32)
+    ], cpCritical).SetRequired,
+    wbInteger(DATA, 'Flags', itU32,
+      wbFlags([
+        {0} 'Has Vertex Normals/Height Map',
+        {1} 'Has Vertex Colors',
+        {2} 'Has Landscape Textures',
+        {3} 'User Created/Edited'
+      ])),
+    IfThen(wbSimpleRecords,
+      wbByteArray(VNML, 'Vertex Normals'),
+      wbArray(VNML, 'Vertex Normals',
+        wbArray('Row',
+          wbStruct('Column', [
+            wbInteger('X', itS8),
+            wbInteger('Y', itS8),
+            wbInteger('Z', itS8)
+          ]),
+        65),
+      65)),
+    IfThen(wbSimpleRecords,
+      wbByteArray(VHGT, 'Vertex Height Map'),
+      wbStruct(VHGT, 'Vertex Height Map', [
+        wbFloat('Offset'),
+        wbUnused(1),
+        wbArray('Height Map',
+          wbArray('Row',
+            wbInteger('Column', itS8),
+          65),
+        65),
+        wbUnused(2)
+      ])),
+    IfThen(wbSimpleRecords,
+      wbByteArray(WNAM, 'World Map Painting'),
+      wbArray(WNAM, 'World Map Painting',
+        wbArray('Row',
+          wbInteger('Column', itS8),
+        9),
+      9)),
+    IfThen(wbSimpleRecords,
+      wbByteArray(VCLR, 'Vertex Colors'),
+      wbArray(VCLR, 'Vertex Colors',
+        wbArray('Row',
+          wbStruct('Column', [
+            wbInteger('Red', itU8),
+            wbInteger('Green', itU8),
+            wbInteger('Blue', itU8)
+          ]),
+        65),
+      65)),
+    IfThen(wbSimpleRecords,
+      wbByteArray(VTXT, 'Textures'),
+      wbArray(VTEX, 'Textures',
+        wbArray('Row',
+          wbInteger('Column', itU16), //[LTEX]
+        16),
+      16))
+  ]).SetFormIDBase($D0)
+    .SetFormIDNameBase($B0)
+    .SetGetFormIDCallback(function(const aMainRecord: IwbMainRecord; out aFormID: TwbFormID): Boolean begin
+      var GridCell: TwbGridCell;
+      Result := aMainRecord.GetGridCell(GridCell) and GridCellToFormID($C0, GridCell, aFormID);
+    end)
+    .SetIdentityCallback(function(const aMainRecord: IwbMainRecord): string begin
+      Result := '';
+      var GridCell: TwbGridCell;
+      if aMainRecord.GetGridCell(GridCell) then
+        Result := GridCell.SortKey
+    end);
+
   wbRecord(LEVC, 'Leveled Creature', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'])),
     wbInteger(DATA, 'Leveled Flags', itU32, wbLeveledFlags),
     wbInteger(NNAM, 'Chance None', itU8),
     wbInteger(INDX, 'Entry Count', itU32),
@@ -1453,7 +1293,7 @@ begin
 
   wbRecord(LEVI, 'Leveled Item', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'])),
     wbInteger(DATA, 'Levelved Flags', itU32, wbLeveledFlags),
     wbInteger(NNAM, 'Chance None', itU8),
     wbInteger(INDX, 'Entry Count', itU32),
@@ -1466,7 +1306,7 @@ begin
 
   wbRecord(LIGH, 'Light', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'])),
     wbString(MODL, 'Model Filename'),
     wbString(FNAM, 'Name'),
     wbString(ITEX, 'Icon Filename'),
@@ -1475,31 +1315,27 @@ begin
       wbInteger('Value', itS32),
       wbInteger('Time', itS32),
       wbFloat('Radius', cpNormal, False, 1.0, 2),
-      wbStruct('Color', [
-        wbInteger('Red', itU8),
-        wbInteger('Green', itU8),
-        wbInteger('Blue', itU8),
-        wbInteger('Alpha (Unused)', itU8, nil, cpIgnore)
-      ]),
-      wbInteger('Flags', itU32, wbFlags([
-        {0x00000001} 'Dynamic',
-        {0x00000002} 'Can Be Carried',
-        {0x00000004} 'Negative',
-        {0x00000008} 'Flicker',
-        {0x00000010} 'Fire',
-        {0x00000020} 'Off By Default',
-        {0x00000040} 'Flicker Slow',
-        {0x00000080} 'Pulse',
-        {0x00000100} 'Pulse Slow'
-      ]))
-    ], cpNormal, True),
+      wbByteColors,
+      wbInteger('Flags', itU32,
+        wbFlags([
+          {0} 'Dynamic',
+          {1} 'Can Be Carried',
+          {2} 'Negative',
+          {3} 'Flicker',
+          {4} 'Fire',
+          {5} 'Off By Default',
+          {6} 'Flicker Slow',
+          {7} 'Pulse',
+          {8} 'Pulse Slow'
+        ])).IncludeFlag(dfCollapsed, wbCollapseFlags)
+    ]).SetRequired,
     wbString(SCRI, 'Script'), //[SCPT]
     wbString(SNAM, 'Sound') //[SOUN]
   ]).SetFormIDBase($40);
 
   wbRecord(LOCK, 'Lockpick', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'])),
     wbString(MODL, 'Model Filename'),
     wbString(FNAM, 'Name'),
     wbStruct(LKDT, 'Data', [
@@ -1507,13 +1343,13 @@ begin
       wbInteger('Value', itS32),
       wbFloat('Quality', cpNormal, False, 1.0, 2),
       wbInteger('Uses', itS32)
-    ], cpNormal, True),
+    ]).SetRequired,
     wbString(SCRI, 'Script'), //[SCPT]
     wbString(ITEX, 'Icon Filename')
   ]).SetFormIDBase($40);
 
   wbRecord(LTEX, 'Landscape Texture', [
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'])),
     wbString(NAME, 'Editor ID'),
     wbInteger(INTV, 'Texture ID', itU32),
     wbString(DATA, 'Texture Filename')
@@ -1522,38 +1358,37 @@ begin
   wbRecord(MGEF, 'Magic Effect', @wbKnownSubRecordSignaturesINDX, [
     wbInteger(INDX, 'Effect', itU32, wbMagicEffectEnum),
     wbStruct(MEDT, 'Data', [
-      wbInteger('School', itU32, wbEnum([
-        {0} 'Alteration',
-        {1} 'Conjuration',
-        {2} 'Destruction',
-        {3} 'Illusion',
-        {4} 'Mysticism',
-        {5} 'Restoration'
-      ])),
+      wbInteger('School', itU32,
+        wbEnum([
+          {0} 'Alteration',
+          {1} 'Conjuration',
+          {2} 'Destruction',
+          {3} 'Illusion',
+          {4} 'Mysticism',
+          {5} 'Restoration'
+        ])),
       wbFloat('Base Cost', cpNormal, False, 1.0, 2),
-      wbInteger('Flags', itU32, wbFlags([
-        //Fixed, Hardcoded Flags
-        {0x00000001} 'Target Skill',
-        {0x00000002} 'Target Attribute',
-        {0x00000004} 'No Duration',
-        {0x00000008} 'No Magnitude',
-        {0x00000010} 'Harmful',
-        {0x00000020} 'Continuous VFX',
-        {0x00000040} 'Cast Self',
-        {0x00000080} 'Cast Touch',
-        {0x00000100} 'Cast Target',
-        //Modifiable Flags
-        {0x00000200} 'Spellmaking',
-        {0x00000400} 'Enchanting',
-        {0x00000800} 'Negative',
-        //Fixed, Hardcoded Flags
-        {0x00001000} 'Applied Once',
-        {0x00002000} 'Stealth', //Unused.
-        {0x00004000} 'Non-Recastable',
-        {0x00008000} 'Illegal Daedra', //Unused.
-        {0x00010000} 'Non-reflectable',
-        {0x00020000} 'Caster Linked'
-      ])),
+      wbInteger('Flags', itU32,
+        wbFlags([
+          {0}  'Target Skill',
+          {1}  'Target Attribute',
+          {2}  'No Duration',
+          {3}  'No Magnitude',
+          {4}  'Harmful',
+          {5}  'Continuous VFX',
+          {6}  'Cast Self',
+          {7}  'Cast Touch',
+          {8}  'Cast Target',
+          {9}  'Spellmaking',
+          {10} 'Enchanting',
+          {11} 'Negative',
+          {12} 'Applied Once',
+          {13} 'Stealth',
+          {14} 'Non-Recastable',
+          {15} 'Illegal Daedra',
+          {16} 'Non-reflectable',
+          {17} 'Caster Linked'
+        ])).IncludeFlag(dfCollapsed, wbCollapseFlags),
       wbStruct('Color', [
         wbInteger('Red', itU32),
         wbInteger('Green', itU32),
@@ -1562,7 +1397,7 @@ begin
       wbFloat('Size Multiplier', cpNormal, False, 1.0, 2),
       wbFloat('Speed Multiplier', cpNormal, False, 1.0, 2),
       wbFloat('Size Cap', cpNormal, False, 1.0, 2)
-    ], cpNormal, True),
+    ]).SetRequired,
     wbString(ITEX, 'Effect Texture Filename'),
     wbString(PTEX, 'Particle Texture Filename'),
     wbString(BSND, 'Bolt Sound'), //[SOUN]
@@ -1578,7 +1413,7 @@ begin
 
   wbRecord(MISC, 'Miscellaneous Item', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'])),
     wbString(MODL, 'Model Filename'),
     wbString(FNAM, 'Name'),
     wbStruct(MCDT,'Data', [
@@ -1586,14 +1421,14 @@ begin
       wbInteger('Value', itS32),
       //This bool is only set true if the object is used in a KNAM on a REFR.
       wbInteger('Is Key', itU32, wbBoolEnum)
-    ], cpNormal, True),
+    ]).SetRequired,
     wbString(SCRI, 'Script'), //[SCPT]
     wbString(ITEX, 'Icon Filename')
   ]).SetFormIDBase($40);
 
  wbRecord(NPC_, 'Non-Player Character', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'])),
     wbString(MODL, 'Model Filename'),
     wbString(FNAM, 'Full Name'),
     wbString(RNAM, 'Race'), //[RACE]
@@ -1645,14 +1480,14 @@ begin
             wbInteger('Mercantile', itU8),
             wbInteger('Hand-to-Hand', itU8)
           ]),
-          wbUnused(1), //Padding Byte
+          wbUnused(1),
           wbInteger('Health', itU16),
           wbInteger('Magicka', itU16),
           wbInteger('Fatigue', itU16),
           wbInteger('Disposition', itU8),
           wbInteger('Reputation', itU8),
           wbInteger('Rank', itU8),
-          wbUnused(1), //Padding Bytes
+          wbUnused(1),
           wbInteger('Gold', itU32)
         ]),
         wbStruct('Auto', [
@@ -1660,43 +1495,36 @@ begin
           wbInteger('Disposition', itU8),
           wbInteger('Reputation', itU8),
           wbInteger('Rank', itU8),
-          wbUnused(3), //Padding Bytes
+          wbUnused(3),
           wbInteger('Gold', itU32)
         ])
       ])
-    ], cpNormal, True),
-    wbInteger(FLAG, 'Flags', itU32, wbFlags([
-      {0x00000001} 'Female',
-      {0x00000002} 'Essential',
-      {0x00000004} 'Respawn',
-      {0x00000008} 'Can Hold Items',
-      {0x00000010} 'Auto Calculate Stats',
-      {0x00000020} '',
-      {0x00000040} '',
-      {0x00000080} '',
-      {0x00000100} '',
-      {0x00000200} '',
-      {0x00000400} 'Skeleton Blood',
-      {0x00000800} 'Metal Blood'
-    ])),
+    ]).SetRequired,
+    wbInteger(FLAG, 'Flags', itU32,
+      wbFlags(wbSparseFlags([
+        0, 'Female',
+        1, 'Essential',
+        2, 'Respawn',
+        3, 'Can Hold Items',
+        4, 'Auto Calculate Stats',
+        10, 'Skeleton Blood',
+        11, 'Metal Blood'
+      ], False, 12))),
     wbRArray('Item Entries',
       wbStruct(NPCO, 'Item Entry', [
         wbInteger('Count', itS32),
         wbString('Item', 32) //[ALCH, APPA, ARMO, BOOK, CLOT, INGR, LEVI, LIGH, LOCK, MISC, PROB, REPA, WEAP]
-      ])
-    ),
-    wbRArray('Spells',
-      wbString(NPCS, 'Spell', 32) //[SPEL]
-    ),
+      ])),
+    wbRArray('Spells', wbString(NPCS, 'Spell', 32)), //[SPEL]
     wbAIDT,
     wbTravelServices,
     wbRArray('AI Packages',
       wbRUnion('AI Packages', [
         wbStruct(AI_T, 'AI Travel', [
           wbVec3('Position'),
-          wbInteger('Repeat', itU8, wbBoolEnum),
+          wbInteger('Reset', itU8, wbBoolEnum),
           wbUnused(3)
-        ], cpNormal, True),
+        ]).SetRequired,
         wbStruct(AI_W, 'AI Wander', [
           wbInteger('Distance', itU16),
           wbInteger('Duration In Hours', itU16),
@@ -1712,14 +1540,14 @@ begin
             wbInteger('Idle 9', itU8)
           ]),
           wbInteger('Reset', itU8, wbBoolEnum)
-        ], cpNormal, True),
+        ]).SetRequired,
         wbRStruct('AI Escort', [
           wbStruct(AI_E, 'AI Escort', [
             wbVec3('Position'),
             wbInteger('Duration In Hours', itU16),
             wbString(True, 'Target', 32), //[CREA, NPC_]
             wbInteger('Reset', itU16, wbBoolEnum)
-          ], cpNormal, True),
+          ]).SetRequired,
           wbString(CNDT, 'Escort To Cell') //[CELL]
         ]),
         wbRStruct('AI Follow', [
@@ -1728,20 +1556,72 @@ begin
             wbInteger('Duration In Hours', itU16),
             wbString(True, 'Target', 32), //[CREA, NPC_]
             wbInteger('Reset', itU16, wbBoolEnum)
-          ], cpNormal, True),
+          ]).SetRequired,
           wbString(CNDT, 'Follow To Cell') //[CELL]
         ]),
         wbStruct(AI_A, 'AI Activate', [
           wbString(True, 'Target', 32), //[ACTI, ALCH, APPA, ARMO, BODY, BOOK, CLOT, CONT, CREA, DOOR, ENCH, INGR, LIGH, LEVC, LEVI, LOCK, MISC, NPC_, PROB, REPA, SPEL, STAT, WEAP]
           wbInteger('Reset', itU8, wbBoolEnum)
-        ], cpNormal, True)
+        ]).SetRequired
       ])),
     wbFloat(XSCL, 'Scale', cpNormal, False, 1.0, 2)
   ]).SetFormIDBase($40);
 
+  wbRecord(PGRD, 'Path Grid', [
+    wbStruct(DATA, 'Data', [
+      wbStruct('Grid', [
+        wbInteger('X', itS32),
+        wbInteger('Y', itS32)
+      ], cpCritical),
+      wbInteger('Granularity', itU16),
+      wbInteger('Grid Point Count', itU16)
+    ]).SetRequired,
+    wbString(NAME, 'Location ID', 0, cpIgnore),
+    IfThen(wbSimpleRecords,
+      wbArray(PGRP, 'Grid Points',
+        wbByteArray('Grid Point', 16)
+      ).SetCountPathOnValue('DATA\Grid Point Count', False),
+      wbArray(PGRP, 'Grid Points',
+        wbStruct('Grid Point', [
+          wbStruct('Position', [
+            wbInteger('X', itS32),
+            wbInteger('Y', itS32),
+            wbInteger('Z', itS32)
+          ]),
+          wbInteger('User Created Point', itU8, wbBoolEnum),
+          wbInteger('Number of Connections', itU8),
+          wbUnused(2)
+        ])
+      ).SetCountPathOnValue('DATA\Grid Point Count', False)),
+    IfThen(wbSimpleRecords,
+      wbByteArray(PGRC, 'Grid Point Connections'),
+      wbArray(PGRC, 'Grid Point Connections',
+        wbArrayS('Grid Point Connection',
+          wbInteger('Point', itU32),
+        wbCalcPGRCSize)))
+  ]).SetFormIDBase($F0)
+    .SetFormIDNameBase($B0).SetGetGridCellCallback(function(const aSubRecord: IwbSubRecord; out aGridCell: TwbGridCell): Boolean begin
+      with aGridCell, aSubRecord do begin
+        X := ElementNativeValues['Grid\X'];
+        Y := ElementNativeValues['Grid\Y'];
+        Result := not ((X = 0) and (Y = 0));
+      end;
+    end)
+    .SetGetFormIDCallback(function(const aMainRecord: IwbMainRecord; out aFormID: TwbFormID): Boolean begin
+      var GridCell: TwbGridCell;
+      Result := aMainRecord.GetGridCell(GridCell) and GridCellToFormID($E0, GridCell, aFormID);
+    end)
+    .SetIdentityCallback(function(const aMainRecord: IwbMainRecord): string begin
+      var GridCell: TwbGridCell;
+      if aMainRecord.GetGridCell(GridCell) then
+        Result := '<Exterior>' + GridCell.SortKey
+      else
+        Result := aMainRecord.EditorID;
+    end);
+
   wbRecord(PROB, 'Probe', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'])),
     wbString(MODL, 'Model Filename'),
     wbString(FNAM, 'Name'),
     wbStruct(PBDT, 'Data', [
@@ -1749,14 +1629,14 @@ begin
       wbInteger('Value', itS32),
       wbFloat('Quality', cpNormal, False, 1.0, 2),
       wbInteger('Uses', itS32)
-    ], cpNormal, True),
+    ]).SetRequired,
     wbString(SCRI, 'Script'), //[SCPT]
     wbString(ITEX, 'Icon Filename')
   ]).SetFormIDBase($40);
 
   wbRecord(RACE, 'Race', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'])),
     wbString(FNAM, 'Name'),
     wbStruct(RADT, 'Data', [
       wbArray('Skill Bonuses',
@@ -1807,19 +1687,68 @@ begin
         wbFloat('Male', cpNormal, False, 1.0, 2),
         wbFloat('Female', cpNormal, False, 1.0, 2)
       ]),
-      wbInteger('Flags', itU32, wbFlags([
-        {0x00000001} 'Playable',
-        {0x00000002} 'Beast Race'
-      ]))
-    ], cpNormal, True),
-    wbRArray('Spells',
-      wbStringForward(NPCS, 'Spell', 32)
-    ),
+      wbInteger('Flags', itU32,
+        wbFlags([
+          {0} 'Playable',
+          {1} 'Beast Race'
+        ])).IncludeFlag(dfCollapsed, wbCollapseFlags)
+    ]).SetRequired,
+    wbRArray('Spells', wbStringForward(NPCS, 'Spell', 32)),
     wbString(DESC, 'Description')
   ]).SetFormIDBase($14);
 
+  wbRecord(REFR, 'Reference', @wbKnownSubRecordSignaturesREFR, [
+    wbStruct(CNDT, 'Previous Cell Grid', [
+      wbInteger('X', itS32),
+      wbInteger('Y', itS32)
+    ]),
+    wbInteger(FRMR, 'Object Index', itU32, wbFRMRToString, nil, cpIgnore, True).IncludeFlag(dfInternalEditOnly),
+    wbString(NAME, 'Base Object'), //[ACTI, ALCH, APPA, ARMO, BODY, BOOK, CLOT, CONT, CREA, DOOR, INGR, LEVC, LOCK, MISC, NPC_, PROB, REPA, STAT, WEAP]
+    wbInteger(UNAM, 'Reference Blocked', itU8, wbEnum(['Blocked'])),
+    wbFloat(XSCL, 'Scale', cpNormal, False, 1, 2),
+    wbRStructSK([], 'Owner Data', [
+      wbString(ANAM, 'Owner'), //[NPC_]
+      wbString(BNAM, 'Global Variable'), //[GLOB]
+      wbString(CNAM, 'Faction Owner'), //[FACT]
+      wbInteger(INDX, 'Faction Rank', itS32)
+    ], [], cpNormal, False, nil, True),
+    wbFloat(XCHG, 'Enchanting Charge', cpNormal, False, 1, 0),
+    wbString(XSOL, 'Soul'), //[CREA]
+    wbInteger(INTV, 'Health', itS32),
+    wbInteger(NAM9, 'Count', itS32),
+    wbRStructSK([], 'Teleport Data', [
+      wbStruct(DODT, 'Teleport Destination', [
+        wbVec3('Position'),
+        wbVec3('Rotation')
+      ]),
+      wbString(DNAM, 'Teleport Cell') //[CELL]
+    ]),
+    wbRStructSK([], 'Lock Data', [
+      wbInteger(FLTV, 'Lock Level', itU32),
+      wbString(KNAM, 'Key'), //[MISC]
+      wbString(TNAM, 'Trap') //[ENCH]
+    ], [], cpNormal, False, nil, True),
+    wbInteger(DELE, 'Deleted', itU32,
+      wbEnum([], [
+        $00482C64, 'Deleted',
+        $11842014, 'Deleted (Door Reference)'
+    ])).SetDefaultNativeValue(4729956),
+    wbStruct(DATA, 'Reference Data', [
+      wbVec3('Position'),
+      wbVec3('Rotation')
+    ])
+  ]).SetGetFormIDCallback(function(const aMainRecord: IwbMainRecord; out aFormID: TwbFormID): Boolean begin
+      var lFRMR := aMainRecord.RecordBySignature[FRMR];
+      Result := Assigned(lFRMR);
+      if Result then begin
+        aFormID := TwbFormID.FromCardinal(lFRMR.NativeValue);
+        if aFormID.FileID.FullSlot = 0 then
+          aFormID.FileID := TwbFileID.CreateFull($FF);
+      end;
+    end);
+
   wbRecord(REGN, 'Region', [
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'])),
     wbString(NAME, 'Editor ID'),
     wbString(FNAM, 'Name'),
     wbStruct(WEAT, 'Weather Chances', [
@@ -1835,23 +1764,17 @@ begin
       wbInteger('Blizzard', itU8)
     ], cpNormal, True, nil, 8),
     wbString(BNAM, 'Sleep Creature'), //[LEVC]
-    wbStruct(CNAM, 'Map Color', [
-      wbInteger('Red', itU8),
-      wbInteger('Green', itU8),
-      wbInteger('Blue', itU8),
-      wbInteger('Alpha (Unused)', itU8, nil, cpIgnore)
-    ]),
+    wbByteColors(CNAM, 'Map Color'),
     wbRArray('Sound Records',
       wbStruct(SNAM, 'Sound Record', [
         wbString(True, 'Sound', 32), //[SOUN]
         wbInteger('Chance', itS8)
-      ])
-    )
+      ]))
   ]).SetFormIDBase($70);
 
   wbRecord(REPA, 'Repair Item', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'])),
     wbString(MODL, 'Model Filename'),
     wbString(FNAM, 'Name'),
     wbStruct(RIDT, 'Data', [
@@ -1859,7 +1782,7 @@ begin
       wbInteger('Value', itS32),
       wbInteger('Uses', itS32),
       wbFloat('Quality', cpNormal, False, 1.0, 2)
-    ], cpNormal, True),
+    ]).SetRequired,
     wbString(SCRI, 'Script'), //[SCPT]
     wbString(ITEX, 'Icon Filename')
   ]).SetFormIDBase($40);
@@ -1873,13 +1796,11 @@ begin
       wbInteger('Number of Floats', itU32),
       wbInteger('Script Data Size', itU32),
       wbInteger('Local Variable Size', itU32)
-    ], cpNormal, True),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
-    wbArray(SCVR, 'Script Variables',
-      wbString('Script Variable', 0, cpCritical)
-    ),
+    ]).SetRequired,
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'])),
+    wbArray(SCVR, 'Script Variables', wbString('Script Variable', 0, cpCritical)),
     wbByteArray(SCDT, 'Compiled Script'),
-    wbStringScript(SCTX, 'Script Source', 0, cpNormal, True)
+    wbStringScript(SCTX, 'Script Source').SetRequired
   ]).SetFormIDBase($30)
     .SetGetEditorIDCallback(function (const aSubRecord: IwbSubRecord): string begin
       Result := aSubRecord.ElementEditValues['Name'];
@@ -1896,120 +1817,127 @@ begin
       wbArray('Actions',
         wbFloat('Action'),
       4)
-    ], cpNormal, True),
+    ]).SetRequired,
     wbString(DESC, 'Description')
   ]).SetFormIDBase($01);
 
   wbRecord(SNDG, 'Sound Generator', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DATA, 'Type', itU32, wbEnum([
-      {0} 'Left Foot',
-      {1} 'Right Foot',
-      {2} 'Swim Left',
-      {3} 'Swim Right',
-      {4} 'Moan',
-      {5} 'Roar',
-      {6} 'Scream',
-      {7} 'Land'
-    ])),
+    wbInteger(DATA, 'Type', itU32,
+      wbEnum([
+        {0} 'Left Foot',
+        {1} 'Right Foot',
+        {2} 'Swim Left',
+        {3} 'Swim Right',
+        {4} 'Moan',
+        {5} 'Roar',
+        {6} 'Scream',
+        {7} 'Land'
+      ])),
     wbString(CNAM, 'Creature'), //[CREA]
     wbString(SNAM, 'Sound'), //[SOUN]
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0)
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted']))
   ]).SetFormIDBase($28);
 
   wbRecord(SOUN, 'Sound', @wbKnownSubRecordSignaturesNoFNAM, [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'])),
     wbString(FNAM, 'Sound Filename'),
     wbStruct(DATA, 'Data', [
       wbInteger('Volume', itU8),
       wbInteger('Minimum Range', itU8),
       wbInteger('Maximum Range', itU8)
-    ], cpNormal, True)
+    ]).SetRequired
   ]).SetFormIDBase($40);
 
   wbRecord(SPEL, 'Spellmaking', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'])),
     wbString(FNAM, 'Name'),
     wbStruct(SPDT, 'Data', [
-      wbInteger('Type', itU32, wbEnum([
-        {0} 'Spell',
-        {1} 'Ability',
-        {2} 'Blight',
-        {3} 'Disease',
-        {4} 'Curse',
-        {5} 'Power'
-      ])),
+      wbInteger('Type', itU32,
+        wbEnum([
+          {0} 'Spell',
+          {1} 'Ability',
+          {2} 'Blight',
+          {3} 'Disease',
+          {4} 'Curse',
+          {5} 'Power'
+        ])),
       wbInteger('Spell Cost', itS32),
-      wbInteger('Flags', itU32, wbFlags([
-        {0x00000001} 'Auto Calculate Cost',
-        {0x00000002} 'PC Start Spell',
-        {0x00000004} 'Always Succeeds'
-      ]))
-    ], cpNormal, True),
+      wbInteger('Flags', itU32,
+        wbFlags([
+          {0} 'Auto Calculate Cost',
+          {1} 'PC Start Spell',
+          {2} 'Always Succeeds'
+        ])).IncludeFlag(dfCollapsed, wbCollapseFlags)
+    ]).SetRequired,
     wbENAM
   ]).SetFormIDBase($0A);
 
   wbRecord(SSCR, 'Start Script', @wbKnownSubRecordSignaturesSSCR, [
-    wbInteger(DELE, 'Deleted', itU32, wbEnum([],[1, 'Deleted'])).SetDefaultNativeValue(1),
+    wbInteger(DELE, 'Deleted', itU32,
+      wbEnum([],[1, 'Deleted'])
+    ).SetDefaultNativeValue(1),
     wbString(DATA, 'Numerical ID'),
     wbString(NAME, 'Script') //[SCPT]
   ]).SetFormIDBase($3F);
 
   wbRecord(STAT, 'Static', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'])),
     wbString(MODL, 'Model Filename')
   ]).SetFormIDBase($40);
 
   wbRecord(WEAP, 'Weapon', [
     wbString(NAME, 'Editor ID'),
-    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'],[])).SetDefaultNativeValue(0),
+    wbInteger(DELE, 'Deleted', itU32, wbEnum(['Deleted'])),
     wbString(MODL, 'Model Filename'),
     wbString(FNAM, 'Name'),
     wbStruct(WPDT, 'Data', [
       wbFloat('Weight', cpNormal, False, 1.0, 2),
       wbInteger('Value', itS32),
-      wbInteger('Type', itU16, wbEnum([
-        { 0} 'Short Blade One Hand',
-        { 1} 'Long Blade One Hand',
-        { 2} 'Long Blade Two Close',
-        { 3} 'Blunt One Hand',
-        { 4} 'Blunt Two Close',
-        { 5} 'Blunt Two Wide',
-        { 6} 'Spear Two Wide',
-        { 7} 'Axe One Hand',
-        { 8} 'Axe Two Hand',
-        { 9} 'Marksman Bow',
-        {10} 'Marksman Crossbow',
-        {11} 'Marksman Thrown',
-        {12} 'Arrow',
-        {13} 'Bolt'
-      ])),
+      wbInteger('Type', itU16,
+        wbEnum([
+          {0}  'Short Blade One Hand',
+          {1}  'Long Blade One Hand',
+          {2}  'Long Blade Two Close',
+          {3}  'Blunt One Hand',
+          {4}  'Blunt Two Close',
+          {5}  'Blunt Two Wide',
+          {6}  'Spear Two Wide',
+          {7}  'Axe One Hand',
+          {8}  'Axe Two Hand',
+          {9}  'Marksman Bow',
+          {10} 'Marksman Crossbow',
+          {11} 'Marksman Thrown',
+          {12} 'Arrow',
+          {13} 'Bolt'
+        ])),
       wbInteger('Health', itU16),
       wbFloat('Speed'),
       wbFloat('Reach'),
       wbInteger('Enchanting Charge', itU16),
       wbStruct('Damage Types', [
         wbStruct('Chop', [
-      wbInteger('Minimum', itU8),
-      wbInteger('Maximum', itU8)
+          wbInteger('Minimum', itU8),
+          wbInteger('Maximum', itU8)
         ]),
         wbStruct('Slash', [
-      wbInteger('Minimum', itU8),
-      wbInteger('Maximum', itU8)
+          wbInteger('Minimum', itU8),
+          wbInteger('Maximum', itU8)
         ]),
         wbStruct('Thrust', [
-      wbInteger('Minimum', itU8),
-      wbInteger('Maximum', itU8)
+          wbInteger('Minimum', itU8),
+          wbInteger('Maximum', itU8)
         ])
       ]),
-      wbInteger('Flags', itU32, wbFlags([
-        {0x00000001} 'Silver Weapon',
-        {0x00000002} 'Ignore Normal Weapon Resistance'
-      ]))
-    ], cpNormal, True),
+      wbInteger('Flags', itU32,
+        wbFlags([
+          {0} 'Silver Weapon',
+          {1} 'Ignore Normal Weapon Resistance'
+        ])).IncludeFlag(dfCollapsed, wbCollapseFlags)
+    ]).SetRequired,
     wbString(SCRI, 'Script'), //[SCPT]
     wbString(ITEX, 'Icon Filename'),
     wbString(ENAM, 'Enchantment') //[ENCH]
@@ -2057,13 +1985,9 @@ begin
   wbAddGroupOrder(SNDG);
   wbAddGroupOrder(DIAL);
   wbAddGroupOrder(INFO);
-
-  wbHEDRVersion := 1.30;
-
   wbNexusModsUrl := 'https://www.nexusmods.com/morrowind/mods/54508';
+  wbHEDRVersion := 1.30;
 end;
 
 initialization
 end.
-
-
