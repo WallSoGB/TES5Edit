@@ -4965,9 +4965,7 @@ begin
     wbEDIDReq,
     wbFULLReq,
     wbGenericModel,
-    wbInteger(DATA, 'Flags', itU8, wbFlags([
-      'Playable'
-    ]), cpNormal, True),
+    wbInteger(DATA, 'Playable', itU8, wbBoolEnum).SetRequired,
     wbRArrayS('Extra Parts',
       wbFormIDCk(HNAM, 'Part', [HDPT])
     )
