@@ -5212,7 +5212,7 @@ begin
     wbEDID,
     wbFULL,
     wbFloat(PNAM, 'Priority', cpNormal, True, 1, -1, nil, nil, 50.0),
-    wbFormIDCkNoReach(BNAM, 'Branch', [DLBR, NULL]),
+    wbFormIDCk(BNAM, 'Branch', [DLBR, NULL]),
     wbFormIDCkNoReach(QNAM, 'Quest', [QUST, NULL], False, cpNormal, False),
     wbStruct(DATA, 'Data', [
       // this should not be named Flags since TwbFile.BuildReachable
