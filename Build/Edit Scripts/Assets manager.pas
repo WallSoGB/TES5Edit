@@ -799,8 +799,8 @@ begin
   if SameText(Name(e),'ScriptName') then begin
     s := StringReplace(GetEditValue(e), ':', '\', [rfReplaceAll]);
     ProcessAssetEx(e, 'scripts\' + s + '.pex', 'Papyrus script attached to ' + Name(CurrentRecord), atPapyrusScript);
-    ProcessAssetEx(e, 'scripts\source\' + s + '.psc', 'Source of papyrus script attached to ' + Name(CurrentRecord), atPapyrusScript)
-  ProcessAssetEx(e, 'source\scripts\' + s + '.psc', 'Source of papyrus script attached to ' + Name(CurrentRecord), atPapyrusScript);
+    ProcessAssetEx(e, 'scripts\source\' + s + '.psc', 'Source of papyrus script attached to ' + Name(CurrentRecord), atPapyrusScript);
+	ProcessAssetEx(e, 'source\scripts\' + s + '.psc', 'Source of papyrus script attached to ' + Name(CurrentRecord), atPapyrusScript);
   end;
   
   for i := 0 to Pred(ElementCount(e)) do
@@ -819,7 +819,7 @@ begin
     MessageDlg('Sorry, script supports Skyrim, SSE, Oblivion and Fallouts only for now.', mtInformation, [mbOk], 0);
     Result := 1;
     Exit;
-  end;}
+  end};
   
   // known extensions, unknown ones are skipped
   slAssetsExt := TStringList.Create;
