@@ -196,7 +196,6 @@ begin
       // linked bone weights *.ssf file
       else if Block.BlockType = 'BSSubIndexTriShape' then
         sl.Add(wbNormalizeResourceName(Block.EditValues['Segment Data\SSF File'], resMesh));
-
     end;    
   finally
     nif.Free;
@@ -995,9 +994,9 @@ begin
       ProcessAsset(ElementByPath(e, 'BNAM'));
     end
   
-  else if (sig = 'NPC_') and (optMode <> wmCheck) then
-      ProcessAssetEx(e, Format('Meshes\Actors\Character\FaceGenData\FaceGeom\%s\00%s.nif', [GetFileName(e), IntToHex(FormID(e), 6)]), 'Facegen for ' + Name(e), atMesh)
-
+    else if (sig = 'NPC_') and (optMode <> wmCheck) then
+      ProcessAssetEx(e, Format('Meshes\Actors\Character\FaceGenData\FaceGeom\%s\00%s.nif', [GetFileName(MasterOrSelf(e(), IntToHex(FormID(e), 6)]), 'Facegen for ' + Name(e), atMesh)
+	  
     else if (sig = 'PROJ') then
       ProcessAsset(ElementByPath(e, 'Muzzle Flash Model\NAM1'))
 
@@ -1067,14 +1066,13 @@ begin
       sl := TStringList.Create;
       sl.CommaText := '00TX,10TX,20TX,30TX,40TX,50TX,60TX,70TX,80TX,90TX,:0TX,;0TX,<0TX,=0TX,>0TX,?0TX,@0TX,A0TX,B0TX,C0TX,D0TX,E0TX,F0TX,G0TX,H0TX,I0TX,J0TX,K0TX,L0TX';
       DisabledClouds := GetElementNativeValues(e, 'NAM1');
-      for i := 0 to Pred(sl.Count) do begin
+	  for i := 0 to Pred(sl.Count) do begin
         if DisabledClouds and (1 shl i) = 0 then
-          ProcessAsset(ElementBySignature(e, 'Cloud Textures\sl[i]'));
+          ProcessAsset(ElementByPath(e, 'Cloud Textures\' + sl[i]));
       end;
       sl.Free;
       ProcessAsset(ElementByPath(e, 'Aurora\Model\MODL'));
-    end;
-    
+    end;  	
   end
 
   
@@ -1086,8 +1084,7 @@ begin
     if (sig = 'WTHR') then begin
       ProcessAsset(ElementByPath(e, 'DNAM'));
       ProcessAsset(ElementByPath(e, 'CNAM'));
-    end;
-  
+    end; 	
   end
   
   
