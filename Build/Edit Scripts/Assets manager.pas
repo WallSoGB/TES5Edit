@@ -800,7 +800,7 @@ begin
     s := StringReplace(GetEditValue(e), ':', '\', [rfReplaceAll]);
     ProcessAssetEx(e, 'scripts\' + s + '.pex', 'Papyrus script attached to ' + Name(CurrentRecord), atPapyrusScript);
     ProcessAssetEx(e, 'scripts\source\' + s + '.psc', 'Source of papyrus script attached to ' + Name(CurrentRecord), atPapyrusScript);
-	ProcessAssetEx(e, 'source\scripts\' + s + '.psc', 'Source of papyrus script attached to ' + Name(CurrentRecord), atPapyrusScript);
+    ProcessAssetEx(e, 'source\scripts\' + s + '.psc', 'Source of papyrus script attached to ' + Name(CurrentRecord), atPapyrusScript);
   end;
   
   for i := 0 to Pred(ElementCount(e)) do
@@ -819,7 +819,7 @@ begin
     MessageDlg('Sorry, script supports Skyrim, SSE, Oblivion and Fallouts only for now.', mtInformation, [mbOk], 0);
     Result := 1;
     Exit;
-  end};
+  end;}
   
   // known extensions, unknown ones are skipped
   slAssetsExt := TStringList.Create;
@@ -1069,7 +1069,7 @@ begin
       DisabledClouds := GetElementNativeValues(e, 'NAM1');
       for i := 0 to Pred(sl.Count) do begin
         if DisabledClouds and (1 shl i) = 0 then
-          ProcessAsset(ElementBySignature(e, sl[i]));
+          ProcessAsset(ElementBySignature(e, 'Cloud Textures\sl[i]'));
       end;
       sl.Free;
       ProcessAsset(ElementByPath(e, 'Aurora\Model\MODL'));
