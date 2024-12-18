@@ -5851,6 +5851,7 @@ begin
 
   wbRecord(MSTT, 'Moveable Static',
     wbFlags(wbFlagsList([
+      2, 'Never Fades',
       8, 'Must Update Anims',
       9, 'Hidden From Local Map',
      15, 'Has Distant LOD',
