@@ -7977,5 +7977,4 @@ begin
     wbNexusModsUrl := 'https://www.nexusmods.com/fallout3/mods/21174';
   wbHEDRVersion := 0.94;
 end;
-
 end.

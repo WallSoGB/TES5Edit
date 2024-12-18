@@ -5135,10 +5135,20 @@ begin
       raise Exception.Create('File ' + GetFileName + ' has an invalid record count');
 
     HEDR.Elements[1].EditValue := IntToStr(Pred(RecordCount));
-
     j := 0;
     ONAMs := nil;
     if wbIsSkyrim or wbIsFallout3 or wbIsFallout4 or wbIsFallout76 or wbIsStarfield then begin
+      if not wbIsFallout3 then begin
+        var INCC := FileHeader.RecordBySignature['INCC'];
+        var Cells := 0;
+        for var R := Low(flRecords) to High(flRecords) do begin
+          var C := flRecords[R] as IwbMainRecord;
+          if (C.Signature = 'CELL') and (C.ElementNativeValues['DATA'] and $1 = 1) then
+            Inc(Cells);
+        end;
+        INCC.EditValue := Cells.ToString;
+      end;
+
       Include(TwbMainRecord(FileHeader).mrStates, mrsNoUpdateRefs);
       BeginUpdate;
       try
@@ -5164,7 +5174,6 @@ begin
                     Inc(j);
 
                     Signature := Current.Signature;
-
                     if (Signature = 'NAVM') or
                        (Signature = 'LAND') or
                        (Signature = 'REFR') or
@@ -5186,7 +5195,6 @@ begin
                          (Signature = 'INFO')
                        ))
                     then begin
-
                       if (not wbMasterUpdateFilterONAM) or Current.IsWinningOverride then begin
                         // ONAMs are for overridden temporary refs only
                         if Current.IsPersistent then
@@ -5222,11 +5230,8 @@ begin
                                   end;
                           end;
                         end;
-
                       end;
-
                     end;
-
                   end;
               finally
                 if Assigned(ONAMs) then

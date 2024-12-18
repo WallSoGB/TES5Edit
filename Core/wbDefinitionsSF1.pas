@@ -16263,7 +16263,7 @@ end;
 
     wbInteger(INTV, 'Unknown', itU32),                                // Ignored by the runtime, 4 bytes loaded in CK
 
-    wbInteger(INCC, 'Internal Cell Count', itU32),                    // Size of some array of 12 bytes elements
+    wbInteger(INCC, 'Interior Cell Count', itU32).SetRequired,                    // Size of some array of 12 bytes elements
 
     wbUnknown(CHGL)
   ], True, nil, cpNormal, True);
@@ -19852,6 +19852,4 @@ end;
   }
 
 end;
-
-initialization
 end.

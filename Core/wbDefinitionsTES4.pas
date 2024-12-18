@@ -3830,6 +3830,4 @@ begin
     wbNexusModsUrl := 'https://www.nexusmods.com/oblivion/mods/15781';
   wbHEDRVersion := 1.0;
 end;
-
-initialization
 end.

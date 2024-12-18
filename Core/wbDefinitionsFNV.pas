@@ -9227,7 +9227,7 @@ begin
   wbAddGroupOrder(CLMT);
   wbAddGroupOrder(REGN);
   wbAddGroupOrder(NAVI);
-  //wbAddGroupOrder(CELL);
+  wbAddGroupOrder(CELL);
   //wbAddGroupOrder(REFR);
   //wbAddGroupOrder(ACHR);
   //wbAddGroupOrder(ACRE);
@@ -9235,7 +9235,7 @@ begin
   //wbAddGroupOrder(PGRE);
   //wbAddGroupOrder(PBEA);
   //wbAddGroupOrder(PFLA);
-  //wbAddGroupOrder(WRLD);
+  wbAddGroupOrder(WRLD);
   //wbAddGroupOrder(LAND);
   //wbAddGroupOrder(NAVM);
   //wbAddGroupOrder(TLOD);
@@ -9291,14 +9291,10 @@ begin
   wbAddGroupOrder(DEHY);
   wbAddGroupOrder(HUNG);
   wbAddGroupOrder(SLPD);
-  // Forced at the end.
-  wbAddGroupOrder(CELL);
-  wbAddGroupOrder(WRLD);
   wbNexusModsUrl := 'https://www.nexusmods.com/newvegas/mods/34703';
   if wbToolMode = tmLODgen then
     wbNexusModsUrl := 'https://www.nexusmods.com/newvegas/mods/58562';
   wbHEDRVersion := 1.34;
 end;
-
 end.
 

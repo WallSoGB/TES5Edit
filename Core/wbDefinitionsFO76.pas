@@ -16185,7 +16185,7 @@ begin
       wbArray('References', wbFormIDCk('Reference', [DIAL, SCEN]))
     ])),          // Ignored by the runtime
     wbInteger(INTV, 'Unknown', itU32),                    // Ignored by the runtime, 4 bytes loaded in CK   Possibly a version
-    wbInteger(INCC, 'Interior Cell Count', itU32)                     // Size of some array of 12 bytes elements
+    wbInteger(INCC, 'Interior Cell Count', itU32).SetRequired                     // Size of some array of 12 bytes elements
   ], True, nil, cpNormal, True);
 
   wbRecord(PLYR, 'Player Reference', [
@@ -18429,7 +18429,5 @@ begin
     wbNexusModsUrl := '';}
   wbHEDRVersion := 216.0;
 end;
-
-initialization
 end.
 

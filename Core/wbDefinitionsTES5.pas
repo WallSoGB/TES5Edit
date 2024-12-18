@@ -10529,7 +10529,7 @@ begin
       0, nil, nil, cpNormal, False{, wbTES4ONAMDontShow}),
     wbByteArray(SCRN, 'Screenshot'),
     wbUnknown(INTV),
-    wbInteger(INCC, 'Interior Cell Count', itU32)
+    wbInteger(INCC, 'Interior Cell Count', itU32).SetRequired
   ], True, nil, cpNormal, True);
 
   wbRecord(PLYR, 'Player Reference', [
@@ -11259,6 +11259,4 @@ begin
   if wbGameMode in [gmSSE, gmEnderalSE] then
     wbHEDRVersion := 1.71;
 end;
-
-initialization
 end.
