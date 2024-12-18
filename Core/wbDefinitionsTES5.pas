@@ -10586,7 +10586,7 @@ begin
         0, 'No Displacement',
         1, 'Ignored by Sandbox'
     ],False, 2))),
-    wbFormIDCk(PFIG, 'Ingredient', [INGR, ALCH, LVLI, MISC, NULL]),
+    wbFormIDCk(PFIG, 'Ingredient', [ALCH, AMMO, APPA, ARMO, BOOK, INGR, KEYM, LIGH, LVLI, MISC, SCRL, SLGM, WEAP, NULL]),
     wbFormIDCK(SNAM, 'Sound', [SNDR, NULL]),
     wbSeasons
   ]);
