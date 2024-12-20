@@ -995,9 +995,9 @@ begin
     end
   
     else if (sig = 'NPC_') and (optMode <> wmCheck) then
-      ProcessAssetEx(e, Format('Meshes\Actors\Character\FaceGenData\FaceGeom\%s\00%s.nif', [GetFileName(MasterOrSelf(e(), IntToHex(FormID(e), 6)]), 'Facegen for ' + Name(e), atMesh)
-	  
-    else if (sig = 'PROJ') then
+      ProcessAssetEx(e, Format('Meshes\Actors\Character\FaceGenData\FaceGeom\%s\%s.nif', [GetFileName(MasterOrSelf(e)), IntToHex(FormID(e) and $00FFFFFF, 8)]), 'Facegen for ' + Name(e), atMesh)
+
+	else if (sig = 'PROJ') then
       ProcessAsset(ElementByPath(e, 'Muzzle Flash Model\NAM1'))
 
     else if (sig = 'QUST') then begin
