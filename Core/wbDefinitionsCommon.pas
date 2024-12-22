@@ -221,7 +221,8 @@ function wbGetPropertyValueArrayItems(const aContainer: IwbContainerElementRef):
 function wbGetREGNType(aElement: IwbElement): Integer;
 function wbGetScriptObjFormat(const aElement: IwbElement): Integer;
 
-{>>> Get Conflict Priority Callbacks <<<} //2
+{>>> Get Conflict Priority Callbacks <<<} //3
+procedure wbLandNormalsGetCP(const aElement: IwbElement; var aConflictPriority: TwbConflictPriority);
 procedure wbModelInfoGetCP(const aElement: IwbElement; var aConflictPriority: TwbConflictPriority);
 procedure wbModelInfoUnknownGetCP(const aElement: IwbElement; var aConflictPriority: TwbConflictPriority);
 
@@ -1359,7 +1360,22 @@ begin
   end;
 end;
 
-{>>> Get Conflict Priority Callbacks <<<} //2
+{>>> Get Conflict Priority Callbacks <<<} //3
+
+procedure wbLandNormalsGetCP(const aElement: IwbElement; var aConflictPriority: TwbConflictPriority);
+begin
+  if not Assigned(aElement) then
+    Exit;
+
+  var MainRecord := aElement.ContainingMainRecord;
+  if not Assigned(MainRecord) then
+    Exit;
+
+  if MainRecord.ConflictAll > caNoConflict then
+    aConflictPriority := cpNormal
+  else
+    aConflictPriority := cpIgnore;
+end;
 
 procedure wbModelInfoGetCP(const aElement: IwbElement; var aConflictPriority: TwbConflictPriority);
 begin
@@ -6036,17 +6052,17 @@ begin
      .IncludeFlag(dfDontSave)
      .IncludeFlag(dfDontAssign);
 
-{{>>>Landscape Common Defs<<<}
+{>>>Landscape Common Defs<<<}
   //TES4,FO3,FNV,TES5,FO4,FO76,SF1
   wbLandNormals :=
     IfThen(wbSimpleRecords,
-      wbByteArray(VNML, 'Vertex Normals', 3267, cpBenign),
+      wbByteArray(VNML, 'Vertex Normals', 3267, cpIgnore, False, False, nil, wbLandNormalsGetCP),
       wbArray(VNML, 'Vertex Normals',
         wbArray('Row',
           wbStruct('Column', [
-            wbInteger('X', itU8, nil, cpBenign),
-            wbInteger('Y', itU8, nil, cpBenign),
-            wbInteger('Z', itU8, nil, cpBenign)
+            wbInteger('X', itU8, nil, cpIgnore, False, nil, nil, 0, wbLandNormalsGetCP),
+            wbInteger('Y', itU8, nil, cpIgnore, False, nil, nil, 0, wbLandNormalsGetCP),
+            wbInteger('Z', itU8, nil, cpIgnore, False, nil, nil, 0, wbLandNormalsGetCP)
           ]).SetSummaryKey([0, 1, 2])
             .SetSummaryMemberPrefixSuffix(0, '' + '(', '')
             .SetSummaryMemberPrefixSuffix(2, '', ')')
