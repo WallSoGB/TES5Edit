@@ -12944,8 +12944,10 @@ begin
     wbCTDAs,
     wbString(DNAM, 'Behavior Graph'),
     wbString(ENAM, 'Animation Event'),
-    wbArray(ANAM, 'Related Idle Animations', wbFormIDCk('Related Idle Animation', [AACT, IDLE, NULL]),
-      ['Parent', 'Previous Sibling'], cpNormal, True),
+    wbStruct(ANAM, 'Animations', [
+      wbFormIDCk('Parent', [AACT, IDLE, NULL], False, cpBenign),
+      wbFormIDCk('Previous', [AACT, IDLE, NULL], False, cpBenign)
+    ]).SetRequired,
     wbStruct(DATA, '', [
       wbStruct('Looping seconds (both 255 forever)', [
         wbInteger('Min', itU8),

@@ -2468,8 +2468,8 @@ begin
     wbConditions,
     wbInteger(ANAM, 'Animation Group Section', itU8, wbIdleAnam).SetRequired,
     wbStruct(DATA, 'Animations', [
-      wbFormIDCk('Parent', [IDLE, NULL]),
-      wbFormIDCk('Previous', [IDLE, NULL])
+      wbFormIDCk('Parent', [IDLE, NULL], False, cpBenign),
+      wbFormIDCk('Previous', [IDLE, NULL], False, cpBenign)
     ]).SetRequired
   ]).SetSummaryKey([1]);
 

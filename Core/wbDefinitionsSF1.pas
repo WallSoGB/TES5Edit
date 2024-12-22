@@ -12554,8 +12554,10 @@ end;
     wbCTDAs,
     wbString(DNAM, 'Behavior Graph'),
     wbString(ENAM, 'Animation Event'),
-    wbArray(ANAM, 'Related Animations', wbFormIDCk('Related Animation', [AACT, IDLE, NULL]),
-      ['Parent', 'Previous Sibling'], cpNormal, True),
+    wbStruct(ANAM, 'Animations', [
+      wbFormIDCk('Parent', [AACT, IDLE, NULL], False, cpBenign),
+      wbFormIDCk('Previous', [AACT, IDLE, NULL], False, cpBenign)
+    ]).SetRequired,
     wbInteger(FNAM, 'Flags', itU8, wbFlags([
       'Loose',
       'Preview',

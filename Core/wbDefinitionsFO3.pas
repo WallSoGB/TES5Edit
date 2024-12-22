@@ -5834,9 +5834,9 @@ begin
     wbEDID,
     wbGenericModel(True),
     wbConditions,
-    wbStruct(ANAM, 'Related Animations', [
-      wbFormIDCk('Parent', [IDLE, NULL]),
-      wbFormIDCk('Previous', [IDLE, NULL])
+    wbStruct(DATA, 'Animations', [
+      wbFormIDCk('Parent', [IDLE, NULL], False, cpBenign),
+      wbFormIDCk('Previous', [IDLE, NULL], False, cpBenign)
     ]).SetRequired,
     wbStruct(DATA, 'Data', [
       wbInteger('Animation Group Section', itU8, wbIdleAnam),
