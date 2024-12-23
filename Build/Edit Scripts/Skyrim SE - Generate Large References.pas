@@ -138,12 +138,13 @@ begin
   if (Dimensions.z = 0) or (Dimensions.y = 0) or (Dimensions.x = 0) then
     Exit;
   
-  if (Dimensions.z = 65535) or (Dimensions.y = 65535) or (Dimensions.x = 65535) then
+  if (Dimensions.z > 32768) or (Dimensions.y > 32768) or (Dimensions.x > 32768) then
     Exit;  
     
 
   // rule based on debugging thanks to aers
-  if SQRT(Power(Dimensions.x, 2) + Power(Dimensions.y, 2) + Power(Dimensions.z, 2)) * 0.5 * fscale >= fLargeRefMinSize then begin
+  if  (SQRT(Power(Dimensions.x, 2) + Power(Dimensions.y, 2) + Power(Dimensions.z, 2)) * 0.5 * fscale >= fLargeRefMinSize)
+  and (SQRT(Power(Dimensions.x, 2) + Power(Dimensions.y, 2) + Power(Dimensions.z, 2)) * 0.5 * fscale < 32768) then begin
     Cell := LinksTo(ElementByPath(e, 'Cell'));
     if not Assigned(Cell) then
       Exit;
