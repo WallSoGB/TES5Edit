@@ -979,6 +979,9 @@ begin
 
     else if (sig = 'FURN') then
       ProcessAsset(ElementByPath(e, 'XMRK'))
+	  
+    else if (sig = 'HDPT') then 
+      ScanForAssets(ElementByPath(e, 'Parts'))
 
     else if (sig = 'LSCR') then
       ProcessAsset(ElementByPath(e, 'MOD2'))
