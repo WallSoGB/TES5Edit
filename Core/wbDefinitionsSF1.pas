@@ -4860,8 +4860,6 @@ begin
     wbInteger('Unknown', itU32)
   ], cpNormal, False, nil, 4);
 
-  var wbEITM := wbFormIDCk(EITM, 'Object Effect', [ENCH, SPEL]);
-
   var wbMODS := wbFloat(MODS, 'Color Remapping Index');
   var wbMO2S := wbFloat(MO2S, 'Color Remapping Index');
   var wbMO3S := wbFloat(MO3S, 'Color Remapping Index');
@@ -8472,7 +8470,7 @@ end;
     wbPTT2,
     wbBaseFormComponents,
     wbFULL,
-    wbEITM,
+    wbEnchantment,
     wbTexturedModel('Male World Model', [MOD2], [wbMOLM(MLM2), wbMO2S, wbMO2F]),
     wbTexturedModel('Female World Model', [MOD4], [wbMOLM(MLM4), wbMO4S, wbMO4F]),
     wbBO64,
@@ -9591,7 +9589,7 @@ end;
   ]);
 
   {subrecords checked against Starfield.esm}
-  wbRecord(ENCH, 'Object Effect', [
+  wbRecord(ENCH, 'Enchantment', [
     wbEDID,
     wbOBND(True),
     wbODTYReq,
@@ -10442,7 +10440,7 @@ end;
     wbBaseFormComponents,
     wbFULL,
     wbGenericModel(True),
-    wbEITM,
+    wbEnchantment,
     wbFormIDCk(MNAM, 'Image Space Modifier', [IMAD]),
     wbStruct(ENAM, 'Data', [
       wbFormIDCk('Light', [LIGH, NULL]),
@@ -19107,8 +19105,7 @@ end;
     wbBaseFormComponents,
     wbFULL,
     wbGenericModel(True),
-    wbEITM,
-    wbInteger(EAMT, 'Enchantment Amount', itU16),
+    wbEnchantment(True),
     wbDEST,
     wbETYP,
     wbFormIDCk(BIDS, 'Block Bash Impact Data Set', [IPDS, NULL]),

@@ -59,7 +59,6 @@ var
   wbZNAM: IwbSubRecordDef;
   wbCOED: IwbSubRecordDef;
   wbXLCM: IwbSubRecordDef;
-  wbEITM: IwbSubRecordDef;
   wbREPL: IwbSubRecordDef;
   wbBIPL: IwbSubRecordDef;
   wbDEST: IwbSubRecordStructDef;
@@ -3098,7 +3097,6 @@ begin
   wbDESCReq := wbStringKC(DESC, 'Description', 0, cpTranslate, True);
   wbXSCL := wbFloat(XSCL, 'Scale');
   wbREPL := wbFormIDCkNoReach(REPL, 'Repair List', [FLST]);
-  wbEITM := wbFormIDCk(EITM, 'Object Effect', [ENCH, SPEL]);
   wbBIPL := wbFormIDCk(BIPL, 'Biped Model List', [FLST]);
   wbCOED := wbStructExSK(COED, [2], [0, 1], 'Extra Data', [
     {00} wbFormIDCkNoReach('Owner', [NPC_, FACT, NULL]),
@@ -4121,7 +4119,7 @@ begin
     wbOBND(True),
     wbFULL,
     wbSCRI,
-    wbEITM,
+    wbEnchantment,
     wbBMDT,
     wbTexturedModel('Male Biped Model', [MODL, MODT], [wbMODS, wbMODD]),
     wbTexturedModel('Male World Model', [MOD2, MO2T], [wbMO2S, nil]),
@@ -5725,7 +5723,7 @@ begin
     wbOBND(True),
     wbFULL,
     wbGenericModel,
-    wbEITM,
+    wbEnchantment,
     wbFormIDCk(MNAM, 'Image Space Modifier', [IMAD]),
     wbStruct(DATA, 'Data', [
       {00} wbFloat('Force'),
@@ -8817,8 +8815,7 @@ begin
     wbGenericModel,
     wbICON,
     wbSCRI,
-    wbEITM,
-    wbInteger(EAMT, 'Enchantment Charge Amount', itS16),
+    wbEnchantment(True),
     wbFormIDCkNoReach(NAM0, 'Ammo', [AMMO, FLST]),
     wbDEST,
     wbREPL,

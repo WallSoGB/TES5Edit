@@ -3777,7 +3777,6 @@ begin
       ]).IncludeFlag(dfMustBeUnion);
 end;
 
-{>>> wbGameMode IfThen Defs <<<} //26
 {>>> wbGameMode IfThen Defs <<<} //31
 
 function IsTES3(const aDef1, aDef2: string): string;
@@ -4548,17 +4547,17 @@ end;
 
 function wbEnchantment(aCapacity: Boolean = False): IwbRecordMemberDef;
 begin
-  Result :=
-    wbRStruct('Enchantment', [
-      IsTES4(
-        wbFormIDCk(ENAM, 'Effect', [ENCH]),
-        wbFormIDCK(EITM, 'Effect', [ENCH])),
-      IfThen(aCapacity,
-        IsTES4(
-          wbInteger(ANAM, 'Capacity', itU16),
-          wbInteger(EAMT, 'Capacity', itU16)),
-        nil)
-    ]).IncludeFlag(dfAllowAnyMember);
+  var aName := IsFO3('Object Effect', 'Enchantment');
+  var aSig1 := IsTES4(ENAM, EITM);
+  var aSig2 := IsTES4(ANAM, EAMT);
+
+  Result := wbFormIDCk(aSig1, aName, [ENCH]);
+  if aCapacity then
+    Result :=
+      wbRStruct(aName, [
+        wbFormIDCk(aSig1, 'Effect', [ENCH]),
+        wbInteger(aSig2, 'Capacity', itU16)
+      ]).IncludeFlag(dfAllowAnyMember);
 end;
 
 function wbLeveledListEntry(aObjectName: string; aSigs: TwbSignatures): IwbRecordMemberDef;

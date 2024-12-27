@@ -105,7 +105,6 @@ var
   wbDURL: IwbSubRecordDef;
   wbCOED: IwbSubRecordDef;
   wbXLCM: IwbSubRecordDef;
-  wbEITM: IwbSubRecordDef;
   wbOPDS: IwbSubRecordDef;
   wbOPDSs: IwbSubRecordArrayDef;
   wbFTAGs: IwbSubRecordArrayDef;
@@ -6396,8 +6395,6 @@ begin
     wbInteger('Count / Distance', itS32)
   ]);
 
-  wbEITM := wbFormIDCk(EITM, 'Object Effect', [ENCH, SPEL]);
-
   wbMODS := wbFormIDCk(MODS, 'Material Swap', [MSWP]);
   wbMO2S := wbFormIDCk(MO2S, 'Material Swap', [MSWP]);
   wbMO3S := wbFormIDCk(MO3S, 'Material Swap', [MSWP]);
@@ -8906,7 +8903,7 @@ begin
     wbXALG,
     wbFTAGs,
     wbFULL,
-    wbEITM,
+    wbEnchantment,
     wbTexturedModel('Male World Model', [MOD2, MO2T], [wbMODC, wbMO2S, wbENLT, wbENLS, wbAUUV]),
     wbString(ICON, 'Male Inventory Image'),
     wbString(MICO, 'Male Message Icon'),
@@ -9795,7 +9792,7 @@ begin
     wbGenericModel
   ]);
 
-  wbRecord(ENCH, 'Object Effect', [
+  wbRecord(ENCH, 'Enchantment', [
     wbEDID,
     wbOBND(True),
     wbOPDSs,
@@ -10496,7 +10493,7 @@ begin
     wbOPDSs,
     wbFULL,
     wbGenericModel,
-    wbEITM,
+    wbEnchantment,
     wbFormIDCk(MNAM, 'Image Space Modifier', [IMAD]),
     wbStruct(DATA, 'Data', [
       wbFormIDCk('Light', [LIGH, NULL]),
@@ -17804,8 +17801,7 @@ begin
     wbGenericModel,
     wbICON,
     wbMICO,
-    wbEITM,
-    wbInteger(EAMT, 'Enchantment Amount', itU16),
+    wbEnchantment(True),
     wbDEST,
     wbETYP,
     wbFormIDCk(BIDS, 'Block Bash Impact Data Set', [IPDS, NULL]),

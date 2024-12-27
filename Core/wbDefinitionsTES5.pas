@@ -69,7 +69,6 @@ var
   wbEDID: IwbSubRecordDef;
   wbCOED: IwbSubRecordDef;
   wbXLCM: IwbSubRecordDef;
-  wbEITM: IwbSubRecordDef;
   wbDEST: IwbSubRecordStructDef;
   wbDESTActor: IwbSubRecordStructDef;
   wbDODT: IwbSubRecordDef;
@@ -3568,8 +3567,6 @@ begin
     wbInteger('Count / Distance', itS32)
   ]);
 
-  wbEITM := wbFormIDCk(EITM, 'Object Effect', [ENCH, SPEL]);
-
   wbMO2S := wbArrayS(MO2S, 'Alternate Textures', wbAlternateTexture, -1);
   wbMO3S := wbArrayS(MO3S, 'Alternate Textures', wbAlternateTexture, -1);
   wbMO4S := wbArrayS(MO4S, 'Alternate Textures', wbAlternateTexture, -1);
@@ -4621,8 +4618,7 @@ begin
     wbVMAD,
     wbOBND(True),
     wbFULL,
-    wbEITM,
-    wbInteger(EAMT, 'Enchantment Amount', itU16),
+    wbEnchantment,
     wbTexturedModel('Male World Model', [MOD2, MO2T], [wbMO2S]),
     wbICON,
     wbTexturedModel('Female World Model', [MOD4, MO4T], [wbMO4S]),
@@ -5525,7 +5521,7 @@ begin
     ], cpNormal, True, nil, 0)
   ], False, nil, cpNormal, False, nil {wbEFSHAfterLoad});
 
-  wbRecord(ENCH, 'Object Effect', [
+  wbRecord(ENCH, 'Enchantment', [
     wbEDID,
     wbOBND(True),
     wbFULL,
@@ -10802,8 +10798,7 @@ begin
     wbFULL,
     wbGenericModel,
     wbICON,
-    wbEITM,
-    wbInteger(EAMT, 'Enchantment Amount', itU16),
+    wbEnchantment(True),
     wbDEST,
     wbETYP,
     wbFormIDCk(BIDS, 'Block Bash Impact Data Set', [IPDS, NULL]),

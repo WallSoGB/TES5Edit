@@ -60,7 +60,6 @@ var
   wbEffectsReq: IwbRecordMemberDef;
   wbEFID: IwbRecordMemberDef;
   wbEFIT: IwbRecordMemberDef;
-  wbEITM: IwbRecordMemberDef;
   wbEmbeddedScript: IwbRecordMemberDef;
   wbEmbeddedScriptReq: IwbRecordMemberDef;
   wbETYP: IwbRecordMemberDef;
@@ -2978,7 +2977,6 @@ begin
   wbEDIDReq := wbString(EDID, 'Editor ID').SetRequired; // not cpBenign according to Arthmoor
   wbEDIDReqKC := wbStringKC(EDID, 'Editor ID').SetRequired; // not cpBenign according to Arthmoor
   wbEFID := wbFormIDCk(EFID, 'Base Effect', [MGEF]);
-  wbEITM := wbFormIDCk(EITM, 'Object Effect', [ENCH, SPEL]);
   wbETYP := wbInteger(ETYP, 'Equipment Type', itS32, wbEquipTypeEnum);
   wbETYPReq := wbInteger(ETYP, 'Equipment Type', itS32, wbEquipTypeEnum).SetRequired;
   wbFULL := wbStringKC(FULL, 'Name', 0, cpTranslate);
@@ -3641,7 +3639,7 @@ begin
     wbOBND(True),
     wbFULL,
     wbSCRI,
-    wbEITM,
+    wbEnchantment,
     wbBMDT,
     wbTexturedModel('Male Biped Model', [MODL, MODT], [wbMODS, wbMODD]),
     wbTexturedModel('Male World Model', [MOD2, MO2T], [wbMO2S, nil]),
@@ -5122,7 +5120,7 @@ begin
     wbOBND(True),
     wbFULL,
     wbGenericModel,
-    wbEITM,
+    wbEnchantment,
     wbFormIDCk(MNAM, 'Image Space Modifier', [IMAD]),
     wbStruct(DATA, 'Data', [
       {00} wbFloat('Force'),
@@ -7585,8 +7583,7 @@ begin
     wbGenericModel,
     wbICON,
     wbSCRI,
-    wbEITM,
-    wbInteger(EAMT, 'Enchantment Charge Amount', itS16),
+    wbEnchantment(True),
     wbFormIDCkNoReach(NAM0, 'Ammo', [AMMO, FLST]),
     wbDEST,
     wbREPL,
