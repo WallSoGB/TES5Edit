@@ -6482,7 +6482,7 @@ begin
     wbEDID,
     wbGenericModel(True),
     wbConditions,
-    wbStruct(DATA, 'Animations', [
+    wbStruct(ANAM, 'Animations', [
       wbFormIDCk('Parent', [IDLE, NULL], False, cpBenign),
       wbFormIDCk('Previous', [IDLE, NULL], False, cpBenign)
     ]).SetRequired,
