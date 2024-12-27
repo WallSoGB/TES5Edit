@@ -356,12 +356,13 @@ function wbIsFlag(aFlag: Integer; const aValue: IwbValueDef; aIsUnused: Boolean 
 function wbIsNotFlag(aFlag: Integer; const aSignature: TwbSignature; const aValue: IwbValueDef; aIsUnused: Boolean = True): IwbRecordMemberDef; overload;
 function wbIsNotFlag(aFlag: Integer; const aValue: IwbValueDef; aIsUnused: Boolean = True): IwbValueDef; overload;
 
-{>>> Game Mode IfThen Defs <<<} //26
+{>>> Game Mode IfThen Defs <<<} //31
 function IsTES3(const aDef1, aDef2: String): string; overload;
 function IsTES4(const aDef1, aDef2: Integer): Integer; overload;
 function IsTES4(const aDef1, aDef2: IwbRecordMemberDef): IwbRecordMemberDef; overload;
 function IsTES4(const aDef1, aDef2: IwbValueDef): IwbValueDef; overload;
 function IsTES4(const aDef1, aDef2: String): string; overload;
+function IsTES4(const aDef1, aDef2: TwbSignature): TwbSignature; overload;
 function IsTES4FO3(const aDef1, aDef2: IwbValueDef): IwbValueDef; overload;
 function IsTES4FO3(const aDef1, aDef2: String): string; overload;
 function IsFO3(const aDef1, aDef2: Integer): Integer; overload;
@@ -3777,245 +3778,223 @@ begin
 end;
 
 {>>> wbGameMode IfThen Defs <<<} //26
+{>>> wbGameMode IfThen Defs <<<} //31
 
 function IsTES3(const aDef1, aDef2: string): string;
 begin
+  Result := aDef2;
   if wbIsMorrowind then
     Result := aDef1
-  else
-    Result := aDef2;
 end;
 
 function IsTES4(const aDef1, aDef2: Integer): Integer;
 begin
+  Result := aDef2;
   if wbIsOblivion then
     Result := aDef1
-  else
-    Result := aDef2;
 end;
 
 function IsTES4(const aDef1, aDef2: IwbRecordMemberDef): IwbRecordMemberDef;
 begin
+  Result := aDef2;
   if wbIsOblivion then
     Result := aDef1
-  else
-    Result := aDef2;
 end;
 
 function IsTES4(const aDef1, aDef2: IwbValueDef): IwbValueDef;
 begin
+  Result := aDef2;
   if wbIsOblivion then
     Result := aDef1
-  else
-    Result := aDef2;
 end;
 
 function IsTES4(const aDef1, aDef2: string): string;
 begin
+  Result := aDef2;
   if wbIsOblivion then
     Result := aDef1
-  else
-    Result := aDef2;
+end;
+
+function IsTES4(const aDef1, aDef2: TwbSignature): TwbSignature;
+begin
+  Result := aDef2;
+  if wbIsOblivion then
+    Result := aDef1
 end;
 
 function IsTES4FO3(const aDef1, aDef2: IwbValueDef): IwbValueDef;
 begin
+  Result := aDef2;
   if wbIsOblivion or wbIsFallout3 then
     Result := aDef1
-  else
-    Result := aDef2;
 end;
 
 function IsTES4FO3(const aDef1, aDef2: string): string;
 begin
+  Result := aDef2;
   if wbIsOblivion or wbIsFallout3 then
     Result := aDef1
-  else
-    Result := aDef2;
 end;
 
 function IsFO3(const aDef1, aDef2: Integer): Integer;
 begin
+  Result := aDef2;
   if wbIsFallout3 then
     Result := aDef1
-  else
-    Result := aDef2;
 end;
 
 function IsFO3(const aDef1, aDef2: IwbValueDef): IwbValueDef;
 begin
+  Result := aDef2;
   if wbIsFallout3 then
     Result := aDef1
-  else
-    Result := aDef2;
 end;
 
 function IsFO3(const aDef1, aDef2: string): string;
 begin
+  Result := aDef2;
   if wbIsFallout3 then
     Result := aDef1
-  else
-    Result := aDef2;
 end;
 
 function IsFNV(const aDef1, aDef2: string): string;
 begin
+  Result := aDef2;
   if wbIsFalloutNV then
     Result := aDef1
-  else
-    Result := aDef2;
 end;
 
 function IsFNV(const aDef1, aDef2: IwbRecordMemberDef): IwbRecordMemberDef;
 begin
+  Result := aDef2;
   if wbIsFalloutNV then
     Result := aDef1
-  else
-    Result := aDef2;
 end;
 
 function IsFNV(const aDef1, aDef2: IwbValueDef): IwbValueDef;
 begin
+  Result := aDef2;
   if wbIsFalloutNV then
     Result := aDef1
-  else
-    Result := aDef2;
 end;
 
 function IsTES5(const aDef1, aDef2: string): string;
 begin
+  Result := aDef2;
   if wbIsSkyrim then
     Result := aDef1
-  else
-    Result := aDef2;
 end;
 
 function IsTES5(const aDef1, aDef2: Integer): Integer;
 begin
+  Result := aDef2;
   if wbIsSkyrim then
     Result := aDef1
-  else
-    Result := aDef2;
 end;
 
 function IsTES5(const aDef1, aDef2: IwbRecordMemberDef): IwbRecordMemberDef;
 begin
+  Result := aDef2;
   if wbIsSkyrim then
     Result := aDef1
-  else
-    Result := aDef2;
 end;
 
 function IsTES5(const aDef1, aDef2: Cardinal): Cardinal;
 begin
+  Result := aDef2;
   if wbIsSkyrim then
     Result := aDef1
-  else
-    Result := aDef2;
 end;
 
 function IsTES5(const aDef1, aDef2: IwbValueDef): IwbValueDef;
 begin
+  Result := aDef2;
   if wbIsSkyrim then
     Result := aDef1
-  else
-    Result := aDef2;
 end;
 
 function IsSSE(const aDef1, aDef2: string): string;
 begin
+  Result := aDef2;
   if wbIsSkyrimSE then
     Result := aDef1
-  else
-    Result := aDef2;
 end;
 
 function IsSSE(const aDef1, aDef2: IwbRecordMemberDef): IwbRecordMemberDef;
 begin
+  Result := aDef2;
   if wbIsSkyrimSE then
     Result := aDef1
-  else
-    Result := aDef2;
 end;
 
 function IsSSE(const aDef1, aDef2: IwbValueDef): IwbValueDef;
 begin
+  Result := aDef2;
   if wbIsSkyrimSE then
     Result := aDef1
-  else
-    Result := aDef2;
 end;
 
 function IsFO4Plus(const aDef1, aDef2: IwbRecordMemberDef): IwbRecordMemberDef;
 begin
+  Result := aDef2;
   if wbIsFallout4 or wbIsFallout76 or wbIsStarfield then
     Result := aDef1
-  else
-    Result := aDef2;
 end;
 
 function IsFO4Plus(const aDef1, aDef2: IwbValueDef): IwbValueDef;
 begin
+  Result := aDef2;
   if wbIsFallout4 or wbIsFallout76 or wbIsStarfield then
     Result := aDef1
-  else
-    Result := aDef2;
 end;
 
 function IsFO4Plus(const aDef1, aDef2: string): string;
 begin
+  Result := aDef2;
   if wbIsFallout4 or wbIsFallout76 or wbIsStarfield then
     Result := aDef1
-  else
-    Result := aDef2;
 end;
 
 function IsFO76(const aDef1, aDef2: IwbValueDef): IwbValueDef;
 begin
+  Result := aDef2;
   if wbIsFallout76 then
     Result := aDef1
-  else
-    Result := aDef2;
 end;
 
 function IsFO76(const aDef1, aDef2: string): string;
 begin
+  Result := aDef2;
   if wbIsFallout76 then
     Result := aDef1
-  else
-    Result := aDef2;
 end;
 
 function IsSF1(const aDef1, aDef2: Integer): Integer;
 begin
+  Result := aDef2;
   if wbIsStarfield then
     Result := aDef1
-  else
-    Result := aDef2;
 end;
 
 function IsSF1(const aDef1, aDef2: IwbRecordMemberDef): IwbRecordMemberDef;
 begin
+  Result := aDef2;
   if wbIsStarfield then
     Result := aDef1
-  else
-    Result := aDef2;
 end;
 
 function IsSF1(const aDef1, aDef2: IwbValueDef): IwbValueDef;
 begin
+  Result := aDef2;
   if wbIsStarfield then
     Result := aDef1
-  else
-    Result := aDef2;
 end;
 
 function IsSF1(const aDef1, aDef2: string): string;
 begin
+  Result := aDef2;
   if wbIsStarfield then
     Result := aDef1
-  else
-    Result := aDef2;
 end;
 
 {>>> Size IfThen Defs <<<} //4
