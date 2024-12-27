@@ -9062,14 +9062,14 @@ begin
       {12} wbFormIDCk('Effect', [SPEL, NULL])
     ], cpNormal, True),
     wbStruct(VATS, 'VATS', [
-     wbFormIDCk('Effect',[SPEL, NULL]),
-     wbFloat('Skill'),
-     wbFloat('Dam. Mult'),
-     wbFloat('AP'),
-     wbInteger('Silent', itU8, wbBoolEnum),
-     wbInteger('Mod Required', itU8, wbBoolEnum),
-     wbUnused(2)
-    ]),
+      wbFormIDCk('Effect', [SPEL, NULL]),
+      wbFloat('Skill'),
+      wbFloat('Dam. Mult'),
+      wbFloat('AP'),
+      wbInteger('Silent', itU8, wbBoolEnum),
+      wbInteger('Mod Required', itU8, wbBoolEnum),
+      wbUnused(2)
+    ], cpNormal, False, nil, 4),
     wbInteger(VNAM, 'Sound Level', itU32, wbSoundLevelEnum, cpNormal, True)
   ], True, nil, cpNormal, False, wbWEAPAfterLoad);
 
