@@ -668,15 +668,15 @@ begin
         if MainRecord._File.LoadOrder = 0 then
 	        MainRecord.RemoveElement('Large References');
 
-    // large values in object bounds cause stutter and performance issues in game (reported by Arthmoor)
+    // large values in worldspace bounds cause stutter and performance issues in game (reported by Arthmoor)
     // CK can occasionally set them wrong, so make a warning
-    if Supports(MainRecord.ElementByName['Object Bounds'], IwbContainer, Container) then
+    if Supports(MainRecord.ElementByName['Worldspace Bounds'], IwbContainer, Container) then
       if OutOfRange(StrToIntDef(Container.ElementEditValues['NAM0\X'], 0)) or
          OutOfRange(StrToIntDef(Container.ElementEditValues['NAM0\Y'], 0)) or
          OutOfRange(StrToIntDef(Container.ElementEditValues['NAM9\X'], 0)) or
          OutOfRange(StrToIntDef(Container.ElementEditValues['NAM9\Y'], 0))
       then
-        wbProgressCallback('<Warning: Object Bounds in ' + MainRecord.Name + ' are abnormally large and can cause performance issues in game>');
+        wbProgressCallback('<Warning: Worldspace Bounds in ' + MainRecord.Name + ' are abnormally large and can cause performance issues in game>');
   finally
     wbEndInternalEdit;
   end;
@@ -1171,11 +1171,11 @@ begin
   if not Supports(Container.Container, IwbDataContainer, Container) then
     Exit;
 
-  if not Assigned(Container.ElementByPath['Object Bounds\NAM0\X']) then
+  if not Assigned(Container.ElementByPath['Worldspace Bounds\NAM0\X']) then
     if not Supports(Container.Container, IwbDataContainer, Container) then
       Exit;
 
-  Element := Container.ElementByPath['Object Bounds\NAM0\X'];
+  Element := Container.ElementByPath['Worldspace Bounds\NAM0\X'];
   if not Assigned(Element) then
     Exit;
 
@@ -1184,7 +1184,7 @@ begin
   if (MinX = Single.MaxValue) or (MinX = Single.MinValue) then
      MinX := 0;
 
-  Element := Container.ElementByPath['Object Bounds\NAM9\X'];
+  Element := Container.ElementByPath['Worldspace Bounds\NAM9\X'];
   if not Assigned(Element) then
     Exit;
   MaxX := Element.NativeValue;
@@ -1208,14 +1208,14 @@ begin
   if not Supports(Container.Container, IwbDataContainer, Container) then
     Exit;
 
-  Element := Container.ElementByPath['Object Bounds\NAM0\Y'];
+  Element := Container.ElementByPath['Worldspace Bounds\NAM0\Y'];
   if not Assigned(Element) then
     Exit;
   MinY := Element.NativeValue;
   if (MinY = Single.MaxValue) or (MinY = Single.MinValue) then
      MinY := 0;
 
-  Element := Container.ElementByPath['Object Bounds\NAM9\Y'];
+  Element := Container.ElementByPath['Worldspace Bounds\NAM9\Y'];
   if not Assigned(Element) then
     Exit;
   MaxY := Element.NativeValue;
@@ -6007,8 +6007,6 @@ begin
         .IncludeFlag(dfCollapsed)
     ).SetRequired;
 
-  var lScaleFactor := 1/wbCellSizeFactor;
-
   wbXLOD := wbArray(XLOD, 'Distant LOD Data', wbFloat('Unknown'), 3);
 
   wbMHDTCELL :=
@@ -6729,14 +6727,14 @@ Can't properly represent that with current record definition methods.
 
   //TES4,FO3,FNV,TES5,SSE,FO4,FO76,SF1
   wbWorldObjectBounds :=
-    wbRStruct('Object Bounds', [
+    wbRStruct('Worldspace Bounds', [
       wbStruct(NAM0, 'Min', [
         IsSF1(
-          wbFloat('X', cpNormal, True, lScaleFactor).SetDefaultNativeValue(1073741824),
-          wbFloat('X', cpNormal, True, lScaleFactor).SetDefaultEditValue('Default')),
+          wbFloat('X', cpNormal, True, 1/100).SetDefaultNativeValue(1073741824),
+          wbFloat('X', cpNormal, True, 1/4096).SetDefaultEditValue('Default')),
         IsSF1(
-          wbFloat('Y', cpNormal, True, lScaleFactor).SetDefaultNativeValue(1073741824),
-          wbFloat('Y', cpNormal, True, lScaleFactor).SetDefaultEditValue('Default'))
+          wbFloat('Y', cpNormal, True, 1/100).SetDefaultNativeValue(1073741824),
+          wbFloat('Y', cpNormal, True, 1/4096).SetDefaultEditValue('Default'))
       ]).SetSummaryKeyOnValue([0, 1])
         .SetSummaryPrefixSuffixOnValue(0, 'X: (', '')
         .SetSummaryPrefixSuffixOnValue(1, 'Y: ', ')')
@@ -6746,11 +6744,11 @@ Can't properly represent that with current record definition methods.
         .IncludeFlag(dfCollapsed, wbCollapseObjectBounds),
       wbStruct(NAM9, 'Max', [
         IsSF1(
-          wbFloat('X', cpNormal, True, lScaleFactor).SetDefaultNativeValue(-1073741824),
-          wbFloat('X', cpNormal, True, lScaleFactor).SetDefaultEditValue('Min')),
+          wbFloat('X', cpNormal, True, 1/100).SetDefaultNativeValue(-1073741824),
+          wbFloat('X', cpNormal, True, 1/4096).SetDefaultEditValue('Min')),
         IsSF1(
-          wbFloat('Y', cpNormal, True, lScaleFactor).SetDefaultNativeValue(-1073741824),
-          wbFloat('Y', cpNormal, True, lScaleFactor).SetDefaultEditValue('Min'))
+          wbFloat('Y', cpNormal, True, 1/100).SetDefaultNativeValue(-1073741824),
+          wbFloat('Y', cpNormal, True, 1/4096).SetDefaultEditValue('Min'))
       ]).SetSummaryKeyOnValue([0, 1])
         .SetSummaryPrefixSuffixOnValue(0, '(X: ', '')
         .SetSummaryPrefixSuffixOnValue(1, 'Y: ', ')')
