@@ -5138,7 +5138,7 @@ begin
                4, 'Ignore LOS Check',
                5, 'Push Explosion Source Ref Only',
                6, 'Ignore Image Space Swap'
-             ], False, 7))
+             ], False, 7), True)
            ).IncludeFlag(dfCollapsed, wbCollapseFlags),
       {24} wbFloat('IS Radius'),
       {28} wbFormIDCk('Impact DataSet', [IPDS, NULL]),

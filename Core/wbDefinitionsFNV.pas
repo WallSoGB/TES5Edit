@@ -5733,15 +5733,16 @@ begin
       {08} wbFloat('Radius'),
       {12} wbFormIDCk('Light', [LIGH, NULL]),
       {16} wbFormIDCk('Sound 1', [SOUN, NULL]),
-      {20} wbInteger('Flags', itU32, wbFlags([
-             {0x00000001}'Unknown 1',
-             {0x00000002}'Always Uses World Orientation',
-             {0x00000004}'Knock Down - Always',
-             {0x00000008}'Knock Down - By Formula',
-             {0x00000010}'Ignore LOS Check',
-             {0x00000020}'Push Explosion Source Ref Only',
-             {0x00000040}'Ignore Image Space Swap'
-           ])),
+      {20} wbInteger('Flags', itU32,
+             wbFlags(wbSparseFlags([
+               1, 'Always Uses World Orientation',
+               2, 'Knock Down - Always',
+               3, 'Knock Down - By Formula',
+               4, 'Ignore LOS Check',
+               5, 'Push Explosion Source Ref Only',
+               6, 'Ignore Image Space Swap'
+             ], False, 7), True)
+           ).IncludeFlag(dfCollapsed, wbCollapseFlags),
       {24} wbFloat('IS Radius'),
       {28} wbFormIDCk('Impact DataSet', [IPDS, NULL]),
       {32} wbFormIDCk('Sound 2', [SOUN, NULL]),
