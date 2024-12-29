@@ -939,7 +939,7 @@ begin
       if not Assigned(Container) then
         Exit;
 
-      if Container = Container.Container.Elements[5] then begin
+      if Assigned(Container.Container.ElementBySignature[CIS1]) then begin
         case aType of
           ctToSummary: Result := Container.ElementSummaries['..\CIS1'];
           ctToEditValue, ctToNativeValue: Result := Container.ElementEditValues['..\CIS1'];
@@ -948,7 +948,7 @@ begin
         end;
       end;
 
-      if Container = Container.Container.Elements[6] then begin
+      if Assigned(Container.Container.ElementBySignature[CIS2]) then begin
         case aType of
           ctToSummary: Result := Container.ElementSummaries['..\CIS2'];
           ctToEditValue, ctToNativeValue: Result := Container.ElementEditValues['..\CIS2'];

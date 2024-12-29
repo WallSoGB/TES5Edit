@@ -1365,6 +1365,7 @@ end;
 
 procedure wbLandNormalsGetCP(const aElement: IwbElement; var aConflictPriority: TwbConflictPriority);
 begin
+  aConflictPriority := cpIgnore;
   if not Assigned(aElement) then
     Exit;
 
@@ -1374,8 +1375,6 @@ begin
 
   if MainRecord.ConflictAll > caNoConflict then
     aConflictPriority := cpNormal
-  else
-    aConflictPriority := cpIgnore;
 end;
 
 procedure wbModelInfoGetCP(const aElement: IwbElement; var aConflictPriority: TwbConflictPriority);
