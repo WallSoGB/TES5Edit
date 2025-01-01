@@ -6087,9 +6087,9 @@ begin
             wbFormIDCk('Texture', [LTEX, NULL]),
             wbInteger('Quadrant', itU8, wbQuadrantEnum),
             wbUnused(1),
-            wbInteger('Layer', itU16)
+            wbInteger('Layer', itS16)
           ]).SetSummaryKeyOnValue([1,0])
-            .SetSummaryPrefixSuffixOnValue(0, ' with', '')
+            .SetSummaryPrefixSuffixOnValue(0, ' with ', '')
             .SetSummaryPrefixSuffixOnValue(1, '[', ']')
             .IncludeFlagOnValue(dfSummaryMembersNoName)
             .IncludeFlagOnValue(dfSummaryNoSortKey)
@@ -6100,9 +6100,9 @@ begin
             wbFormIDCk('Texture', [LTEX, NULL]),
             wbInteger('Quadrant', itU8, wbQuadrantEnum),
             wbUnused(1),
-            wbInteger('Layer', itU16)
+            wbInteger('Layer', itS16)
           ]).SetSummaryKeyOnValue([1,3,0])
-            .SetSummaryPrefixSuffixOnValue(0, ' with', '')
+            .SetSummaryPrefixSuffixOnValue(0, ' with ', '')
             .SetSummaryPrefixSuffixOnValue(1, '[', ']')
             .SetSummaryPrefixSuffixOnValue(3, 'on Layer [', ']')
             .IncludeFlagOnValue(dfSummaryMembersNoName)
@@ -6122,7 +6122,7 @@ begin
                 .IncludeFlag(dfSummaryMembersNoName)
                 .IncludeFlag(dfSummaryNoSortKey)
             ).IncludeFlag(dfCollapsed))
-        ])
+        ]).IncludeFlag(dfCollapsed)
       ]));
 
 
