@@ -6088,9 +6088,10 @@ begin
             wbInteger('Quadrant', itU8, wbQuadrantEnum),
             wbUnused(1),
             wbInteger('Layer', itS16)
-          ]).SetSummaryKeyOnValue([1,0])
+          ]).SetSummaryKeyOnValue([1,3,0])
             .SetSummaryPrefixSuffixOnValue(0, ' with ', '')
             .SetSummaryPrefixSuffixOnValue(1, '[', ']')
+            .SetSummaryPrefixSuffixOnValue(3, 'on Layer [', ']')
             .IncludeFlagOnValue(dfSummaryMembersNoName)
             .IncludeFlagOnValue(dfSummaryNoSortKey)
             .IncludeFlag(dfCollapsed)
