@@ -6043,8 +6043,9 @@ begin
             .SetSummaryMemberPrefixSuffix(2, '', ')')
             .IncludeFlag(dfSummaryMembersNoName)
             .IncludeFlag(dfCollapsed, wbCollapseVec3),
-        33),
-      33));
+        33).SetSummaryName('Columns')
+           .IncludeFlag(dfCollapsed),
+      33).SetSummaryName('Rows'));
 
   //TES4,FO3,FNV,TES5,FO4,FO76,SF1
   wbLandHeights :=
@@ -6055,8 +6056,9 @@ begin
         wbArray('Height Data',
           wbArray('Row',
             wbInteger('Column', itS8),
-          33),
-        33),
+          33).SetSummaryName('Columns')
+             .IncludeFlag(dfCollapsed),
+        33).SetSummaryName('Rows'),
         wbUnused(3)
       ]));
 
@@ -6065,18 +6067,16 @@ begin
     IfThen(wbSimpleRecords,
       wbByteArray(VCLR, 'Vertex Colors'),
       wbArray(VCLR, 'Vertex Colors',
-        wbArray('Columns',
+        wbArray('Row',
           wbStruct('Column', [
-            wbInteger('R', itU8),
-            wbInteger('G', itU8),
-            wbInteger('B', itU8)
-          ]).SetSummaryKey([0, 1, 2])
-            .SetSummaryMemberPrefixSuffix(0, '' + '(', '')
-            .SetSummaryMemberPrefixSuffix(2, '', ')')
-            .IncludeFlag(dfSummaryMembersNoName)
+            wbInteger('Red', itU8),
+            wbInteger('Green', itU8),
+            wbInteger('Blue', itU8)
+          ]).SetToStr(wbRGBAToStr)
             .IncludeFlag(dfCollapsed, wbCollapseVec3),
-        33),
-      33));
+        33).SetSummaryName('Columns')
+           .IncludeFlag(dfCollapsed),
+      33).SetSummaryName('Rows'));
 
   //TES4,FO3,FNV,TES5,FO4,FO76
   wbLandLayers :=
@@ -6088,15 +6088,26 @@ begin
             wbInteger('Quadrant', itU8, wbQuadrantEnum),
             wbUnused(1),
             wbInteger('Layer', itU16)
-          ])
-        ]),
+          ]).SetSummaryKeyOnValue([1,0])
+            .SetSummaryPrefixSuffixOnValue(0, ' with', '')
+            .SetSummaryPrefixSuffixOnValue(1, '[', ']')
+            .IncludeFlagOnValue(dfSummaryMembersNoName)
+            .IncludeFlagOnValue(dfSummaryNoSortKey)
+            .IncludeFlag(dfCollapsed)
+        ]).IncludeFlag(dfCollapsed),
         wbRStructSK([0], 'Alpha Layer', [
           wbStructSK(ATXT, [1, 3], 'Alpha Layer Header', [
             wbFormIDCk('Texture', [LTEX, NULL]),
             wbInteger('Quadrant', itU8, wbQuadrantEnum),
             wbUnused(1),
             wbInteger('Layer', itU16)
-          ]),
+          ]).SetSummaryKeyOnValue([1,3,0])
+            .SetSummaryPrefixSuffixOnValue(0, ' with', '')
+            .SetSummaryPrefixSuffixOnValue(1, '[', ']')
+            .SetSummaryPrefixSuffixOnValue(3, 'on Layer [', ']')
+            .IncludeFlagOnValue(dfSummaryMembersNoName)
+            .IncludeFlagOnValue(dfSummaryNoSortKey)
+            .IncludeFlag(dfCollapsed),
           IfThen(wbSimpleRecords,
             wbByteArray(VTXT, 'Alpha Layer Data'),
             wbArrayS(VTXT, 'Alpha Layer Data',
@@ -6104,7 +6115,13 @@ begin
                 wbInteger('Position', itU16, wbVTXTPosition),
                 wbUnused(2),
                 wbFloat('Opacity')
-              ])))
+              ]).SetSummaryKey([2,0])
+                .SetSummaryMemberPrefixSuffix(0, ' at Position [', ']')
+                .SetSummaryMemberPrefixSuffix(2, 'Opacity: [', ']')
+                .IncludeFlag(dfCollapsed)
+                .IncludeFlag(dfSummaryMembersNoName)
+                .IncludeFlag(dfSummaryNoSortKey)
+            ).IncludeFlag(dfCollapsed))
         ])
       ]));
 
