@@ -501,6 +501,15 @@ begin
     Value := Element.EditValue;
 end;
 
+procedure IwbElement_GetValue(var Value: Variant; Args: TJvInterpreterArgs);
+var
+  Element: IwbElement;
+begin
+  Value := '';
+  if Supports(IInterface(Args.Values[0]), IwbElement, Element) then
+    Value := Element.Value;
+end;
+
 procedure IwbElement_SetEditValue(var Value: Variant; Args: TJvInterpreterArgs);
 var
   Element: IwbElement;
@@ -831,6 +840,15 @@ begin
   Value := '';
   if Supports(IInterface(Args.Values[0]), IwbContainerElementRef, Container) then
     Value := Container.ElementEditValues[Args.Values[1]];
+end;
+
+procedure IwbContainer_GetElementValues(var Value: Variant; Args: TJvInterpreterArgs);
+var
+  Container: IwbContainerElementRef;
+begin
+  Value := '';
+  if Supports(IInterface(Args.Values[0]), IwbContainerElementRef, Container) then
+    Value := Container.ElementValues[Args.Values[1]];
 end;
 
 procedure IwbContainer_SetElementEditValues(var Value: Variant; Args: TJvInterpreterArgs);
@@ -2151,6 +2169,7 @@ begin
     AddFunction(cUnit, 'IsInjected', IwbElement_IsInjected, 1, [varEmpty], varEmpty);
     AddFunction(cUnit, 'IsEditable', IwbElement_GetIsEditable, 1, [varEmpty], varEmpty);
     AddFunction(cUnit, 'GetEditValue', IwbElement_GetEditValue, 1, [varEmpty], varEmpty);
+    AddFunction(cUnit, 'GetValue', IwbElement_GetValue, 1, [varEmpty], varEmpty);
     AddFunction(cUnit, 'SetEditValue', IwbElement_SetEditValue, 2, [varEmpty, varString], varEmpty);
     AddFunction(cUnit, 'GetNativeValue', IwbElement_GetNativeValue, 1, [varEmpty], varEmpty);
     AddFunction(cUnit, 'SetNativeValue', IwbElement_SetNativeValue, 2, [varEmpty, varEmpty], varEmpty);
@@ -2188,6 +2207,7 @@ begin
 
     { IwbContainer }
     AddFunction(cUnit, 'GetElementEditValues', IwbContainer_GetElementEditValues, 2, [varEmpty, varString], varEmpty);
+    AddFunction(cUnit, 'GetElementValues', IwbContainer_GetElementValues, 2, [varEmpty, varString], varEmpty);
     AddFunction(cUnit, 'SetElementEditValues', IwbContainer_SetElementEditValues, 3, [varEmpty, varString, varString], varEmpty);
     AddFunction(cUnit, 'GetElementNativeValues', IwbContainer_GetElementNativeValues, 2, [varEmpty, varString], varEmpty);
     AddFunction(cUnit, 'SetElementNativeValues', IwbContainer_SetElementNativeValues, 3, [varEmpty, varString, varEmpty], varEmpty);
