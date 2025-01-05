@@ -5963,11 +5963,7 @@ begin
 
   wbSoundDescriptorSounds :=
     wbRArray('Sounds',
-      wbRStruct('Sound Files', [
-        wbString(ANAM, 'File Name')
-      ]).SetSummaryKey([0])
-        .IncludeFlag(dfSummaryMembersNoName)
-        .IncludeFlag(dfCollapsed));
+      wbString(ANAM, 'Sound'));
 
   wbSoundTypeSounds :=
     wbRArrayS('Sounds',
