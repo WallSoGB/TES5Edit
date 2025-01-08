@@ -83,6 +83,7 @@ const
   cAssetSound:         TAssetType = (Root: 'sound';         Ext: ['.lip', '.wav', '.xwm', '.mp3', '.ogg', '.fuz']);
   cAssetMusic:         TAssetType = (Root: 'music';         Ext: ['.xwm', '.mp3']);
   cAssetScript:        TAssetType = (Root: 'scripts';       Ext: ['.pex', '.psc']);
+  cAssetSource:        TAssetType = (Root: 'source';        Ext: ['.psc']);
   cAssetStrings:       TAssetType = (Root: 'strings';       Ext: ['.strings', '.ilstrings', '.dlstrings']);
   cAssetSpeedTree:     TAssetType = (Root: 'trees';         Ext: ['.spt']);
   cAssetVideo:         TAssetType = (Root: 'video';         Ext: ['.bik', '.bk2']);
@@ -449,6 +450,7 @@ initialization
     cAssetSound,
     cAssetMusic,
     cAssetScript,
+    cAssetSource,
     cAssetStrings,
     cAssetSpeedTree,
     cAssetVideo,
