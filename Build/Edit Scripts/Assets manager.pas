@@ -787,6 +787,7 @@ procedure ScanForPapyrusScripts(e: IInterface);
 var
   i: integer;
   s: string;
+  Source: string;
 begin
   if not Assigned(e) then
     Exit;
@@ -797,9 +798,12 @@ begin
   
   if SameText(Name(e),'ScriptName') then begin
     s := StringReplace(GetEditValue(e), ':', '\', [rfReplaceAll]);
+	if wbGameMode = gmSSE then
+	  Source := 'source\scripts'
+	else
+	  Source := 'scripts\source';
     ProcessAssetEx(e, 'scripts\' + s + '.pex', 'Papyrus script attached to ' + Name(CurrentRecord), atPapyrusScript);
-    ProcessAssetEx(e, 'scripts\source\' + s + '.psc', 'Source of papyrus script attached to ' + Name(CurrentRecord), atPapyrusScript);
-    ProcessAssetEx(e, 'source\scripts\' + s + '.psc', 'Source of papyrus script attached to ' + Name(CurrentRecord), atPapyrusScript);
+    ProcessAssetEx(e, Source + s + '.psc', 'Source of papyrus script attached to ' + Name(CurrentRecord), atPapyrusScript);
   end;
   
   for i := 0 to Pred(ElementCount(e)) do
