@@ -1377,57 +1377,57 @@ begin
 {>>> Struct Members <<<}
 
   wbConditionParameters := [
-    //Misc
-    {0} wbUnknown(4),
-    {1} wbByteArray('None', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
-    {2} wbInteger('Integer', itS32),
-    {3} wbInteger('Quest Stage', itS32, wbConditionQuestStageToStr, wbQuestStageToInt),
-    {4} wbInteger('Variable Name', itS32, wbConditionVariableNameToStr, wbConditionVariableNameToInt),
+  //Misc
+  {0} wbUnknown(4),
+  {1} wbByteArray('None', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
+  {2} wbInteger('Integer', itS32),
+  {3} wbInteger('Quest Stage', itS32, wbConditionQuestStageToStr, wbQuestStageToInt),
+  {4} wbInteger('Variable Name', itS32, wbConditionVariableNameToStr, wbConditionVariableNameToInt),
 
-    //Enums
-	  {5}  wbInteger('Actor Value', itS32, wbActorValueEnum),
-	  {6}  wbInteger('Axis', itU32, wbAxisEnum),
-   	{7}  wbInteger('Crime Type', itU32, wbCrimeTypeEnum),
-    {8}  wbInteger('Form Type', itU32, wbFormTypeEnum),
-    {9}  wbInteger('Menu Mode', itU32, wbMenuModeEnum),
-    {10} wbInteger('Misc Stat', itU32, wbMiscStatEnum),
-    {11} wbInteger('Sex', itU32, wbSexEnum),
+  //Enums
+  {5}  wbInteger('Actor Value', itS32, wbActorValueEnum),
+  {6}  wbInteger('Axis', itU32, wbAxisEnum),
+  {7}  wbInteger('Crime Type', itU32, wbCrimeTypeEnum),
+  {8}  wbInteger('Form Type', itU32, wbFormTypeEnum),
+  {9}  wbInteger('Menu Mode', itU32, wbMenuModeEnum),
+  {10} wbInteger('Misc Stat', itU32, wbMiscStatEnum),
+  {11} wbInteger('Sex', itU32, wbSexEnum),
 
-    //FormIDs
-   	{12} wbFormIDCkNoReach('Actor', [ACHR, ACRE, PLYR, TRGT]),
-    {13} wbFormIDCkNoReach('Actor Base', [CREA, NPC_]),
-    {14} wbFormIDCkNoReach('Base Object', [ACTI, ALCH, AMMO, APPA, ARMO, BOOK, CLOT, CONT, CREA, DOOR, FLOR, FURN, GRAS, INGR, KEYM, LIGH, LVLC, LVLI, LVSP, MISC, NPC_, SBSP, SGST, SLGM, SOUN, STAT, TREE, WEAP]),
-    {15} wbFormIDCkNoReach('Birthsign', [BSGN]),
-    {16} wbFormIDCkNoReach('Cell', [CELL]),
-    {17} wbFormIDCkNoReach('Class', [CLAS]),
-    {18} wbFormIDCkNoReach('Faction', [FACT]),
-    {19} wbFormIDCkNoReach('Furniture', [FURN]),
-    {20} wbFormIDCkNoReach('Global', [GLOB]),
-    {21} wbFormIDCkNoReach('Inventory Object', [ALCH, AMMO, APPA, ARMO, BOOK, CLOT, INGR, KEYM, LIGH, LVLI, MISC, SGST, SLGM, WEAP]),
-    {22} wbFormIDCkNoReach('Magic Effect', [MGEF]),
-    {23} wbFormIDCkNoReach('Magic Item', [ALCH, ENCH, INGR, SPEL]),
-    {24} wbFormIDCkNoReach('Owner', [FACT, NPC_]),
-    {25} wbFormIDCkNoReach('Package', [PACK]),
-    {26} wbFormIDCkNoReach('Quest', [QUST]),
-    {27} wbFormIDCkNoReach('Race', [RACE]),
-    {28} wbFormIDCkNoReach('Reference', [ACHR, ACRE, PLYR, REFR, TRGT]),
-    {29} wbFormIDCkNoReach('Spell', [SPEL]),
-    {30} wbFormIDCkNoReach('Weather', [WTHR]),
-    {31} wbFormIDCkNoReach('Worldspace', [WRLD])
+  //FormIDs
+  {12} wbFormIDCkNoReach('Actor', [ACHR, ACRE, PLYR, TRGT]),
+  {13} wbFormIDCkNoReach('Actor Base', [CREA, NPC_]),
+  {14} wbFormIDCkNoReach('Base Object', [ACTI, ALCH, AMMO, APPA, ARMO, BOOK, CLOT, CONT, CREA, DOOR, FLOR, FURN, GRAS, INGR, KEYM, LIGH, LVLC, LVLI, LVSP, MISC, NPC_, SBSP, SGST, SLGM, SOUN, STAT, TREE, WEAP]),
+  {15} wbFormIDCkNoReach('Birthsign', [BSGN]),
+  {16} wbFormIDCkNoReach('Cell', [CELL]),
+  {17} wbFormIDCkNoReach('Class', [CLAS]),
+  {18} wbFormIDCkNoReach('Faction', [FACT]),
+  {19} wbFormIDCkNoReach('Furniture', [FURN]),
+  {20} wbFormIDCkNoReach('Global', [GLOB]),
+  {21} wbFormIDCkNoReach('Inventory Object', [ALCH, AMMO, APPA, ARMO, BOOK, CLOT, INGR, KEYM, LIGH, LVLI, MISC, SGST, SLGM, WEAP]),
+  {22} wbFormIDCkNoReach('Magic Effect', [MGEF]),
+  {23} wbFormIDCkNoReach('Magic Item', [ALCH, ENCH, INGR, SPEL]),
+  {24} wbFormIDCkNoReach('Owner', [FACT, NPC_]),
+  {25} wbFormIDCkNoReach('Package', [PACK]),
+  {26} wbFormIDCkNoReach('Quest', [QUST]),
+  {27} wbFormIDCkNoReach('Race', [RACE]),
+  {28} wbFormIDCkNoReach('Reference', [ACHR, ACRE, PLYR, REFR, TRGT]),
+  {29} wbFormIDCkNoReach('Spell', [SPEL]),
+  {30} wbFormIDCkNoReach('Weather', [WTHR]),
+  {31} wbFormIDCkNoReach('Worldspace', [WRLD])
   ];
 
   wbConditionMembers := [
-    {0} wbInteger('Type', itU8, wbConditionTypeToStr, wbConditionTypeToInt).SetAfterSet(wbConditionTypeAfterSet),
-    {1} wbUnused(3),
-    {2} wbUnion('Comparison Value', wbConditionCompValueDecider, [
-          wbFloat('Comparison Value - Float'),
-          wbFormIDCk('Comparison Value - Global', [GLOB])
-        ]),
-    {3} wbInteger('Function', itU16, wbConditionFunctionToStr, wbConditionFunctionToInt),
-    {4} wbUnused(2),
-    {5} wbUnion('Parameter #1', wbConditionParam1Decider, wbConditionParameters),
-    {6} wbUnion('Parameter #2', wbConditionParam2Decider, wbConditionParameters),
-    {7} wbUnused(0)
+  {0} wbInteger('Type', itU8, wbConditionTypeToStr, wbConditionTypeToInt).SetAfterSet(wbConditionTypeAfterSet),
+  {1} wbUnused(3),
+  {2} wbUnion('Comparison Value', wbConditionCompValueDecider, [
+      {0} wbFloat('Comparison Value - Float'),
+      {1} wbFormIDCk('Comparison Value - Global', [GLOB])
+      ]),
+  {3} wbInteger('Function', itU16, wbConditionFunctionToStr, wbConditionFunctionToInt),
+  {4} wbUnused(2),
+  {5} wbUnion('Parameter #1', wbConditionParam1Decider, wbConditionParameters),
+  {6} wbUnion('Parameter #2', wbConditionParam2Decider, wbConditionParameters),
+  {7} wbUnused(0)
   ];
 
   wbSoundDataMembers := [
@@ -1478,12 +1478,12 @@ begin
   wbConditions :=
     wbRArray('Conditions',
       wbRUnion('Condition', [
-        wbStructSK(CTDA, [3, 5, 6], 'Condition', wbConditionMembers, cpNormal, False, nil, 7)
-          .SetToStr(wbConditionToStr)
-          .IncludeFlag(dfCollapsed, wbCollapseConditions),
-        wbStructSK(CTDT, [3, 5, 6], 'Condition', wbConditionMembers, cpNormal, False, nil, 7)
-          .SetToStr(wbConditionToStr)
-          .IncludeFlag(dfCollapsed, wbCollapseConditions)
+      {0} wbStruct(CTDA, 'Condition', wbConditionMembers, cpNormal, False, nil, 7)
+            .SetToStr(wbConditionToStr)
+            .IncludeFlag(dfCollapsed, wbCollapseConditions),
+      {1} wbStruct(CTDT, 'Condition', wbConditionMembers, cpNormal, False, nil, 7)
+            .SetToStr(wbConditionToStr)
+            .IncludeFlag(dfCollapsed, wbCollapseConditions)
       ]));
 
   wbFaceGen :=

@@ -3153,26 +3153,26 @@ begin
 
   wbConditions :=
     wbRArray('Conditions',
-      wbStructSK(CTDA, [3, 5, 6], 'Condition', [
+      wbStruct(CTDA, 'Condition', [
       {0} wbInteger('Type', itU8, wbConditionTypeToStr, wbConditionTypeToInt).SetAfterSet(wbConditionTypeAfterSet),
       {1} wbUnused(3),
       {2} wbUnion('Comparison Value', wbConditionCompValueDecider, [
-            wbFloat('Comparison Value - Float'),
-            wbFormIDCk('Comparison Value - Global', [GLOB])
+          {0} wbFloat('Comparison Value - Float'),
+          {1} wbFormIDCk('Comparison Value - Global', [GLOB])
           ]),
-      {3} wbInteger('Function', itU16, wbConditionFunctionToStr, wbConditionFunctionToInt),   // Limited to itu16
+      {3} wbInteger('Function', itU16, wbConditionFunctionToStr, wbConditionFunctionToInt),
       {4} wbUnused(2),
       {5} wbUnion('Parameter #1', wbConditionParam1Decider, wbConditionParameters),
       {6} wbUnion('Parameter #2', wbConditionParam2Decider, wbConditionParameters),
       {7} wbInteger('Run On', itU32,
             wbEnum([
-              {0} 'Subject',
-              {1} 'Target',
-              {2} 'Reference',
-              {3} 'Combat Target',
-              {4} 'Linked Reference'
+            {0} 'Subject',
+            {1} 'Target',
+            {2} 'Reference',
+            {3} 'Combat Target',
+            {4} 'Linked Reference'
             ])).SetAfterSet(wbCTDARunOnAfterSet),
-      {8}wbUnion('Reference', wbCTDAReferenceDecider, [
+      {8} wbUnion('Reference', wbCTDAReferenceDecider, [
             wbInteger('Unused', itU32, nil, cpIgnore),
             wbFormIDCkNoReach('Reference', [ACHR, ACRE, PBEA, PGRE, PLYR, PMIS, REFR], True)
           ])

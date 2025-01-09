@@ -6036,42 +6036,44 @@ begin
 
   wbConditions :=
     wbRArray('Conditions',
-      wbRStructSK([0], 'Condition', [
-        wbStructSK(CTDA, [3, 5, 6], '', [
-       {0}wbInteger('Type', itU8, wbConditionTypeToStr, wbConditionTypeToInt).SetAfterSet(wbConditionTypeAfterSet),
-       {1}wbUnused(3),
-       {2}wbUnion('Comparison Value', wbConditionCompValueDecider, [
-            wbFloat('Comparison Value - Float'),
-            wbFormIDCk('Comparison Value - Global', [GLOB])
+      wbRStruct('Condition', [
+      {0} wbStruct(CTDA, '', [
+          {0} wbInteger('Type', itU8, wbConditionTypeToStr, wbConditionTypeToInt).SetAfterSet(wbConditionTypeAfterSet),
+          {1} wbUnused(3),
+          {2} wbUnion('Comparison Value', wbConditionCompValueDecider, [
+              {0} wbFloat('Comparison Value - Float'),
+              {1} wbFormIDCk('Comparison Value - Global', [GLOB])
+              ]),
+          {3} wbInteger('Function', itU16, wbConditionFunctionToStr, wbConditionFunctionToInt),
+          {4} wbUnused(2),
+          {5} wbUnion('Parameter #1', wbConditionParam1Decider, wbConditionParameters),
+          {6} wbUnion('Parameter #2', wbConditionParam2Decider, wbConditionParameters),
+          {7} wbInteger('Run On', itU32,
+                wbEnum([
+                {0}  'Subject',
+                {1}  'Target',
+                {2}  'Reference',
+                {3}  'Combat Target',
+                {4}  'Linked Reference',
+                {5}  'Quest Alias',
+                {6}  'Package Data',
+                {7}  'Event Data',
+                {8}  'Command Target',
+                {9} 'Event Camera Ref',
+                {10} 'My Killer'
+                ])).SetAfterSet(wbCTDARunOnAfterSet),
+          {8} wbUnion('Reference', wbCTDAReferenceDecider, [
+              {0} wbInteger('Unused', itU32, nil, cpIgnore),
+              {1} wbFormIDCkNoReach('Reference', sigReferences)
+              ]),
+          {9} wbInteger('Parameter #3', itS32).SetDefaultNativeValue(-1)
           ]),
-       {3}wbInteger('Function', itU16, wbConditionFunctionToStr, wbConditionFunctionToInt),
-       {4}wbUnused(2),
-       {5}wbUnion('Parameter #1', wbConditionParam1Decider, wbConditionParameters),
-          wbUnion('Parameter #2', wbConditionParam2Decider, wbConditionParameters),
-          wbInteger('Run On', itU32, wbEnum([
-            {0}  'Subject',
-            {1}  'Target',
-            {2}  'Reference',
-            {3}  'Combat Target',
-            {4}  'Linked Reference',
-            {5}  'Quest Alias',
-            {6}  'Package Data',
-            {7}  'Event Data',
-            {9}  'Command Target',
-            {10} 'Event Camera Ref',
-            {11} 'My Killer'
-          ])).SetAfterSet(wbCTDARunOnAfterSet),
-          wbUnion('Reference', wbCTDAReferenceDecider, [
-            wbInteger('Unused', itU32, nil, cpIgnore),
-            wbFormIDCkNoReach('Reference', sigReferences)
-          ]),
-          wbInteger('Parameter #3', itS32).SetDefaultNativeValue(-1)
-        ]),
-        wbString(CIS1, 'Parameter #1'),
-        wbString(CIS2, 'Parameter #2')
+      {1} wbString(CIS1, 'Parameter #1'),
+      {2} wbString(CIS2, 'Parameter #2')
       ]).SetToStr(wbConditionToStr)
         .IncludeFlag(dfCollapsed, wbCollapseConditions)
-    ).SetCountPath(CITC);
+    ).SetCountPath(CITC)
+     .IncludeFlag(dfNotAlignable);
 
   wbICON := wbString(ICON, 'Inventory Image');
   wbMICO := wbString(MICO, 'Message Icon');

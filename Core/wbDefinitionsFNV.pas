@@ -3947,44 +3947,44 @@ begin
 
   wbConditions :=
     wbRArray('Conditions',
-      wbStructSK(CTDA, [3, 5, 6], 'Condition', [
-        {0}wbInteger('Type', itU8, wbConditionTypeToStr, wbConditionTypeToInt).SetAfterSet(wbConditionTypeAfterSet),
-        {1}wbUnused(3),
-        {2}wbUnion('Comparison Value', wbConditionCompValueDecider, [
-             wbFloat('Comparison Value - Float'),
-              wbFormIDCk('Comparison Value - Global', [GLOB])
-           ]),
-        {3}wbInteger('Function', itU16, wbConditionFunctionToStr, wbConditionFunctionToInt),
-        {4}wbUnused(2),
-        {5}wbUnion('Parameter #1', wbConditionParam1Decider, wbConditionParameters),
-        {6}wbUnion('Parameter #2', wbConditionParam2Decider, wbConditionParameters),
-        {7}wbUnion('Run On', wbConditionRunOnDecider, [
-             wbInteger('Run On', itU32,
-               wbEnum([
-                 {0} 'Subject',
-                 {1} 'Target',
-                 {2} 'Reference',
-                 {3} 'Combat Target',
-                 {4} 'Linked Reference'
-               ])).SetAfterSet(wbCTDARunOnAfterSet),
-             wbInteger('Run On', itU32,
-               wbEnum([], [
-                 0, 'Idle',
-                 1, 'Movement',
-                 2, 'Left Arm',
-                 3, 'Left Hand',
-                 4, 'Weapon',
-                 5, 'Weapon Up',
-                 6, 'Weapon Down',
-                 7, 'Special Idle',
-                 20, 'Whole Body',
-                 21, 'Upper Body'
-               ]))
-             ]),
-        {8}wbUnion('Reference', wbCTDAReferenceDecider, [
-             wbInteger('Unused', itU32, nil, cpIgnore),
-             wbFormIDCkNoReach('Reference', [PLYR, ACHR, ACRE, REFR, PMIS, PBEA, PGRE, NULL], True)    // Can end up NULL if the original function requiring a reference is replaced by another who has no Run on prerequisite
-           ])
+      wbStruct(CTDA, 'Condition', [
+      {0} wbInteger('Type', itU8, wbConditionTypeToStr, wbConditionTypeToInt).SetAfterSet(wbConditionTypeAfterSet),
+      {1} wbUnused(3),
+      {2} wbUnion('Comparison Value', wbConditionCompValueDecider, [
+          {0} wbFloat('Comparison Value - Float'),
+          {1} wbFormIDCk('Comparison Value - Global', [GLOB])
+          ]),
+      {3} wbInteger('Function', itU16, wbConditionFunctionToStr, wbConditionFunctionToInt),
+      {4} wbUnused(2),
+      {5} wbUnion('Parameter #1', wbConditionParam1Decider, wbConditionParameters),
+      {6} wbUnion('Parameter #2', wbConditionParam2Decider, wbConditionParameters),
+      {7} wbUnion('Run On', wbConditionRunOnDecider, [
+          {0} wbInteger('Run On', itU32,
+                wbEnum([
+                {0} 'Subject',
+                {1} 'Target',
+                {2} 'Reference',
+                {3} 'Combat Target',
+                {4} 'Linked Reference'
+                ])).SetAfterSet(wbCTDARunOnAfterSet),
+          {1} wbInteger('Run On', itU32,
+                wbEnum([], [
+                0, 'Idle',
+                1, 'Movement',
+                2, 'Left Arm',
+                3, 'Left Hand',
+                4, 'Weapon',
+                5, 'Weapon Up',
+                6, 'Weapon Down',
+                7, 'Special Idle',
+                20, 'Whole Body',
+                21, 'Upper Body'
+                ]))
+          ]),
+      {8} wbUnion('Reference', wbCTDAReferenceDecider, [
+          {0} wbInteger('Unused', itU32, nil, cpIgnore),
+          {1} wbFormIDCkNoReach('Reference', [PLYR, ACHR, ACRE, REFR, PMIS, PBEA, PGRE, NULL], True)    // Can end up NULL if the original function requiring a reference is replaced by another who has no Run on prerequisite
+          ])
       ], cpNormal, False, nil, 7)
         .SetAfterLoad(wbConditionAfterLoad)
         .SetToStr(wbConditionToStr)
