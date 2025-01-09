@@ -1098,16 +1098,16 @@ begin
 end;
 
 function wbConditionQuestOverlay(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): Int64;
-
-  procedure ResolveOverlay;
-  var
-    MainRecord : IwbMainRecord;
-    GroupRecord: IwbGroupRecord;
-    Element    : IwbElement;
-  begin
+var
+  GroupRecord: IwbGroupRecord;
+  Element    : IwbElement;
+begin
+  Result := aInt;
+  if (aInt = 0) and (aType in [ctCheck, ctLinksTo, ctToSortKey, ctToStr, ctToSummary]) then begin
     if not Assigned(aElement) then
       Exit;
-    MainRecord := aElement.ContainingMainRecord;
+
+    var MainRecord := aElement.ContainingMainRecord;
     if not Assigned(MainRecord) then
       Exit;
 
@@ -1132,11 +1132,6 @@ function wbConditionQuestOverlay(aInt: Int64; const aElement: IwbElement; aType:
           end;
     end;
   end;
-
-begin
-  Result := aInt;
-  if (aInt = 0) and (aType in [ctCheck, ctToStr, ctToSummary, ctToSortKey, ctLinksTo]) then
-    ResolveOverlay;
 end;
 
 function wbGenericModel(aRequired: Boolean = False; aDontShow: TwbDontShowCallback = nil): IwbRecordMemberDef;
