@@ -927,7 +927,7 @@ begin
   end;
 end;
 
-function wbConditionStringToString(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
+function wbConditionStringToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
 begin
   case aType of
     ctToStr, ctToSummary, ctToSortKey, ctToEditValue, ctToNativeValue: begin
@@ -4404,7 +4404,7 @@ begin
     {5} wbInteger('Event', itU32, wbConditionEventToStr, wbConditionEventToInt),
     {6} wbInteger('Packdata ID', itU32),
     {7} wbInteger('Quest Stage', itS32, wbConditionQuestStageToStr, wbCTDAParam2QuestStageToInt),
-    {8} wbInteger('Variable Name', itU32, wbConditionStringToString, wbConditionStringToInt),
+    {8} wbInteger('Variable Name', itU32, wbConditionStringToStr, wbConditionStringToInt),
     {9} wbUnion('VATS Value Param', wbConditionVATSValueParamDecider, wbConditionVATSValueParameters),
 
     //Enums
