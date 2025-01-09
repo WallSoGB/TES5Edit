@@ -4401,7 +4401,7 @@ begin
     {4} wbInteger('Alias', itS32, wbConditionAliasToStr, wbStrToAlias),
     {5} wbInteger('Event', itU32, wbConditionEventToStr, wbConditionEventToInt),
     {6} wbInteger('Packdata ID', itU32),
-    {7} wbInteger('Quest Stage', itS32, wbConditionQuestStageToStr, wbCTDAParam2QuestStageToInt),
+    {7} wbInteger('Quest Stage', itS32, wbConditionQuestStageToStr, wbQuestStageToInt),
     {8} wbInteger('Variable Name', itU32, wbConditionStringToStr, wbConditionStringToInt),
     {9} wbUnion('VATS Value Param', wbConditionVATSValueParamDecider, wbConditionVATSValueParameters),
 
@@ -6454,7 +6454,7 @@ begin
       wbUnion(DATA, 'Effect Data', wbPerkDATADecider, [
         wbStructSK([0, 1], 'Quest + Stage', [
           wbFormIDCk('Quest', [QUST]),
-          wbInteger('Quest Stage', itU8, wbPerkDATAQuestStageToStr, wbCTDAParam2QuestStageToInt),
+          wbInteger('Quest Stage', itU8, wbPerkDATAQuestStageToStr, wbQuestStageToInt),
           wbUnused(3)
         ]),
         wbFormIDCk('Ability', [SPEL]),

@@ -3027,7 +3027,7 @@ begin
     {0}  wbUnknown(4),
     {1}  wbByteArray('None', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
     {2}  wbInteger('Integer', itS32),
-    {3}  wbInteger('Quest Stage', itS32, wbConditionQuestStageToStr, wbCTDAParam2QuestStageToInt),
+    {3}  wbInteger('Quest Stage', itS32, wbConditionQuestStageToStr, wbQuestStageToInt),
     {4}  wbInteger('Variable Name', itS32, wbConditionVariableNameToStr, wbConditionVariableNameToInt),
     {5}  wbUnion('VATS Value Param', wbConditionVATSValueParam, wbConditionVATSValueParameters),
 
@@ -5362,7 +5362,7 @@ begin
         wbUnion(DATA, 'Effect Data', wbPerkDATADecider, [
           wbStructSK([0, 1], 'Quest + Stage', [
             wbFormIDCk('Quest', [QUST]),
-            wbInteger('Quest Stage', itU8, wbPerkDATAQuestStageToStr, wbCTDAParam2QuestStageToInt),
+            wbInteger('Quest Stage', itU8, wbPerkDATAQuestStageToStr, wbQuestStageToInt),
             wbUnused(3)
           ]),
           wbFormIDCk('Ability', [SPEL]),

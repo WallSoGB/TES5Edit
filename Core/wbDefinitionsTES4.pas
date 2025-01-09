@@ -1381,7 +1381,7 @@ begin
     {0} wbUnknown(4),
     {1} wbByteArray('None', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
     {2} wbInteger('Integer', itS32),
-    {3} wbInteger('Quest Stage', itS32, wbConditionQuestStageToStr, wbCTDAParam2QuestStageToInt),
+    {3} wbInteger('Quest Stage', itS32, wbConditionQuestStageToStr, wbQuestStageToInt),
     {4} wbInteger('Variable Name', itS32, wbConditionVariableNameToStr, wbConditionVariableNameToInt),
 
     //Enums

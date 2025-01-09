@@ -258,11 +258,10 @@ function wbTryGetContainingMainRecord(const aElement: IwbElement; out aMainRecor
 function wbTryGetMainRecord(const aElement: IwbElement; out aMainRecord: IwbMainRecord; aSignature: string = ''): Boolean;
 function wbTrySetContainer(const aElement: IwbElement; aType: TwbCallbackType; out aContainer: IwbContainerElementRef): Boolean;
 
-{>>> To Integer Callbacks <<<} //16
+{>>> To Integer Callbacks <<<} //15
 function Sig2Int(aSignature: TwbSignature): Cardinal; inline;
 function wbConditionTypeToInt(const aString: string; const aElement: IwbElement): Int64;
-function wbCTDAParam2QuestObjectiveToInt(const aString: string; const aElement: IwbElement): Int64;
-function wbCTDAParam2QuestStageToInt(const aString: string; const aElement: IwbElement): Int64;
+function wbQuestStageToInt(const aString: string; const aElement: IwbElement): Int64;
 function wbEdgeToInt(aEdge: Integer; const aString: string; const aElement: IwbElement): Int64;
 function wbEdgeToInt0(const aString: string; const aElement: IwbElement): Int64;
 function wbEdgeToInt1(const aString: string; const aElement: IwbElement): Int64;
@@ -1923,27 +1922,10 @@ begin
     Result := Result or 16;
 end;
 
-function wbCTDAParam2QuestObjectiveToInt(const aString: string; const aElement: IwbElement): Int64;
-var
-  i : Integer;
-  s : string;
+function wbQuestStageToInt(const aString: string; const aElement: IwbElement): Int64;
 begin
-  i := 1;
-  s := Trim(aString);
-  while (i <= Length(s)) and (s[i] in ['0'..'9']) do
-    Inc(i);
-  s := Copy(s, 1, Pred(i));
-
-  Result := StrToInt(s);
-end;
-
-function wbCTDAParam2QuestStageToInt(const aString: string; const aElement: IwbElement): Int64;
-var
-  i : Integer;
-  s : string;
-begin
-  i := 1;
-  s := Trim(aString);
+  var i := 1;
+  var s := Trim(aString);
   while (i <= Length(s)) and (s[i] in ['0'..'9']) do
     Inc(i);
   s := Copy(s, 1, Pred(i));
