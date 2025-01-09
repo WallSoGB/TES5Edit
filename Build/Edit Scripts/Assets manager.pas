@@ -799,7 +799,7 @@ begin
   if SameText(Name(e),'ScriptName') then begin
     s := StringReplace(GetEditValue(e), ':', '\', [rfReplaceAll]);
 	if wbGameMode = gmSSE then
-	  Source := 'source\scripts'
+	  Source := 'source\scripts\'
 	else
 	  Source := 'scripts\source';
     ProcessAssetEx(e, 'scripts\' + s + '.pex', 'Papyrus script attached to ' + Name(CurrentRecord), atPapyrusScript);
