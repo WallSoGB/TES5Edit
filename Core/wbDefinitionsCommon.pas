@@ -1365,7 +1365,7 @@ end;
 
 procedure wbLandNormalsGetCP(const aElement: IwbElement; var aConflictPriority: TwbConflictPriority);
 begin
-  aConflictPriority := cpIgnore;
+  aConflictPriority := cpBenign;
   if not Assigned(aElement) then
     Exit;
 
@@ -6027,13 +6027,13 @@ begin
   //TES4,FO3,FNV,TES5,FO4,FO76,SF1
   wbLandNormals :=
     IfThen(wbSimpleRecords,
-      wbByteArray(VNML, 'Vertex Normals', 3267, cpIgnore, False, False, nil, wbLandNormalsGetCP),
+      wbByteArray(VNML, 'Vertex Normals', 3267, cpBenign, False, False, nil, wbLandNormalsGetCP),
       wbArray(VNML, 'Vertex Normals',
         wbArray('Row',
           wbStruct('Column', [
-            wbInteger('X', itU8, nil, cpIgnore, False, nil, nil, 0, wbLandNormalsGetCP),
-            wbInteger('Y', itU8, nil, cpIgnore, False, nil, nil, 0, wbLandNormalsGetCP),
-            wbInteger('Z', itU8, nil, cpIgnore, False, nil, nil, 0, wbLandNormalsGetCP)
+            wbInteger('X', itU8, nil, cpBenign, False, nil, nil, 0, wbLandNormalsGetCP),
+            wbInteger('Y', itU8, nil, cpBenign, False, nil, nil, 0, wbLandNormalsGetCP),
+            wbInteger('Z', itU8, nil, cpBenign, False, nil, nil, 0, wbLandNormalsGetCP)
           ]).SetSummaryKey([0, 1, 2])
             .SetSummaryMemberPrefixSuffix(0, '' + '(', '')
             .SetSummaryMemberPrefixSuffix(2, '', ')')
