@@ -12656,9 +12656,9 @@ begin
       wbFloat('Material UV Scale'),
       wbVec3('Projection Vector'),
       wbFloat('Normal Dampener'),
-      wbFloatColors('Single Pass Color'),
-      wbInteger('Flags', itU32, wbFlags(['Single Pass']))
-    ], cpNormal, True, nil, 5)
+      wbFromVersion(25, wbFloatColors('Single Pass Color')),
+      wbFromVersion(31, wbInteger('Single Pass', itU32, wbBoolEnum))
+    ]).SetRequired
   ]);
 
   wbRecord(MOVT, 'Movement Type', [

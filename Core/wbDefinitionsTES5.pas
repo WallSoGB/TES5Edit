@@ -7942,7 +7942,7 @@ begin
       wbFromVersion(25, wbFloatColors('Single Pass Color')),
       wbFromVersion(25, wbInteger('Single Pass', itU32, wbBoolEnum)),
       IsSSE(
-        wbFromVersion(44, wbInteger('Is Snow', itU32, wbBoolEnum)),
+        wbFromVersion(43, wbInteger('Is Snow', itU32, wbBoolEnum)),
         nil
       )
     ]).SetRequired

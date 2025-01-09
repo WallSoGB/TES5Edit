@@ -12394,26 +12394,6 @@ end;
     wbFormIDCK(ENAM, 'Effect Shader', [EFSH])
   ]);
 
-  (* still exists in game code, but not in Starfield.esm * )
-  wbRecord(MATO, 'Material Object', [
-    wbEDID,
-    wbGenericModel(True),
-    wbRArray('Property Data',
-      wbByteArray(DNAM, 'Data', 0, cpIgnore, False, False, wbNeverShow)
-    ),
-    wbStruct(DATA, 'Directional Material Data', [
-      wbFloat('Falloff Scale'),
-      wbFloat('Falloff Bias'),
-      wbFloat('Noise UV Scale'),
-      wbFloat('Material UV Scale'),
-      wbVec3('Projection Vector'),
-      wbFloat('Normal Dampener'),
-      wbFloatColors('Single Pass Color'),
-      wbInteger('Flags', itU32, wbFlags(['Single Pass']))
-    ], cpNormal, True, nil, 5)
-  ]);
-  *)
-
   {subrecords checked against Starfield.esm}
   wbRecord(MOVT, 'Movement Type', [
     wbEDID,
