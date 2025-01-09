@@ -885,8 +885,7 @@ begin
 
       if aElement = Container.Elements[5] then begin
         case aType of
-          ctToSummary: Result := Container.ElementEditValues['..\CIS1'];
-          ctToEditValue, ctToNativeValue: Result := Container.ElementEditValues['..\CIS1'];
+          ctToEditValue, ctToNativeValue, ctToSummary: Result := Container.ElementEditValues['..\CIS1'];
         else
           Result := Container.ElementValues['..\CIS1'];
         end;
@@ -894,8 +893,7 @@ begin
 
       if aElement = Container.Elements[6] then begin
         case aType of
-          ctToSummary: Result := Container.ElementEditValues['..\CIS2'];
-          ctToEditValue, ctToNativeValue: Result := Container.ElementEditValues['..\CIS2'];
+          ctToEditValue, ctToNativeValue, ctToSummary: Result := Container.ElementEditValues['..\CIS2'];
         else
           Result := Container.ElementValues['..\CIS2'];
         end;
