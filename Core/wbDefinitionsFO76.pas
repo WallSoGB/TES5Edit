@@ -2306,7 +2306,6 @@ type
     { 4} ptActor,              // ACHR
     { 5} ptActorBase,          // NPC_
     { 6} ptActorValue,         // AVIF?
-    { 7} ptAdvanceAction,      // ?? Enum
     { 8} ptAlias,              // index into QUST quest aliases
     { 9} ptAlignment,          // ?? Enum
     {10} ptAssociationType,    // ASTP
@@ -2347,10 +2346,6 @@ type
     {45} ptRegion,             // REGN
     {46} ptScene,              // SCEN
     {47} ptSex,                // Enum: Male, Female
-    {48} ptShout,              // SHOU
-    {49} ptVariableName,       // Integer
-    {50} ptVATSValueFunction,  //
-    {51} ptVATSValueParam,     //
     {52} ptVoiceType,          // VTYP
     {53} ptWardState,          // enum
     {54} ptWeather,            // WTHR
@@ -2363,10 +2358,8 @@ type
     {61} ptCurrency,           // CNCY
     {62} ptConstructibleObject,// COBJ
     {63} ptRegionOpt,          // REGN optional
-    {64} ptActorValueEnum,     // Enum: wbActorValue
     {65} ptChallenge,          // CHAL
     {66} ptAttackData,         // Unsure. Defaulting to int
-    {67} ptLegendaryItem,      // Unsure. Possibly formid?
     {68} ptDailyContentGroup,  // DailyContentGroup or Quest formid
     {69} ptSpell,
     {70} ptFactionOpt          // FACT
@@ -7620,8 +7613,6 @@ begin
         wbFormIDCkNoReach('Actor Base', [NPC_]),
         { 6 ptActorValue}
         wbActorValue,
-        { 7 ptAdvanceAction}
-        wbInteger('Player Action', itU32, wbAdvanceActionEnum),
         { 8 ptAlias}
         wbInteger('Alias', itS32, wbConditionAliasToStr, wbStrToAlias),
         { 9 ptAlignment}
@@ -7702,14 +7693,6 @@ begin
         wbFormIDCk('Scene', [NULL, SCEN]),
         {47 ptSex}
         wbInteger('Sex', itU32, wbSexEnum),
-        {48 ptShout}
-        wbFormIDCkNoReach('Shout', [SHOU]),
-        {49 ptVariableName}
-        wbByteArray('Variable Name (unused)', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
-        {50 ptVATSValueFunction}
-        wbInteger('VATS Value Function', itU32, wbVATSValueFunctionEnum),
-        {51 ptVATSValueParam}
-        wbInteger('VATS Value Param (unused)', itU32).IncludeFlag(dfZeroSortKey),
         {52 ptVoiceType}
         wbFormIDCkNoReach('Voice Type', [VTYP, FLST]),
         {53 ptWardState}
@@ -7734,14 +7717,10 @@ begin
         wbFormIDCkNoReach('Constructible Object', [COBJ, NULL]),
         {63 ptRegionOpt }
         wbFormIDCkNoReach('Region', [REGN, NULL]),
-        {64 ptActorValueEnum }
-        wbInteger('Actor Value', itS32, wbActorValueEnum),
         {65 ptChallenge }
         wbFormIDCkNoReach('Challenge', [CHAL, NULL]),
         {66 ptAttackData }
         wbInteger('Attack Data', itU32),
-        {67 ptLegendaryItem }
-        wbFormIDCkNoReach('Legendary Item', [LGDI]),
         {68 ptDailyContentGroup }
         wbFormIDCkNoReach('Daily Content Group', [DCGF, QUST]),
         {69 ptSpell }
@@ -7767,8 +7746,6 @@ begin
         wbFormIDCkNoReach('Actor Base', [NPC_]),
         { 6 ptActorValue}
         wbActorValue,
-        { 7 ptAdvanceAction}
-        wbInteger('Player Action', itU32, wbAdvanceActionEnum),
         { 8 ptAlias}
         wbInteger('Alias', itS32, wbConditionAliasToStr, wbStrToAlias),
         { 9 ptAlignment}
@@ -7849,57 +7826,6 @@ begin
         wbFormIDCk('Scene', [NULL, SCEN]),
         {47 ptSex}
         wbInteger('Sex', itU32, wbSexEnum),
-        {48 ptShout}
-        wbFormIDCkNoReach('Shout', [SHOU]),
-        {49 ptVariableName}
-        wbByteArray('Variable Name (unused)', 4, cpIgnore),
-        {50 ptVATSValueFunction}
-        wbInteger('VATS Value Function', itU32, wbVATSValueFunctionEnum),
-        {51 ptVATSValueParam}
-        wbUnion('VATS Value Param', wbCTDAParam2VATSValueParamDecider, [
-         { 0} wbFormIDCkNoReach('Weapon', [WEAP]),
-         { 1} wbFormIDCkNoReach('Weapon List', [FLST], [WEAP]),
-         { 2} wbFormIDCkNoReach('Target', [NPC_]),
-         { 3} wbFormIDCkNoReach('Target List', [FLST], [NPC_]),
-         { 4} wbInteger('Target Distance', itU32),
-         { 5} wbInteger('Target Part', itS32, wbActorValueEnum),
-         { 6} wbInteger('VATS Action', itU32, wbEnum([
-                'Unarmed Attack',
-                'One Hand Melee Attack',
-                'Two Hand Melee Attack',
-                'Magic Attack',
-                'Ranged Attack',
-                'Reload',
-                'Crouch',
-                'Stand',
-                'Switch Weapon',
-                'Toggle Weapon Drawn',
-                'Heal',
-                'Player Death'
-          ])),
-         { 7} wbByteArray('Is Success', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
-         { 8} wbByteArray('Is Critical', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
-         { 9} wbFormIDCkNoReach('Critical Effect', [SPEL]),
-         {10} wbFormIDCkNoReach('Critical Effect List', [FLST], [SPEL]),
-         {11} wbByteArray('Is Fatal', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
-         {12} wbByteArray('Explode Part', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
-         {13} wbByteArray('Dismember Part', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
-         {14} wbByteArray('Cripple Part', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
-         {15} wbInteger('Weapon Type', itU32, wbWeaponAnimTypeEnum),
-         {16} wbByteArray('Is Stranger', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
-         {17} wbByteArray('Is Paralyzing Palm', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
-         {18} wbInteger('Projectile Type', itU32, wbEnum([
-                'Missile',
-                'Lobber',
-                'Beam',
-                'Flame',
-                'Cone',
-                'Barrier',
-                'Arrow'
-              ])),
-         {19} wbInteger('Delivery Type', itU32, wbTargetEnum),
-         {20} wbInteger('Casting Type', itU32, wbCastEnum)
-        ]),
         {52 ptVoiceType}
         wbFormIDCkNoReach('Voice Type', [VTYP, FLST]),
         {53 ptWardState}
@@ -7924,14 +7850,10 @@ begin
         wbFormIDCkNoReach('Constructible Object', [COBJ]),
         {63 ptRegionOpt}
         wbFormIDCkNoReach('Region', [REGN, NULL]),
-        {64 ptActorValueEnum}
-        wbInteger('Actor Value', itS32, wbActorValueEnum),
         {65 ptChallenge }
         wbFormIDCkNoReach('Challenge', [CHAL, NULL]),
         {66 ptAttackData }
         wbInteger('Attack Data', itU32),
-        {67 ptLegendaryItem }
-        wbFormIDCkNoReach('Legendary Item', [LGDI]),
         {68 ptDailyContentGroup }
         wbFormIDCkNoReach('Daily Content Group', [DCGF, QUST]),
         {69 ptSpell }
