@@ -989,6 +989,527 @@ const
     (Index: 12000; Name: 'IsFOWPersonalEWSEnabled'; Desc: 'Is the personal EWS enabled?')
   );
 
+function wbConditionDescFromIndex(aIndex: Integer): PConditionFunction;
+begin
+  Result := nil;
+
+  var L := Low(wbConditionFunctions);
+  var H := High(wbConditionFunctions);
+  while L <= H do begin
+    var I := (L + H) shr 1;
+    var C := CmpW32(wbConditionFunctions[I].Index, aIndex);
+    if C < 0 then
+      L := I + 1
+    else begin
+      H := I - 1;
+      if C = 0 then begin
+        L := I;
+        Result := @wbConditionFunctions[L];
+      end;
+    end;
+  end;
+end;
+
+function wbConditionFunctionToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
+begin
+  Result := '';
+  var Desc := wbConditionDescFromIndex(aInt);
+  case aType of
+    ctEditType: Result := 'ComboBox';
+    ctToSortKey: Result := IntToHex(aInt, 8);
+    ctCheck: if not Assigned(Desc) then Result := '<Unknown: '+aInt.ToString+'>';
+    ctEditInfo: begin
+      with TStringList.Create do try
+        for var i := Low(wbConditionFunctions) to High(wbConditionFunctions) do
+          Add(wbConditionFunctions[i].Name);
+        Sort;
+        Result := CommaText;
+      finally
+        Free;
+      end;
+    end;
+  end;
+
+  if Assigned(Desc) then begin
+    case aType of
+      ctToEditValue, ctToStr, ctToSummary: Result := Desc.Name;
+    end;
+  end else begin
+    case aType of
+      ctToEditValue, ctToSummary: Result := aInt.ToString;
+      ctToStr: Result := '<Unknown: '+aInt.ToString+'>';
+    end;
+  end;
+end;
+
+function wbConditionFunctionToInt(const aString: string; const aElement: IwbElement): Int64;
+begin
+  for var i := Low(wbConditionFunctions) to High(wbConditionFunctions) do
+    with wbConditionFunctions[i] do
+      if SameText(Name, aString) then
+        Exit(Index);
+
+  Result := StrToInt64(aString);
+end;
+
+function wbConditionParam1Decider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+var
+  Container: IwbContainer;
+begin
+  Result := 0;
+  if not wbTryGetContainerFromUnion(aElement, Container) then
+    Exit;
+
+  var Desc := wbConditionDescFromIndex(Container.ElementByName['Function'].NativeValue);
+  if not Assigned(Desc) then
+    Exit;
+
+  var ParamType := Desc.ParamType1;
+  var ParamFlag := Container.ElementByName['Type'].NativeValue;
+
+  if ParamType in [ptObjectReference, ptActor, ptPackage] then begin
+    if ParamFlag and $02 > 0 then begin
+      // except for this func when Run On = Quest Alias, then alias is param3 and package is param1
+      // [INFO:00020D3C]
+      if not ((Container.ElementByName['Run On'].NativeValue = 5) and (Desc.Name = 'GetIsCurrentPackage')) then
+        ParamType := ptAlias    {>>> 'use aliases' is set <<<}
+    end
+    else if ParamFlag and $08 > 0 then
+      ParamType := ptPackdata;  {>>> 'use packdata' is set <<<}
+  end;
+
+  Result := Succ(Integer(ParamType));
+end;
+
+function wbConditionParam2Decider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+var
+  Container: IwbContainer;
+begin
+  Result := 0;
+  if not wbTryGetContainerFromUnion(aElement, Container) then
+    Exit;
+
+  var Desc := wbConditionDescFromIndex(Container.ElementByName['Function'].NativeValue);
+  if not Assigned(Desc) then
+    Exit;
+
+  var ParamType := Desc.ParamType2;
+  var ParamFlag := Container.ElementByName['Type'].NativeValue;
+
+  if ParamType in [ptObjectReference, ptActor, ptPackage] then begin
+    if ParamFlag and $02 > 0 then ParamType := ptAlias else {>>> 'use aliases' is set <<<}
+    if ParamFlag and $08 > 0 then ParamType := ptPackdata;  {>>> 'use packdata' is set <<<}
+  end;
+
+  Result := Succ(Integer(ParamType));
+end;
+
+function wbConditionStringToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
+begin
+  Result := '';
+  case aType of
+    ctToEditValue, ctToNativeValue, ctToSortKey, ctToStr, ctToSummary: begin
+      if not Assigned(aElement) then
+        Exit;
+
+      var Container := GetContainerFromUnion(aElement) as IwbContainerElementRef;
+      if not Assigned(Container) then
+        Exit;
+
+      if aElement = Container.Elements[5] then begin
+        case aType of
+          ctToEditValue, ctToNativeValue, ctToSummary: Result := Container.ElementEditValues['..\CIS1'];
+        else
+          Result := Container.ElementValues['..\CIS1'];
+        end;
+      end;
+
+      if aElement = Container.Elements[6] then begin
+        case aType of
+          ctToEditValue, ctToNativeValue, ctToSummary: Result := Container.ElementEditValues['..\CIS2'];
+        else
+          Result := Container.ElementValues['..\CIS2'];
+        end;
+      end;
+    end;
+    ctCheck, ctEditInfo, ctEditType, ctLinksTo: Result := '';
+  else
+    Result := aInt.ToString;
+  end;
+end;
+
+function wbConditionStringToInt(const aString: string; const aElement: IwbElement): Int64;
+begin
+  Result := 0;
+
+  if not Assigned(aElement) then
+    Exit;
+
+  var Container := GetContainerFromUnion(aElement) as IwbContainerElementRef;
+  if not Assigned(Container) then
+    Exit;
+
+  if aElement = Container.Elements[5] then
+    Container.ElementEditValues['..\CIS1'] := aString;
+
+  if aElement = Container.Elements[6] then
+    Container.ElementEditValues['..\CIS2'] := aString;
+end;
+
+function wbConditionAliasToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
+var
+  Container  : IwbContainer;
+  MainRecord : IwbMainRecord;
+  GroupRecord : IwbGroupRecord;
+begin
+  Result := '';
+  case aType of
+    ctToSortKey: Result := IntToHex64(aInt, 8);
+    ctToStr, ctToSummary, ctToEditValue: Result := aInt.ToString;
+  end;
+
+  if wbResolveAlias then begin
+    if not wbTryGetContainerFromUnion(aElement, Container) then
+      Exit;
+
+    while Assigned(Container) and (Container.ElementType <> etMainRecord) do
+      Container := Container.Container;
+
+    if not Assigned(Container) then
+      Exit;
+
+    if not Supports(Container, IwbMainRecord, MainRecord) then
+      Exit;
+
+    if MainRecord.Signature = QUST then
+      Result := wbAliasToStr(aInt, Container, aType)
+    else if MainRecord.Signature = SCEN then
+      Result := wbAliasToStr(aInt, Container.ElementBySignature['PNAM'], aType)
+    else if (MainRecord.Signature = PACK) or (MainRecord.Signature = TERM) then
+      Result := wbAliasToStr(aInt, Container.ElementBySignature['QNAM'], aType)
+    else if MainRecord.Signature = INFO then begin
+      // get DIAL for INFO
+      if Supports(MainRecord.Container, IwbGroupRecord, GroupRecord) then
+        if Supports(GroupRecord.ChildrenOf, IwbMainRecord, MainRecord) then
+          Result := wbAliasToStr(aInt, MainRecord.ElementBySignature['QNAM'], aType);
+    end;
+  end;
+end;
+
+function wbConditionEventToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
+begin
+  Result := '';
+  var EventFunction := aInt and $FFFF;
+  var EventMember := aInt shr 16;
+  case aType of
+    ctEditType: Result := 'ComboBox';
+    ctToSortKey: Result := IntToHex(aInt, 8);
+    ctToStr, ctToSummary, ctToEditValue: begin
+      Result := wbEventFunctionEnum.ToEditValue(EventFunction, nil);
+      Result := Result + ':' + wbEventMemberEnum.ToEditValue(EventMember, nil);
+    end;
+    ctCheck: begin
+      var s1 := wbEventFunctionEnum.Check(EventFunction, nil);
+      if s1 <> '' then
+        s1 := 'EventFunction' + s1;
+      var s2 := wbEventMemberEnum.Check(EventMember, nil);
+      if s2 <> '' then
+        s2 := 'EventMember' + s2;
+      if (s1 <> '') or (s2 <> '') then
+        Result := s1 + ':' + s2;
+    end;
+    ctEditInfo: begin
+      var slMember := TStringList.Create;
+      slMember.AddStrings(wbEventMemberEnum.EditInfo[nil]);
+      with TStringList.Create do try
+        for var i := 0 to Pred(wbEventFunctionEnum.NameCount) do
+          for var j := 0 to Pred(slMember.Count) do
+            Add(wbEventFunctionEnum.Names[i] + ':' + slMember[j]);
+        Sort;
+        Result := CommaText;
+      finally
+        Free;
+      end;
+    end;
+  end;
+end;
+
+function wbConditionEventToInt(const aString: string; const aElement: IwbElement): Int64;
+var
+  EventFunction, EventMember: Integer;
+begin
+  var i := Pos(':', aString);
+  if i > 0 then begin
+    EventFunction := wbEventFunctionEnum.FromEditValue(Copy(aString, 1, i-1), nil);
+    EventMember := wbEventMemberEnum.FromEditValue(Copy(aString, i+1, Length(aString)), nil);
+  end
+  else begin
+    EventFunction := 0;
+    EventMember := 0;
+  end;
+  Result := EventMember shl 16 + EventFunction;
+end;
+
+function wbConditionQuestOverlay(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): Int64;
+var
+  GroupRecord: IwbGroupRecord;
+  Element    : IwbElement;
+begin
+  Result := aInt;
+  if (aInt = 0) and (aType in [ctCheck, ctToStr, ctToSummary, ctToSortKey, ctLinksTo]) then begin
+    if not Assigned(aElement) then
+      Exit;
+
+    var MainRecord := aElement.ContainingMainRecord;
+    if not Assigned(MainRecord) then
+      Exit;
+
+    if MainRecord.Signature = QUST then
+      Result := MainRecord.FixedFormID.ToCardinal
+    else if (MainRecord.Signature = ACTI) or (MainRecord.Signature = TACT) then begin
+      Element := MainRecord.ElementBySignature[QSTI];
+      if Assigned(Element) then
+        Result := Element.NativeValue;
+    end else if MainRecord.Signature = SCEN then begin
+      Element := MainRecord.ElementBySignature[PNAM];
+      if Assigned(Element) then
+        Result := Element.NativeValue;
+    end else if (MainRecord.Signature = PACK) or (MainRecord.Signature = TERM) then begin
+      Element := MainRecord.ElementBySignature[QNAM];
+      if Assigned(Element) then
+        Result := Element.NativeValue;
+    end else if MainRecord.Signature = INFO then begin
+      // get DIAL for INFO
+      if Supports(MainRecord.Container, IwbGroupRecord, GroupRecord) then
+        if Supports(GroupRecord.ChildrenOf, IwbMainRecord, MainRecord) then
+          if MainRecord.Signature = DIAL then begin
+            Element := MainRecord.ElementBySignature[QNAM];
+            if Assigned(Element) then
+              Result := Element.NativeValue;
+          end;
+    end;
+  end;
+end;
+
+function wbConditionParam1QuestStageToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
+var
+  EditInfos  : TStringList;
+  Stages     : IwbContainerElementRef;
+  Stage      : IwbContainerElementRef;
+  Objectives : IwbContainerElementRef;
+  Objective  : IwbContainerElementRef;
+  GroupRecord: IwbGroupRecord;
+  Element    : IwbElement;
+begin
+  Result := '';
+  case aType of
+    ctToSortKey: Exit(IntToHex64(aInt, 8));
+    ctToEditValue, ctToSummary: Result := aInt.ToString;
+    ctCheck: Result := '<Warning: Could not resolve Quest>';
+    ctToStr: Result := aInt.ToString + ' <Warning: Could not resolve Quest>';
+  end;
+
+  if not Assigned(aElement) then
+    Exit;
+
+  var MainRecord := aElement.ContainingMainRecord;
+  if not Assigned(MainRecord) then
+    Exit;
+
+  Element := nil;
+  if (MainRecord.Signature = ACTI) or (MainRecord.Signature = TACT) or (MainRecord.Signature = FURN) then
+    Element := MainRecord.ElementBySignature[QSTI]
+  else if MainRecord.Signature = SCEN then
+    Element := MainRecord.ElementBySignature[PNAM]
+  else if (MainRecord.Signature = PACK) or (MainRecord.Signature = TERM) then
+    Element := MainRecord.ElementBySignature[QNAM]
+  else if (MainRecord.Signature = GMRW) then
+    Element := MainRecord.ElementBySignature[ANAM]
+  else if (MainRecord.Signature = INFO) then begin
+    // get DIAL for INFO
+    if Supports(MainRecord.Container, IwbGroupRecord, GroupRecord) then
+      if Supports(GroupRecord.ChildrenOf, IwbMainRecord, MainRecord) then
+        if MainRecord.Signature = DIAL then
+          Element := MainRecord.ElementBySignature[QNAM];
+  end;
+
+  if Assigned(Element) then
+    Supports(Element.LinksTo, IwbMainRecord, MainRecord);
+
+  if not Assigned(MainRecord) then
+    Exit;
+
+  if MainRecord.Signature <> QUST then
+    Exit;
+
+  case aType of
+    ctEditType: Exit('ComboBox');
+    ctEditInfo: EditInfos := TStringList.Create;
+  else
+    EditInfos := nil;
+  end;
+
+  try
+    if Supports(MainRecord.ElementByName['Stages'], IwbContainerElementRef, Stages) then begin
+      for var i := 0 to Pred(Stages.ElementCount) do
+        if Supports(Stages.Elements[i], IwbContainerElementRef, Stage) then begin
+          var j := Stage.ElementNativeValues['INDX\Stage Index'];
+          var s := Trim(Stage.ElementValues['Log Entries\Log Entry\CNAM']);
+          var t := IntToStr(j);
+          while Length(t) < 3 do
+            t := '0' + t;
+          if s <> '' then
+            t := t + ' ' + s;
+          if Assigned(EditInfos) then
+            EditInfos.AddObject(t, TObject(Integer(j)))
+          else if j = aInt then begin
+            case aType of
+              ctToStr, ctToSummary, ctToEditValue: Result := t;
+              ctCheck: Result := '';
+            end;
+            Exit;
+          end;
+        end;
+    end;
+
+    if Supports(MainRecord.ElementByName['Objectives'], IwbContainerElementRef, Objectives) then begin
+      for var i := 0 to Pred(Objectives.ElementCount) do
+        if Supports(Objectives.Elements[i], IwbContainerElementRef, Objective) then begin
+          var j := Objective.ElementNativeValues['QOBJ'];
+          var s := Trim(Objective.ElementValues['NNAM']);
+          var t := IntToStr(j);
+          while Length(t) < 3 do
+            t := '0' + t;
+          if s <> '' then
+            t := t + ' ' + s;
+          if Assigned(EditInfos) then
+            EditInfos.AddObject(t, TObject(Integer(j)))
+          else if j = aInt then begin
+            case aType of
+              ctToStr, ctToSummary, ctToEditValue: Result := t;
+              ctCheck: Result := '';
+            end;
+            Exit;
+          end;
+        end;
+    end;
+
+    case aType of
+      ctCheck: Result := '<Warning: Quest Stage/Objective [' + aInt.ToString + '] not found in "' + MainRecord.Name + '">';
+      ctToStr: Result := aInt.ToString + ' <Warning: Quest Stage/Objective [' + aInt.ToString + '] not found in "' + MainRecord.Name + '">';
+      ctEditInfo: begin
+        EditInfos.Sort;
+        Result := EditInfos.CommaText;
+      end;
+    end;
+  finally
+    FreeAndNil(EditInfos);
+  end;
+end;
+
+function wbConditionParam2QuestStageToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
+var
+  Container  : IwbContainerElementRef;
+  MainRecord : IwbMainRecord;
+  EditInfos  : TStringList;
+  Stages     : IwbContainerElementRef;
+  Stage      : IwbContainerElementRef;
+  Objectives : IwbContainerElementRef;
+  Objective  : IwbContainerElementRef;
+begin
+  Result := '';
+  case aType of
+    ctToSortKey: Exit(IntToHex64(aInt, 8));
+    ctToEditValue, ctToSummary: Result := aInt.ToString;
+    ctCheck: Result := '<Warning: Could not resolve Parameter 1>';
+    ctToStr: Result := aInt.ToString + ' <Warning: Could not resolve Parameter 1>';
+  end;
+
+  if not wbTryGetContainerRefFromUnionOrValue(aElement, Container) then
+    Exit;
+
+  if not wbTryGetMainRecord(Container.ElementByName['Parameter #1'], MainRecord) then
+    Exit;
+
+  // get winning quest override except for partial forms
+  if MainRecord.WinningOverride.Flags._Flags and $00004000 = 0 then
+    MainRecord := MainRecord.WinningOverride
+  else if MainRecord.Flags._Flags and $00004000 <> 0 then
+    MainRecord := MainRecord.MasterOrSelf;
+
+  if MainRecord.Signature <> QUST then begin
+    case aType of
+      ctCheck: Result := '<Warning: "'+MainRecord.ShortName+'" is not a Quest record>';
+      ctToStr: Result := aInt.ToString + ' <Warning: "'+MainRecord.ShortName+'" is not a Quest record>';
+    end;
+    Exit;
+  end;
+
+  case aType of
+    ctEditType: Exit('ComboBox');
+    ctEditInfo: EditInfos := TStringList.Create;
+  else
+    EditInfos := nil;
+  end;
+
+  try
+    if Supports(MainRecord.ElementByName['Stages'], IwbContainerElementRef, Stages) then begin
+      for var i := 0 to Pred(Stages.ElementCount) do
+        if Supports(Stages.Elements[i], IwbContainerElementRef, Stage) then begin
+          var j := Stage.ElementNativeValues['INDX\Stage Index'];
+          var s := Trim(Stage.ElementValues['Log Entries\Log Entry\CNAM']);
+          var t := IntToStr(j);
+          while Length(t) < 3 do
+            t := '0' + t;
+          if s <> '' then
+            t := t + ' ' + s;
+          if Assigned(EditInfos) then
+            EditInfos.AddObject(t, TObject(Integer(j)))
+          else if j = aInt then begin
+            case aType of
+              ctToStr, ctToSummary, ctToEditValue: Result := t;
+              ctCheck: Result := '';
+            end;
+            Exit;
+          end;
+        end;
+    end;
+
+    if Supports(MainRecord.ElementByName['Objectives'], IwbContainerElementRef, Objectives) then begin
+      for var i := 0 to Pred(Objectives.ElementCount) do
+        if Supports(Objectives.Elements[i], IwbContainerElementRef, Objective) then begin
+          var j := Objective.ElementNativeValues['QOBJ'];
+          var s := Trim(Objective.ElementValues['NNAM']);
+          var t := IntToStr(j);
+          while Length(t) < 3 do
+            t := '0' + t;
+          if s <> '' then
+            t := t + ' ' + s;
+          if Assigned(EditInfos) then
+            EditInfos.AddObject(t, TObject(Integer(j)))
+          else if j = aInt then begin
+            case aType of
+              ctToStr, ctToSummary, ctToEditValue: Result := t;
+              ctCheck: Result := '';
+            end;
+            Exit;
+          end;
+        end;
+    end;
+
+    case aType of
+      ctCheck: Result := '<Warning: Quest Stage/Objective [' + aInt.ToString + '] not found in "' + MainRecord.Name + '">';
+      ctToStr: Result := aInt.ToString + ' <Warning: Quest Stage/Objective [' + aInt.ToString + '] not found in "' + MainRecord.Name + '">';
+      ctEditInfo: begin
+        EditInfos.Sort;
+        Result := EditInfos.CommaText;
+      end;
+    end;
+  finally
+    FreeAndNil(EditInfos);
+  end;
+end;
+
 function wbGenericModel(aRequired: Boolean = False; aDontShow: TwbDontShowCallback = nil): IwbRecordMemberDef;
 begin
   Result :=
@@ -1135,225 +1656,6 @@ begin
   Result := PInteger(@value)^;
 end;
 
-function wbConditionParam2QuestStageToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
-var
-  Container  : IwbContainerElementRef;
-  MainRecord : IwbMainRecord;
-  EditInfos  : TStringList;
-  Stages     : IwbContainerElementRef;
-  Stage      : IwbContainerElementRef;
-  Objectives : IwbContainerElementRef;
-  Objective  : IwbContainerElementRef;
-begin
-  Result := '';
-  case aType of
-    ctToSortKey: Exit(IntToHex64(aInt, 8));
-    ctToEditValue, ctToSummary: Result := aInt.ToString;
-    ctCheck: Result := '<Warning: Could not resolve Parameter 1>';
-    ctToStr: Result := aInt.ToString + ' <Warning: Could not resolve Parameter 1>';
-  end;
-
-  if not wbTryGetContainerRefFromUnionOrValue(aElement, Container) then
-    Exit;
-
-  if not wbTryGetMainRecord(Container.ElementByName['Parameter #1'], MainRecord) then
-    Exit;
-
-  // get winning quest override except for partial forms
-  if MainRecord.WinningOverride.Flags._Flags and $00004000 = 0 then
-    MainRecord := MainRecord.WinningOverride
-  else if MainRecord.Flags._Flags and $00004000 <> 0 then
-    MainRecord := MainRecord.MasterOrSelf;
-
-  if MainRecord.Signature <> QUST then begin
-    case aType of
-      ctCheck: Result := '<Warning: "'+MainRecord.ShortName+'" is not a Quest record>';
-      ctToStr: Result := aInt.ToString + ' <Warning: "'+MainRecord.ShortName+'" is not a Quest record>';
-    end;
-    Exit;
-  end;
-
-  case aType of
-    ctEditType: Exit('ComboBox');
-    ctEditInfo: EditInfos := TStringList.Create;
-  else
-    EditInfos := nil;
-  end;
-
-  try
-    if Supports(MainRecord.ElementByName['Stages'], IwbContainerElementRef, Stages) then begin
-      for var i := 0 to Pred(Stages.ElementCount) do
-        if Supports(Stages.Elements[i], IwbContainerElementRef, Stage) then begin
-          var j := Stage.ElementNativeValues['INDX\Stage Index'];
-          var s := Trim(Stage.ElementValues['Log Entries\Log Entry\CNAM']);
-          var t := IntToStr(j);
-          while Length(t) < 3 do
-            t := '0' + t;
-          if s <> '' then
-            t := t + ' ' + s;
-          if Assigned(EditInfos) then
-            EditInfos.AddObject(t, TObject(Integer(j)))
-          else if j = aInt then begin
-            case aType of
-              ctToStr, ctToSummary, ctToEditValue: Result := t;
-              ctCheck: Result := '';
-            end;
-            Exit;
-          end;
-        end;
-    end;
-
-    if Supports(MainRecord.ElementByName['Objectives'], IwbContainerElementRef, Objectives) then begin
-      for var i := 0 to Pred(Objectives.ElementCount) do
-        if Supports(Objectives.Elements[i], IwbContainerElementRef, Objective) then begin
-          var j := Objective.ElementNativeValues['QOBJ'];
-          var s := Trim(Objective.ElementValues['NNAM']);
-          var t := IntToStr(j);
-          while Length(t) < 3 do
-            t := '0' + t;
-          if s <> '' then
-            t := t + ' ' + s;
-          if Assigned(EditInfos) then
-            EditInfos.AddObject(t, TObject(Integer(j)))
-          else if j = aInt then begin
-            case aType of
-              ctToStr, ctToSummary, ctToEditValue: Result := t;
-              ctCheck: Result := '';
-            end;
-            Exit;
-          end;
-        end;
-    end;
-
-    case aType of
-      ctCheck: Result := '<Warning: Quest Stage/Objective [' + aInt.ToString + '] not found in "' + MainRecord.Name + '">';
-      ctToStr: Result := aInt.ToString + ' <Warning: Quest Stage/Objective [' + aInt.ToString + '] not found in "' + MainRecord.Name + '">';
-      ctEditInfo: begin
-        EditInfos.Sort;
-        Result := EditInfos.CommaText;
-      end;
-    end;
-  finally
-    FreeAndNil(EditInfos);
-  end;
-end;
-
-function wbConditionParam1QuestStageToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
-var
-  EditInfos  : TStringList;
-  Stages     : IwbContainerElementRef;
-  Stage      : IwbContainerElementRef;
-  Objectives : IwbContainerElementRef;
-  Objective  : IwbContainerElementRef;
-  GroupRecord: IwbGroupRecord;
-  Element    : IwbElement;
-begin
-  Result := '';
-  case aType of
-    ctToSortKey: Exit(IntToHex64(aInt, 8));
-    ctToEditValue, ctToSummary: Result := aInt.ToString;
-    ctCheck: Result := '<Warning: Could not resolve Quest>';
-    ctToStr: Result := aInt.ToString + ' <Warning: Could not resolve Quest>';
-  end;
-
-  if not Assigned(aElement) then
-    Exit;
-
-  var MainRecord := aElement.ContainingMainRecord;
-  if not Assigned(MainRecord) then
-    Exit;
-
-  Element := nil;
-  if (MainRecord.Signature = ACTI) or (MainRecord.Signature = TACT) or (MainRecord.Signature = FURN) then
-    Element := MainRecord.ElementBySignature[QSTI]
-  else if MainRecord.Signature = SCEN then
-    Element := MainRecord.ElementBySignature[PNAM]
-  else if (MainRecord.Signature = PACK) or (MainRecord.Signature = TERM) then
-    Element := MainRecord.ElementBySignature[QNAM]
-  else if (MainRecord.Signature = GMRW) then
-    Element := MainRecord.ElementBySignature[ANAM]
-  else if (MainRecord.Signature = INFO) then begin
-    // get DIAL for INFO
-    if Supports(MainRecord.Container, IwbGroupRecord, GroupRecord) then
-      if Supports(GroupRecord.ChildrenOf, IwbMainRecord, MainRecord) then
-        if MainRecord.Signature = DIAL then
-          Element := MainRecord.ElementBySignature[QNAM];
-  end;
-
-  if Assigned(Element) then
-    Supports(Element.LinksTo, IwbMainRecord, MainRecord);
-
-  if not Assigned(MainRecord) then
-    Exit;
-
-  if MainRecord.Signature <> QUST then
-    Exit;
-
-  case aType of
-    ctEditType: Exit('ComboBox');
-    ctEditInfo: EditInfos := TStringList.Create;
-  else
-    EditInfos := nil;
-  end;
-
-  try
-    if Supports(MainRecord.ElementByName['Stages'], IwbContainerElementRef, Stages) then begin
-      for var i := 0 to Pred(Stages.ElementCount) do
-        if Supports(Stages.Elements[i], IwbContainerElementRef, Stage) then begin
-          var j := Stage.ElementNativeValues['INDX\Stage Index'];
-          var s := Trim(Stage.ElementValues['Log Entries\Log Entry\CNAM']);
-          var t := IntToStr(j);
-          while Length(t) < 3 do
-            t := '0' + t;
-          if s <> '' then
-            t := t + ' ' + s;
-          if Assigned(EditInfos) then
-            EditInfos.AddObject(t, TObject(Integer(j)))
-          else if j = aInt then begin
-            case aType of
-              ctToStr, ctToSummary, ctToEditValue: Result := t;
-              ctCheck: Result := '';
-            end;
-            Exit;
-          end;
-        end;
-    end;
-
-    if Supports(MainRecord.ElementByName['Objectives'], IwbContainerElementRef, Objectives) then begin
-      for var i := 0 to Pred(Objectives.ElementCount) do
-        if Supports(Objectives.Elements[i], IwbContainerElementRef, Objective) then begin
-          var j := Objective.ElementNativeValues['QOBJ'];
-          var s := Trim(Objective.ElementValues['NNAM']);
-          var t := IntToStr(j);
-          while Length(t) < 3 do
-            t := '0' + t;
-          if s <> '' then
-            t := t + ' ' + s;
-          if Assigned(EditInfos) then
-            EditInfos.AddObject(t, TObject(Integer(j)))
-          else if j = aInt then begin
-            case aType of
-              ctToStr, ctToSummary, ctToEditValue: Result := t;
-              ctCheck: Result := '';
-            end;
-            Exit;
-          end;
-        end;
-    end;
-
-    case aType of
-      ctCheck: Result := '<Warning: Quest Stage/Objective [' + aInt.ToString + '] not found in "' + MainRecord.Name + '">';
-      ctToStr: Result := aInt.ToString + ' <Warning: Quest Stage/Objective [' + aInt.ToString + '] not found in "' + MainRecord.Name + '">';
-      ctEditInfo: begin
-        EditInfos.Sort;
-        Result := EditInfos.CommaText;
-      end;
-    end;
-  finally
-    FreeAndNil(EditInfos);
-  end;
-end;
-
 function wbPerkDATAQuestStageToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
 var
   Container  : IwbContainerElementRef;
@@ -1476,67 +1778,6 @@ begin
   finally
     FreeAndNil(EditInfos);
   end;
-end;
-
-function wbQuestStageToInt(const aString: string; const aElement: IwbElement): Int64;
-var
-  i    : Integer;
-  s    : string;
-begin
-  i := 1;
-  s := Trim(aString);
-  while (i <= Length(s)) and (s[i] in ['0'..'9']) do
-    Inc(i);
-  s := Copy(s, 1, Pred(i));
-
-  Result := StrToInt(s);
-end;
-
-function wbConditionQuestOverlay(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): Int64;
-
-  procedure ResolveOverlay;
-  var
-    MainRecord : IwbMainRecord;
-    GroupRecord: IwbGroupRecord;
-    Element    : IwbElement;
-  begin
-    if not Assigned(aElement) then
-      Exit;
-
-    MainRecord := aElement.ContainingMainRecord;
-    if not Assigned(MainRecord) then
-      Exit;
-
-    if MainRecord.Signature = QUST then
-      Result := MainRecord.FixedFormID.ToCardinal
-    else if (MainRecord.Signature = ACTI) or (MainRecord.Signature = TACT) then begin
-      Element := MainRecord.ElementBySignature[QSTI];
-      if Assigned(Element) then
-        Result := Element.NativeValue;
-    end else if MainRecord.Signature = SCEN then begin
-      Element := MainRecord.ElementBySignature[PNAM];
-      if Assigned(Element) then
-        Result := Element.NativeValue;
-    end else if (MainRecord.Signature = PACK) or (MainRecord.Signature = TERM) then begin
-      Element := MainRecord.ElementBySignature[QNAM];
-      if Assigned(Element) then
-        Result := Element.NativeValue;
-    end else if MainRecord.Signature = INFO then begin
-      // get DIAL for INFO
-      if Supports(MainRecord.Container, IwbGroupRecord, GroupRecord) then
-        if Supports(GroupRecord.ChildrenOf, IwbMainRecord, MainRecord) then
-          if MainRecord.Signature = DIAL then begin
-            Element := MainRecord.ElementBySignature[QNAM];
-            if Assigned(Element) then
-              Result := Element.NativeValue;
-          end;
-    end;
-  end;
-
-begin
-  Result := aInt;
-  if (aInt = 0) and (aType in [ctCheck, ctToStr, ctToSummary, ctToSortKey, ctLinksTo]) then
-    ResolveOverlay;
 end;
 
 function wbStringToInt(const aString: string; const aElement: IwbElement): Int64;
@@ -1854,181 +2095,6 @@ begin
     Exit;
 
   Result := wbAliasToStr(aInt, Container.ElementBySignature['ALEQ'] , aType);
-end;
-
-function wbConditionStringToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
-begin
-  case aType of
-    ctToStr, ctToSummary, ctToSortKey, ctToEditValue, ctToNativeValue: begin
-      Result := '';
-
-      if not Assigned(aElement) then
-        Exit;
-
-      var Container := GetContainerFromUnion(aElement) as IwbContainerElementRef;
-      if not Assigned(Container) then
-        Exit;
-
-      if aElement = Container.Elements[5] then begin
-        case aType of
-          ctToSummary: Result := Container.ElementEditValues['..\CIS1'];
-          ctToEditValue, ctToNativeValue: Result := Container.ElementEditValues['..\CIS1'];
-        else
-          Result := Container.ElementValues['..\CIS1'];
-        end;
-      end;
-
-      if aElement = Container.Elements[6] then begin
-        case aType of
-          ctToSummary: Result := Container.ElementEditValues['..\CIS2'];
-          ctToEditValue, ctToNativeValue: Result := Container.ElementEditValues['..\CIS2'];
-        else
-          Result := Container.ElementValues['..\CIS2'];
-        end;
-      end;
-    end;
-    ctCheck, ctEditType, ctEditInfo, ctLinksTo:
-      Result := '';
-  else
-    Result := aInt.ToString;
-  end;
-end;
-
-function wbConditionStringToInt(const aString: string; const aElement: IwbElement): Int64;
-begin
-  Result := 0;
-
-  if not Assigned(aElement) then
-    Exit;
-
-  var Container := GetContainerFromUnion(aElement) as IwbContainerElementRef;
-  if not Assigned(Container) then
-    Exit;
-
-  if aElement = Container.Elements[5] then
-    Container.ElementEditValues['..\CIS1'] := aString;
-
-  if aElement = Container.Elements[6] then
-    Container.ElementEditValues['..\CIS2'] := aString;
-end;
-
-function wbConditionAliasToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
-var
-  Container  : IwbContainer;
-  MainRecord : IwbMainRecord;
-  GroupRecord : IwbGroupRecord;
-begin
-  if not wbResolveAlias then begin
-    case aType of
-      ctToStr, ctToSummary, ctToEditValue: Result := aInt.ToString;
-      ctToSortKey: Result := IntToHex64(aInt, 8);
-    else
-      Result := '';
-    end;
-    Exit;
-  end;
-
-  if not wbTryGetContainerFromUnion(aElement, Container) then
-    Exit;
-
-  while Assigned(Container) and (Container.ElementType <> etMainRecord) do
-    Container := Container.Container;
-
-  if not Assigned(Container) then
-    Exit;
-
-  if not Supports(Container, IwbMainRecord, MainRecord) then
-    Exit;
-
-  if MainRecord.Signature = QUST then
-    Result := wbAliasToStr(aInt, Container, aType)
-  else if MainRecord.Signature = SCEN then
-    Result := wbAliasToStr(aInt, Container.ElementBySignature['PNAM'], aType)
-  else if (MainRecord.Signature = PACK) or (MainRecord.Signature = TERM) then
-    Result := wbAliasToStr(aInt, Container.ElementBySignature['QNAM'], aType)
-  else if MainRecord.Signature = INFO then begin
-    // get DIAL for INFO
-    if Supports(MainRecord.Container, IwbGroupRecord, GroupRecord) then
-      if Supports(GroupRecord.ChildrenOf, IwbMainRecord, MainRecord) then
-        Result := wbAliasToStr(aInt, MainRecord.ElementBySignature['QNAM'], aType);
-  end else
-  // this should never be called since aliases in conditions can be in the forms above only
-  // but just in case
-  case aType of
-    ctToStr, ctToSummary, ctToEditValue: Result := aInt.ToString;
-    ctToSortKey: Result := IntToHex64(aInt, 8);
-  else
-    Result := '';
-  end;
-end;
-
-var
-  wbEventFunctionAndMemberEditInfo: string;
-
-function wbEventFunctionAndMemberToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
-var
-  EventFunction, EventMember: Integer;
-  i, j: Integer;
-  s1, s2: string;
-  slMember: TStringList;
-begin
-  Result := '';
-  EventFunction := aInt and $FFFF;
-  EventMember := aInt shr 16;
-  case aType of
-    ctToStr, ctToSummary, ctToEditValue: begin
-      Result := wbEventFunctionEnum.ToEditValue(EventFunction, nil);
-      Result := Result + ':' + wbEventMemberEnum.ToEditValue(EventMember, nil);
-    end;
-    ctToSortKey: Result := IntToHex(aInt, 8);
-    ctCheck: begin
-      s1 := wbEventFunctionEnum.Check(EventFunction, nil);
-      if s1 <> '' then
-        s1 := 'EventFunction' + s1;
-      s2 := wbEventMemberEnum.Check(EventMember, nil);
-      if s2 <> '' then
-        s2 := 'EventMember' + s2;
-      if (s1 <> '') or (s2 <> '') then
-        Result := s1 + ':' + s2;
-    end;
-    ctEditType:
-      Result := 'ComboBox';
-    ctEditInfo: begin
-      Result := wbEventFunctionAndMemberEditInfo;
-      if Result = '' then try
-        slMember := TStringList.Create;
-        slMember.AddStrings(wbEventMemberEnum.EditInfo[nil]);
-        with TStringList.Create do try
-          for i := 0 to Pred(wbEventFunctionEnum.NameCount) do
-            for j := 0 to Pred(slMember.Count) do
-              Add(wbEventFunctionEnum.Names[i] + ':' + slMember[j]);
-          Sort;
-          Result := CommaText;
-        finally
-          Free;
-        end;
-        wbEventFunctionAndMemberEditInfo := Result;
-      finally
-        FreeAndNil(slMember);
-      end
-    end;
-  end;
-end;
-
-function wbEventFunctionAndMemberToInt(const aString: string; const aElement: IwbElement): Int64;
-var
-  EventFunction, EventMember, i: Integer;
-begin
-  i := Pos(':', aString);
-  if i > 0 then begin
-    EventFunction := wbEventFunctionEnum.FromEditValue(Copy(aString, 1, i-1), nil);
-    EventMember := wbEventMemberEnum.FromEditValue(Copy(aString, i+1, Length(aString)), nil);
-  end
-  else begin
-    EventFunction := 0;
-    EventMember := 0;
-  end;
-  Result := EventMember shl 16 + EventFunction;
 end;
 
 function wbOBTEAddonIndexToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
@@ -2914,205 +2980,6 @@ begin
     Result := 3
   else
     Result := 0;
-end;
-
-function wbConditionDescFromIndex(aIndex: Integer): PConditionFunction;
-var
-  L, H, I, C: Integer;
-begin
-  Result := nil;
-
-  L := Low(wbConditionFunctions);
-  H := High(wbConditionFunctions);
-
-  while L <= H do begin
-    I := (L + H) shr 1;
-    C := CmpW32(wbConditionFunctions[I].Index, aIndex);
-    if C < 0 then
-      L := I + 1
-    else begin
-      H := I - 1;
-      if C = 0 then begin
-        L := I;
-        Result := @wbConditionFunctions[L];
-      end;
-    end;
-  end;
-end;
-
-function wbConditionParam1Decider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
-var
-  Desc: PConditionFunction;
-  Container: IwbContainer;
-  ParamFlag: Byte;
-  ParamType: TConditionParameterType;
-  MainRecord: IwbMainRecord;
-  GroupRecord: IwbGroupRecord;
-  Element    : IwbElement;
-begin
-  Result := 0;
-  if not wbTryGetContainerFromUnion(aElement, Container) then
-    Exit;
-
-  Desc := wbConditionDescFromIndex(Container.ElementByName['Function'].NativeValue);
-  if not Assigned(Desc) then
-    Exit;
-
-  if (Desc.Index = 59 {GetStageDone}) {and (Container.ElementByName['Run On'].EditValue = 'Subject')} then begin
-    MainRecord := aElement.ContainingMainRecord;
-    if Assigned(MainRecord) then begin
-
-      Element := nil;
-      if (MainRecord.Signature = ACTI) or (MainRecord.Signature = TACT) then
-        Element := MainRecord.ElementBySignature[QSTI]
-      else if MainRecord.Signature = SCEN then
-        Element := MainRecord.ElementBySignature[PNAM]
-      else if (MainRecord.Signature = PACK) or (MainRecord.Signature = TERM) then
-        Element := MainRecord.ElementBySignature[QNAM]
-      else if (MainRecord.Signature = INFO) then begin
-        // get DIAL for INFO
-        if Supports(MainRecord.Container, IwbGroupRecord, GroupRecord) then
-          if Supports(GroupRecord.ChildrenOf, IwbMainRecord, MainRecord) then
-            if MainRecord.Signature = DIAL then
-              Element := MainRecord.ElementBySignature[QNAM];
-      end;
-
-      if Assigned(Element) then
-        Supports(Element.LinksTo, IwbMainRecord, MainRecord);
-
-      if Assigned(MainRecord) and (MainRecord.Signature = QUST) then begin
-        ParamType := ptQuestStage1;
-        Exit(Succ(Integer(ParamType)));
-      end;
-    end;
-  end;
-
-  ParamType := Desc.ParamType1;
-  ParamFlag := Container.ElementByName['Type'].NativeValue;
-
-  if ParamType in [ptObjectReference, ptActor, ptPackage] then begin
-    if ParamFlag and $02 > 0 then begin
-      // except for this func when Run On = Quest Alias, then alias is param3 and package is param1
-      // [INFO:00020D3C]
-      if not ((Container.ElementByName['Run On'].NativeValue = 5) and (Desc.Name = 'GetIsCurrentPackage')) then
-        ParamType := ptAlias    {>>> 'use aliases' is set <<<}
-    end
-    else if ParamFlag and $08 > 0 then
-      ParamType := ptPackdata;  {>>> 'use packdata' is set <<<}
-  end;
-
-  Result := Succ(Integer(ParamType));
-end;
-
-function wbConditionParam2Decider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
-var
-  Desc: PConditionFunction;
-  Container: IwbContainer;
-  ParamFlag: Byte;
-  ParamType: TConditionParameterType;
-  MainRecord: IwbMainRecord;
-  GroupRecord: IwbGroupRecord;
-  Element    : IwbElement;
-begin
-  Result := 0;
-  if not wbTryGetContainerFromUnion(aElement, Container) then
-    Exit;
-
-  Desc := wbConditionDescFromIndex(Container.ElementByName['Function'].NativeValue);
-  if not Assigned(Desc) then
-    Exit;
-
-  if (Desc.Index = 59 {GetStageDone}) {and (Container.ElementByName['Run On'].EditValue = 'Subject')} then begin
-    MainRecord := aElement.ContainingMainRecord;
-    if Assigned(MainRecord) then begin
-
-      Element := nil;
-      if (MainRecord.Signature = ACTI) or (MainRecord.Signature = TACT) then
-        Element := MainRecord.ElementBySignature[QSTI]
-      else if MainRecord.Signature = SCEN then
-        Element := MainRecord.ElementBySignature[PNAM]
-      else if (MainRecord.Signature = PACK) or (MainRecord.Signature = TERM) then
-        Element := MainRecord.ElementBySignature[QNAM]
-      else if (MainRecord.Signature = INFO) then begin
-        // get DIAL for INFO
-        if Supports(MainRecord.Container, IwbGroupRecord, GroupRecord) then
-          if Supports(GroupRecord.ChildrenOf, IwbMainRecord, MainRecord) then
-            if MainRecord.Signature = DIAL then
-              Element := MainRecord.ElementBySignature[QNAM];
-      end;
-
-      if Assigned(Element) then
-        Supports(Element.LinksTo, IwbMainRecord, MainRecord);
-
-      if Assigned(MainRecord) and (MainRecord.Signature = QUST) then begin
-        ParamType := ptNone;
-        Exit(Succ(Integer(ParamType)));
-      end;
-    end;
-  end;
-
-  ParamType := Desc.ParamType2;
-  ParamFlag := Container.ElementByName['Type'].NativeValue;
-
-  if ParamType in [ptObjectReference, ptActor, ptPackage] then begin
-    if ParamFlag and $02 > 0 then ParamType := ptAlias else {>>> 'use aliases' is set <<<}
-    if ParamFlag and $08 > 0 then ParamType := ptPackdata;  {>>> 'use packdata' is set <<<}
-  end;
-
-  Result := Succ(Integer(ParamType));
-end;
-
-function wbConditionFunctionToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
-var
-  Desc : PConditionFunction;
-  i    : Integer;
-begin
-  Result := '';
-  case aType of
-    ctToStr, ctToSummary, ctToEditValue: begin
-      Desc := wbConditionDescFromIndex(aInt);
-      if Assigned(Desc) then
-        Result := Desc.Name
-      else if aType in [ctToSummary, ctToEditValue] then
-        Result := aInt.ToString
-      else
-        Result := '<Unknown: '+aInt.ToString+'>';
-    end;
-    ctToSortKey: Result := IntToHex(aInt, 8);
-    ctCheck: begin
-      Desc := wbConditionDescFromIndex(aInt);
-      if Assigned(Desc) then
-        Result := ''
-      else
-        Result := '<Unknown: '+aInt.ToString+'>';
-    end;
-    ctEditType:
-      Result := 'ComboBox';
-    ctEditInfo: begin
-      with TStringList.Create do try
-        for i := Low(wbConditionFunctions) to High(wbConditionFunctions) do
-          Add(wbConditionFunctions[i].Name);
-        Sort;
-        Result := CommaText;
-      finally
-        Free;
-      end;
-    end;
-  end;
-end;
-
-function wbConditionFunctionToInt(const aString: string; const aElement: IwbElement): Int64;
-var
-  i: Integer;
-begin
-  for i := Low(wbConditionFunctions) to High(wbConditionFunctions) do
-    with wbConditionFunctions[i] do
-      if SameText(Name, aString) then begin
-        Result := Index;
-        Exit;
-      end;
-
-  Result := StrToInt64(aString);
 end;
 
 function wbMESGTNAMDontShow(const aElement: IwbElement): Boolean;
@@ -7507,7 +7374,7 @@ begin
     {16} wbInteger('Critical Stage', itU32, wbCriticalStageEnum),
     {17} wbFormIDCkNoReach('Encounter Zone', [ECZN]),
     {18} wbFormIDCkNoReach('Equip Type', [EQUP]) ,
-    {19} wbInteger('Event', itU32, wbEventFunctionAndMemberToStr, wbEventFunctionAndMemberToInt),
+    {19} wbInteger('Event', itU32, wbConditionEventToStr, wbConditionEventToInt),
     {20} wbFormID('Event Data'),
     {21} wbFormIDCkNoReach('Faction', [FACT]),
     {22} wbFormIDCkNoReach('Form List', [FLST]),
