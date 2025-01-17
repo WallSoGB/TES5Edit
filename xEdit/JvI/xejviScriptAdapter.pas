@@ -1684,7 +1684,10 @@ var
   _File: IwbFile;
 begin
   if Supports(IInterface(Args.Values[0]), IwbFile, _File) then
-    _File.AddMasters(TStrings(V2O(Args.Values[1])));
+    case Args.Count of
+    3: _File.AddMasters(TStrings(V2O(Args.Values[1])), Boolean(Args.Values[2]));
+    2: _File.AddMasters(TStrings(V2O(Args.Values[1])));
+    end;
 end;
 
 procedure IwbFile_AddMasterIfMissing(var Value: Variant; Args: TJvInterpreterArgs);
@@ -1694,6 +1697,7 @@ begin
   if Supports(IInterface(Args.Values[0]), IwbFile, _File) then
     case Args.Count of
     0, 1: JvInterpreterError(ieNotEnoughParams, -1);
+    4: _File.AddMasterIfMissing(string(Args.Values[1]), Boolean(Args.Values[2]), Boolean(Args.Values[3]));
     3: _File.AddMasterIfMissing(string(Args.Values[1]), Boolean(Args.Values[2]));
     2: _File.AddMasterIfMissing(string(Args.Values[1]));
     else
