@@ -860,6 +860,7 @@ type
     procedure AddMasters(aMasters: TStrings; aSilent: Boolean = False); overload;
     procedure AddMasters(const aMasters: array of string; aSilent: Boolean = False); overload;
     procedure AddMasterIfMissing(const aMaster: string; aSortMasters: Boolean = True; aSilent: Boolean = False);
+    procedure AddMastersIfMissing(const aMasters: TStrings; aSortMasters: Boolean = True; aSilent: Boolean = False);
 
     procedure SortMasters;
     procedure CleanMasters;
@@ -2468,9 +2469,8 @@ var
   i       : Integer;
   Masters : TStringList;
 begin
-  for i := 0 to Pred(GetMasterCount(True)) do
-    if SameText(aMaster, GetMaster(i, True).FileName) then
-      Exit;
+  if HasMaster(aMaster) then
+    Exit;
   Masters := TStringList.Create;
   try
     Masters.Add(aMaster);
@@ -2482,7 +2482,28 @@ begin
   end;
 end;
 
-procedure TwbFile.AddMasters(const aMasters: array of string; aSilent: Boolean = False);
+procedure TwbFile.AddMastersIfMissing(const aMasters: TStrings; aSortMasters: Boolean = True; aSilent: Boolean = False);
+var
+  i       : Integer;
+  Masters : TStringList;
+begin
+  Masters := TStringList.Create;
+  try
+    for i := 0  to Pred(aMasters.Count) do
+      if not HasMaster(aMasters[i]) then
+        Masters.Add(aMasters[i]);
+
+    if Masters.Count = 0 then Exit;
+
+    AddMasters(Masters, aSilent);
+    if aSortMasters then
+      SortMasters;
+  finally
+    Masters.Free;
+  end;
+end;
+
+procedure TwbFile.AddMasters(const aMasters: array of string; aSilent: Boolean);
 begin
   If Length(aMasters) < 1 then
     Exit;
@@ -2497,7 +2518,7 @@ begin
   end;
 end;
 
-procedure TwbFile.AddMasters(aMasters: TStrings; aSilent: Boolean = False);
+procedure TwbFile.AddMasters(aMasters: TStrings; aSilent: Boolean);
 var
   NotAllAdded    : Boolean;
   lMasters       : TStringList;

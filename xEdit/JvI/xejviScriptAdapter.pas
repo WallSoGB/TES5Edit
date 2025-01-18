@@ -1685,8 +1685,11 @@ var
 begin
   if Supports(IInterface(Args.Values[0]), IwbFile, _File) then
     case Args.Count of
+    0, 1: JvInterpreterError(ieNotEnoughParams, -1);
     3: _File.AddMasters(TStrings(V2O(Args.Values[1])), Boolean(Args.Values[2]));
     2: _File.AddMasters(TStrings(V2O(Args.Values[1])));
+    else
+     JvInterpreterError(ieTooManyParams, -1);
     end;
 end;
 
@@ -1700,6 +1703,21 @@ begin
     4: _File.AddMasterIfMissing(string(Args.Values[1]), Boolean(Args.Values[2]), Boolean(Args.Values[3]));
     3: _File.AddMasterIfMissing(string(Args.Values[1]), Boolean(Args.Values[2]));
     2: _File.AddMasterIfMissing(string(Args.Values[1]));
+    else
+     JvInterpreterError(ieTooManyParams, -1);
+    end;
+end;
+
+procedure IwbFile_AddMastersIfMissing(var Value: Variant; Args: TJvInterpreterArgs);
+var
+  _File: IwbFile;
+begin
+  if Supports(IInterface(Args.Values[0]), IwbFile, _File) then
+    case Args.Count of
+    0, 1: JvInterpreterError(ieNotEnoughParams, -1);
+    4: _File.AddMastersIfMissing(TStrings(V2O(Args.Values[1])), Boolean(Args.Values[2]), Boolean(Args.Values[3]));
+    3: _File.AddMastersIfMissing(TStrings(V2O(Args.Values[1])), Boolean(Args.Values[2]));
+    2: _File.AddMastersIfMissing(TStrings(V2O(Args.Values[1])));
     else
      JvInterpreterError(ieTooManyParams, -1);
     end;
@@ -2317,6 +2335,7 @@ begin
     AddFunction(cUnit, 'GetMasters', IwbFile_GetMasters, 2, [varEmpty, varEmpty], varEmpty);
     AddFunction(cUnit, 'AddMasters', IwbFile_AddMasters, 2, [varEmpty, varEmpty], varEmpty);
     AddFunction(cUnit, 'AddMasterIfMissing', IwbFile_AddMasterIfMissing, -1, [varEmpty, varString], varEmpty);
+    AddFunction(cUnit, 'AddMastersIfMissing', IwbFile_AddMastersIfMissing, -1, [varEmpty, varString], varEmpty);
     AddFunction(cUnit, 'HasMaster', IwbFile_HasMaster, 2, [varEmpty, varString], varEmpty);
     AddFunction(cUnit, 'HasGroup', IwbFile_HasGroup, 2, [varEmpty, varString], varEmpty);
     AddFunction(cUnit, 'LoadOrderFormIDtoFileFormID', IwbFile_LoadOrderFormIDtoFileFormID, 2, [varEmpty, varEmpty], varEmpty);
