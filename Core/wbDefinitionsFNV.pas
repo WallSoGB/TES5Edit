@@ -3966,7 +3966,7 @@ begin
                 {2} 'Reference',
                 {3} 'Combat Target',
                 {4} 'Linked Reference'
-                ])).SetAfterSet(wbCTDARunOnAfterSet),
+                ])).SetAfterSet(wbConditionRunOnAfterSet),
           {1} wbInteger('Run On', itU32,
                 wbEnum([], [
                 0, 'Idle',
@@ -3981,7 +3981,7 @@ begin
                 21, 'Upper Body'
                 ]))
           ]),
-      {8} wbUnion('Reference', wbCTDAReferenceDecider, [
+      {8} wbUnion('Reference', wbConditionReferenceDecider, [
           {0} wbInteger('Unused', itU32, nil, cpIgnore),
           {1} wbFormIDCkNoReach('Reference', [PLYR, ACHR, ACRE, REFR, PMIS, PBEA, PGRE, NULL], True)    // Can end up NULL if the original function requiring a reference is replaced by another who has no Run on prerequisite
           ])

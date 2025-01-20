@@ -6061,8 +6061,8 @@ begin
                 {8}  'Command Target',
                 {9} 'Event Camera Ref',
                 {10} 'My Killer'
-                ])).SetAfterSet(wbCTDARunOnAfterSet),
-          {8} wbUnion('Reference', wbCTDAReferenceDecider, [
+                ])).SetAfterSet(wbConditionRunOnAfterSet),
+          {8} wbUnion('Reference', wbConditionReferenceDecider, [
               {0} wbInteger('Unused', itU32, nil, cpIgnore),
               {1} wbFormIDCkNoReach('Reference', sigReferences)
               ]),

@@ -58,7 +58,7 @@ type
   TwbWwiseGUIDsDicationary = TDictionary<TGUID, TJSONObject>;
 
 type
-  TCTDAFunctionParamType = (
+  TConditionParameterType = (
     { 0} ptNone,
     { 1} ptString,
     { 2} ptInteger,
@@ -128,18 +128,18 @@ type
     {73} ptGamePlayOption
   );
 
-  PCTDAFunction = ^TCTDAFunction;
-  TCTDAFunction = record
+  PConditionFunction = ^TConditionFunction;
+  TConditionFunction = record
     Index: Integer;
     Name: string;
-    ParamType1: TCTDAFunctionParamType;
-    ParamType2: TCTDAFunctionParamType;
-    ParamType3: TCTDAFunctionParamType;
+    ParamType1: TConditionParameterType;
+    ParamType2: TConditionParameterType;
+    ParamType3: TConditionParameterType;
     Desc: string;
   end;
 
 const
-  wbCTDAFunctions : array[0..609] of TCTDAFunction = (
+  wbConditionFunctions : array[0..609] of TConditionFunction = (
     (Index:   0; Name: 'GetWantBlocking'),                                                                                                                  //   0
     (Index:   1; Name: 'GetDistance'; ParamType1: ptObjectReference),                                                                                       //   1
     (Index:   5; Name: 'GetLocked'),                                                                                                                        //   2
@@ -1305,7 +1305,7 @@ begin
   Result := wbAliasLinksTo(lAlias, wbParentQuestHelper(aElement));
 end;
 
-function wbCTDAParam1StringToInt(const aString: string; const aElement: IwbElement): Int64;
+function wbConditionParam1StringToInt(const aString: string; const aElement: IwbElement): Int64;
 var
   Container  : IwbContainerElementRef;
 begin
@@ -1321,7 +1321,7 @@ begin
   Container.ElementEditValues['..\CIS1'] := aString
 end;
 
-function wbCTDAParam1StringToString(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
+function wbConditionParam1StringToString(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
 var
   Container  : IwbContainerElementRef;
 begin
@@ -1352,7 +1352,7 @@ begin
   end;
 end;
 
-function wbCTDAParam2StringToInt(const aString: string; const aElement: IwbElement): Int64;
+function wbConditionParam2StringToInt(const aString: string; const aElement: IwbElement): Int64;
 var
   Container  : IwbContainerElementRef;
 begin
@@ -1368,7 +1368,7 @@ begin
   Container.ElementEditValues['..\CIS2'] := aString
 end;
 
-function wbCTDAParam2StringToString(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
+function wbConditionParam2StringToString(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
 var
   Container  : IwbContainerElementRef;
 begin
@@ -2348,44 +2348,41 @@ begin
     Result := 0;
 end;
 
-var
-  wbCTDAFunctionEditInfo: string;
-
-function wbCTDAParamDescFromIndex(aIndex: Integer): PCTDAFunction;
+function wbConditionParamDescFromIndex(aIndex: Integer): PConditionFunction;
 var
   L, H, I, C: Integer;
 begin
   Result := nil;
 
-  L := Low(wbCTDAFunctions);
-  H := High(wbCTDAFunctions);
+  L := Low(wbConditionFunctions);
+  H := High(wbConditionFunctions);
   while L <= H do begin
     I := (L + H) shr 1;
-    C := CmpW32(wbCTDAFunctions[I].Index, aIndex);
+    C := CmpW32(wbConditionFunctions[I].Index, aIndex);
     if C < 0 then
       L := I + 1
     else begin
       H := I - 1;
       if C = 0 then begin
         L := I;
-        Result := @wbCTDAFunctions[L];
+        Result := @wbConditionFunctions[L];
       end;
     end;
   end;
 end;
 
-function wbCTDAParam1Decider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+function wbConditionParam1Decider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
 var
-  Desc: PCTDAFunction;
+  Desc: PConditionFunction;
   Container: IwbContainer;
   ParamFlag: Byte;
-  ParamType: TCTDAFunctionParamType;
+  ParamType: TConditionParameterType;
 begin
   Result := 0;
   if not wbTryGetContainerFromUnion(aElement, Container) then
     Exit;
 
-  Desc := wbCTDAParamDescFromIndex(Container.ElementByName['Function'].NativeValue);
+  Desc := wbConditionParamDescFromIndex(Container.ElementByName['Function'].NativeValue);
   if not Assigned(Desc) then
     Exit;
 
@@ -2408,18 +2405,18 @@ begin
   Result := Succ(Integer(ParamType));
 end;
 
-function wbCTDAParam2Decider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+function wbConditionParam2Decider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
 var
-  Desc: PCTDAFunction;
+  Desc: PConditionFunction;
   Container: IwbContainer;
   ParamFlag: Byte;
-  ParamType: TCTDAFunctionParamType;
+  ParamType: TConditionParameterType;
 begin
   Result := 0;
   if not wbTryGetContainerFromUnion(aElement, Container) then
     Exit;
 
-  Desc := wbCTDAParamDescFromIndex(Container.ElementByName['Function'].NativeValue);
+  Desc := wbConditionParamDescFromIndex(Container.ElementByName['Function'].NativeValue);
   if not Assigned(Desc) then
     Exit;
 
@@ -2434,26 +2431,15 @@ begin
   Result := Succ(Integer(ParamType));
 end;
 
-function wbCTDAParam2VATSValueParamDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+function wbConditionFunctionToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
 var
-  Container : IwbContainer;
-begin
-  Result := 0;
-  if not wbTryGetContainerFromUnion(aElement, Container) then
-    Exit;
-
-  Result := Container.ElementByName['Parameter #1'].NativeValue;
-end;
-
-function wbCTDAFunctionToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
-var
-  Desc : PCTDAFunction;
+  Desc : PConditionFunction;
   i    : Integer;
 begin
   Result := '';
   case aType of
     ctToStr, ctToSummary, ctToEditValue: begin
-      Desc := wbCTDAParamDescFromIndex(aInt);
+      Desc := wbConditionParamDescFromIndex(aInt);
       if Assigned(Desc) then
         Result := Desc.Name
       else if aType in [ctToSummary, ctToEditValue] then
@@ -2463,7 +2449,7 @@ begin
     end;
     ctToSortKey: Result := IntToHex(aInt, 8);
     ctCheck: begin
-      Desc := wbCTDAParamDescFromIndex(aInt);
+      Desc := wbConditionParamDescFromIndex(aInt);
       if Assigned(Desc) then
         Result := ''
       else
@@ -2472,28 +2458,24 @@ begin
     ctEditType:
       Result := 'ComboBox';
     ctEditInfo: begin
-      Result := wbCTDAFunctionEditInfo;
-      if Result = '' then begin
-        with TStringList.Create do try
-          for i := Low(wbCTDAFunctions) to High(wbCTDAFunctions) do
-            Add(wbCTDAFunctions[i].Name);
-          Sort;
-          Result := CommaText;
-        finally
-          Free;
-        end;
-        wbCTDAFunctionEditInfo := Result;
+      with TStringList.Create do try
+        for i := Low(wbConditionFunctions) to High(wbConditionFunctions) do
+          Add(wbConditionFunctions[i].Name);
+        Sort;
+        Result := CommaText;
+      finally
+        Free;
       end;
     end;
   end;
 end;
 
-function wbCTDAFunctionToInt(const aString: string; const aElement: IwbElement): Int64;
+function wbConditionFunctionToInt(const aString: string; const aElement: IwbElement): Int64;
 var
   i: Integer;
 begin
-  for i := Low(wbCTDAFunctions) to High(wbCTDAFunctions) do
-    with wbCTDAFunctions[i] do
+  for i := Low(wbConditionFunctions) to High(wbConditionFunctions) do
+    with wbConditionFunctions[i] do
       if SameText(Name, aString) then begin
         Result := Index;
         Exit;
@@ -5997,7 +5979,7 @@ end;
 
   var wbEventFunctionAndMemberEditInfo: string;
 
-  var wbCTDAParamEvent :=  wbInteger('Event', itU32,
+  var wbConditionParamEvent :=  wbInteger('Event', itU32,
     function{wbEventFunctionAndMemberToStr}(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string
     var
       EventFunction, EventMember: Integer;
@@ -6063,7 +6045,7 @@ end;
       Result := EventMember shl 16 + EventFunction;
     end);
 
-  var wbCTDAParamQuestOverlay: TwbIntOverlayCallback :=
+  var wbConditionParamQuestOverlay: TwbIntOverlayCallback :=
     function(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): Int64
     begin
       Result := aInt;
@@ -6109,8 +6091,9 @@ end;
       end;
     end;
 
-  var wbCTDA :=
-    wbRStructSK([0], 'Condition', [
+  var wbConditions :=
+    wbRArray('Conditions',
+    wbRStruct('Condition', [
       wbStructSK(CTDA, [3, 5, 6], '', [
      {0}wbInteger('Type', itU8, wbConditionTypeToStr, wbConditionTypeToInt).SetAfterSet(wbConditionTypeAfterSet),
      {1}wbUnused(3),
@@ -6118,15 +6101,15 @@ end;
           wbFloat('Comparison Value - Float'),
           wbFormIDCk('Comparison Value - Global', [GLOB])
         ]),
-     {3}wbInteger('Function', itU16, wbCTDAFunctionToStr, wbCTDAFunctionToInt),
+     {3}wbInteger('Function', itU16, wbConditionFunctionToStr, wbConditionFunctionToInt),
      {4}wbUnused(2),
-     {5}wbUnion('Parameter #1', wbCTDAParam1Decider, [
+     {5}wbUnion('Parameter #1', wbConditionParam1Decider, [
           { unknown }
           wbByteArray('Unknown', 4).IncludeFlag(dfZeroSortKey),
           { 0 ptNone}
           wbByteArray('None', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
           { 1 ptString}
-          wbInteger('String', itU32, wbCTDAParam1StringToString, wbCTDAParam1StringToInt),
+          wbInteger('String', itU32, wbConditionParam1StringToString, wbConditionParam1StringToInt),
           { 2 ptInteger}
           wbInteger('Integer', itS32),
           { 3 ptFloat}
@@ -6158,7 +6141,7 @@ end;
           {18 ptEquipType}
           wbFormIDCkNoReach('Equip Type', [EQUP]),
           {19 ptEvent}
-          wbCTDAParamEvent,
+          wbConditionParamEvent,
           {20 ptEventData}
           wbFormID('Event Data'),
           {21 ptFaction}
@@ -6202,7 +6185,7 @@ end;
           {39 ptPerk}
           wbFormIDCkNoReach('Perk', [PERK]),
           {40 ptQuest}
-          wbFormIDCkNoReach('Quest', [QUST]).AddOverlay(wbCTDAParamQuestOverlay),
+          wbFormIDCkNoReach('Quest', [QUST]).AddOverlay(wbConditionParamQuestOverlay),
           {41 ptQuestStage - normally only in Param2!}
           wbInteger('Quest Stage', itU32),
           {42 ptRace}
@@ -6265,13 +6248,13 @@ end;
           wbFormIDCk('GamePlayOption', [GPOF])
         ]),
 
-        wbUnion('Parameter #2', wbCTDAParam2Decider, [
+        wbUnion('Parameter #2', wbConditionParam2Decider, [
           { unknown }
           wbByteArray('Unknown', 4).IncludeFlag(dfZeroSortKey),
           { 0 ptNone}
           wbByteArray('None', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
           { 1 ptString}
-          wbInteger('String', itU32, wbCTDAParam2StringToString, wbCTDAParam2StringToInt),
+          wbInteger('String', itU32, wbConditionParam2StringToString, wbConditionParam2StringToInt),
           { 2 ptInteger}
           wbInteger('Integer', itS32),
           { 3 ptFloat}
@@ -6303,7 +6286,7 @@ end;
           {18 ptEquipType}
           wbFormIDCkNoReach('Equip Type', [EQUP]),
           {19 ptEvent}
-          wbCTDAParamEvent,
+          wbConditionParamEvent,
           {20 ptEventData}
           wbFormIDCk('Event Data', [KYWD,LCTN,NULL]),
           {21 ptFaction}
@@ -6440,10 +6423,10 @@ end;
           {13} 'My Ship',
           {14} 'Player Home Ship',
           {15} 'Player'
-        ]), cpNormal, False, nil, wbCTDARunOnAfterSet),
-        wbUnion('Reference', wbCTDAReferenceDecider, [
+        ])).SetAfterSet(wbConditionRunOnAfterSet),
+        wbUnion('Reference', wbConditionReferenceDecider, [
           wbInteger('Unused', itU32, nil, cpIgnore),
-          wbFormIDCkNoReach('Reference', sigReferences, False)
+          wbFormIDCkNoReach('Reference', sigReferences)
         ])
           .SetDontShow(function(const aElement: IwbElement): Boolean
           begin
@@ -6454,27 +6437,17 @@ end;
             if lContainer.ElementValues['..\Run On'] = 'Reference' then
               Exit(False);
           end),
-        wbUnion('Parameter #3', wbCTDAParam3Decider, [
-          wbInteger('Parameter #3', itS32, nil, cpNormal, False, nil, nil, -1),
+        wbUnion('Parameter #3', wbConditionParam3Decider, [
+          wbInteger('Parameter #3', itS32).SetDefaultNativeValue(-1),
           wbFormIDCk('Linked Keyword', [KYWD, NULL])
         ])
-      ], cpNormal, False{, nil, 0, wbCTDAAfterLoad}),
+      ]),
       wbString(CIS1, 'Parameter #1'),
       wbString(CIS2, 'Parameter #2')
-    ], [], cpNormal)
-      .SetToStr(wbConditionToStr)
+    ]).SetToStr(wbConditionToStr)
       .SetSummaryLinksToCallback(wbConditionSummaryLinksTo)
-      .IncludeFlag(dfCollapsed, wbCollapseConditions);
-
-  var wbCTDAs := wbRArray('Conditions', wbCTDA, cpNormal, False);
-  var wbCTDAsCount := wbRArray('Conditions', wbCTDA).SetCountPath(CITC);
-  var wbCTDAsCountReq := wbRArray('Conditions', wbCTDA, cpNormal, True).SetCountPath(CITC);
-  var wbCTDAsReq := wbRArray('Conditions', wbCTDA, cpNormal, True);
-
-  var wbConditions := wbRStruct('Conditions', [
-    wbCITCReq,
-    wbCTDAsCountReq
-  ]);
+      .IncludeFlag(dfCollapsed, wbCollapseConditions)
+    ).SetCountPath(CITC);
 
   var wbPerkActivityTypes := [
     'Actor Value',
@@ -6519,7 +6492,7 @@ end;
       wbRStructs('Progression Evaluator', 'Argument', [
         wbString(DNAM, 'Name').SetRequired,
         wbCITCReq,
-        wbCTDAsCount.SetRequired(False)
+        wbConditions
       ]).SetRequired,
       wbRStruct('Progression Configuration', [
         wbString(ANAM).SetRequired,
@@ -6578,7 +6551,7 @@ end;
     wbEmpty(SPOR, 'Animation Only Movement'),                           //SPOR  none // sets +0x5C to 1 (uint8/bool)
     wbEmpty(OCOR, 'Use Flavor Anim'),                                   //not documented by gibbed, occurs in Starfield.esm
     wbFloat(LVCR, 'Delay Start Time Action').SetRequired,               //LVCR  uint32 // +0x50
-    wbCTDAs,                                                            //CTDA  standard CTDA reading // +0x08
+    wbConditions,                                                       //CTDA  standard CTDA reading // +0x08
     wbFormIDCk(ATAC, 'Action', [NULL, AACT]).SetRequired,               //ATAC  uint32 // +0x48  probably formid
     wbEmpty(SHRT, 'Use Actor Anim Action'),                             //SHRT  none // sets +0x5F to 1 (uint8/bool)
     wbEmpty(PLRL, 'Animation Hold Event'),                              //PLRL  none // sets +0x5D to 1 (uint8/bool)
@@ -7102,7 +7075,7 @@ end;
           wbRStructs('Population Proportions', 'Population Proportion', [
             wbCrowdPRPS,
             wbCITCReq,
-            wbCTDAsCount,
+            wbConditions,
             wbString(STRV, 'Name'),
             wbFloat(FLTV, 'Population Scale')
           ]).SetCountPath(CDNS)
@@ -7477,7 +7450,7 @@ end;
           wbInteger(NAM8, 'Allow Invalid Biome Markers', itU8, wbBoolEnum),
           wbInteger(NAM9, 'Number of Times Allowed (per planet world)', itU32),
           wbCITCReq,
-          wbCTDAsCount
+          wbConditions
         ]),
         //BGSVehicleConfig
         wbRStruct('Component Data - Vehicle Config', [
@@ -8115,7 +8088,7 @@ end;
     wbRStruct('Effect', [
       wbEFID,
       wbEFIT,
-      wbCTDAs,
+      wbConditions,
       wbFormIDCk(MNAM, 'Magnitude Global', [GLOB]),
       wbFormIDCk(ANAM, 'Area Global', [GLOB]),
       wbFormIDCk(ZNAM, 'Duration Global', [GLOB]),
@@ -8233,7 +8206,10 @@ end;
       wbInteger('Starts Active', itU8, wbBoolEnum),
       wbInteger('No Signal Static', itU8, wbBoolEnum)
     ], cpNormal, False, nil),
-    wbConditions,
+    wbRStruct('Conditions', [
+      wbCITCReq,
+      wbConditions.SetRequired
+    ]),
     wbNVNM
   ]);
 
@@ -9635,7 +9611,10 @@ end;
     .SetSummaryPrefixSuffixOnValue(1,'to ',':00,')
     .IncludeFlagOnValue(dfSummaryMembersNoName),
     wbPLVD,
-    wbConditions,
+    wbRStruct('Conditions', [
+      wbCITCReq,
+      wbConditions.SetRequired
+    ]),
     wbFormIDCk(VTCK, 'Voice', [FLST, VTYP]),
     wbRStruct('Herd', [
       wbMarkerReq(CRHR),
@@ -9953,7 +9932,7 @@ end;
     wbFormIDCk(TNAM, 'Texture Set', [TXST]),
     wbFormIDCk(RNAM, 'Valid Races', [FLST]),
     wbFormIDCk(MNAM, 'Morph', [MRPH]),
-    wbCTDAs
+    wbConditions
   ]);
 
   {subrecords checked against Starfield.esm}
@@ -10196,7 +10175,7 @@ end;
            ])).IncludeFlag(dfCollapsed, wbCollapseFlags)
       {92}
     ]).SetRequired,
-    wbCTDAs
+    wbConditions
   ]);
 
   {subrecords checked against Starfield.esm}
@@ -10436,7 +10415,7 @@ end;
     wbRStructs('Conditional Entries', 'Conditional Entry', [
       wbInteger(INAM, 'Index', itU32),
       wbCITCReq,
-      wbCTDAsCountReq
+      wbConditions.SetRequired
     ]),
     wbFormIDCk(ANAM, 'Add To List', [FLST, NULL])
   ]);
@@ -10444,7 +10423,7 @@ end;
   var wbPerkConditions :=
     wbRStructSK([0], 'Perk Condition', [
       wbInteger(PRKC, 'Run On (Tab Index)', itS8{, wbPRKCToStr, wbPRKCToInt}),
-      wbCTDAsReq
+      wbConditions.SetRequired
     ], [], cpNormal, False{, nil, nil, wbPERKPRKCDontShow});
 
   var wbPerkEffect :=
@@ -10592,7 +10571,7 @@ end;
     wbRStructs('Ranks', 'Rank', [
       wbEmpty(PRRK, 'Header Marker').SetRequired,
       wbRArrayS('Effects', wbPerkEffect),
-      wbCTDAs,
+      wbConditions,
       wbActivityTracker,
       wbDESC.SetRequired,
       wbEmpty(PRRF, 'End Marker').SetRequired
@@ -10601,7 +10580,7 @@ end;
 
     (*
     //wbString(ICON, 'Image'), not in Starfield.esm
-    //wbCTDAs,                 not in Starfield.esm
+    //wbConditions,                 not in Starfield.esm
     wbFormIDCk(SNAM, 'Sound', [SNDR]),
     wbFormIDCK(NNAM, 'Next Perk', [PERK, NULL]),
     wbString(FNAM, 'SWF'),
@@ -10772,7 +10751,7 @@ end;
     wbGenericModel(True),
     wbKeywords,
     wbNLDT,
-    wbCTDAs,
+    wbConditions,
     wbStruct(DATA, 'Data', [
       wbInteger('Action', itU32, wbEnum([
         {0} 'Shoot',
@@ -10825,7 +10804,7 @@ end;
   {subrecords checked against Starfield.esm}
   wbRecord(CPTH, 'Camera Path', [
     wbEDID,
-    wbCTDAs,
+    wbConditions,
     wbStruct(ANAM, 'Camera Paths', [
       wbFormIDCk('Parent', [CPTH, NULL], False, cpBenign),
       wbFormIDCk('Previous', [CPTH, NULL], False, cpBenign)
@@ -11089,7 +11068,7 @@ end;
     wbRStruct('Menu Button', [
       wbLStringKC(ITXT, 'Button Text', 0, cpTranslate),
       wbString(IBIN, 'Event Name'),  // unsure if localized or not
-      wbCTDAs,
+      wbConditions,
       wbFormIDCk(DODT, 'Reference', [REFR, PLYR, NULL])
     ]);
 
@@ -11634,7 +11613,7 @@ end;
     wbFormIDCkNoReach(PNAM, 'Parent Node', [SMQN, SMBN, SMEN, NULL]),
     wbFormIDCkNoReach(SNAM, 'Previous Node', [SMQN, SMBN, SMEN, NULL], False, cpBenign),
     wbCITCReq,
-    wbCTDAsCount,
+    wbConditions,
     wbInteger(DNAM, 'Flags', itU32,
       wbFlags([
         'Random',
@@ -11650,7 +11629,7 @@ end;
     wbFormIDCkNoReach(PNAM, 'Parent Node', [SMQN, SMBN, SMEN, NULL]),
     wbFormIDCkNoReach(SNAM, 'Previous Node', [SMQN, SMBN, SMEN, NULL], False, cpBenign),
     wbCITCReq,
-    wbCTDAsCount,
+    wbConditions,
     wbInteger(DNAM, 'Flags', itU32,
       wbFlags(wbSparseFlags([
         0, 'Random',
@@ -11678,7 +11657,7 @@ end;
     wbFormIDCkNoReach(PNAM, 'Parent Node', [SMQN, SMBN, SMEN, NULL]),
     wbFormIDCkNoReach(SNAM, 'Previous Node', [SMQN, SMBN, SMEN, NULL], False, cpBenign),
     wbCITCReq,
-    wbCTDAsCount,
+    wbConditions,
     wbInteger(DNAM, 'Flags', itU32,
       wbFlags([
         'Random',
@@ -11720,7 +11699,10 @@ end;
     wbSoundReference(MTSH, 'Single Track Sound'),
     wbArray(FNAM, 'Cue Points', wbFloat('Point')).IncludeFlag(dfNotAlignable),
     wbInteger(MSTF, 'Conditions can''t fail after success', itU8, wbBoolEnum),
-    wbConditions,
+    wbRStruct('Conditions', [
+      wbCITCReq,
+      wbConditions
+    ]),
     wbArray(SNAM, 'Tracks', wbFormIDCk('Track', [MUST, NULL])) // do not sort. NULL entry acts as a divider for groups
   ]);
 
@@ -11810,9 +11792,9 @@ end;
       wbRStruct('Phase', [
         wbEmpty(HNAM, 'Marker Phase Start', cpNormal, True),
         wbString(NAM0, 'Name', 0, cpNormal, True),
-        wbRStruct('Start Conditions', [wbCTDAs]),
+        wbRStruct('Start Conditions', [wbConditions]),
         wbEmpty(NEXT, 'End Marker Start Conditions', cpNormal, True),
-        wbRStruct('Completion Conditions', [wbCTDAs]),
+        wbRStruct('Completion Conditions', [wbConditions]),
         wbEmpty(NEXT, 'End Marker Completion Conditions', cpNormal, True),
         wbInteger(WNAM, 'Editor Width', itU32, nil, cpNormal, True, false, nil, nil, 350),
         wbInteger(FNAM, 'Flags', itU16, wbFlags([
@@ -12007,7 +11989,7 @@ end;
             ]).SetRequired,
             wbString(SSPN, 'Start Phase for Scene'),                            //not documented by gibbed from source, occurs in Starfield.esm
             wbCITCReq,                                                          //CITC uint32 // +0x28 array; repeated; item+0x08; count of following fields, CTDA/CNDD, others will be ignored
-            wbCTDAsCount
+            wbConditions
           ]).SetRequired(False),
           wbEmpty(HTID, 'End Scene Flag')
         ], [], cpNormal, True)
@@ -12072,7 +12054,7 @@ end;
             wbEmpty(AIDT, 'Ignore Collision'),                                  //AIDT  none // sets +0x48 to 1 (uint8/bool)
             wbEmpty(MPCD, 'Use Look Target Alias'),                             //MPCD  none // sets +0x47 to 1 (uint8/bool)
             wbEmpty(VNAM, 'Force Look At 1st Person Camera'),                   //VNAM  none // sets +0x49 to 1 (uint8/bool)
-            wbCTDAs,                                                            //CTDA  standard CTDA reading // +0x10 //not found in Starfield.esm
+            wbConditions,                                                       //CTDA  standard CTDA reading // +0x10 //not found in Starfield.esm
             wbMarkerReq(XNAM)                                                   //XNAM  end marker for CNAM fields
           ])
         ]),
@@ -12102,7 +12084,7 @@ end;
             {0x00010000} 'Unknown 16'
           ])).IncludeFlag(dfCollapsed, wbCollapseFlags).SetRequired,
           wbSoundReference(WED0),                                               //WED0  SoundReference // +0x38
-          wbCTDAs,                                                              //CTDA  standard CTDA reading // +0x20
+          wbConditions,                                                              //CTDA  standard CTDA reading // +0x20
           wbFormIDCk(BIPL, 'Reference', [REFR, PLYR, NULL]).SetRequired,        //BIPL  uint32 // +0x70  probably formid
           wbInteger(LVLO, 'Alias', itS32, wbSCENQuestAliasToStr, wbStrToAlias, cpNormal, True)
             .SetDefaultNativeValue(-1)
@@ -12182,7 +12164,7 @@ end;
     wbFormIDCk(PNAM, 'Quest', [QUST], False, cpNormal, True),
     wbInteger(INAM, 'Last Action Index', itU32),
     wbUnknown(VNAM),
-    wbCTDAs,
+    wbConditions,
     wbStruct(SCQS, 'Set Parent Quest Stage', [
       wbInteger('On Begin', itS16),
       wbInteger('On End', itS16)
@@ -12400,7 +12382,7 @@ end;
       'Remapping Index',
       'Extended LUT'
     ]), cpNormal, True).IncludeFlag(dfCollapsed, wbCollapseFlags),
-    wbCTDAs
+    wbConditions
   ]);
 
   {subrecords checked against Starfield.esm}
@@ -12449,7 +12431,7 @@ end;
   {subrecords checked against Starfield.esm}
   wbRecord(IDLE, 'Animation', [
     wbEDID,
-    wbCTDAs,
+    wbConditions,
     wbString(DNAM, 'Behavior Graph'),
     wbString(ENAM, 'Animation Event'),
     wbStruct(ANAM, 'Animations', [
@@ -12540,7 +12522,7 @@ end;
       wbHNAMHNAM,
       wbSoundReference(RVSH)
     ])),
-    wbCTDAs,
+    wbConditions,
     wbLStringKC(RNAM, 'Prompt', 0, cpTranslate),
     wbFormIDCk(ANAM, 'Speaker', [NPC_]),
     wbFormIDCk(TSCE, 'Start Scene', [SCEN]),
@@ -12762,7 +12744,7 @@ end;
     wbEDID,
     wbBaseFormComponents,
     wbDESCReq(),
-    wbCTDAs,
+    wbConditions,
     wbString(ICON, 'Loadscreen')
     {
     wbFormIDCk(NNAM, 'Loading Screen NIF', [STAT, SCOL, NULL], False, cpNormal, True),
@@ -12834,14 +12816,14 @@ end;
       {0x0080} '',
       {0x0100} 'Do All Before Repeating'
     ]), cpNormal, True).IncludeFlag(dfCollapsed, wbCollapseFlags),
-    wbCTDAs,
+    wbConditions,
     wbFormIDCk(LVLG, 'Use Global', [GLOB]),
     wbLLCT,
     wbRArrayS('Leveled List Entries',
       wbRStructExSK([0], [1], 'Leveled List Entry', [
         wbLeveledListEntry('NPC', [LVLN, NPC_]),
         wbCOED,
-        wbCTDAs
+        wbConditions
       ]).SetSummaryMemberMaxDepth(0, 1)
         .IncludeFlag(dfCollapsed, wbCollapseLeveledItems)
     ).SetCountPath(LLCT),
@@ -12875,7 +12857,7 @@ end;
       {0x0080} 'Get Chance From Required Biome',
       {0x0100} 'Do All Before Repeating'
     ]), cpNormal, True).IncludeFlag(dfCollapsed, wbCollapseFlags),
-    wbCTDAs,
+    wbConditions,
     wbFormIDCk(LVLG, 'Use Chance None Global', [GLOB]),
     wbFormIDCk(LLRB, 'Required Biome', [BIOM]),
     wbFormIDCk(LLRV, 'Required Resource Vein', [IRES]),
@@ -12884,7 +12866,7 @@ end;
       wbRStructExSK([0], [1], 'Leveled List Entry', [
         wbLeveledListEntry('Item', sigBaseObjects),
         wbCOED,
-        wbCTDAs
+        wbConditions
       ]).SetSummaryMemberMaxDepth(0, 1)
         .IncludeFlag(dfCollapsed, wbCollapseLeveledItems)
     ).SetCountPath(LLCT),
@@ -12923,13 +12905,13 @@ end;
       {0x0080} '',
       {0x0100} 'Do All Before Repeating'
     ]), cpNormal, True).IncludeFlag(dfCollapsed, wbCollapseFlags),
-    wbCTDAs,
+    wbConditions,
     wbFormIDCk(LVLG, 'Use Global', [GLOB]),
     wbLLCT,
     wbRArrayS('Leveled List Entries',
       wbRStructExSK([0], [1], 'Leveled List Entry', [
         wbLeveledListEntry('Pack In', [LVLP, PKIN]),
-        wbCTDAs.IncludeFlag(dfSummaryMembersNoName)
+        wbConditions.IncludeFlag(dfSummaryMembersNoName)
       ]).SetSummaryMemberMaxDepth(0, 1)
         .IncludeFlag(dfCollapsed, wbCollapseLeveledItems)
     ).SetCountPath(LLCT),
@@ -13148,7 +13130,7 @@ end;
     ]).SetSummaryKeyOnValue([1]).IncludeFlag(dfCollapsed, wbCollapseSounds)
     ),
     wbLStringKC(DNAM, 'Magic Item Description', 0, cpTranslate),
-    wbCTDAs
+    wbConditions
   ], False, nil, cpNormal, False, nil {wbMGEFAfterLoad}, wbMGEFAfterSet);
 
   {subrecords checked against Starfield.esm}
@@ -13213,7 +13195,7 @@ end;
     wbBaseFormComponents,
     wbDESC().SetRequired,
     wbFormIDCkNoReach(BNAM, 'Workbench Keyword', [NULL, KYWD]).SetRequired,
-    wbCTDAs,
+    wbConditions,
     wbComponents,
     wbArrayS(RQPK, 'Required Perks',
       wbStructSK([0], 'Required Perk', [
@@ -14216,7 +14198,7 @@ end;
           'Chargen Detail',
           'Takes Skin Tone'
         ])).IncludeFlag(dfCollapsed, wbCollapseFlags),
-        wbCTDAs,
+        wbConditions,
         wbRArray('Textures', wbString(TTET, 'Texture')),
         wbInteger(TTEB, 'Blend Operation', itU32, wbBlendOperationEnum),
         wbArray(TTEC, 'Template Colors', wbStruct('Template Color', [
@@ -14356,7 +14338,7 @@ end;
       wbInteger('Duration (minutes)', itS32)
     ], cpNormal, True),
 
-    wbCTDAs,
+    wbConditions,
 
     wbRStruct('Animations', [
       wbInteger(IDLF, 'Flags', itU8, wbEnum([], [
@@ -14394,7 +14376,7 @@ end;
           wbRStruct('Target', [
             wbPTDA,
             wbCITCReq,
-            wbCTDAsCount
+            wbConditions
           ]),
           wbFormIDCk(STSC, 'Scene', [SCEN]).IncludeFlag(dfUnmappedFormID, wbStarfieldIsABugInfestedHellhole)
         ])
@@ -14477,7 +14459,7 @@ end;
         wbString(ANAM, 'Branch Type'),
         wbString(NNAM, 'Note'),
         wbCITCReq,
-        wbCTDAsCount,
+        wbConditions,
         wbStruct(PRCB, 'Root', [
           wbInteger('Branch Count', itU32),
           wbInteger('Flags', itU32, wbFlags([
@@ -14720,7 +14702,7 @@ end;
           ])
       ]).IncludeFlag(dfMustBeUnion),
 
-      wbCTDAs,
+      wbConditions,
       wbKeywords,
       wbContainerItems,
 
@@ -14781,11 +14763,11 @@ end;
           ])
       ]).IncludeFlag(dfMustBeUnion),
 
-      wbCTDAs,
+      wbConditions,
 
       wbRStruct('Unknown', [
         wbMarkerReq(ALPS),
-        wbCTDAs,
+        wbConditions,
         wbFormIDCk(LNAM, 'PCM Type Keyword', [KYWD])
       ]),
 
@@ -14887,9 +14869,9 @@ end;
     wbRArray('Text Display Globals', wbFormIDCk(QTGL, 'Global', [GLOB])),
     wbFLTR,
     wbString(NAM3, 'Summary'),
-    wbRStruct('Quest Dialogue Conditions', [wbCTDAs], [], cpNormal, False),
+    wbRStruct('Quest Dialogue Conditions', [wbConditions], [], cpNormal, False),
     wbMarkerReq(NEXT),
-    wbRStruct('Story Manager Conditions', [wbCTDAs], [], cpNormal, False),
+    wbRStruct('Story Manager Conditions', [wbConditions], [], cpNormal, False),
     wbRArrayS('Stages', wbRStructSK([0], 'Stage', [
       wbStructSK(INDX, [0], 'Stage Index', [
         wbInteger('Stage Index', itU16),
@@ -14909,7 +14891,7 @@ end;
           {0x01} 'Complete Quest',
           {0x02} 'Fail Quest'
         ])).IncludeFlag(dfCollapsed, wbCollapseFlags),
-        wbCTDAs,
+        wbConditions,
         wbString(NAM2, 'Note'),
         wbString(SCFC, 'Script Flag Comment'),
         wbLStringKC(CNAM, 'Log Entry', 0, cpTranslate),
@@ -14923,7 +14905,7 @@ end;
               wbFormIDCk('Item', sigBaseObjects, False, cpNormal, True),
               wbInteger('Count', itU32)
             ])),
-            wbCTDAs
+            wbConditions
           ])).SetCountPath(QSRD),
           wbEmpty(QSRD, 'End Marker', cpNormal, True)
           ]),
@@ -14948,7 +14930,7 @@ end;
           ])).IncludeFlag(dfCollapsed, wbCollapseFlags),
           wbFromVersion(82, wbFormIDCk('Keyword', [KYWD, NULL]))
         ]),
-        wbCTDAs
+        wbConditions
       ]))
     ])
       .SetSummaryKey([0, 2])
@@ -17023,7 +17005,10 @@ end;
       wbInteger('Starts Active', itU8, wbBoolEnum),
       wbInteger('No Signal Static', itU8, wbBoolEnum)
     ]),
-    wbConditions,
+    wbRStruct('Conditions', [
+      wbCITCReq,
+      wbConditions
+    ]),
     wbMNAMFurnitureMarker.SetRequired,
     wbInteger(GNAM, 'Activation Angle - For Sitting Actor', itU16)
       .SetDefaultNativeValue(360)
@@ -17152,7 +17137,7 @@ end;
         ])),
         wbInteger(ENAM, 'Trigger Release', itU8, wbBoolEnum),
         wbString(NNAM, 'Description'),
-        wbCTDAs,
+        wbConditions,
         wbEmpty(ECHE, 'Echo End Marker')
       ]).SetSummaryKey([1,2])
     )
@@ -17270,7 +17255,7 @@ end;
   wbRecord(PMFT, 'Photo Mode Feature', [
     wbEDID,
     wbFULL,
-    wbCTDAs,
+    wbConditions,
     wbStruct(FNAM, 'Data', [
       wbInteger('Type', itU8, wbPhotoModeEnum),
       wbFloat('X offset'),
@@ -17307,7 +17292,7 @@ end;
   {subrecords checked against Starfield.esm}
   wbRecord(CNDF, 'Condition Form', [
     wbEDID,
-    wbCTDAs,
+    wbConditions,
     wbFormIDCk(QNAM, 'Owner Quest', [QUST]),
     wbFormIDCk(PNAM, 'Owner Package', [PACK])
   ]);
@@ -17363,7 +17348,7 @@ end;
     wbBaseFormComponents,
     wbGenericModel(True),
     wbKeywords,
-    wbCTDAs,
+    wbConditions,
     wbFormIDCk(KNAM, 'Marker Type', [NULL, KYWD]).SetRequired,
     wbFormIDCk(LNAM, 'Fallback List', [NULL, LVLI]).SetRequired,
     wbFormIDCk(LNA2, 'Navmesh Object', [NULL, FLOR, PKIN, STAT]).SetRequired //probably any type of non-actor reference?
@@ -17422,14 +17407,14 @@ end;
       {0x0100} 'Do All Before Repeating',
       {0x0200} 'Contains Only Spaceship Base Forms'
     ]), cpNormal, True).IncludeFlag(dfCollapsed, wbCollapseFlags),
-    wbCTDAs,
+    wbConditions,
     wbFormIDCk(LVLG, 'Use Global', [GLOB]),
     wbLLCT.IncludeFlag(dfSkipImplicitEdit),
     wbRArrayS('Leveled List Entries',
       wbRStructExSK([0], [1], 'Leveled List Entry', [
         wbLeveledListEntry('Base Form', [GBFM, LVLB]),
         wbCOED,
-        wbCTDAs
+        wbConditions
       ]).SetSummaryMemberMaxDepth(0, 1)
         .IncludeFlag(dfCollapsed, wbCollapseLeveledItems)
     ).SetCountPath(LLCT),
@@ -18004,13 +17989,13 @@ end;
       {0x0080} '',
       {0x0100} 'Do All Before Repeating'
     ]), cpNormal, True).IncludeFlag(dfCollapsed, wbCollapseFlags),
-    wbCTDAs,
+    wbConditions,
     wbFormIDCk(LVLG, 'Use Global', [GLOB]),
     wbLLCT,
     wbRArrayS('Leveled List Entries',
       wbRStructExSK([0], [1], 'Leveled List Entry', [
         wbLeveledListEntry('Space Cell', [CELL, LVSC]),
-        wbCTDAs
+        wbConditions
       ]).SetSummaryMemberMaxDepth(0, 1)
         .IncludeFlag(dfCollapsed, wbCollapseLeveledItems)
     ).SetCountPath(LLCT)
@@ -18061,7 +18046,7 @@ end;
     wbInteger(NAM5, 'Consume request even on failure', itU8, wbBoolEnum, cpNormal, True),
     wbRArray('Nodes', wbFormIDCk(PCCB, 'Node', [PCBN, PCCN])),
     wbCITCReq,
-    wbCTDAsCount,
+    wbConditions,
     wbKWDAs,
     wbFormIDCk(PRTN, 'Parent Node', [PCBN, PCMT, NULL]),
     wbFormIDCk(PRVN, 'Previous Node', [PCBN, NULL])
@@ -18087,7 +18072,7 @@ end;
     wbInteger(NAM5, 'Consume request even on failure', itU8, wbBoolEnum, cpNormal, True), // PCMT does not allow changing flag to true
     wbRArray('Nodes', wbFormIDCk(PCCB, 'Node', [PCBN])),
     wbCITCReq,
-    wbCTDAsCount,
+    wbConditions,
     wbKWDAs
   ]);
 
@@ -18363,7 +18348,7 @@ end;
     wbFULL,
     wbDESC(),
     wbFormIDCk(BNAM,'Workbench Keyword', [KYWD]),
-    wbCTDAs,
+    wbConditions,
     wbStructs(FVPA, 'Required Items', 'Item', [
       wbFormIDCk('Item', [ALCH,AMMO,ARMO,BOOK,COBJ,IRES,KEYM,LIGH,LVLI,MISC,WEAP]),
       wbInteger('Required Count', itU32),
@@ -18602,7 +18587,7 @@ end;
       ])).SetRequired,
       wbFormIDCk(PNAM, 'Payload', sigBaseObjects + [FLST], sigBaseObjects).SetRequired,
       wbCITCReq,
-      wbCTDAsCount,
+      wbConditions,
       wbFormIDCk(UNAM, 'Snap Template Node', [NULL, STND]).SetRequired,
       wbFormIDCk(VNAM, 'Group Keyword', [NULL, KYWD]).SetRequired
     ])
@@ -18666,7 +18651,7 @@ end;
       wbInteger(BSIZ, 'Count', itU32, nil, cpBenign).IncludeFlag(dfSkipImplicitEdit),
       wbRStructs('Items', 'Item', [
         wbLStringKC(BTXT, 'Text', 0, cpTranslate, True),
-        wbCTDAs,
+        wbConditions,
         wbInteger(TPLT, 'Uses Templated Text', itU8, wbBoolEnum) // note that this is not set on text that uses aliases or script token replacement
       ]).SetCountPath(BSIZ)
     ]),
@@ -18704,7 +18689,7 @@ end;
                 .IncludeFlag(dfDontAssign)
                 .IncludeFlag(dfDontSave)
           ], [], cpNormal, False, wbTMLMTypeDontShowCallback),
-        wbCTDAs
+        wbConditions
       ]).SetCountPath(ISIZ)
     ])
   ]);

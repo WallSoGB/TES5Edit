@@ -3171,8 +3171,8 @@ begin
             {2} 'Reference',
             {3} 'Combat Target',
             {4} 'Linked Reference'
-            ])).SetAfterSet(wbCTDARunOnAfterSet),
-      {8} wbUnion('Reference', wbCTDAReferenceDecider, [
+            ])).SetAfterSet(wbConditionRunOnAfterSet),
+      {8} wbUnion('Reference', wbConditionReferenceDecider, [
             wbInteger('Unused', itU32, nil, cpIgnore),
             wbFormIDCkNoReach('Reference', [ACHR, ACRE, PBEA, PGRE, PLYR, PMIS, REFR], True)
           ])

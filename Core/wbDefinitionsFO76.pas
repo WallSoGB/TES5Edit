@@ -7465,8 +7465,8 @@ begin
                 {14} 'Player Teammates',
                 {15} 'Target List',
                 {16} 'Instance Owner'
-                ])).SetAfterSet(wbCTDARunOnAfterSet),
-          {8} wbUnion('Reference', wbCTDAReferenceDecider, [
+                ])).SetAfterSet(wbConditionRunOnAfterSet),
+          {8} wbUnion('Reference', wbConditionReferenceDecider, [
               {0} wbInteger('Unused', itU32, nil, cpIgnore),
               {1} wbFormIDCkNoReach('Reference', sigReferences, False)
               ]),

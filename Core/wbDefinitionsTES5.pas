@@ -4482,8 +4482,8 @@ begin
                 {5} 'Quest Alias',
                 {6} 'Package Data',
                 {7} 'Event Data'
-                ])).SetAfterSet(wbCTDARunOnAfterSet),
-          {8} wbUnion('Reference', wbCTDAReferenceDecider, [
+                ])).SetAfterSet(wbConditionRunOnAfterSet),
+          {8} wbUnion('Reference', wbConditionReferenceDecider, [
               {0} wbInteger('Unused', itU32, nil, cpIgnore),
               {1} wbFormIDCkNoReach('Reference', [NULL, PLYR, ACHR, REFR, PGRE, PHZD, PMIS, PARW, PBAR, PBEA, PCON, PFLA], False)
               ]),
