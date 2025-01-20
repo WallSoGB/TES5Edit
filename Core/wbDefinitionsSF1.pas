@@ -1662,7 +1662,6 @@ type
     { 4} ptActor,              // ACHR
     { 5} ptActorBase,          // NPC_
     { 6} ptActorValue,         // AVIF?
-    { 7} ptAdvanceAction,      // ?? Enum
     { 8} ptAlias,              // index into QUST quest aliases
     { 9} ptAlignment,          // ?? Enum
     {10} ptAssociationType,    // ASTP
@@ -1672,7 +1671,6 @@ type
     {14} ptClass,              // CLAS
     {15} ptCrimeType,          // ?? Enum
     {16} ptCriticalStage,      // ?? Enum
-    {17} ptEncounterZone,      // LCTN
     {18} ptEquipType,          // ?? Enum
     {19} ptEvent,              // Struct
     {20} ptEventData,          // LCTN, KYWD or FLST
@@ -1680,11 +1678,9 @@ type
     {22} ptFormList,           // FLST
     {23} ptFormType,           // ?? Enum
     {24} ptFurniture,          // FURN
-    {25} ptFurnitureAnim,      // enum
     {26} ptFurnitureEntry,     // flags
     {27} ptGlobal,             // GLOB
     {28} ptIdleForm,           // IDLE
-    {29} ptInventoryObject,    // ARMO, BOOK, MISC, WEAP, AMMO, KEYM, ALCH, ARMA, LIGH, LVLI, COBJ
     {30} ptKeyword,            // KYWD
     {31} ptLocation,           // LCTN
     {32} ptMagicEffect,        // MGEF
@@ -1703,10 +1699,6 @@ type
     {45} ptRegion,             // REGN
     {46} ptScene,              // SCEN
     {47} ptSex,                // Enum: Male, Female
-    {48} ptShout,              // SHOU
-    {49} ptVariableName,       // Integer
-    {50} ptVATSValueFunction,  //
-    {51} ptVATSValueParam,
     {52} ptVoiceType,          // VTYP
     {53} ptWardState,          // enum
     {54} ptWeather,            // WTHR
@@ -6145,8 +6137,6 @@ end;
           wbFormIDCkNoReach('Actor Base', [NPC_, NULL]),
           { 6 ptActorValue }
           wbActorValue(),
-          { 7 ptAdvanceAction}
-          wbInteger('Player Action', itU32, wbAdvanceActionEnum),
           { 8 ptAlias}
           wbInteger('Alias', itS32, wbConditionAliasToStr, wbStrToAlias),
           { 9 ptAlignment}
@@ -6165,8 +6155,6 @@ end;
           wbInteger('Crime Type', itU32, wbCrimeTypeEnum),
           {16 ptCriticalStage}
           wbInteger('Critical Stage', itU32, wbCriticalStageEnum),
-          {17 ptEncounterZone}
-          wbFormIDCkNoReach('Encounter Location', [LCTN]),
           {18 ptEquipType}
           wbFormIDCkNoReach('Equip Type', [EQUP]),
           {19 ptEvent}
@@ -6181,8 +6169,6 @@ end;
           wbInteger('Form Type', itU32, wbFormTypeEnum),
           {24 ptFurniture}
           wbFormIDCkNoReach('Furniture', [FURN, FLST]),
-          {25 ptFurnitureAnim}
-          wbInteger('Furniture Anim', itU32, wbFurnitureAnimTypeEnum),
           {26 ptFurnitureEntry}
           wbInteger('Furniture Entry', itU32, wbEnum([], [
             $01, 'Front',
@@ -6195,8 +6181,6 @@ end;
           wbFormIDCkNoReach('Global', [GLOB]),
           {28 ptIdleForm}
           wbFormIDCkNoReach('Idle', [IDLE]),
-          {29 ptInventoryObject}
-          wbFormIDCkNoReach('Inventory Object', sigBaseObjects),
           {30 ptKeyword}
           wbFormIDCkNoReach('Keyword', [KYWD, FLST, NULL]),
           {31 ptLocation}
@@ -6233,14 +6217,6 @@ end;
           wbFormIDCk('Scene', [NULL, SCEN]),
           {47 ptSex}
           wbInteger('Sex', itU32, wbSexEnum),
-          {48 ptShout}
-          wbFormIDCkNoReach('Shout', [SHOU]),
-          {49 ptVariableName}
-          wbByteArray('Variable Name (unused)', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
-          {50 ptVATSValueFunction}
-          wbInteger('VATS Value Function', itU32, wbVATSValueFunctionEnum),
-          {51 ptVATSValueParam}
-          wbInteger('VATS Value Param (unused)', itU32).IncludeFlag(dfZeroSortKey),
           {52 ptVoiceType}
           wbFormIDCkNoReach('Voice Type', [VTYP, FLST]),
           {53 ptWardState}
@@ -6306,8 +6282,6 @@ end;
           wbFormIDCkNoReach('Actor Base', [NPC_]),
           { 6 ptActorValue}
           wbActorValue(),
-          { 7 ptAdvanceAction}
-          wbInteger('Player Action', itU32, wbAdvanceActionEnum),
           { 8 ptAlias}
           wbInteger('Alias', itS32, wbConditionAliasToStr, wbStrToAlias),
           { 9 ptAlignment}
@@ -6326,8 +6300,6 @@ end;
           wbInteger('Crime Type', itU32, wbCrimeTypeEnum),
           {16 ptCriticalStage}
           wbInteger('Critical Stage', itU32, wbCriticalStageEnum),
-          {17 ptEncounterZone}
-          wbFormIDCkNoReach('Encounter Location', [LCTN]),
           {18 ptEquipType}
           wbFormIDCkNoReach('Equip Type', [EQUP]),
           {19 ptEvent}
@@ -6342,8 +6314,6 @@ end;
           wbInteger('Form Type', itU32, wbFormTypeEnum),
           {24 ptFurniture}
           wbFormIDCkNoReach('Furniture', [FURN, FLST]),
-          {25 ptFurnitureAnim}
-          wbInteger('Furniture Anim', itU32, wbFurnitureAnimTypeEnum),
           {26 ptFurnitureEntry}
           wbInteger('Furniture Entry', itU32, wbEnum([], [
             $01, 'Front',
@@ -6356,8 +6326,6 @@ end;
           wbFormIDCkNoReach('Global', [GLOB]),
           {28 ptIdleForm}
           wbFormIDCkNoReach('Idle', [IDLE]),
-          {29 ptInventoryObject}
-          wbFormIDCkNoReach('Inventory Object', sigBaseObjects),
           {30 ptKeyword}
           wbFormIDCkNoReach('Keyword', [KYWD, FLST, NULL]),
           {31 ptLocation}
@@ -6408,57 +6376,6 @@ end;
           wbFormIDCk('Scene', [NULL, SCEN]),
           {47 ptSex}
           wbInteger('Sex', itU32, wbSexEnum),
-          {48 ptShout}
-          wbFormIDCkNoReach('Shout', [SHOU]),
-          {49 ptVariableName}
-          wbByteArray('Variable Name (unused)', 4, cpIgnore),
-          {50 ptVATSValueFunction}
-          wbInteger('VATS Value Function', itU32, wbVATSValueFunctionEnum),
-          {51 ptVATSValueParam}
-          wbUnion('VATS Value Param', wbCTDAParam2VATSValueParamDecider, [
-           { 0} wbFormIDCkNoReach('Weapon', [WEAP]),
-           { 1} wbFormIDCkNoReach('Weapon List', [FLST], [WEAP]),
-           { 2} wbFormIDCkNoReach('Target', [NPC_]),
-           { 3} wbFormIDCkNoReach('Target List', [FLST], [NPC_]),
-           { 4} wbByteArray('Unknown', 4, cpIgnore),
-           { 5} wbInteger('Target Part', itS32, wbActorValueEnum),
-           { 6} wbInteger('VATS Action', itU32, wbEnum([
-                  'Unarmed Attack',
-                  'One Hand Melee Attack',
-                  'Two Hand Melee Attack',
-                  'Magic Attack',
-                  'Ranged Attack',
-                  'Reload',
-                  'Crouch',
-                  'Stand',
-                  'Switch Weapon',
-                  'Toggle Weapon Drawn',
-                  'Heal',
-                  'Player Death'
-            ])),
-           { 7} wbByteArray('Unknown', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
-           { 8} wbByteArray('Unknown', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
-           { 9} wbFormIDCkNoReach('Critical Effect', [SPEL]),
-           {10} wbFormIDCkNoReach('Critical Effect List', [FLST], [SPEL]),
-           {11} wbByteArray('Unknown', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
-           {12} wbByteArray('Unknown', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
-           {13} wbByteArray('Unknown', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
-           {14} wbByteArray('Unknown', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
-           {15} wbInteger('Weapon Type', itU32, wbWeaponAnimTypeEnum),
-           {16} wbByteArray('Unknown', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
-           {17} wbByteArray('Unknown', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
-           {18} wbInteger('Projectile Type', itU32, wbEnum([
-                  'Missile',
-                  'Lobber',
-                  'Beam',
-                  'Flame',
-                  'Cone',
-                  'Barrier',
-                  'Arrow'
-                ])),
-           {19} wbInteger('Delivery Type', itU32, wbTargetEnum),
-           {20} wbInteger('Casting Type', itU32, wbCastEnum)
-          ]),
           {52 ptVoiceType}
           wbFormIDCkNoReach('Voice Type', [VTYP, FLST]),
           {53 ptWardState}
