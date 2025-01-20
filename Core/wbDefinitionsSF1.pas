@@ -1305,98 +1305,56 @@ begin
   Result := wbAliasLinksTo(lAlias, wbParentQuestHelper(aElement));
 end;
 
-function wbConditionParam1StringToInt(const aString: string; const aElement: IwbElement): Int64;
-var
-  Container  : IwbContainerElementRef;
+function wbConditionStringToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
+begin
+  Result := '';
+  case aType of
+    ctToEditValue, ctToNativeValue, ctToSortKey, ctToStr, ctToSummary: begin
+      if not Assigned(aElement) then
+        Exit;
+
+      var Container := GetContainerFromUnion(aElement) as IwbContainerElementRef;
+      if not Assigned(Container) then
+        Exit;
+
+      if aElement = Container.Elements[5] then begin
+        case aType of
+          ctToEditValue, ctToNativeValue, ctToSummary: Result := Container.ElementEditValues['..\CIS1'];
+        else
+          Result := Container.ElementValues['..\CIS1'];
+        end;
+      end;
+
+      if aElement = Container.Elements[6] then begin
+        case aType of
+          ctToEditValue, ctToNativeValue, ctToSummary: Result := Container.ElementEditValues['..\CIS2'];
+        else
+          Result := Container.ElementValues['..\CIS2'];
+        end;
+      end;
+    end;
+    ctCheck, ctEditInfo, ctEditType, ctLinksTo: Result := '';
+  else
+    Result := aInt.ToString;
+  end;
+end;
+
+function wbConditionStringToInt(const aString: string; const aElement: IwbElement): Int64;
 begin
   Result := 0;
 
   if not Assigned(aElement) then
     Exit;
 
-  Container := GetContainerFromUnion(aElement) as IwbContainerElementRef;
+  var Container := GetContainerFromUnion(aElement) as IwbContainerElementRef;
   if not Assigned(Container) then
     Exit;
 
-  Container.ElementEditValues['..\CIS1'] := aString
-end;
+  if aElement = Container.Elements[5] then
+    Container.ElementEditValues['..\CIS1'] := aString;
 
-function wbConditionParam1StringToString(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
-var
-  Container  : IwbContainerElementRef;
-begin
-  case aType of
-    ctToStr, ctToSummary, ctToSortKey, ctToEditValue, ctToNativeValue: begin
-      Result := '';
-
-      if not Assigned(aElement) then
-        Exit;
-
-      Container := GetContainerFromUnion(aElement) as IwbContainerElementRef;
-      if not Assigned(Container) then
-        Exit;
-
-      case aType of
-        ctToSummary:
-          Result := Container.ElementEditValues['..\CIS1'];
-        ctToEditValue, ctToNativeValue:
-          Result := Container.ElementEditValues['..\CIS1'];
-      else
-        Result := Container.ElementValues['..\CIS1'];
-      end;
-    end;
-    ctCheck, ctEditType, ctEditInfo, ctLinksTo:
-      Result := '';
-  else
-    Result := aInt.ToString;
-  end;
-end;
-
-function wbConditionParam2StringToInt(const aString: string; const aElement: IwbElement): Int64;
-var
-  Container  : IwbContainerElementRef;
-begin
-  Result := 0;
-
-  if not Assigned(aElement) then
-    Exit;
-
-  Container := GetContainerFromUnion(aElement) as IwbContainerElementRef;
-  if not Assigned(Container) then
-    Exit;
-
-  Container.ElementEditValues['..\CIS2'] := aString
-end;
-
-function wbConditionParam2StringToString(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
-var
-  Container  : IwbContainerElementRef;
-begin
-  case aType of
-    ctToStr, ctToSummary, ctToSortKey, ctToEditValue, ctToNativeValue: begin
-      Result := '';
-
-      if not Assigned(aElement) then
-        Exit;
-
-      Container := GetContainerFromUnion(aElement) as IwbContainerElementRef;
-      if not Assigned(Container) then
-        Exit;
-
-      case aType of
-        ctToSummary:
-          Result := Container.ElementSummaries['..\CIS2'];
-        ctToEditValue, ctToNativeValue:
-          Result := Container.ElementEditValues['..\CIS2'];
-      else
-        Result := Container.ElementValues['..\CIS2'];
-      end;
-    end;
-    ctCheck, ctEditType, ctEditInfo, ctLinksTo:
-      Result := '';
-  else
-    Result := aInt.ToString;
-  end;
+  if aElement = Container.Elements[6] then
+    Container.ElementEditValues['..\CIS2'] := aString;
 end;
 
 function wbConditionAliasToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
@@ -6091,362 +6049,151 @@ end;
       end;
     end;
 
+  var wbConditionParameters := [
+    {0}  wbByteArray('Unknown', 4).IncludeFlag(dfZeroSortKey),
+    {1}  wbByteArray('None', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
+    {2}  wbInteger('String', itU32, wbConditionStringToStr, wbConditionStringToInt),
+    {3}  wbInteger('Integer', itS32),
+    {4}  wbFloat('Float'),
+    {5}  wbFormIDCkNoReach('Actor', [ACHR,PLYR,REFR,TRGT], True),
+    {6}  wbFormIDCkNoReach('Actor Base', [NPC_]),
+    {7}  wbActorValue(),
+    {8}  wbInteger('Alias', itS32, wbConditionAliasToStr, wbStrToAlias),
+    {9}  wbInteger('Alignment', itU32, wbAlignmentEnum),
+    {10} wbFormIDCkNoReach('Association Type', [ASTP]),
+    {11} wbInteger('Axis', itU32, wbAxisEnum),
+    {12} wbInteger('Casting Type', itU32, wbCastingSourceEnum),
+    {13} wbFormIDCkNoReach('Cell', [CELL]),
+    {14} wbFormIDCkNoReach('Class', [CLAS]),
+    {15} wbInteger('Crime Type', itU32, wbCrimeTypeEnum),
+    {16} wbInteger('Critical Stage', itU32, wbCriticalStageEnum),
+    {17} wbFormIDCkNoReach('Equip Type', [EQUP]),
+    {18} wbConditionParamEvent,
+    {19} wbFormIDCkNoReach('Event Data', [KYWD,LCTN,NULL]),
+    {20} wbFormIDCkNoReach('Faction', [FACT, NULL]),
+    {21} wbFormIDCkNoReach('Form List', [FLST]),
+    {22} wbInteger('Form Type', itU32, wbFormTypeEnum),
+    {23} wbFormIDCkNoReach('Furniture', [FURN, FLST]),
+    {24} wbInteger('Furniture Entry', itU32, wbEnum([], [
+            $01, 'Front',
+            $02, 'Behind',
+            $04, 'Right',
+            $08, 'Left',
+            $10, 'Up'
+          ])),
+    {25} wbFormIDCkNoReach('Global', [GLOB]),
+    {26} wbFormIDCkNoReach('Idle', [IDLE]),
+    {27} wbFormIDCkNoReach('Keyword', [KYWD, FLST, NULL]),
+    {28} wbFormIDCkNoReach('Location', [LCTN]),
+    {29} wbFormIDCkNoReach('Base Effect', [MGEF]),
+    {30} wbFormIDCkNoReach('Effect Item', [SPEL, ENCH, ALCH, INGR, SCRL]),
+    {31} wbInteger('Misc Stat', itU32, wbMiscStatEnum),
+    {32} wbFormIDCkNoReach('Object Reference', sigReferences),
+    {33} wbFormIDCkNoReach('Owner', [NULL, FACT, NPC_]),
+    {34} wbFormIDCkNoReach('Package', [PACK]),
+    {35} wbInteger('Packdata ID', itU32),
+    {36} wbFormIDCkNoReach('Perk', [PERK]),
+    {37} wbFormIDCkNoReach('Quest', [QUST]).AddOverlay(wbConditionParamQuestOverlay),
+    {38} wbInteger('Quest Stage', itU32,
+           function(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string
+           begin
+             var lMainRecord: IwbMainRecord;
+             var lContainer: IwbContainerElementRef;
+             if wbTryGetContainerRefFromUnionOrValue(aElement, lContainer) then begin
+               var lElement := lContainer.ElementByName['Parameter #1'];
+               if not wbTryGetMainRecord(lElement, lMainRecord) then
+                 lMainRecord := nil;
+             end else
+               lMainRecord := nil;
+
+             Result := wbQuestStageToStr(aInt, aElement, aType, 'Quest in Parameter #1', lMainRecord, True);
+           end, wbIntPrefixedStrToInt),
+    {39} wbFormIDCkNoReach('Race', [RACE]),
+    {40} wbFormIDCkNoReach('Referenceable Object', sigBaseObjects),
+    {41} wbFormIDCkNoReach('Location Ref Type', [LCRT]),
+    {42} wbFormIDCkNoReach('Region', [REGN]),
+    {43} wbFormIDCk('Scene', [NULL, SCEN]),
+    {44} wbInteger('Sex', itU32, wbSexEnum),
+    {45} wbFormIDCkNoReach('Voice Type', [VTYP, FLST]),
+    {46} wbInteger('Ward State', itU32, wbWardStateEnum),
+    {47} wbFormIDCkNoReach('Weather', [WTHR]),
+    {48} wbFormIDCkNoReach('Worldspace', [WRLD, FLST]),
+    {49} wbFormIDCkNoReach('Damage Type', [DMGT, FLST]),
+    {50} wbFormIDCkNoReach('Research Project', [RSPJ]),
+    {51} wbFormIDCkNoReach('Condition Form', [CNDF]),
+    {52} wbInteger('Pronouns', itU32, wbPronounEnum),
+    {53} wbFormIDCkNoReach('Resource', [IRES]),
+    {54} wbFormIDCkNoReach('Planet', [PNDT]),
+    {55} wbInteger('DamageCauseType', itU32, wbDamageCauseTypeEnum),
+    {56} wbFormIDCkNoReach('Speech Challenge', [SPCH]),
+    {57} wbFormID('Form'),
+    {58} wbFormIDCkNoReach('Acoustic Space', [ASPC]),
+    {59} wbFormIDCkNoReach('Snap Template', [STMP]),
+    {60} wbByteArray('Biome Mask', 4),
+    {61} wbInteger('Perk Category', itU32, wbPerkCategoryEnum),
+    {62} wbInteger('Perk Skill Group Comparison', itU32, wbPerkSkillGroupEnum),
+    {63} wbInteger('Perk Skill Group', itU32, wbPerkSkillGroupEnum),
+    {64} wbByteArray('Reaction Type', 4),
+    {65} wbByteArray('Limb Category', 4),
+    {66} wbFormIDCkNoReach('Faction', [NULL, FACT]),
+    {67} wbFormIDCk('GamePlayOption', [GPOF])
+  ];
+
   var wbConditions :=
     wbRArray('Conditions',
-    wbRStruct('Condition', [
-      wbStructSK(CTDA, [3, 5, 6], '', [
-     {0}wbInteger('Type', itU8, wbConditionTypeToStr, wbConditionTypeToInt).SetAfterSet(wbConditionTypeAfterSet),
-     {1}wbUnused(3),
-     {2}wbUnion('Comparison Value', wbConditionCompValueDecider, [
-          wbFloat('Comparison Value - Float'),
-          wbFormIDCk('Comparison Value - Global', [GLOB])
-        ]),
-     {3}wbInteger('Function', itU16, wbConditionFunctionToStr, wbConditionFunctionToInt),
-     {4}wbUnused(2),
-     {5}wbUnion('Parameter #1', wbConditionParam1Decider, [
-          { unknown }
-          wbByteArray('Unknown', 4).IncludeFlag(dfZeroSortKey),
-          { 0 ptNone}
-          wbByteArray('None', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
-          { 1 ptString}
-          wbInteger('String', itU32, wbConditionParam1StringToString, wbConditionParam1StringToInt),
-          { 2 ptInteger}
-          wbInteger('Integer', itS32),
-          { 3 ptFloat}
-          wbFloat('Float'),
-          { 4 ptActor}
-          wbFormIDCkNoReach('Actor', [NULL, PLYR, ACHR, REFR]),
-          { 5 ptActorBase}
-          wbFormIDCkNoReach('Actor Base', [NPC_, NULL]),
-          { 6 ptActorValue }
-          wbActorValue(),
-          { 8 ptAlias}
-          wbInteger('Alias', itS32, wbConditionAliasToStr, wbStrToAlias),
-          { 9 ptAlignment}
-          wbInteger('Alignment', itU32, wbAlignmentEnum),
-          {10 ptAssociationType}
-          wbFormIDCk('Association Type', [ASTP]),
-          {11 ptAxis}
-          wbInteger('Axis', itU32, wbAxisEnum),
-          {12 ptCastingSource}
-          wbInteger('Casting Type', itU32, wbCastingSourceEnum),
-          {13 ptCell}
-          wbFormIDCkNoReach('Cell', [CELL, NULL]),
-          {14 ptClass}
-          wbFormIDCkNoReach('Class', [CLAS, NULL]),
-          {15 ptCrimeType}
-          wbInteger('Crime Type', itU32, wbCrimeTypeEnum),
-          {16 ptCriticalStage}
-          wbInteger('Critical Stage', itU32, wbCriticalStageEnum),
-          {18 ptEquipType}
-          wbFormIDCkNoReach('Equip Type', [EQUP]),
-          {19 ptEvent}
-          wbConditionParamEvent,
-          {20 ptEventData}
-          wbFormID('Event Data'),
-          {21 ptFaction}
-          wbFormIDCkNoReach('Faction', [FACT, NULL]),
-          {22 ptFormList}
-          wbFormIDCkNoReach('Form List', [FLST, NULL]),
-          {23 ptFormType}
-          wbInteger('Form Type', itU32, wbFormTypeEnum),
-          {24 ptFurniture}
-          wbFormIDCkNoReach('Furniture', [FURN, FLST]),
-          {26 ptFurnitureEntry}
-          wbInteger('Furniture Entry', itU32, wbEnum([], [
-            $01, 'Front',
-            $02, 'Behind',
-            $04, 'Right',
-            $08, 'Left',
-            $10, 'Up'
-          ])),
-          {27 ptGlobal}
-          wbFormIDCkNoReach('Global', [GLOB]),
-          {28 ptIdleForm}
-          wbFormIDCkNoReach('Idle', [IDLE]),
-          {30 ptKeyword}
-          wbFormIDCkNoReach('Keyword', [KYWD, FLST, NULL]),
-          {31 ptLocation}
-          wbFormIDCkNoReach('Location', [LCTN]),
-          {32 ptMagicEffect}
-          wbFormIDCkNoReach('Base Effect', [MGEF]),
-          {33 ptMagicItem}
-          wbFormIDCkNoReach('Effect Item', [SPEL, ENCH, ALCH, INGR, SCRL]),
-          {34 ptMiscStat}
-          wbInteger('Misc Stat', itU32, wbMiscStatEnum),
-          {35 ptObjectReference}
-          wbFormIDCkNoReach('Object Reference', sigReferences),
-          {36 ptOwner}
-          wbFormIDCkNoReach('Owner', [NULL, FACT, NPC_]),
-          {37 ptPackage}
-          wbFormIDCkNoReach('Package', [PACK]),
-          {38 ptPackdata}
-          wbInteger('Packdata ID', itU32),
-          {39 ptPerk}
-          wbFormIDCkNoReach('Perk', [PERK]),
-          {40 ptQuest}
-          wbFormIDCkNoReach('Quest', [QUST]).AddOverlay(wbConditionParamQuestOverlay),
-          {41 ptQuestStage - normally only in Param2!}
-          wbInteger('Quest Stage', itU32),
-          {42 ptRace}
-          wbFormIDCkNoReach('Race', [RACE]),
-          {43 ptReferencableObject}
-          wbFormIDCkNoReach('Referenceable Object', sigBaseObjects),
-          {44 ptRefType}
-          wbFormIDCkNoReach('Location Ref Type', [LCRT]),
-          {45 ptRegion}
-          wbFormIDCkNoReach('Region', [REGN]),
-          {46 ptScene}
-          wbFormIDCk('Scene', [NULL, SCEN]),
-          {47 ptSex}
-          wbInteger('Sex', itU32, wbSexEnum),
-          {52 ptVoiceType}
-          wbFormIDCkNoReach('Voice Type', [VTYP, FLST]),
-          {53 ptWardState}
-          wbInteger('Ward State', itU32, wbWardStateEnum),
-          {54 ptWeather}
-          wbFormIDCkNoReach('Weather', [WTHR]),
-          {55 ptWorldspace}
-          wbFormIDCkNoReach('Worldspace', [WRLD, FLST]),
-          {56 ptDamageType}
-          wbFormIDCkNoReach('Damage Type', [DMGT, FLST]),
-          {57 ptResearchProject}
-          wbFormIDCkNoReach('Research Project', [RSPJ]),
-          {58 ptConditionForm}
-          wbFormIDCkNoReach('Condition Form', [CNDF]),
-          {59 ptPronoun}
-          wbInteger('Pronouns', itU32, wbPronounEnum),
-          {60 ptResource}
-          wbFormIDCkNoReach('Resource', [IRES]),
-          {61 ptPlanet}
-          wbFormIDCkNoReach('Planet', [PNDT]),
-          {62 ptDamageCauseType}
-          wbInteger('DamageCauseType', itU32, wbDamageCauseTypeEnum),
-          {63 ptSpeechChallenge}
-          wbFormIDCkNoReach('Speech Challenge', [SPCH]),
-          {63 ptForm}
-          wbFormID('Form'),
-          {64 ptAcousticSpace}
-          wbFormIDCkNoReach('Acoustic Space', [ASPC]),
-          {65 ptSnapTemplate}
-          wbFormIDCkNoReach('Snap Template', [STMP]),
-          {66 ptBiomeMask}
-          wbByteArray('Biome Mask', 4),
-          {67 ptPerkCategory}
-          wbInteger('Perk Category', itU32, wbPerkCategoryEnum),
-          {68 ptPerkSkillGroupComparison}
-          wbInteger('Perk Skill Group Comparison', itU32, wbPerkSkillGroupEnum),
-          {69 ptPerkSkillGroup}
-          wbInteger('Perk Skill Group', itU32, wbPerkSkillGroupEnum),
-          {70 ptReactionType}
-          wbByteArray('Reaction Type', 4),
-          {71 ptLimbCategory}
-          wbByteArray('Limb Category', 4),
-          {72 ptFactionOpt}
-          wbFormIDCkNoReach('Faction', [NULL, FACT]),
-          {73 ptGamePlayOption}
-          wbFormIDCk('GamePlayOption', [GPOF])
-        ]),
-
-        wbUnion('Parameter #2', wbConditionParam2Decider, [
-          { unknown }
-          wbByteArray('Unknown', 4).IncludeFlag(dfZeroSortKey),
-          { 0 ptNone}
-          wbByteArray('None', 4, cpIgnore).IncludeFlag(dfZeroSortKey),
-          { 1 ptString}
-          wbInteger('String', itU32, wbConditionParam2StringToString, wbConditionParam2StringToInt),
-          { 2 ptInteger}
-          wbInteger('Integer', itS32),
-          { 3 ptFloat}
-          wbFloat('Float'),
-          { 4 ptActor}
-          wbFormIDCkNoReach('Actor', [NULL, PLYR, ACHR, REFR]),
-          { 5 ptActorBase}
-          wbFormIDCkNoReach('Actor Base', [NPC_]),
-          { 6 ptActorValue}
-          wbActorValue(),
-          { 8 ptAlias}
-          wbInteger('Alias', itS32, wbConditionAliasToStr, wbStrToAlias),
-          { 9 ptAlignment}
-          wbInteger('Alignment', itU32, wbAlignmentEnum),
-          {10 ptAssociationType}
-          wbFormIDCk('Association Type', [ASTP]),
-          {11 ptAxis}
-          wbInteger('Axis', itU32, wbAxisEnum),
-          {12 ptCastingSource}
-          wbInteger('Casting Type', itU32, wbCastingSourceEnum),
-          {13 ptCell}
-          wbFormIDCkNoReach('Cell', [CELL]),
-          {14 ptClass}
-          wbFormIDCkNoReach('Class', [CLAS]),
-          {15 ptCrimeType}
-          wbInteger('Crime Type', itU32, wbCrimeTypeEnum),
-          {16 ptCriticalStage}
-          wbInteger('Critical Stage', itU32, wbCriticalStageEnum),
-          {18 ptEquipType}
-          wbFormIDCkNoReach('Equip Type', [EQUP]),
-          {19 ptEvent}
-          wbConditionParamEvent,
-          {20 ptEventData}
-          wbFormIDCk('Event Data', [KYWD,LCTN,NULL]),
-          {21 ptFaction}
-          wbFormIDCkNoReach('Faction', [FACT, NULL]),
-          {22 ptFormList}
-          wbFormIDCkNoReach('Form List', [FLST]),
-          {23 ptFormType}
-          wbInteger('Form Type', itU32, wbFormTypeEnum),
-          {24 ptFurniture}
-          wbFormIDCkNoReach('Furniture', [FURN, FLST]),
-          {26 ptFurnitureEntry}
-          wbInteger('Furniture Entry', itU32, wbEnum([], [
-            $01, 'Front',
-            $02, 'Behind',
-            $04, 'Right',
-            $08, 'Left',
-            $10, 'Up'
-          ])),
-          {27 ptGlobal}
-          wbFormIDCkNoReach('Global', [GLOB]),
-          {28 ptIdleForm}
-          wbFormIDCkNoReach('Idle', [IDLE]),
-          {30 ptKeyword}
-          wbFormIDCkNoReach('Keyword', [KYWD, FLST, NULL]),
-          {31 ptLocation}
-          wbFormIDCkNoReach('Location', [LCTN]),
-          {32 ptMagicEffect}
-          wbFormIDCkNoReach('Base Effect', [MGEF]),
-          {33 ptMagicItem}
-          wbFormIDCkNoReach('Effect Item', [SPEL, ENCH, ALCH, INGR, SCRL]),
-          {34 ptMiscStat}
-          wbInteger('Misc Stat', itU32, wbMiscStatEnum),
-          {35 ptObjectReference}
-          wbFormIDCkNoReach('Object Reference', sigReferences),
-          {36 ptOwner}
-          wbFormIDCkNoReach('Owner', [NULL, FACT, NPC_]),
-          {37 ptPackage}
-          wbFormIDCkNoReach('Package', [PACK]),
-          {38 ptPackdata}
-          wbInteger('Packdata ID', itU32),
-          {39 ptPerk}
-          wbFormIDCkNoReach('Perk', [PERK]),
-          {40 ptQuest}
-          wbFormIDCkNoReach('Quest', [QUST]),
-          {41 ptQuestStage}
-          wbInteger('Quest Stage', itU32,
-            function(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string
-            begin
-              var lMainRecord: IwbMainRecord;
-
-              var lContainer: IwbContainerElementRef;
-              if wbTryGetContainerRefFromUnionOrValue(aElement, lContainer) then begin
-                var lElement := lContainer.ElementByName['Parameter #1'];
-                if not wbTryGetMainRecord(lElement, lMainRecord) then
-                  lMainRecord := nil;
-              end else
-                lMainRecord := nil;
-
-              Result := wbQuestStageToStr(aInt, aElement, aType, 'Quest in Parameter #1', lMainRecord, True);
-            end, wbIntPrefixedStrToInt),
-          {42 ptRace}
-          wbFormIDCkNoReach('Race', [RACE]),
-          {43 ptReferencableObject}
-          wbFormIDCkNoReach('Referenceable Object', sigBaseObjects),
-          {44 ptRefType}
-          wbFormIDCkNoReach('Location Ref Type', [LCRT]),
-          {45 ptRegion}
-          wbFormIDCkNoReach('Region', [REGN]),
-          {46 ptScene}
-          wbFormIDCk('Scene', [NULL, SCEN]),
-          {47 ptSex}
-          wbInteger('Sex', itU32, wbSexEnum),
-          {52 ptVoiceType}
-          wbFormIDCkNoReach('Voice Type', [VTYP, FLST]),
-          {53 ptWardState}
-          wbInteger('Ward State', itU32, wbWardStateEnum),
-          {54 ptWeather}
-          wbFormIDCkNoReach('Weather', [WTHR]),
-          {55 ptWorldspace}
-          wbFormIDCkNoReach('Worldspace', [WRLD, FLST]),
-          {56 ptDamageType}
-          wbFormIDCkNoReach('Damage Type', [DMGT, FLST]),
-          {57 ptResearchProject}
-          wbFormIDCkNoReach('Research Project', [RSPJ]),
-          {58 ptConditionForm}
-          wbFormIDCkNoReach('Condition Form', [CNDF]),
-          {59 ptPronoun}
-          wbInteger('Pronouns', itU32, wbPronounEnum),
-          {60 ptResource}
-          wbFormIDCkNoReach('Resource', [IRES]),
-          {61 ptPlanet}
-          wbFormIDCkNoReach('Planet', [PNDT]),
-          {62 ptDamageCauseType}
-          wbByteArray('DamageCauseType', 4),
-          {63 ptSpeechChallenge}
-          wbFormIDCkNoReach('Speech Challenge', [SPCH]),
-          {63 ptForm}
-          wbFormID('Form'),
-          {64 ptAcousticSpace}
-          wbFormIDCkNoReach('Acoustic Space', [ASPC]),
-          {65 ptSnapTemplate}
-          wbFormIDCkNoReach('Snap Template', [STMP]),
-          {66 ptBiomeMask}
-          wbByteArray('Biome Mask', 4),
-          {67 ptPerkCategory}
-          wbInteger('Perk Category', itU32, wbPerkCategoryEnum),
-          {68 ptPerkSkillGroupComparison}
-          wbInteger('Perk Skill Group Comparison', itU32, wbPerkSkillGroupEnum),
-          {69 ptPerkSkillGroup}
-          wbInteger('Perk Skill Group', itU32, wbPerkSkillGroupEnum),
-          {70 ptReactionType}
-          wbByteArray('Reaction Type', 4),
-          {71 ptLimbCategory}
-          wbByteArray('Limb Category', 4),
-          {72 ptFactionOpt}
-          wbFormIDCkNoReach('Faction', [NULL, FACT]),
-          {73 ptGamePlayOption}
-          wbFormIDCk('GamePlayOption', [GPOF])
-        ]),
-        wbInteger('Run On', itU32, wbEnum([
-          { 0} 'Subject',
-          { 1} 'Target',
-          { 2} 'Reference',
-          { 3} 'Combat Target',
-          { 4} 'Linked Reference',
-          { 5} 'Quest Alias',
-          { 6} 'Package Data',
-          { 7} 'Event Data',
-          { 8} 'Command Target',
-          { 9} 'Event Camera Ref',
-          {10} 'My Killer',
-          {11} 'Self Packin',
-          {12} 'Target Packin',
-          {13} 'My Ship',
-          {14} 'Player Home Ship',
-          {15} 'Player'
-        ])).SetAfterSet(wbConditionRunOnAfterSet),
-        wbUnion('Reference', wbConditionReferenceDecider, [
-          wbInteger('Unused', itU32, nil, cpIgnore),
-          wbFormIDCkNoReach('Reference', sigReferences)
-        ])
-          .SetDontShow(function(const aElement: IwbElement): Boolean
-          begin
-            Result := True;
-            var lContainer: IwbContainer;
-            if not Supports(aElement, IwbContainer, lContainer) then
-              Exit;
-            if lContainer.ElementValues['..\Run On'] = 'Reference' then
-              Exit(False);
-          end),
-        wbUnion('Parameter #3', wbConditionParam3Decider, [
-          wbInteger('Parameter #3', itS32).SetDefaultNativeValue(-1),
-          wbFormIDCk('Linked Keyword', [KYWD, NULL])
-        ])
-      ]),
-      wbString(CIS1, 'Parameter #1'),
-      wbString(CIS2, 'Parameter #2')
-    ]).SetToStr(wbConditionToStr)
-      .SetSummaryLinksToCallback(wbConditionSummaryLinksTo)
-      .IncludeFlag(dfCollapsed, wbCollapseConditions)
+      wbRStruct('Condition', [
+      {0} wbStructSK(CTDA, [3, 5, 6], '', [
+          {0} wbInteger('Type', itU8, wbConditionTypeToStr, wbConditionTypeToInt).SetAfterSet(wbConditionTypeAfterSet),
+          {1} wbUnused(3),
+          {2} wbUnion('Comparison Value', wbConditionCompValueDecider, [
+              {0} wbFloat('Comparison Value - Float'),
+              {1} wbFormIDCk('Comparison Value - Global', [GLOB])
+              ]),
+          {3} wbInteger('Function', itU16, wbConditionFunctionToStr, wbConditionFunctionToInt),
+          {4} wbUnused(2),
+          {5} wbUnion('Parameter #1', wbConditionParam1Decider, wbConditionParameters),
+          {6} wbUnion('Parameter #2', wbConditionParam2Decider, wbConditionParameters),
+          {7} wbInteger('Run On', itU32,
+                wbEnum([
+                {0}  'Subject',
+                {1}  'Target',
+                {2}  'Reference',
+                {3}  'Combat Target',
+                {4}  'Linked Reference',
+                {5}  'Quest Alias',
+                {6}  'Package Data',
+                {7}  'Event Data',
+                {8}  'Command Target',
+                {9}  'Event Camera Ref',
+                {10} 'My Killer',
+                {11} 'Self Packin',
+                {12} 'Target Packin',
+                {13} 'My Ship',
+                {14} 'Player Home Ship',
+                {15} 'Player'
+                ])).SetAfterSet(wbConditionRunOnAfterSet),
+          {8} wbUnion('Reference', wbConditionReferenceDecider, [
+              {0} wbInteger('Unused', itU32, nil, cpIgnore),
+              {1} wbFormIDCkNoReach('Reference', sigReferences)
+              ]).SetDontShow(function(const aElement: IwbElement): Boolean
+                begin
+                  Result := True;
+                  var lContainer: IwbContainer;
+                  if not Supports(aElement, IwbContainer, lContainer) then
+                    Exit;
+                  if lContainer.ElementValues['..\Run On'] = 'Reference' then
+                    Exit(False);
+                end),
+          {9} wbUnion('Parameter #3', wbConditionParam3Decider, [
+              {0} wbInteger('Parameter #3', itS32).SetDefaultNativeValue(-1),
+              {1} wbFormIDCk('Linked Keyword', [KYWD, NULL])
+              ])
+          ]),
+      {1} wbString(CIS1, 'Parameter #1'),
+      {2} wbString(CIS2, 'Parameter #2')
+      ]).SetToStr(wbConditionToStr)
+        .SetSummaryLinksToCallback(wbConditionSummaryLinksTo)
+        .IncludeFlag(dfCollapsed, wbCollapseConditions)
     ).SetCountPath(CITC);
 
   var wbPerkActivityTypes := [
