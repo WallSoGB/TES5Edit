@@ -8393,6 +8393,7 @@ end;
         6, 'Hand Changed',
         7, 'Show Sky',
         8, 'Use Sky Lighting',
+        9, 'Unknown 9',
        10, 'Hidden from Interior Cell List',
        11, 'Sunlight Shadows',
        12, 'Distant LOD only',
