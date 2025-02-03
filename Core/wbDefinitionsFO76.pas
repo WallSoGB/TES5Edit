@@ -960,10 +960,9 @@ begin
 
   if LegendaryIndex = -1 then
     Exit;
-    
+
   if not Supports(LegendaryMods.Elements[LegendaryIndex], IwbContainerElementRef, ModBase) then
     Exit;
-  
 
   Result := ModBase.Elements[1].LinksTo;
 end;
@@ -5737,6 +5736,72 @@ end;
       wbEmpty(XLKT, 'Linked Ref Transient'),
       wbXRGD,
       wbFormIDCk(XLYR, 'Layer', [LAYR]),
+      wbStruct(XRLL, 'Lighting', [
+        wbByteColors('Ambient Color'),
+        wbByteColors('Directional Color'),
+        wbByteColors('Fog Color Near'),
+        wbFloat('Fog Near'),
+        wbFloat('Fog Far'),
+        wbInteger('Directional Rotation XY', itS32),
+        wbInteger('Directional Rotation Z', itS32),
+        wbFloat('Directional Fade'),
+        wbFloat('Fog Clip Distance'),
+        wbFloat('Fog Power'),
+        wbAmbientColors('Ambient Colors'),
+        wbByteColors('Fog Color Far'),
+        wbFloat('Fog Max'),
+        wbFloat('Light Fade Begin'),
+        wbFloat('Light Fade End'),
+        wbInteger('Inherits', itU32, wbFlags([
+          {0x00000001} 'Ambient Color',
+          {0x00000002} 'Directional Color',
+          {0x00000004} 'Fog Color',
+          {0x00000008} 'Fog Near',
+          {0x00000010} 'Fog Far',
+          {0x00000020} 'Directional Rotation',
+          {0x00000040} 'Directional Fade',
+          {0x00000080} 'Clip Distance',
+          {0x00000100} 'Fog Power',
+          {0x00000200} 'Fog Max',
+          {0x00000400} 'Light Fade Distances',
+          {0x00000800} 'Unknown 11',
+          {0x00001000} 'Unknown 12',
+          {0x00002000} 'Unknown 13',
+          {0x00004000} 'Unknown 14',
+          {0x00008000} 'Unknown 15',
+          {0x00010000} 'Unknown 16',
+          {0x00020000} 'Unknown 17',
+          {0x00040000} 'Unknown 18',
+          {0x00080000} 'Unknown 19',
+          {0x00100000} 'Unknown 20',
+          {0x00200000} 'Unknown 21',
+          {0x00400000} 'Unknown 22',
+          {0x00800000} 'Unknown 23',
+          {0x01000000} 'Unknown 24',
+          {0x02000000} 'Unknown 25',
+          {0x04000000} 'Unknown 26',
+          {0x08000000} 'Unknown 27',
+          {0x10000000} 'Unknown 28',
+          {0x20000000} 'Unknown 29',
+          {0x40000000} 'Unknown 30'
+        ])),
+        wbFloat('Near Height Mid'),
+        wbFloat('Near Height Range'),
+        wbByteColors('Fog Color High Near'),
+        wbByteColors('Fog Color High Far'),
+        wbFloat('High Density Scale'),
+        wbFloat('Fog Near Scale'),
+        wbFloat('Fog Far Scale'),
+        wbFloat('Fog High Near Scale'),
+        wbFloat('Fog High Far Scale'),
+        wbFloat('Far Height Mid'),
+        wbFloat('Far Height Range'),
+        wbStruct('Skybox Bounds', [
+            wbVec3('Center'),
+            wbVec3('Radius')
+          ])
+      ], cpNormal, False, nil, 11),
+      wbFormIDCk(XRL2, 'Lighting Template', [LGTM]),
       wbFormIDCk(XMSP, 'Material Swap', [MSWP]),
       wbXLWT,
       wbFormIDCk(XRFG, 'Reference Group', [RFGP]),
@@ -7214,6 +7279,72 @@ begin
     wbEmpty(XLKT, 'Linked Ref Transient'),
     wbFormIDCk(XRFG, 'Reference Group', [RFGP]),
     wbFormIDCk(XLYR, 'Layer', [LAYR]),
+    wbStruct(XRLL, 'Lighting', [
+      wbByteColors('Ambient Color'),
+      wbByteColors('Directional Color'),
+      wbByteColors('Fog Color Near'),
+      wbFloat('Fog Near'),
+      wbFloat('Fog Far'),
+      wbInteger('Directional Rotation XY', itS32),
+      wbInteger('Directional Rotation Z', itS32),
+      wbFloat('Directional Fade'),
+      wbFloat('Fog Clip Distance'),
+      wbFloat('Fog Power'),
+      wbAmbientColors('Ambient Colors'),
+      wbByteColors('Fog Color Far'),
+      wbFloat('Fog Max'),
+      wbFloat('Light Fade Begin'),
+      wbFloat('Light Fade End'),
+      wbInteger('Inherits', itU32, wbFlags([
+        {0x00000001} 'Ambient Color',
+        {0x00000002} 'Directional Color',
+        {0x00000004} 'Fog Color',
+        {0x00000008} 'Fog Near',
+        {0x00000010} 'Fog Far',
+        {0x00000020} 'Directional Rotation',
+        {0x00000040} 'Directional Fade',
+        {0x00000080} 'Clip Distance',
+        {0x00000100} 'Fog Power',
+        {0x00000200} 'Fog Max',
+        {0x00000400} 'Light Fade Distances',
+        {0x00000800} 'Unknown 11',
+        {0x00001000} 'Unknown 12',
+        {0x00002000} 'Unknown 13',
+        {0x00004000} 'Unknown 14',
+        {0x00008000} 'Unknown 15',
+        {0x00010000} 'Unknown 16',
+        {0x00020000} 'Unknown 17',
+        {0x00040000} 'Unknown 18',
+        {0x00080000} 'Unknown 19',
+        {0x00100000} 'Unknown 20',
+        {0x00200000} 'Unknown 21',
+        {0x00400000} 'Unknown 22',
+        {0x00800000} 'Unknown 23',
+        {0x01000000} 'Unknown 24',
+        {0x02000000} 'Unknown 25',
+        {0x04000000} 'Unknown 26',
+        {0x08000000} 'Unknown 27',
+        {0x10000000} 'Unknown 28',
+        {0x20000000} 'Unknown 29',
+        {0x40000000} 'Unknown 30'
+      ])),
+      wbFloat('Near Height Mid'),
+      wbFloat('Near Height Range'),
+      wbByteColors('Fog Color High Near'),
+      wbByteColors('Fog Color High Far'),
+      wbFloat('High Density Scale'),
+      wbFloat('Fog Near Scale'),
+      wbFloat('Fog Far Scale'),
+      wbFloat('Fog High Near Scale'),
+      wbFloat('Fog High Far Scale'),
+      wbFloat('Far Height Mid'),
+      wbFloat('Far Height Range'),
+      wbStruct('Skybox Bounds', [
+          wbVec3('Center'),
+          wbVec3('Radius')
+        ])
+    ], cpNormal, False, nil, 11),
+    wbFormIDCk(XRL2, 'Lighting Template', [LGTM]),
     wbFormIDCk(XMSP, 'Material Swap', [MSWP]),
 
     wbXLWT,
@@ -9834,12 +9965,10 @@ begin
       wbFloat('Fog High Far Scale'),
       wbFloat('Far Height Mid'),
       wbFloat('Far Height Range'),
-      wbFloat('Unknown'),
-      wbFloat('Unknown'),
-      wbFloat('Unknown'),
-      wbFloat('Unknown'),
-      wbFloat('Unknown'),
-      wbFloat('Unknown')
+      wbStruct('Skybox Bounds', [
+          wbVec3('Center'),
+          wbVec3('Radius')
+        ])
     ], cpNormal, False, nil, 11),
 
     wbInteger(CNAM, 'Precombined Object Level XY', itU8),
@@ -10703,6 +10832,7 @@ begin
     ])), [
     wbEDID,
     wbXALG,
+    wbFTAGs,
     wbInteger(FNAM, 'Type', itU8, wbEnum([], [
       Ord('s'), 'Short',
       Ord('l'), 'Long',
@@ -10990,7 +11120,11 @@ begin
       wbString(NAM1, 'Model FileName'),
       wbModelInfo(NAM2)
     ], [], cpNormal, True),
-    wbInteger(VNAM, 'Sound Level', itU32, wbSoundLevelEnum, cpNormal, True)
+    wbInteger(VNAM, 'Sound Level', itU32, wbSoundLevelEnum, cpNormal, True),
+    wbFormID(PSCT, 'Speed Curve Table'),
+    wbFormID(PSSC, 'Seek Strength Curve Table'),
+    wbFloat(PFDX, 'X-Axis Drag'),
+    wbFloat(PFDZ, 'Z-Axis Drag')
   ]);
 
   wbRecord(HAZD, 'Hazard', [
@@ -11741,6 +11875,7 @@ begin
         wbModelInfo(NAM5),
         wbString(ENAM, 'Hit Reaction - Start'),
         wbString(FNAM, 'Hit Reaction - End'),
+        wbUnknown(BPAB),
         wbFormIDCk(BNAM, 'Gore Effects - Dismember Blood Art', [ARTO]),
         wbFormIDCk(INAM, 'Gore Effects - Blood Impact Material Type', [MATT]),
         wbFormIDCk(JNAM, 'On Cripple - Blood Impact Material Type', [MATT]),
@@ -13989,6 +14124,7 @@ begin
       wbLVOT,
       wbLVIV,
       wbLVIG,
+      wbLVIT,
       wbLVLV,
       wbLVOG,
       wbLVLT
@@ -14508,6 +14644,7 @@ begin
     wbDEFL,
     wbPHST,
     wbXALG,
+    wbFTAGs,
     wbStruct(ACBS, 'Configuration', [
       wbInteger('Flags', itU32, wbFlags([
         {0x00000001} 'Female',
@@ -14955,6 +15092,7 @@ begin
   wbRecord(PACK, 'Package', [
     wbEDID,
     wbVMADFragmentedPACK,
+    wbFTAGs,
 
     wbStruct(PKDT, 'Pack Data', [
       wbInteger('General Flags', itU32, wbPKDTFlags),
@@ -15666,6 +15804,7 @@ begin
     wbEDID,
     wbString(DURL, 'Group Name'),
     wbSTCP,
+    wbFTAGs,
     wbFULL,
     wbDESCReq,
     wbSPCT,
@@ -16203,6 +16342,72 @@ begin
     wbInteger(XAMC, 'Ammo Count', itU32),
     wbEmpty(XLKT, 'Linked Ref Transient'),
     wbFormIDCk(XLYR, 'Layer', [LAYR]),
+    wbStruct(XRLL, 'Lighting', [
+      wbByteColors('Ambient Color'),
+      wbByteColors('Directional Color'),
+      wbByteColors('Fog Color Near'),
+      wbFloat('Fog Near'),
+      wbFloat('Fog Far'),
+      wbInteger('Directional Rotation XY', itS32),
+      wbInteger('Directional Rotation Z', itS32),
+      wbFloat('Directional Fade'),
+      wbFloat('Fog Clip Distance'),
+      wbFloat('Fog Power'),
+      wbAmbientColors('Ambient Colors'),
+      wbByteColors('Fog Color Far'),
+      wbFloat('Fog Max'),
+      wbFloat('Light Fade Begin'),
+      wbFloat('Light Fade End'),
+      wbInteger('Inherits', itU32, wbFlags([
+        {0x00000001} 'Ambient Color',
+        {0x00000002} 'Directional Color',
+        {0x00000004} 'Fog Color',
+        {0x00000008} 'Fog Near',
+        {0x00000010} 'Fog Far',
+        {0x00000020} 'Directional Rotation',
+        {0x00000040} 'Directional Fade',
+        {0x00000080} 'Clip Distance',
+        {0x00000100} 'Fog Power',
+        {0x00000200} 'Fog Max',
+        {0x00000400} 'Light Fade Distances',
+        {0x00000800} 'Unknown 11',
+        {0x00001000} 'Unknown 12',
+        {0x00002000} 'Unknown 13',
+        {0x00004000} 'Unknown 14',
+        {0x00008000} 'Unknown 15',
+        {0x00010000} 'Unknown 16',
+        {0x00020000} 'Unknown 17',
+        {0x00040000} 'Unknown 18',
+        {0x00080000} 'Unknown 19',
+        {0x00100000} 'Unknown 20',
+        {0x00200000} 'Unknown 21',
+        {0x00400000} 'Unknown 22',
+        {0x00800000} 'Unknown 23',
+        {0x01000000} 'Unknown 24',
+        {0x02000000} 'Unknown 25',
+        {0x04000000} 'Unknown 26',
+        {0x08000000} 'Unknown 27',
+        {0x10000000} 'Unknown 28',
+        {0x20000000} 'Unknown 29',
+        {0x40000000} 'Unknown 30'
+      ])),
+      wbFloat('Near Height Mid'),
+      wbFloat('Near Height Range'),
+      wbByteColors('Fog Color High Near'),
+      wbByteColors('Fog Color High Far'),
+      wbFloat('High Density Scale'),
+      wbFloat('Fog Near Scale'),
+      wbFloat('Fog Far Scale'),
+      wbFloat('Fog High Near Scale'),
+      wbFloat('Fog High Far Scale'),
+      wbFloat('Far Height Mid'),
+      wbFloat('Far Height Range'),
+      wbStruct('Skybox Bounds', [
+          wbVec3('Center'),
+          wbVec3('Radius')
+        ])
+    ], cpNormal, False, nil, 11),
+    wbFormIDCk(XRL2, 'Lighting Template', [LGTM]),
     wbFormIDCk(XMSP, 'Material Swap', [MSWP]),
     wbXLWT,
     wbFormIDCk(XRFG, 'Reference Group', [RFGP]),
@@ -18101,6 +18306,7 @@ begin
     wbXFLG,
     wbFormID(CNAM, 'Category'),
     wbFormID(DNAM, 'Animation'),
+    wbLString(ACTV, 'Unused'), //Currently does nothing and seems to be something that would show up in the text chat or the cut TTS/STT feature but 76 doesn't have text chat.
     wbKeywords
   ]);
 
@@ -18428,6 +18634,17 @@ begin
     ]),
     wbUnknown(DICO)
   ]);
+
+  wbRecord(PLYT, 'Player Title', [
+    wbEDID,
+    wbXALG,
+    wbLString(ANAM, 'Title'), //Possibly male version
+    wbLString(BNAM), //Possibly female version
+    wbInteger(PTPR, 'Is Prefix', itU8, wbBoolEnum),
+    wbInteger(PTSU, 'Is Suffix', itU8, wbBoolEnum),
+    wbUnknown(PTDS), //Only shows up on ones labeled with DEL so most likely a deleted flag
+    wbCTDAs
+  ]).SetSummaryKey([2]).IncludeFlag(dfSummaryNoName);
 
   wbRecord(WATR, 'Water', [
     wbEDID,
@@ -18757,7 +18974,12 @@ begin
       'Fast',
       'Very Fast'
     ])),
-    wbDAMS
+    wbDAMS,
+    wbRStruct('Telegraph Data', [
+      wbFloat(WTDT, 'Time'),
+      wbFormID(WTDA, 'Visual'),
+      wbFormID(WTDS, 'Sound')
+    ], [])
   ], False, nil, cpNormal, False, nil{wbWEAPAfterLoad});
 
   wbRecord(WTHR, 'Weather',
@@ -19167,10 +19389,11 @@ begin
   wbAddGroupOrder(QMDL); //new in Fallout 76
   wbAddGroupOrder(LOUT); //new in Fallout 76
   wbAddGroupOrder(DIST); //new in Fallout 76
+  wbAddGroupOrder(PLYT);
   wbNexusModsUrl := 'https://www.nexusmods.com/fallout76/mods/30';
   {if wbToolMode = tmLODgen then
     wbNexusModsUrl := '';}
-  wbHEDRVersion := 216.0;
+  wbHEDRVersion := 224.0;
 end;
 
 initialization
