@@ -2865,7 +2865,7 @@ type
   end;
 
 const
-  wbCTDAFunctions : array[0..617] of TCTDAFunction = (
+  wbCTDAFunctions : array[0..619] of TCTDAFunction = (
     (Index:   0; Name: 'GetWantBlocking'),
     (Index:   1; Name: 'GetDistance'; ParamType1: ptObjectReference),
     (Index:   2; Name: 'AddItem'), { ObjID (Form ID), Count, Flag (Opt), Level (Opt), Equip (Opt) }
@@ -3483,6 +3483,8 @@ const
     (Index: 10012; Name: 'JoinExpedition'),    //Does nothing on the client
     (Index: 10013; Name: 'GetPublicEventHasMutation'; ParamType1: ptSpell),
     (Index: 10014; Name: 'IsUsingAltCurveTable'),
+    (Index: 10016; Name: 'GetIsDisguisedWithKeyword'; Desc: 'Is the player disguised in an outfit with the specified disguise keyword?'; ParamType1: ptKeyword),
+    (Index: 10017; Name: 'GetIsPlayerGhoul'),
     (Index: 12000; Name: 'IsFOWPersonalEWSEnabled'; Desc: 'Is the personal EWS enabled?')
   );
 
@@ -6256,7 +6258,13 @@ begin
    {195} 'Mod Max Barter Currency',
    {196} 'Mod Body Part Damage Mult',
    {197} 'Apply On Kill Participation Spell',
-   {198} 'Is Next Clip Last Shot'
+   {198} 'Is Next Clip Last Shot',
+   {199} 'Instant Reload Clip On Bash',
+   {200} 'Mod Attack Damage On Striking Appendage',
+   {201} 'Apply Spell On Actor When Limb Crippled',
+   {202} 'Mod Rads to Health Mult',
+   {203} 'Mod Rads to Radshield Mult',
+   {204} 'Mod Weak Body Part Damage Mult'
   ]);
 
   wbEquipType := wbFlags([
@@ -10706,6 +10714,22 @@ begin
       wbUnknown
     ]),
     wbPLVD,
+    wbRArray('Entry Checks',
+      wbRStruct('Entry Check', [
+        wbEmpty(FCNR, 'Start Marker'),
+        wbFormIDCk(FCRF, 'Referenced Faction', [FACT]),
+        wbUnknown(FCOR),
+        wbFormID(FCBM, 'Blocked Message'),
+        wbCITC,
+        wbCTDAsCount,
+        wbUnknown(FCAF)
+        //Integer(FCAF, 'Access Flags', itU32, wbFlags([
+           {0x1} //'Allowed',
+           {0x2} //'Unknown 2',
+           {0x4} //'Blocked'
+        //]))
+      ], [])
+    ),
     wbCITC,
     wbCTDAsCount
   ], False, nil, cpNormal, False, nil {wbFACTAfterLoad}, wbConditionsAfterSet);
@@ -10905,6 +10929,7 @@ begin
   wbRecord(TXST, 'Texture Set', [
     wbEDID,
     wbOBND(True),
+    wbFULL,
     wbOPDSs,
     wbFLTR,
     wbRStruct('Textures (RGB/A)', [
@@ -11296,6 +11321,7 @@ begin
     wbPHST,
     wbOPDSs,
     wbFULL,
+    wbDESC,
     wbGenericModel,
     wbEITM,
     wbFormIDCk(MNAM, 'Image Space Modifier', [IMAD]),
@@ -13411,7 +13437,8 @@ begin
 
   wbRecord(OTFT, 'Outfit', [
     wbEDID,
-    wbArrayS(INAM, 'Items', wbFormIDCk('Item', [ARMO, LVLI]))
+    wbArrayS(INAM, 'Items', wbFormIDCk('Item', [ARMO, LVLI])),
+    wbFormIDCk(KNAM, 'Keyword', [KYWD])
   ]);
 
   wbRecord(ARTO, 'Art Object',
@@ -15391,7 +15418,8 @@ begin
           'Module',
           'Caravan'
         ])),  //0xE9
-        wbByteArray('Unused',3)
+        wbByteArray('Unused',3),
+        wbUnknown
       ]),
       wbStruct(DNAM, 'General', [
         wbInteger('Flags', itU16, wbFlags([
@@ -15427,7 +15455,8 @@ begin
           'Module',
           'Caravan'
         ])),  //0xE9
-        wbByteArray('Unused',3)
+        wbByteArray('Unused',3),
+        wbUnknown
       ])
     ], []),
     wbInteger(ENAM, 'Event', itU32, wbQuestEventEnum),
@@ -15439,6 +15468,7 @@ begin
     wbFormIDCk(QSSK, 'Start Keyword', [KYWD]),
     wbFormIDCk(QSLC, 'Quest Start Location', [LCTN]),
     wbFormIDCk(QECV, 'Enable Keyword', [KYWD]),
+    wbFormIDCk(QUCF, 'Faction', [FACT]),
     wbUnknown(QSDD),
     wbInteger(QETE, 'Quest Event Type', itU8, wbEnum([
       'Co-op',
@@ -18588,6 +18618,7 @@ begin
     wbFormID(LIPC, 'Bonus Cards'),
     wbFormID(LEPC, 'Perk Card List'),
     wbFormID(LINV, 'Inventory'),
+    wbFormID(LMML, 'Map Marker'),
     wbStruct(LSPC, 'SPECIAL Values', [
       wbInteger('Strength', itU8),
       wbInteger('Perception', itU8),
@@ -18979,7 +19010,12 @@ begin
       wbFloat(WTDT, 'Time'),
       wbFormID(WTDA, 'Visual'),
       wbFormID(WTDS, 'Sound')
-    ], [])
+    ], []),
+    wbInteger(WSAM, 'Sneak Attack Multiplier', itU32, wbFlags(wbFlagsList([
+      4, '2.25',
+      5, '2.5',
+      6, '2.75'
+    ])))
   ], False, nil, cpNormal, False, nil{wbWEAPAfterLoad});
 
   wbRecord(WTHR, 'Weather',
