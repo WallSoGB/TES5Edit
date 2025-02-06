@@ -10586,7 +10586,7 @@ begin
         1, 'Ignored by Sandbox'
     ],False, 2))),
     wbFormIDCk(PFIG, 'Ingredient', [ALCH, AMMO, APPA, ARMO, BOOK, INGR, KEYM, LIGH, LVLI, MISC, SCRL, SLGM, WEAP, NULL]),
-    wbFormIDCK(SNAM, 'Sound', [SNDR, NULL]),
+    wbFormIDCK(SNAM, 'Harvest Sound', [SNDR, NULL]),
     wbSeasons
   ]);
 
