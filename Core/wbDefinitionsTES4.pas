@@ -40,6 +40,7 @@ var
   wbSpecializationEnum: IwbEnumDef;
 
   wbBipedFlags: IwbFlagsDef;
+  wbPGAGFlags: IwbFlagsDef;
 
   wbOBMEVersion: IwbStructDef;
 
@@ -1361,6 +1362,18 @@ begin
       {13} 'Shield',
       {14} 'Torch',
       {15} 'Tail'
+    ]);
+
+  wbPGAGFlags :=
+    wbFlags([
+      {0} 'Point 1',
+      {1} 'Point 2',
+      {2} 'Point 3',
+      {3} 'Point 4',
+      {4} 'Point 5',
+      {5} 'Point 6',
+      {6} 'Point 7',
+      {7} 'Point 8'
     ]);
 
 {>>> Common Defs <<<}
@@ -3101,7 +3114,9 @@ begin
     ])), [
     wbInteger(DATA, 'Point Count', itU16).SetRequired,
     wbPGRP,
-    wbByteArray(PGAG, 'Unknown'),
+    wbArray(PGAG, 'Auto-Generated Point Sets',
+      wbInteger('Set', itU8, wbPGAGFlags, cpIgnore)
+    ).IncludeFlag(dfCollapsed, wbCollapseFlags),
     wbArray(PGRR, 'Point-to-Point Connections',
       wbArrayS('Point', wbInteger('Point', itS16), wbCalcPGRRSize)),
     wbArrayS(PGRI, 'Inter-Cell Connections',
