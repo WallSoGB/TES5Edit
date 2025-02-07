@@ -2865,7 +2865,7 @@ type
   end;
 
 const
-  wbCTDAFunctions : array[0..619] of TCTDAFunction = (
+  wbCTDAFunctions : array[0..631] of TCTDAFunction = (
     (Index:   0; Name: 'GetWantBlocking'),
     (Index:   1; Name: 'GetDistance'; ParamType1: ptObjectReference),
     (Index:   2; Name: 'AddItem'), { ObjID (Form ID), Count, Flag (Opt), Level (Opt), Equip (Opt) }
@@ -3450,6 +3450,10 @@ const
     (Index: 930; Name: 'IsNextClipLastShot'),
     (Index: 931; Name: 'WornInOrOutOfPowerArmorHasKeyword'; ParamType1: ptKeyword),
     (Index: 932; Name: 'IsPlayerInBestBuildCamp'),
+    (Index: 933; Name: 'GetWeakPointDamageMultiplier'; Desc: 'Gets the highest body part damage multiplier for the actor (ie weak point)'),
+    (Index: 934; Name: 'GetLastHitLimbDamageMultiplier'; Desc: 'Gets the limb damage multipler'),
+    (Index: 935; Name: 'IsLastDamageFromVATS'; Desc: 'True if last source of damage was from VATS'),
+    (Index: 936; Name: 'IsLastDamageCripplingLimb'; Desc: 'True if last source of damage crippled a limb'),
     (Index: 5000; Name: 'IsInAirOrFloating'; Desc: 'Is the Havok state InAir or IsFloating?'),
     (Index: 5001; Name: 'GetIsForm'),
     (Index: 5002; Name: 'GetIsInDailyOps'),
@@ -3483,9 +3487,17 @@ const
     (Index: 10012; Name: 'JoinExpedition'),    //Does nothing on the client
     (Index: 10013; Name: 'GetPublicEventHasMutation'; ParamType1: ptSpell),
     (Index: 10014; Name: 'IsUsingAltCurveTable'),
+    (Index: 10015; Name: 'GetIsInVATS'),
     (Index: 10016; Name: 'GetIsDisguisedWithKeyword'; Desc: 'Is the player disguised in an outfit with the specified disguise keyword?'; ParamType1: ptKeyword),
     (Index: 10017; Name: 'GetIsPlayerGhoul'),
-    (Index: 12000; Name: 'IsFOWPersonalEWSEnabled'; Desc: 'Is the personal EWS enabled?')
+    (Index: 10018; Name: 'GetDistanceToClosestHostileActor'; Desc: 'Gets the distance to the nearest hostile actor in a player''s combat group or the current combat target for AI'),
+    (Index: 10019; Name: 'GetRadshieldPercentage'; Desc: 'Gets the percentage of max the radshield is currently at'),
+    (Index: 10020; Name: 'IsChallengeTypeMonthly'; Desc: 'Is the target challenge a Monthly challenge?'),
+    (Index: 12000; Name: 'IsFOWPersonalEWSEnabled'; Desc: 'Is the personal EWS enabled?'),
+    (Index: 12001; Name: 'GetWeakPointDamageMultiplier'; Desc: 'Gets the highest body part damage multiplier for the actor (ie weak point)'),
+    (Index: 12002; Name: 'GetEquippedItemHealthPercent'; ParamType1: ptEquipType),
+    (Index: 12003; Name: 'GetEquippedArmorHealthPercent'; ParamType1: ptInteger),
+    (Index: 12004; Name: 'GetEquippedWeaponHealthPercent')
   );
 
 var
@@ -9222,7 +9234,9 @@ begin
    {109} 'AmmoConsumption',
    {110} 'Overheating',
    {111} 'OverheatRateUp',
-   {112} 'OverheatRateDown'
+   {112} 'OverheatRateDown',
+   {113} 'SoundTagSet',
+   {114} 'SneakAttackMult'
   ]);
 
   wbStorefrontData :=
@@ -9782,7 +9796,11 @@ begin
     wbInteger(VONL, 'Unknown Bool', itU8, wbBoolEnum)
   ], False, nil, cpNormal, False, wbARMAAfterLoad);
 
-  wbRecord(BOOK, 'Book', [
+  wbRecord(BOOK, 'Book',
+    wbFlags(wbFlagsList([
+      {0x00000004}  2, 'Unknown 2',
+      {0x00000200}  9, 'Unknown 9'
+    ])), [
     wbEDID,
     wbVMAD,
     wbOBND(True),
@@ -9989,7 +10007,7 @@ begin
     {>>> XCLW sometimes has $FF7FFFFF and causes invalid floation point <<<}
     wbFloat(XCLW, 'Water Height', cpNormal, False, 1, -1, nil, nil, 0, wbCELLXCLWGetConflictPriority),
     wbFloat(XILS),
-    wbFormIDCk(RDES, 'Unknown Reference', [REFR]),
+    wbFormIDCk(RDES, 'Unknown Reference', [NULL, REFR]),
     wbUnknown(NAVH),
     wbFormIDCk(XCWT, 'Water Type', [WATR]),
     wbArrayS(XCLR, 'Regions', wbFormIDCk('Region', [REGN])),
@@ -11912,7 +11930,11 @@ begin
     )
   ]);
 
-  wbRecord(ADDN, 'Addon Node', [
+  wbRecord(ADDN, 'Addon Node',
+    wbFlags(wbFlagsList([
+      {0x00000004}  2, 'Unknown 2',
+      {0x00000200}  9, 'Unknown 9'
+    ])), [
     wbEDID,
     wbOBND(True),
     wbXALG,
@@ -12402,6 +12424,7 @@ begin
     Sig2Int('AFIA'), 'Action Fire Auto',
     Sig2Int('AFIS'), 'Action Fire Single',
     Sig2Int('AFLT'), 'Action Flip-Throw',
+    Sig2Int('AFOH'), 'Action Weapon Overheat',
     Sig2Int('AFNP'), 'Keyword - Activator Furniture No Player',
     Sig2Int('AGAL'), 'Action Gun Alert',
     Sig2Int('AGCS'), 'Action Gun Charge Start',
@@ -13435,7 +13458,11 @@ begin
     ], cpNormal, True)
   ]);
 
-  wbRecord(OTFT, 'Outfit', [
+  wbRecord(OTFT, 'Outfit',
+    wbFlags(wbFlagsList([
+      {0x00000004}  2, 'Unknown 2',
+      {0x00000200}  9, 'Unknown 9'
+    ])), [
     wbEDID,
     wbArrayS(INAM, 'Items', wbFormIDCk('Item', [ARMO, LVLI])),
     wbFormIDCk(KNAM, 'Keyword', [KYWD])
@@ -15630,7 +15657,7 @@ begin
             wbFormIDCk('Keyword', [KYWD, NULL]),
             wbInteger('Alias', itS32, wbQuestAliasToStr, wbStrToAlias)
           ])),
-          wbFormIDCk(ALDN, 'Display Name', [MESG]),
+          wbFormIDCk(ALDN, 'Display Name', [NULL, MESG]),
           wbFormIDCk(ALFV, 'Forced Voice', [VTYP]),
           wbFormIDCk(ALDI, 'Death Item', [LVLI]),
           wbRArrayS('Alias Spells', wbFormIDCk(ALSP, 'Spell', [SPEL])),
@@ -18666,7 +18693,11 @@ begin
     wbUnknown(DICO)
   ]);
 
-  wbRecord(PLYT, 'Player Title', [
+  wbRecord(PLYT, 'Player Title',
+    wbFlags(wbFlagsList([
+      {0x00000004}  2, 'Unknown 2',
+      {0x00000200}  9, 'Unknown 9'
+    ])), [
     wbEDID,
     wbXALG,
     wbLString(ANAM, 'Title'), //Possibly male version
