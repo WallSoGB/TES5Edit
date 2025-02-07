@@ -7324,6 +7324,8 @@ begin
     Sig2Int('HBTL'), 'Help - Target Lock',
     Sig2Int('HBAT'), 'Help - Attack Target',
     Sig2Int('MHFL'), 'Help - Mods',
+    Sig2Int('HMCC'), 'Help - Installed Content',
+    Sig2Int('HMAE'), 'Help - Installed Content (AE)',
     Sig2Int('LSIS'), 'Imagespace: Load screen',
     Sig2Int('WMDA'), 'Keyword - Weapon Material Daedric',
     Sig2Int('WMDR'), 'Keyword - Weapon Material Draugr',
