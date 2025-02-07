@@ -2268,6 +2268,32 @@ begin
     end;
 end;
 
+function wbINNRTargetDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+var
+  Container: IwbContainerElementRef;
+  MainRecord: IwbMainRecord;
+  TypeElement: IwbElement;
+begin
+  Result := 0;
+  if not Assigned(aElement) then
+    Exit;
+
+  if not Supports(aElement.ContainingMainRecord, IwbMainRecord, MainRecord) then
+    Exit;
+
+  TypeElement := MainRecord.ElementBySignature['UNAM'];
+
+  case Integer(TypeElement.NativeValue) of
+      0: Result := 0; // None
+    $22: Result := 1; // Armor
+    $24: Result := 2; // Container
+    $2E: Result := 3; // Flora
+    $2F: Result := 4; // Furniture
+    $30: Result := 5; // Weapon
+    $32: Result := 6; // Actor
+  end;
+end;
+
 function wbCLFMColorToStr(aInt: Int64; const aElement: IwbElement; aType: TwbCallbackType): string;
 var
   Container  : IwbContainer;
@@ -16021,22 +16047,227 @@ end;
             wbKeywords,
             wbStruct(XNAM, 'Property', [
               wbFloat('Value'),
-              wbInteger('Target', itU8, wbEnum([
-                { 0} 'Enchantments',
-                { 1} 'BashImpactDataSet',
-                { 2} 'BlockMaterial',
-                { 3} 'Keywords',
-                { 4} 'Weight',
-                { 5} 'Value',
-                { 6} 'Rating',
-                { 7} 'AddonIndex',
-                { 8} 'BodyPart',
-                { 9} 'DamageTypeValues',
-                {10} 'ActorValues',
-                {11} 'Health',
-                {12} 'ColorRemappingIndex',
-                {13} 'MaterialSwaps'
-              ])),
+              wbUnion('Target', wbINNRTargetDecider, [
+                //None
+                wbUnused(1),
+
+                // Armor
+                wbInteger('Target', itU8, wbEnum([
+                  { 0} 'Enchantments',
+                  { 1} 'BashImpactDataSet',
+                  { 2} 'BlockMaterial',
+                  { 3} 'Keywords',
+                  { 4} 'Weight',
+                  { 5} 'Value',
+                  { 6} 'Rating',
+                  { 7} 'AddonIndex',
+                  { 8} 'BodyPart',
+                  { 9} 'DamageTypeValues',
+                  {10} 'ActorValues',
+                  {11} 'Health',
+                  {12} 'ColorRemappingIndex',
+                  {13} 'ModCount',
+                  {14} 'LayeredMaterialSwaps',
+                  {15} 'ActorValues'
+                ])),
+
+                // Container
+                wbInteger('Target', itU8, wbEnum([
+                  { 0} 'Keywords'
+                ])),
+
+                // Flora
+                wbInteger('Target', itU8, wbEnum([
+                  { 0} 'Keywords',
+                  { 1} 'LayeredMaterialSwaps'
+                ])),
+
+                // Furniture
+                wbInteger('Target', itU8, wbEnum([
+                  { 0} '----' // The name in CK is actually ----
+                ])),
+
+                // Weapon
+                wbInteger('Target', itU8, wbEnum([
+                  {  0} 'Speed',
+                  {  1} 'Reach',
+                  {  2} 'MinRange',
+                  {  3} 'MaxRange',
+                  {  4} 'AttackDelaySeconds',
+                  {  5} 'ModCount',
+                  {  6} 'OutOfRangeDamageMult',
+                  {  7} 'BashDamage',
+                  {  8} 'CriticalChargeBonus',
+                  {  9} 'HitBehavior',
+                  { 10} 'Rank',
+                  { 11} 'DEPRECATED2',
+                  { 12} 'AmmoCapacity',
+                  { 13} 'DEPRECATED3',
+                  { 14} 'DEPRECATED4',
+                  { 15} 'Type',
+                  { 16} 'PlayerOnly',
+                  { 17} 'NPCUseAmmo',
+                  { 18} 'ChargingReload',
+                  { 19} 'MinorCrime',
+                  { 20} 'VariableRange',
+                  { 21} 'CriticalEffectOnDeathOnly',
+                  { 22} 'DEPRECATED9-2',
+                  { 23} 'NonHostile',
+                  { 24} 'DEPRECATED10',
+                  { 25} 'DEPRECATED5',
+                  { 26} 'CantDrop',
+                  { 27} 'NonPlayable',
+                  { 28} 'AttackDamage',
+                  { 29} 'Value',
+                  { 30} 'Weight',
+                  { 31} 'Keywords',
+                  { 32} 'AimModelTemplate',
+                  { 33} 'AimModelMinConeDegrees',
+                  { 34} 'AimModelMaxConeDegrees',
+                  { 35} 'AimModelConeIncreasePerShot',
+                  { 36} 'AimModelConeDecreasePerSec',
+                  { 37} 'AimModelConeDecreaseDelaySec',
+                  { 38} 'AimModelConeSneakMultiplier',
+                  { 39} 'AimModelRecoilDiminishSpringForce',
+                  { 40} 'AimModelRecoilDiminishSightsMult',
+                  { 41} 'AimModelRecoilMaxDegPerShot',
+                  { 42} 'AimModelRecoilMinDegPerShot',
+                  { 43} 'AimModelRecoilHipMult',
+                  { 44} 'AimModelRecoilShotsForRunaway',
+                  { 45} 'AimModelRecoilArcDeg',
+                  { 46} 'AimModelRecoilArcRotateDeg',
+                  { 47} 'AimModelConeIronSightsMultiplier',
+                  { 48} 'HasScope',
+                  { 49} 'ReticleType',
+                  { 50} 'AimDownSightWorldFOVMult',
+                  { 51} 'FireSeconds',
+                  { 52} 'NumProjectiles',
+                  { 53} 'SoundLevel',
+                  { 54} 'ImpactDataSet',
+                  { 55} 'Ammo',
+                  { 56} 'CritEffect',
+                  { 57} 'BashImpactDataSet',
+                  { 58} 'BlockMaterial',
+                  { 59} 'Enchantments',
+                  { 60} 'AimModelBaseStability',
+                  { 61} 'AimDownSightTemplate',
+                  { 62} 'ZoomDataOverlay',
+                  { 63} 'AimDownSightDataImageSpace',
+                  { 64} 'AimDownSightFPGeometryOffsetX',
+                  { 65} 'AimDownSightFPGeometryOffsetY',
+                  { 66} 'AimDownSightFPGeometryOffsetZ',
+                  { 67} 'EquipSlots',
+                  { 68} 'SoundLevelMult',
+                  { 69} 'NPCAmmoList',
+                  { 70} 'ReloadSpeed',
+                  { 71} 'DamageTypeValues',
+                  { 72} 'AccuracyBonus',
+                  { 73} 'AttackOxygenCost',
+                  { 74} 'OverrideProjectile',
+                  { 75} 'OverrideShellCasing',
+                  { 76} 'BoltAction',
+                  { 77} 'StaggerValue',
+                  { 78} 'SightedTransitionSeconds',
+                  { 79} 'FullPowerSeconds',
+                  { 80} 'HoldInput',
+                  { 81} 'DEPRECATED6',
+                  { 82} 'MinPowerPerShot',
+                  { 83} 'ColorRemappingIndex',
+                  { 84} 'DEPRECATED',
+                  { 85} 'LayeredMaterialSwaps',
+                  { 86} 'CriticalDamageMult',
+                  { 87} 'DisableShellCaseEject',
+                  { 88} 'ChargingAttack',
+                  { 89} 'ActorValues',
+                  { 90} 'DEPRECATED7',
+                  { 91} 'ReloadSingle',
+                  { 92} 'DEPRECATED8',
+                  { 93} 'UsePower',
+                  { 94} 'DEPRECATED9-1',
+                  { 95} 'AttackSeconds',
+                  { 96} 'FiringType',
+                  { 97} 'BurstShots',
+                  { 98} 'BoltChargeSeconds2',
+                  { 99} 'RepeateableFire',
+                  {100} 'Resistance',
+                  {101} 'Skill',
+                  {102} 'PowerAVIF',
+                  {103} 'FullRechargeTime',
+                  {104} 'BoltChargeSeconds1',
+                  {105} 'ConsumeAmmo',
+                  {106} 'VariableRangeApertureValueRangeMin',
+                  {107} 'VariableRangeApertureValueRangeMax',
+                  {108} 'VariableRangeApertureInputRangeMin',
+                  {109} 'VariableRangeApertureInputRangeMax',
+                  {110} 'VariableRangeApertureAcceleration',
+                  {111} 'VariableRangeApertureDeceleration',
+                  {112} 'VariableRangeDistanceValueRangeMin',
+                  {113} 'VariableRangeDistanceValueRangeMax',
+                  {114} 'VariableRangeDistanceInputRangeMin',
+                  {115} 'VariableRangeDistanceInputRangeMax',
+                  {116} 'VariableRangeDistanceAcceleration',
+                  {117} 'VariableRangeDistanceDeceleration',
+                  {118} 'PowerBonusAVIF',
+                  {119} 'AimAssistTemplate',
+                  {120} 'InnerConeAngleDegrees',
+                  {121} 'OuterConeAngleDegrees',
+                  {122} 'SteeringDegPerSec',
+                  {123} 'PitchScale',
+                  {124} 'InnerSteeringRing',
+                  {125} 'OuterSteeringRing',
+                  {126} 'Friction',
+                  {127} 'MoveFollowDegPerSec',
+                  {128} 'ADSSnapSteeringMultiplier',
+                  {129} 'ADSSnapSeconds',
+                  {130} 'ADSSnapConeAngleDegrees',
+                  {131} 'NoSteering',
+                  {132} 'BulletBendingConeAngleDegrees',
+                  {133} 'ADSSnapSteeringMultiplierInnerRing',
+                  {134} 'ADSSnapSteeringMultiplierOuterRing',
+                  {135} 'ADSMultiplierInnerConeAngleDegrees',
+                  {136} 'ADSMultiplierOuterConeAngleDegrees',
+                  {137} 'ADSMultiplierInnerSteeringRing',
+                  {138} 'ADSMultiplierOuterSteeringRing',
+                  {139} 'ADSMultiplierFriction',
+                  {140} 'ADSMultiplierSteeringRingDegPerSec',
+                  {141} 'AimAssist',
+                  {142} 'AimOpticalSightModel',
+                  {143} 'HasStagedTrigger',
+                  {144} 'HasDualTrigger',
+                  {145} 'BurstDelaySeconds',
+                  {146} 'OverrideRateOfFire',
+                  {147} 'CritChanceIncMult',
+                  {148} 'ShotsPerSecond',
+                  {149} 'EnableMarkingTargets'
+                ])),
+
+                // Actor
+                wbInteger('Target', itU8, wbEnum([
+                  { 0} 'Keywords',
+                  { 1} 'ForcedInventory',
+                  { 2} 'XPOffset',
+                  { 3} 'Enchantments',
+                  { 4} 'ColorRemappingIndex',
+                  { 5} 'DEPRECATED',
+                  { 6} 'LayeredMaterialSwaps',
+                  { 7} 'RaceChange',
+                  { 8} 'SkinChange',
+                  { 9} 'VoiceChange',
+                  {10} 'HeightMinMax',
+                  {11} 'CombatStyle',
+                  {12} 'RaceOverride',
+                  {13} 'Spells',
+                  {14} 'Perks',
+                  {15} 'Factions',
+                  {16} 'ActorValues',
+                  {17} 'Packages',
+                  {18} 'DisplayName',
+                  {19} 'ReactionRadius',
+                  {20} 'GroupFaction',
+                  {21} 'AiData',
+                  {22} 'NpcRaceOverride'
+                ]))
+              ]),
               wbInteger('Op', itU8, wbEnum([
                 {0} '>=',
                 {1} '>',
