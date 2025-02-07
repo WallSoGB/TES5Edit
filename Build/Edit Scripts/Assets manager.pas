@@ -196,7 +196,6 @@ begin
       // linked bone weights *.ssf file
       else if Block.BlockType = 'BSSubIndexTriShape' then
         sl.Add(wbNormalizeResourceName(Block.EditValues['Segment Data\SSF File'], resMesh));
-
     end;    
   finally
     nif.Free;
@@ -788,6 +787,7 @@ procedure ScanForPapyrusScripts(e: IInterface);
 var
   i: integer;
   s: string;
+  Source: string;
 begin
   if not Assigned(e) then
     Exit;
@@ -798,8 +798,12 @@ begin
   
   if SameText(Name(e),'ScriptName') then begin
     s := StringReplace(GetEditValue(e), ':', '\', [rfReplaceAll]);
+	if wbGameMode = gmSSE then
+	  Source := 'source\scripts\'
+	else
+	  Source := 'scripts\source';
     ProcessAssetEx(e, 'scripts\' + s + '.pex', 'Papyrus script attached to ' + Name(CurrentRecord), atPapyrusScript);
-    ProcessAssetEx(e, 'scripts\source\' + s + '.psc', 'Source of papyrus script attached to ' + Name(CurrentRecord), atPapyrusScript);
+    ProcessAssetEx(e, Source + s + '.psc', 'Source of papyrus script attached to ' + Name(CurrentRecord), atPapyrusScript);
   end;
   
   for i := 0 to Pred(ElementCount(e)) do
@@ -928,8 +932,8 @@ begin
       i1 := GetElementNativeValues(e, 'DNAM\Weight slider - Male');
       i2 := GetElementNativeValues(e, 'DNAM\Weight slider - Female');
       for i := 1 to 4 do begin
-        if i = 1 then s := 'Male world model\MOD2'
-        else if i = 2 then s := 'Female world model\MOD3'
+        if i = 1 then s := 'Male Biped Model\MOD2'
+        else if i = 2 then s := 'Female Biped Model\MOD3'
         else if i = 3 then s := 'Male 1st Person\MOD4'
         else if i = 4 then s := 'Female 1st Person\MOD5';
         ent := ElementByPath(e, s);
@@ -952,8 +956,8 @@ begin
     end
     
     else if (sig = 'ARMO') then begin
-      ScanForAssets(ElementByName(e, 'Male world model'));
-      ScanForAssets(ElementByName(e, 'Female world model'));
+      ScanForAssets(ElementByName(e, 'Male World Model'));
+      ScanForAssets(ElementByName(e, 'Female World Model'));
       ScanForAssets(ElementByName(e, 'Icon 2 (female)'));
     end
 
@@ -979,6 +983,9 @@ begin
 
     else if (sig = 'FURN') then
       ProcessAsset(ElementByPath(e, 'XMRK'))
+	  
+    else if (sig = 'HDPT') then 
+      ScanForAssets(ElementByPath(e, 'Parts'))
 
     else if (sig = 'LSCR') then
       ProcessAsset(ElementByPath(e, 'MOD2'))
@@ -993,8 +1000,11 @@ begin
       ProcessAsset(ElementByPath(e, 'ANAM'));
       ProcessAsset(ElementByPath(e, 'BNAM'));
     end
+  
+    else if (sig = 'NPC_') and (optMode <> wmCheck) then
+      ProcessAssetEx(e, Format('Meshes\Actors\Character\FaceGenData\FaceGeom\%s\%s.nif', [GetFileName(MasterOrSelf(e)), IntToHex(FormID(e) and $00FFFFFF, 8)]), 'Facegen for ' + Name(e), atMesh)
 
-    else if (sig = 'PROJ') then
+	else if (sig = 'PROJ') then
       ProcessAsset(ElementByPath(e, 'Muzzle Flash Model\NAM1'))
 
     else if (sig = 'QUST') then begin
@@ -1031,8 +1041,12 @@ begin
     else if (sig = 'TREE') and (optMode <> wmCheck) then begin
       s := GetElementEditValues(e, 'Model\MODL');
       if s <> '' then begin
-        s := wbNormalizeResourceName(ChangeFileExt(s, '') + '_lod_flat.nif', resMesh);
-        ProcessAssetEx(e, s, 'Tree LOD mesh for ' + Name(e), atLODAsset);
+        s := wbNormalizeResourceName(ChangeFileExt(s, '') + '_lod_%s.nif', resMesh);
+        ProcessAssetEx(e, Format(s, ['flat']), 'Tree LOD mesh for ' + Name(e), atLODAsset);
+        ProcessAssetEx(e, Format(s, ['0']), 'xLODGen 0 mesh for ' + Name(e), atLODAsset);
+        ProcessAssetEx(e, Format(s, ['1']), 'xLODGen 1 mesh for ' + Name(e), atLODAsset);
+        ProcessAssetEx(e, Format(s, ['2']), 'xLODGen 2 mesh for ' + Name(e), atLODAsset);
+        ProcessAssetEx(e, Format(s, ['3']), 'xLODGen 3 mesh for ' + Name(e), atLODAsset);
       end;
     end
 
@@ -1041,12 +1055,17 @@ begin
 
     else if (sig = 'WATR') then
       ProcessAsset(ElementByPath(e, 'NAM2'))
+   
+    else if (sig = 'WEAP') then
+      ProcessAsset(ElementByPath(e, 'Has Scope\MOD3'))
 
     else if (sig = 'WRLD') then begin
       ScanForAssets(ElementByPath(e, 'Cloud Model\Model'));
+      ProcessAsset(ElementByPath(e, 'NNAM'));
       ProcessAsset(ElementByPath(e, 'XNAM'));
       ProcessAsset(ElementByPath(e, 'TNAM'));
       ProcessAsset(ElementByPath(e, 'UNAM'));
+      ProcessAsset(ElementByPath(e, 'XWEM'));
     end
 
     else if (sig = 'WTHR') then begin
@@ -1054,14 +1073,13 @@ begin
       sl := TStringList.Create;
       sl.CommaText := '00TX,10TX,20TX,30TX,40TX,50TX,60TX,70TX,80TX,90TX,:0TX,;0TX,<0TX,=0TX,>0TX,?0TX,@0TX,A0TX,B0TX,C0TX,D0TX,E0TX,F0TX,G0TX,H0TX,I0TX,J0TX,K0TX,L0TX';
       DisabledClouds := GetElementNativeValues(e, 'NAM1');
-      for i := 0 to Pred(sl.Count) do begin
+	  for i := 0 to Pred(sl.Count) do begin
         if DisabledClouds and (1 shl i) = 0 then
-          ProcessAsset(ElementBySignature(e, sl[i]));
+          ProcessAsset(ElementByPath(e, 'Cloud Textures\' + sl[i]));
       end;
       sl.Free;
       ProcessAsset(ElementByPath(e, 'Aurora\Model\MODL'));
-    end;
-    
+    end;  	
   end
 
   
@@ -1073,8 +1091,7 @@ begin
     if (sig = 'WTHR') then begin
       ProcessAsset(ElementByPath(e, 'DNAM'));
       ProcessAsset(ElementByPath(e, 'CNAM'));
-    end;
-  
+    end; 	
   end
   
   

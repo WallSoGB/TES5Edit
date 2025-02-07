@@ -4,7 +4,7 @@
 unit FindPotentialESL;
 
 const
-  iESLMaxRecords = $800; // max possible new records in ESL
+  iESLMaxRecords = $ffe; // max possible new records in ESL
   iESLMaxFormID = $fff; // max allowed FormID number in ESL
 
 
@@ -54,7 +54,7 @@ begin
     
   // check if plugin has new cell(s)
   if HasCELL then
-    AddMessage(#9'Warning: Plugin has new CELL(s) which won''t work when turned into ESL and overridden by other mods due to the game bug');
+    AddMessage(#9'Warning: Plugin has new CELL(s) which won''t work when flagged ESL + ESM and overridden by other mods due to the game bug');
 end;
   
 function Initialize: integer;
@@ -69,7 +69,7 @@ begin
     if GetLoadOrder(f) = 0 then
       Continue;
     // check non-light plugins only
-    if (GetElementNativeValues(ElementByIndex(f, 0), 'Record Header\Record Flags\ESL') = 0) and not SameText(ExtractFileExt(GetFileName(f)), '.esl') then
+    if not GetIsEsl and not SameText(ExtractFileExt(GetFileName(f)), '.esl') then
       CheckForESL(f);
   end;
 end;

@@ -106,9 +106,9 @@ begin
   SetEditValue(havePath, GetEditValue(swapPath));
   SetEditValue(swapPath, saveString);
 
-  havePath := ElementByPath(haveLink, 'Unknown');
+  havePath := ElementByPath(haveLink, 'Type');
   saveString := GetEditValue(havePath);
-  swapPath := ElementByPath(swapLink, 'Unknown');
+  swapPath := ElementByPath(swapLink, 'Type');
   SetEditValue(havePath, GetEditValue(swapPath));
   SetEditValue(swapPath, saveString);
 end;

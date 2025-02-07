@@ -525,7 +525,7 @@ object frmMain: TfrmMain
               '- Ctrl + F3 to open Assets Browser'
               '- Alt + F3 to open Worldspace Browser'
               ''
-              'Navagation treeview:'
+              'Navigation treeview:'
               ''
               '- Ctrl + 1 through 5 to set a Bookmark.'
               '- ALT + 1 through 5 to jump to a Bookmark.'

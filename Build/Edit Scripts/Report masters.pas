@@ -60,6 +60,10 @@ begin
         Result := 1;
         Exit;
       end;
+      AddMessage('You selected these masters:');
+      for i := 0 to Pred(slCheckMasters.Count) do
+        AddMessage(slCheckMasters[i]);
+      AddMessage('----------');
       AddMessage('Selected masters are required by the following records and elements:');
     finally
       frm.Free;

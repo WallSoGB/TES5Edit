@@ -143,7 +143,7 @@ begin
     
 
   // rule based on debugging thanks to aers
-  if SQRT(Power(Dimensions.x, 2) + Power(Dimensions.y, 2) + Power(Dimensions.z, 2)) * 0.5 * fscale >= fLargeRefMinSize then begin
+  if  (SQRT(Power(Dimensions.x, 2) + Power(Dimensions.y, 2) + Power(Dimensions.z, 2)) * 0.5 * fscale >= fLargeRefMinSize) then begin
     Cell := LinksTo(ElementByPath(e, 'Cell'));
     if not Assigned(Cell) then
       Exit;

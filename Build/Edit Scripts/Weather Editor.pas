@@ -225,7 +225,7 @@ begin
     Exit;
 
   Layer := lbCloudLayers.ItemIndex;
-  SetElementEditValues(Weather, slCloudSignatures[Layer], cmbCloudTexture.Text);
+  SetElementEditValues(Weather, 'Cloud Textures\' + slCloudSignatures[Layer], cmbCloudTexture.Text);
 
   if IsFormat3 then begin
     SetElementEditValues(Weather, Format('Cloud Speed\QNAM - X Speed\Layer #%d', [Layer]), edCloudXSpeed.Text);
@@ -260,7 +260,7 @@ begin
   Layer := lbCloudLayers.ItemIndex;
   
   // show cloud texture
-  CloudTexture := LowerCase(GetElementEditValues(Weather, slCloudSignatures[Layer]));
+  CloudTexture := LowerCase(GetElementEditValues(Weather, 'Cloud Textures\' + slCloudSignatures[Layer]));
   if SameText(Copy(CloudTexture, 1, 9), 'textures\') then
     Delete(CloudTexture, 1, 9);
   cmbCloudTexture.Text := CloudTexture;
@@ -331,7 +331,7 @@ begin
   
   // enable layer
   if lbCloudLayers.Checked[Layer] then begin
-    Add(Weather, slCloudSignatures[Layer], True);
+    Add(Weather, 'Cloud Textures\' + slCloudSignatures[Layer], True);
     DisabledClouds := GetElementNativeValues(Weather, 'NAM1');
     DisabledClouds := DisabledClouds and (not (1 shl Layer));
     SetElementNativeValues(Weather, 'NAM1', DisabledClouds);
@@ -341,7 +341,7 @@ begin
     // since disabling removes cloud texture subrecord which means a data loss, ask user first
     i := MessageDlg(Format('Do you really want to disable cloud layer %d?', [Layer]), mtConfirmation, [mbYes, mbNo], 0);
     if i = mrYes then begin
-      RemoveElement(Weather, slCloudSignatures[Layer]);
+      RemoveElement(Weather, 'Cloud Textures\' + slCloudSignatures[Layer]);
       DisabledClouds := GetElementNativeValues(Weather, 'NAM1');
       DisabledClouds := DisabledClouds or (1 shl Layer);
       SetElementNativeValues(Weather, 'NAM1', DisabledClouds);
@@ -367,8 +367,7 @@ begin
     Exit;
   
   // copy clouds textures
-  for i := 0 to Pred(slCloudSignatures.Count) do
-    CopyElement(WeatherFrom, Weather, slCloudSignatures[i]);
+  CopyElement(WeatherFrom, Weather, 'Cloud Textures');
   
   // copy clouds speed, alpha, colors
   if IsFormat3 then begin
@@ -459,7 +458,6 @@ begin
   Result.Tag := Pred(lstCEDElement.Count);
   Result.ParentBackground := False;
   Result.Color := ColorElementToColor(elColor);
-  Result.StyleElements := [];
   Result.OnClick := ColorEditorClick;
   // list of color editors, indexes are the same for editors and elements
   lstCED.Add(Result);
@@ -802,7 +800,7 @@ begin
   end;
   // time spans for colors
   if (wbGameMode = gmFO4) or (wbGameMode = gmFO4VR) then
-    sColorTimes := 'Sunrise,Day,Sunset,Night,EarlySunrise,LateSunrise,EarlySunset,LateSunset'
+    sColorTimes := 'Sunrise,Day,Sunset,Night,Early Sunrise,Late Sunrise,Early Sunset,Late Sunset'
   else
     sColorTimes := 'Sunrise,Day,Sunset,Night';
 end;
