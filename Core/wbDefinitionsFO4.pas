@@ -12210,7 +12210,7 @@ begin
       wbVec3('Half Extents'),
       wbInteger('Wind - Detached End', itU8, wbBoolEnum),
       wbUnused(0) // junk data?
-    ], cpNormal, False, nil, 5),
+    ], cpNormal, False, nil, 3),
     wbStruct(XPDD, 'Projected Decal', [
       wbFloat('Width Scale'),
       wbFloat('Height Scale')
