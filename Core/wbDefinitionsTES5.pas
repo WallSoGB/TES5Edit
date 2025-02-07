@@ -7948,7 +7948,7 @@ begin
         wbFromVersion(43, wbInteger('Is Snow', itU32, wbBoolEnum)),
         nil
       )
-    ]).SetRequired
+    ], cpNormal, True, nil, 8)
   ]);
 
   wbRecord(MOVT, 'Movement Type', [
