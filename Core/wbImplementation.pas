@@ -2749,7 +2749,31 @@ begin
       if flRecords[i].IsWinningOverride then
         (flRecords[i] as IwbElementInternal).Reached;
 
-  Group := GetGroupBySignature('GMST');
+  Group := GetGroupBySignature('ADDN');
+  if Assigned(Group) then
+    for i := 0 to Pred(Group.ElementCount) do
+      (Group.Elements[i] as IwbElementInternal).Reached;
+  Group := GetGroupBySignature('ANIO');
+  if Assigned(Group) then
+    for i := 0 to Pred(Group.ElementCount) do
+      (Group.Elements[i] as IwbElementInternal).Reached;
+  Group := GetGroupBySignature('AVIF');
+  if Assigned(Group) then
+    for i := 0 to Pred(Group.ElementCount) do
+      (Group.Elements[i] as IwbElementInternal).Reached;
+  Group := GetGroupBySignature('BSGN');
+  if Assigned(Group) then
+    for i := 0 to Pred(Group.ElementCount) do
+      (Group.Elements[i] as IwbElementInternal).Reached;
+  Group := GetGroupBySignature('CAMS');
+  if Assigned(Group) then
+    for i := 0 to Pred(Group.ElementCount) do
+      (Group.Elements[i] as IwbElementInternal).Reached;
+  Group := GetGroupBySignature('COBJ');
+  if Assigned(Group) then
+    for i := 0 to Pred(Group.ElementCount) do
+      (Group.Elements[i] as IwbElementInternal).Reached;
+  Group := GetGroupBySignature('CPTH');
   if Assigned(Group) then
     for i := 0 to Pred(Group.ElementCount) do
       (Group.Elements[i] as IwbElementInternal).Reached;
@@ -2757,7 +2781,11 @@ begin
   if Assigned(Group) then
     for i := 0 to Pred(Group.ElementCount) do
       (Group.Elements[i] as IwbElementInternal).Reached;
-  Group := GetGroupBySignature('ANIO');
+  Group := GetGroupBySignature('DOBJ');
+  if Assigned(Group) then
+    for i := 0 to Pred(Group.ElementCount) do
+      (Group.Elements[i] as IwbElementInternal).Reached;
+  Group := GetGroupBySignature('GMST');
   if Assigned(Group) then
     for i := 0 to Pred(Group.ElementCount) do
       (Group.Elements[i] as IwbElementInternal).Reached;
@@ -2769,17 +2797,21 @@ begin
   if Assigned(Group) then
     for i := 0 to Pred(Group.ElementCount) do
       (Group.Elements[i] as IwbElementInternal).Reached;
+  Group := GetGroupBySignature('NAVI');
+  if Assigned(Group) then
+    for i := 0 to Pred(Group.ElementCount) do
+      (Group.Elements[i] as IwbElementInternal).Reached;
+  Group := GetGroupBySignature('RADS');
+  if Assigned(Group) then
+    for i := 0 to Pred(Group.ElementCount) do
+      (Group.Elements[i] as IwbElementInternal).Reached;
+  Group := GetGroupBySignature('SKIL');
+  if Assigned(Group) then
+    for i := 0 to Pred(Group.ElementCount) do
+      (Group.Elements[i] as IwbElementInternal).Reached;
 
-  if wbGameMode = gmTES4 then begin
-    Group := GetGroupBySignature('SKIL');
-    if Assigned(Group) then
-      for i := 0 to Pred(Group.ElementCount) do
-        (Group.Elements[i] as IwbElementInternal).Reached;
-    Group := GetGroupBySignature('BSGN');
-    if Assigned(Group) then
-      for i := 0 to Pred(Group.ElementCount) do
-        (Group.Elements[i] as IwbElementInternal).Reached;
 
+  if wbIsOblivion or wbIsFallout3 then begin
     Group := GetGroupBySignature('CLAS');
     if Assigned(Group) then
       for i := 0 to Pred(Group.ElementCount) do
@@ -2796,49 +2828,31 @@ begin
             end;
           end;
         end;
-  end else begin
-    Group := GetGroupBySignature('AVIF');
-    if Assigned(Group) then
-      for i := 0 to Pred(Group.ElementCount) do
-        (Group.Elements[i] as IwbElementInternal).Reached;
-    Group := GetGroupBySignature('ADDN');
-    if Assigned(Group) then
-      for i := 0 to Pred(Group.ElementCount) do
-        (Group.Elements[i] as IwbElementInternal).Reached;
-    Group := GetGroupBySignature('CAMS');
-    if Assigned(Group) then
-      for i := 0 to Pred(Group.ElementCount) do
-        (Group.Elements[i] as IwbElementInternal).Reached;
-    Group := GetGroupBySignature('CPTH');
-    if Assigned(Group) then
-      for i := 0 to Pred(Group.ElementCount) do
-        (Group.Elements[i] as IwbElementInternal).Reached;
-    Group := GetGroupBySignature('NAVI');
-    if Assigned(Group) then
-      for i := 0 to Pred(Group.ElementCount) do
-        (Group.Elements[i] as IwbElementInternal).Reached;
-    Group := GetGroupBySignature('RADS');
-    if Assigned(Group) then
-      for i := 0 to Pred(Group.ElementCount) do
-        (Group.Elements[i] as IwbElementInternal).Reached;
+  end;
 
-    Group := GetGroupBySignature('PERK');
+
+  if wbIsFallout3 then begin
+    Group := GetGroupBySignature('DIAL');
     if Assigned(Group) then
       for i := 0 to Pred(Group.ElementCount) do
         if Supports(Group.Elements[i], IwbMainRecord, Rec) then begin
           if Rec.IsWinningOverride then begin
             Cnt := Rec as IwbContainerElementRef;
-            if Supports(Cnt.RecordBySignature['DATA'], IwbContainerElementRef, Cnt) then begin
-              Flg := Cnt.ElementByName['Playable'];
+            if Supports(Cnt.RecordBySignature['DATA'], IwbContainerElementRef, Cnt2) then begin
+              Flg := Cnt2.ElementByName['Flags'];
               if Assigned(Flg) then begin
-                if Flg.NativeValue <> 0 then
+                s := Flg.SortKey[False];
+                if (Length(s)>1) and (s[2] = '1') then
+                  //Top-level
                   (Rec as IwbElementInternal).Reached;
               end;
             end;
           end;
         end;
+  end;
 
-    Group := GetGroupBySignature('HDPT');
+  if wbIsOblivion or wbIsFallout3 then begin
+    Group := GetGroupBySignature('EYES');
     if Assigned(Group) then
       for i := 0 to Pred(Group.ElementCount) do
         if Supports(Group.Elements[i], IwbMainRecord, Rec) then begin
@@ -2852,44 +2866,57 @@ begin
             end;
           end;
         end;
+  end;
 
-    if wbGameMode >= gmTES5 then begin
-      Group := GetGroupBySignature('EYES');
-      if Assigned(Group) then
-        for i := 0 to Pred(Group.ElementCount) do
-          if Supports(Group.Elements[i], IwbMainRecord, Rec) then begin
-            if Rec.IsWinningOverride then begin
-              Cnt := Rec as IwbContainerElementRef;
-              if Supports(Cnt.RecordBySignature['DATA'], IwbContainerElementRef, Cnt) then begin
-                s := Cnt.SortKey[False];
-                if (Length(s)>0) and (s[1] = '1') then
+  Group := GetGroupBySignature('HDPT');
+  if Assigned(Group) then
+    for i := 0 to Pred(Group.ElementCount) do
+      if Supports(Group.Elements[i], IwbMainRecord, Rec) then begin
+        if Rec.IsWinningOverride then begin
+          Cnt := Rec as IwbContainerElementRef;
+          if Supports(Cnt.RecordBySignature['DATA'], IwbContainerElementRef, Cnt) then begin
+            if wbIsFallout3 then begin
+              flg := Cnt.ElementByName['Playable'];
+              if Assigned(Flg) then begin
+                if Flg.NativeValue <> 0 then
+                  (Rec as IwbElementInternal).Reached;
+              end;
+            end else begin
+              s := Cnt.SortKey[False];
+              if (Length(s)>0) and (s[1] = '1') then
+                //Playable
+                (Rec as IwbElementInternal).Reached;
+            end;
+          end;
+        end;
+      end;
+
+  Group := GetGroupBySignature('PERK');
+  if Assigned(Group) then
+    for i := 0 to Pred(Group.ElementCount) do
+      if Supports(Group.Elements[i], IwbMainRecord, Rec) then begin
+        if Rec.IsWinningOverride then begin
+          Cnt := Rec as IwbContainerElementRef;
+          if Supports(Cnt.RecordBySignature['DATA'], IwbContainerElementRef, Cnt) then begin
+            if wbIsStarfield then begin
+              Flg := Cnt.ElementByName['Flags'];
+              if Assigned(Flg) then
+                s := Flg.SortKey[False];
+                if (Length(s)>0) and (s[2] = '1') then
                   //Playable
+                  (Rec as IwbElementInternal).Reached;
+            end else begin
+              Flg := Cnt.ElementByName['Playable'];
+              if Assigned(Flg) then begin
+                if Flg.NativeValue <> 0 then
                   (Rec as IwbElementInternal).Reached;
               end;
             end;
           end;
-    end;
+        end;
+      end;
 
-    if wbGameMode < gmTES5 then begin
-      Group := GetGroupBySignature('DIAL');
-      if Assigned(Group) then
-        for i := 0 to Pred(Group.ElementCount) do
-          if Supports(Group.Elements[i], IwbMainRecord, Rec) then begin
-            if Rec.IsWinningOverride then begin
-              Cnt := Rec as IwbContainerElementRef;
-              if Supports(Cnt.RecordBySignature['DATA'], IwbContainerElementRef, Cnt2) then begin
-                Flg := Cnt2.ElementByName['Flags'];
-                if Assigned(Flg) then begin
-                  s := Flg.SortKey[False];
-                  if (Length(s)>1) and (s[2] = '1') then
-                    //Top-level
-                    (Rec as IwbElementInternal).Reached;
-                end;
-              end;
-            end;
-          end;
-    end;
-
+  if not wbIsOblivion or wbIsMorrowind then begin
     Group := GetGroupBySignature('NPC_');
     if Assigned(Group) then
       for i := 0 to Pred(Group.ElementCount) do
@@ -2909,24 +2936,6 @@ begin
         end;
   end;
 
-  Group := GetGroupBySignature('RACE');
-  if Assigned(Group) then
-    for i := 0 to Pred(Group.ElementCount) do
-      if Supports(Group.Elements[i], IwbMainRecord, Rec) then begin
-        if Rec.IsWinningOverride then begin
-          Cnt := Rec as IwbContainerElementRef;
-          if Supports(Cnt.RecordBySignature['DATA'], IwbContainerElementRef, Cnt) then begin
-            Flg := Cnt.ElementByName['Flags'];
-            if Assigned(Flg) then begin
-              s := Flg.EditValue;
-              if (Length(s) > 0) and (s[1]='1') then
-                //Playable
-                (Rec as IwbElementInternal).Reached;
-            end;
-          end;
-        end;
-      end;
-
   Group := GetGroupBySignature('QUST');
   if Assigned(Group) then
     for i := 0 to Pred(Group.ElementCount) do
@@ -2945,10 +2954,31 @@ begin
         end;
       end;
 
-  Group := GetGroupBySignature('DOBJ');
+  Group := GetGroupBySignature('RACE');
   if Assigned(Group) then
     for i := 0 to Pred(Group.ElementCount) do
-      (Group.Elements[i] as IwbElementInternal).Reached;
+      if Supports(Group.Elements[i], IwbMainRecord, Rec) then begin
+        if Rec.IsWinningOverride then begin
+          Cnt := Rec as IwbContainerElementRef;
+          if Supports(Cnt.RecordBySignature[wb<TwbSignature>.Iff(wbGameMode >= gmSF1, 'DAT2', 'DATA')], IwbContainerElementRef, Cnt) then begin
+            if wbIsOblivion then begin
+              Flg := Cnt.ElementByName['Playable'];
+              if Assigned(Flg) then begin
+                if Flg.NativeValue <> 0 then
+                  (Rec as IwbElementInternal).Reached;
+              end;
+            end else begin
+              Flg := Cnt.ElementByName['Flags'];
+              if Assigned(Flg) then begin
+                s := Flg.EditValue;
+                if (Length(s) > 0) and (s[1]='1') then
+                  //Playable
+                  (Rec as IwbElementInternal).Reached;
+              end;
+            end;
+          end;
+        end;
+      end;
 end;
 
 procedure TwbFile.BuildRef;
@@ -5127,10 +5157,20 @@ begin
       raise Exception.Create('File ' + GetFileName + ' has an invalid record count');
 
     HEDR.Elements[1].EditValue := IntToStr(Pred(RecordCount));
-
     j := 0;
     ONAMs := nil;
     if wbIsSkyrim or wbIsFallout3 or wbIsFallout4 or wbIsFallout76 or wbIsStarfield then begin
+      if not wbIsFallout3 then begin
+        var INCC := FileHeader.RecordBySignature['INCC'];
+        var Cells := 0;
+        for var R := Low(flRecords) to High(flRecords) do begin
+          var C := flRecords[R] as IwbMainRecord;
+          if (C.Signature = 'CELL') and (C.ElementNativeValues['DATA'] and $1 = 1) then
+            Inc(Cells);
+        end;
+        INCC.EditValue := Cells.ToString;
+      end;
+
       Include(TwbMainRecord(FileHeader).mrStates, mrsNoUpdateRefs);
       BeginUpdate;
       try
@@ -5156,7 +5196,6 @@ begin
                     Inc(j);
 
                     Signature := Current.Signature;
-
                     if (Signature = 'NAVM') or
                        (Signature = 'LAND') or
                        (Signature = 'REFR') or
@@ -5178,7 +5217,6 @@ begin
                          (Signature = 'INFO')
                        ))
                     then begin
-
                       if (not wbMasterUpdateFilterONAM) or Current.IsWinningOverride then begin
                         // ONAMs are for overridden temporary refs only
                         if Current.IsPersistent then
@@ -5214,11 +5252,8 @@ begin
                                   end;
                           end;
                         end;
-
                       end;
-
                     end;
-
                   end;
               finally
                 if Assigned(ONAMs) then
@@ -10769,7 +10804,7 @@ begin
       else if _File.IsMedium and (FormID.ObjectID > $FFFF) and (FixedFormID.FileID = _File.FileFileID[True]) then
         Result := 'ObjectID ' + IntToHex64((FormID.ToCardinal and $00FFFFFF),6) + ' is invalid for a medium module.'
       else begin
-        if FormID <> FixedFormID then
+        if (FormID <> FixedFormID) and not wbIsMorrowind then
           Result := 'Warning: internal file FormID is a HITME: ' + FormID.ToString(True) + ' (should be ' + FixedFormID.ToString(True) + ' )';
       end;
     end;

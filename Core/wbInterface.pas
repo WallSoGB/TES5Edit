@@ -2419,8 +2419,8 @@ type
     function GetGridCell(const aSubRecord: IwbSubRecord; out aGridCell: TwbGridCell): Boolean;
     function SetGetGridCellCallback(const aCallback: TwbMainRecordGetGridCellCallback): IwbMainRecordDef;
 
+    function SetAddInfo(const aAddInfo: TwbAddInfoCallback): IwbMainRecordDef;
     function SetToStr(const aToStr : TwbToStrCallback): IwbMainRecordDef{Self};
-
     function SetSummaryKey(const aSummaryKey: array of Integer): {Self}IwbMainRecordDef;
     function SetSummaryMemberPrefixSuffix(aIndex: Integer; const aPrefix, aSuffix: string): {Self}IwbMainRecordDef;
     function SetSummaryMemberMaxDepth(aIndex, aMaxDepth: Integer): {Self}IwbMainRecordDef;
@@ -4341,7 +4341,7 @@ function wbStructLZ(const aName                : string;
 
 function wbRStruct(const aName           : string;
                    const aMembers        : array of IwbRecordMemberDef;
-                   const aSkipSigs       : TwbSignatures;
+                   const aSkipSigs       : TwbSignatures = nil;
                          aPriority       : TwbConflictPriority = cpNormal;
                          aRequired       : Boolean = False;
                          aDontShow       : TwbDontShowCallback = nil;
@@ -4354,7 +4354,7 @@ function wbRStruct(const aName           : string;
 function wbRStructSK(const aSortKey        : array of Integer;
                      const aName           : string;
                      const aMembers        : array of IwbRecordMemberDef;
-                     const aSkipSigs       : TwbSignatures;
+                     const aSkipSigs       : TwbSignatures = nil;
                            aPriority       : TwbConflictPriority = cpNormal;
                            aRequired       : Boolean = False;
                            aDontShow       : TwbDontShowCallback = nil;
@@ -4368,7 +4368,7 @@ function wbRStructExSK(const aSortKey        : array of Integer;
                        const aExSortKey      : array of Integer;
                        const aName           : string;
                        const aMembers        : array of IwbRecordMemberDef;
-                       const aSkipSigs       : TwbSignatures;
+                       const aSkipSigs       : TwbSignatures = nil;
                              aPriority       : TwbConflictPriority = cpNormal;
                              aRequired       : Boolean = False;
                              aDontShow       : TwbDontShowCallback = nil;
@@ -4380,7 +4380,7 @@ function wbRStructExSK(const aSortKey        : array of Integer;
 
 function wbRUnion(const aName     : string;
                   const aMembers  : array of IwbRecordMemberDef;
-                  const aSkipSigs : TwbSignatures;
+                  const aSkipSigs : TwbSignatures = nil;
                         aPriority : TwbConflictPriority = cpNormal;
                         aRequired : Boolean = False;
                         aDontShow : TwbDontShowCallback = nil;
@@ -4390,7 +4390,7 @@ function wbRUnion(const aName     : string;
 function wbRUnion(const aName     : string;
                   const aDecider  : TwbRUnionDecider; //called with the container of the RUnion
                   const aMembers  : array of IwbRecordMemberDef;
-                  const aSkipSigs : TwbSignatures;
+                  const aSkipSigs : TwbSignatures = nil;
                         aPriority : TwbConflictPriority = cpNormal;
                         aRequired : Boolean = False;
                         aDontShow : TwbDontShowCallback = nil;
@@ -4421,7 +4421,7 @@ function wbStructs(const aName        : string;
 function wbRStructs(const aName        : string;
                     const aElementName : string;
                     const aMembers     : array of IwbRecordMemberDef;
-                    const aSkipSigs    : TwbSignatures;
+                    const aSkipSigs    : TwbSignatures = nil;
                           aPriority    : TwbConflictPriority = cpNormal;
                           aRequired    : Boolean = False;
                           aDontShow    : TwbDontShowCallback = nil;
@@ -4432,7 +4432,7 @@ function wbRStructsSK(const aName        : string;
                       const aElementName : string;
                       const aSortKey     : array of Integer;
                       const aMembers     : array of IwbRecordMemberDef;
-                      const aSkipSigs    : TwbSignatures;
+                      const aSkipSigs    : TwbSignatures = nil;
                             aPriority    : TwbConflictPriority = cpNormal;
                             aRequired    : Boolean = False;
                             aAfterLoad   : TwbAfterLoadCallback = nil;
@@ -4914,6 +4914,7 @@ var
 function wbDefToName(const aDef: IwbDef): string;
 function wbDefsToPath(const aDefs: TwbDefPath): string;
 
+function wbIsMorrowind: Boolean; inline;
 function wbIsOblivion: Boolean; inline;
 function wbIsFallout3: Boolean; inline;
 function wbIsFalloutNV: Boolean; inline;
@@ -5493,6 +5494,11 @@ var
 begin
   for i:= Low(wbRecordDefs) to High(wbRecordDefs) do
     wbRecordDefs[i].rdeDef.Report(nil);
+end;
+
+function wbIsMorrowind: Boolean; inline;
+begin
+  Result := wbGameMode in [gmTES3];
 end;
 
 function wbIsOblivion: Boolean; inline;
@@ -6075,6 +6081,7 @@ type
     function GetGridCell(const aSubRecord: IwbSubRecord; out aGridCell: TwbGridCell): Boolean;
     function SetGetGridCellCallback(const aCallback: TwbMainRecordGetGridCellCallback): IwbMainRecordDef;
 
+    function SetAddInfo(const aAddInfo: TwbAddInfoCallback): IwbMainRecordDef;
     function SetToStr(const aToStr : TwbToStrCallback): IwbMainRecordDef{Self};
     function SetSummaryKey(const aSummaryKey: array of Integer): {Self}IwbMainRecordDef;
     function SetSummaryMemberPrefixSuffix(aIndex: Integer; const aPrefix, aSuffix: string): {Self}IwbMainRecordDef;
@@ -8345,14 +8352,14 @@ function wbUnused(const aSignature : TwbSignature;
                         aRequired  : Boolean = False)
                                    : IwbSubRecordDef;
 begin
-  Result := wbEmpty(aSignature, 'Unused', cpIgnore, aRequired, nil, nil);
+  Result := wbEmpty(aSignature, 'Unused', cpIgnore, aRequired, wbNeverShow);
   Result.IncludeFlag(dfNoReport);
 end;
 
 function wbUnused(aRequired : Boolean = False)
                             : IwbValueDef;
 begin
-  Result := wbEmpty('Unused', cpIgnore, aRequired, nil, False, nil);
+  Result := wbEmpty('Unused', cpIgnore, aRequired, wbNeverShow, False);
   Result.IncludeFlag(dfNoReport);
 end;
 
@@ -8361,7 +8368,7 @@ function wbUnused(const aSignature : TwbSignature;
                         aRequired  : Boolean = False)
                                    : IwbSubRecordDef;
 begin
-  Result := wbByteArray(aSignature, 'Unused', aSize, cpIgnore, aRequired, False, nil, nil);
+  Result := wbByteArray(aSignature, 'Unused', aSize, cpIgnore, aRequired, False, wbNeverShow);
   Result.IncludeFlag(dfNoReport);
 end;
 
@@ -8369,7 +8376,7 @@ function wbUnused(aSize     : Integer;
                   aRequired : Boolean = False)
                             : IwbValueDef;
 begin
-  Result := wbByteArray('Unused', aSize, cpIgnore, aRequired, nil, nil);
+  Result := wbByteArray('Unused', aSize, cpIgnore, aRequired, wbNeverShow);
   Result.IncludeFlag(dfNoReport);
 end;
 
@@ -9343,7 +9350,7 @@ end;
 
 function wbRStruct(const aName           : string;
                    const aMembers        : array of IwbRecordMemberDef;
-                   const aSkipSigs       : TwbSignatures;
+                   const aSkipSigs       : TwbSignatures = nil;
                          aPriority       : TwbConflictPriority = cpNormal;
                          aRequired       : Boolean = False;
                          aDontShow       : TwbDontShowCallback = nil;
@@ -9359,7 +9366,7 @@ end;
 function wbRStructSK(const aSortKey        : array of Integer;
                      const aName           : string;
                      const aMembers        : array of IwbRecordMemberDef;
-                     const aSkipSigs       : TwbSignatures;
+                     const aSkipSigs       : TwbSignatures = nil;
                            aPriority       : TwbConflictPriority = cpNormal;
                            aRequired       : Boolean = False;
                            aDontShow       : TwbDontShowCallback = nil;
@@ -9376,7 +9383,7 @@ function wbRStructExSK(const aSortKey        : array of Integer;
                        const aExSortKey      : array of Integer;
                        const aName           : string;
                        const aMembers        : array of IwbRecordMemberDef;
-                       const aSkipSigs       : TwbSignatures;
+                       const aSkipSigs       : TwbSignatures = nil;
                              aPriority       : TwbConflictPriority = cpNormal;
                              aRequired       : Boolean = False;
                              aDontShow       : TwbDontShowCallback = nil;
@@ -9391,7 +9398,7 @@ end;
 
 function wbRUnion(const aName     : string;
                   const aMembers  : array of IwbRecordMemberDef;
-                  const aSkipSigs : TwbSignatures;
+                  const aSkipSigs : TwbSignatures = nil;
                         aPriority : TwbConflictPriority = cpNormal;
                         aRequired : Boolean = False;
                         aDontShow : TwbDontShowCallback = nil;
@@ -9404,7 +9411,7 @@ end;
 function wbRUnion(const aName     : string;
                   const aDecider  : TwbRUnionDecider; //called with the container of the RUnion
                   const aMembers  : array of IwbRecordMemberDef;
-                  const aSkipSigs : TwbSignatures;
+                  const aSkipSigs : TwbSignatures = nil;
                         aPriority : TwbConflictPriority = cpNormal;
                         aRequired : Boolean = False;
                         aDontShow : TwbDontShowCallback = nil;
@@ -9444,7 +9451,7 @@ end;
 function wbRStructs(const aName        : string;
                     const aElementName : string;
                     const aMembers     : array of IwbRecordMemberDef;
-                    const aSkipSigs    : TwbSignatures;
+                    const aSkipSigs    : TwbSignatures = nil;
                           aPriority    : TwbConflictPriority = cpNormal;
                           aRequired    : Boolean = False;
                           aDontShow    : TwbDontShowCallback = nil;
@@ -9458,7 +9465,7 @@ function wbRStructsSK(const aName        : string;
                       const aElementName : string;
                       const aSortKey     : array of Integer;
                       const aMembers     : array of IwbRecordMemberDef;
-                      const aSkipSigs    : TwbSignatures;
+                      const aSkipSigs    : TwbSignatures = nil;
                             aPriority    : TwbConflictPriority = cpNormal;
                             aRequired    : Boolean = False;
                             aAfterLoad   : TwbAfterLoadCallback = nil;
@@ -10983,6 +10990,15 @@ begin
     end;
 
   defReported := True;
+end;
+
+function TwbMainRecordDef.SetAddInfo(const aAddInfo: TwbAddInfoCallback): IwbMainRecordDef;
+begin
+  if defIsLocked then
+    Exit(TwbMainRecordDef(Duplicate).SetAddInfo(aAddInfo));
+
+  Result := Self;
+  recAddInfoCallback := aAddInfo;
 end;
 
 function TwbMainRecordDef.SetBuildIndexKeys(const aCallback: TwbBuildIndexKeysCallback): IwbMainRecordDef;
