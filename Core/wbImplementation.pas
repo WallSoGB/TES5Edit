@@ -857,9 +857,10 @@ type
     function LoadOrderFileIDtoFileFileID(aFileID: TwbFileID; aNew: Boolean): TwbFileID;
     function FileFileIDtoLoadOrderFileID(aFileID: TwbFileID; aNew: Boolean): TwbFileID;
 
-    procedure AddMasters(aMasters: TStrings); overload;
-    procedure AddMasters(const aMasters: array of string); overload;
-    procedure AddMasterIfMissing(const aMaster: string; aSortMasters: Boolean = True);
+    procedure AddMasters(aMasters: TStrings; aSilent: Boolean = False); overload;
+    procedure AddMasters(const aMasters: array of string; aSilent: Boolean = False); overload;
+    procedure AddMasterIfMissing(const aMaster: string; aSortMasters: Boolean = True; aSilent: Boolean = False);
+    procedure AddMastersIfMissing(const aMasters: TStrings; aSortMasters: Boolean = True; aSilent: Boolean = False);
 
     procedure SortMasters;
     procedure CleanMasters;
@@ -927,7 +928,7 @@ type
     procedure Scan; virtual;
     procedure SortRecords;
 
-    procedure AddMaster(const aFileName: string; isTemporary: Boolean = False; aAutoLoadOrder: Boolean = False); overload;
+    procedure AddMaster(const aFileName: string; isTemporary: Boolean = False; aAutoLoadOrder: Boolean = False; aSilent: Boolean = False); overload;
     procedure AddMaster(const aFile: IwbFile); overload;
 
     procedure UpdateModuleMasters;
@@ -2229,7 +2230,7 @@ var
   _FileGeneration: Integer = 1;
   _GlobalGeneration: Integer = 1;
 
-procedure TwbFile.AddMaster(const aFileName: string; IsTemporary: Boolean; aAutoLoadOrder: Boolean);
+procedure TwbFile.AddMaster(const aFileName: string; IsTemporary: Boolean; aAutoLoadOrder: Boolean; aSilent: Boolean);
 var
   _File : IwbFile;
   s     : string;
@@ -2256,7 +2257,8 @@ begin
   else
     States := [];
 
-  flProgress('Adding master "' + t + '"');
+  if not aSilent then
+    flProgress('Adding master "' + t + '"');
   i := -1;
   if aAutoLoadOrder then
     i := High(Integer);
@@ -2462,18 +2464,17 @@ begin
   UpdateModuleMasters;
 end;
 
-procedure TwbFile.AddMasterIfMissing(const aMaster: string; aSortMasters: Boolean = True);
+procedure TwbFile.AddMasterIfMissing(const aMaster: string; aSortMasters: Boolean = True; aSilent: Boolean = False);
 var
   i       : Integer;
   Masters : TStringList;
 begin
-  for i := 0 to Pred(GetMasterCount(True)) do
-    if SameText(aMaster, GetMaster(i, True).FileName) then
-      Exit;
+  if HasMaster(aMaster) then
+    Exit;
   Masters := TStringList.Create;
   try
     Masters.Add(aMaster);
-    AddMasters(Masters);
+    AddMasters(Masters, aSilent);
     if aSortMasters then
       SortMasters;
   finally
@@ -2481,7 +2482,28 @@ begin
   end;
 end;
 
-procedure TwbFile.AddMasters(const aMasters: array of string);
+procedure TwbFile.AddMastersIfMissing(const aMasters: TStrings; aSortMasters: Boolean = True; aSilent: Boolean = False);
+var
+  i       : Integer;
+  Masters : TStringList;
+begin
+  Masters := TStringList.Create;
+  try
+    for i := 0  to Pred(aMasters.Count) do
+      if not HasMaster(aMasters[i]) then
+        Masters.Add(aMasters[i]);
+
+    if Masters.Count = 0 then Exit;
+
+    AddMasters(Masters, aSilent);
+    if aSortMasters then
+      SortMasters;
+  finally
+    Masters.Free;
+  end;
+end;
+
+procedure TwbFile.AddMasters(const aMasters: array of string; aSilent: Boolean);
 begin
   If Length(aMasters) < 1 then
     Exit;
@@ -2490,13 +2512,13 @@ begin
   try
     for var lMaster in aMasters do
       lMasters.Add(lMaster);
-    AddMasters(lMasters);
+    AddMasters(lMasters, aSilent);
   finally
     lMasters.Free;
   end;
 end;
 
-procedure TwbFile.AddMasters(aMasters: TStrings);
+procedure TwbFile.AddMasters(aMasters: TStrings; aSilent: Boolean);
 var
   NotAllAdded    : Boolean;
   lMasters       : TStringList;
@@ -2550,7 +2572,7 @@ var
         Assert(Rec.EditValue = '', '[AddMasters] Rec.EditValue <> ''''');
 
         try
-          AddMaster(lMasters[i]);
+          AddMaster(lMasters[i], false, false, aSilent);
         except
           Rec.Remove;
           raise;

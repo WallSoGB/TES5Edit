@@ -501,6 +501,15 @@ begin
     Value := Element.EditValue;
 end;
 
+procedure IwbElement_GetValue(var Value: Variant; Args: TJvInterpreterArgs);
+var
+  Element: IwbElement;
+begin
+  Value := '';
+  if Supports(IInterface(Args.Values[0]), IwbElement, Element) then
+    Value := Element.Value;
+end;
+
 procedure IwbElement_SetEditValue(var Value: Variant; Args: TJvInterpreterArgs);
 var
   Element: IwbElement;
@@ -831,6 +840,15 @@ begin
   Value := '';
   if Supports(IInterface(Args.Values[0]), IwbContainerElementRef, Container) then
     Value := Container.ElementEditValues[Args.Values[1]];
+end;
+
+procedure IwbContainer_GetElementValues(var Value: Variant; Args: TJvInterpreterArgs);
+var
+  Container: IwbContainerElementRef;
+begin
+  Value := '';
+  if Supports(IInterface(Args.Values[0]), IwbContainerElementRef, Container) then
+    Value := Container.ElementValues[Args.Values[1]];
 end;
 
 procedure IwbContainer_SetElementEditValues(var Value: Variant; Args: TJvInterpreterArgs);
@@ -1666,7 +1684,13 @@ var
   _File: IwbFile;
 begin
   if Supports(IInterface(Args.Values[0]), IwbFile, _File) then
-    _File.AddMasters(TStrings(V2O(Args.Values[1])));
+    case Args.Count of
+    0, 1: JvInterpreterError(ieNotEnoughParams, -1);
+    3: _File.AddMasters(TStrings(V2O(Args.Values[1])), Boolean(Args.Values[2]));
+    2: _File.AddMasters(TStrings(V2O(Args.Values[1])));
+    else
+     JvInterpreterError(ieTooManyParams, -1);
+    end;
 end;
 
 procedure IwbFile_AddMasterIfMissing(var Value: Variant; Args: TJvInterpreterArgs);
@@ -1676,8 +1700,24 @@ begin
   if Supports(IInterface(Args.Values[0]), IwbFile, _File) then
     case Args.Count of
     0, 1: JvInterpreterError(ieNotEnoughParams, -1);
+    4: _File.AddMasterIfMissing(string(Args.Values[1]), Boolean(Args.Values[2]), Boolean(Args.Values[3]));
     3: _File.AddMasterIfMissing(string(Args.Values[1]), Boolean(Args.Values[2]));
     2: _File.AddMasterIfMissing(string(Args.Values[1]));
+    else
+     JvInterpreterError(ieTooManyParams, -1);
+    end;
+end;
+
+procedure IwbFile_AddMastersIfMissing(var Value: Variant; Args: TJvInterpreterArgs);
+var
+  _File: IwbFile;
+begin
+  if Supports(IInterface(Args.Values[0]), IwbFile, _File) then
+    case Args.Count of
+    0, 1: JvInterpreterError(ieNotEnoughParams, -1);
+    4: _File.AddMastersIfMissing(TStrings(V2O(Args.Values[1])), Boolean(Args.Values[2]), Boolean(Args.Values[3]));
+    3: _File.AddMastersIfMissing(TStrings(V2O(Args.Values[1])), Boolean(Args.Values[2]));
+    2: _File.AddMastersIfMissing(TStrings(V2O(Args.Values[1])));
     else
      JvInterpreterError(ieTooManyParams, -1);
     end;
@@ -2151,6 +2191,7 @@ begin
     AddFunction(cUnit, 'IsInjected', IwbElement_IsInjected, 1, [varEmpty], varEmpty);
     AddFunction(cUnit, 'IsEditable', IwbElement_GetIsEditable, 1, [varEmpty], varEmpty);
     AddFunction(cUnit, 'GetEditValue', IwbElement_GetEditValue, 1, [varEmpty], varEmpty);
+    AddFunction(cUnit, 'GetValue', IwbElement_GetValue, 1, [varEmpty], varEmpty);
     AddFunction(cUnit, 'SetEditValue', IwbElement_SetEditValue, 2, [varEmpty, varString], varEmpty);
     AddFunction(cUnit, 'GetNativeValue', IwbElement_GetNativeValue, 1, [varEmpty], varEmpty);
     AddFunction(cUnit, 'SetNativeValue', IwbElement_SetNativeValue, 2, [varEmpty, varEmpty], varEmpty);
@@ -2188,6 +2229,7 @@ begin
 
     { IwbContainer }
     AddFunction(cUnit, 'GetElementEditValues', IwbContainer_GetElementEditValues, 2, [varEmpty, varString], varEmpty);
+    AddFunction(cUnit, 'GetElementValues', IwbContainer_GetElementValues, 2, [varEmpty, varString], varEmpty);
     AddFunction(cUnit, 'SetElementEditValues', IwbContainer_SetElementEditValues, 3, [varEmpty, varString, varString], varEmpty);
     AddFunction(cUnit, 'GetElementNativeValues', IwbContainer_GetElementNativeValues, 2, [varEmpty, varString], varEmpty);
     AddFunction(cUnit, 'SetElementNativeValues', IwbContainer_SetElementNativeValues, 3, [varEmpty, varString, varEmpty], varEmpty);
@@ -2293,6 +2335,7 @@ begin
     AddFunction(cUnit, 'GetMasters', IwbFile_GetMasters, 2, [varEmpty, varEmpty], varEmpty);
     AddFunction(cUnit, 'AddMasters', IwbFile_AddMasters, 2, [varEmpty, varEmpty], varEmpty);
     AddFunction(cUnit, 'AddMasterIfMissing', IwbFile_AddMasterIfMissing, -1, [varEmpty, varString], varEmpty);
+    AddFunction(cUnit, 'AddMastersIfMissing', IwbFile_AddMastersIfMissing, -1, [varEmpty, varString], varEmpty);
     AddFunction(cUnit, 'HasMaster', IwbFile_HasMaster, 2, [varEmpty, varString], varEmpty);
     AddFunction(cUnit, 'HasGroup', IwbFile_HasGroup, 2, [varEmpty, varString], varEmpty);
     AddFunction(cUnit, 'LoadOrderFormIDtoFileFormID', IwbFile_LoadOrderFormIDtoFileFormID, 2, [varEmpty, varEmpty], varEmpty);
