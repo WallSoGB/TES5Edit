@@ -960,10 +960,9 @@ begin
 
   if LegendaryIndex = -1 then
     Exit;
-    
+
   if not Supports(LegendaryMods.Elements[LegendaryIndex], IwbContainerElementRef, ModBase) then
     Exit;
-  
 
   Result := ModBase.Elements[1].LinksTo;
 end;
@@ -2866,7 +2865,7 @@ type
   end;
 
 const
-  wbCTDAFunctions : array[0..617] of TCTDAFunction = (
+  wbCTDAFunctions : array[0..631] of TCTDAFunction = (
     (Index:   0; Name: 'GetWantBlocking'),
     (Index:   1; Name: 'GetDistance'; ParamType1: ptObjectReference),
     (Index:   2; Name: 'AddItem'), { ObjID (Form ID), Count, Flag (Opt), Level (Opt), Equip (Opt) }
@@ -3451,6 +3450,10 @@ const
     (Index: 930; Name: 'IsNextClipLastShot'),
     (Index: 931; Name: 'WornInOrOutOfPowerArmorHasKeyword'; ParamType1: ptKeyword),
     (Index: 932; Name: 'IsPlayerInBestBuildCamp'),
+    (Index: 933; Name: 'GetWeakPointDamageMultiplier'; Desc: 'Gets the highest body part damage multiplier for the actor (ie weak point)'),
+    (Index: 934; Name: 'GetLastHitLimbDamageMultiplier'; Desc: 'Gets the limb damage multipler'),
+    (Index: 935; Name: 'IsLastDamageFromVATS'; Desc: 'True if last source of damage was from VATS'),
+    (Index: 936; Name: 'IsLastDamageCripplingLimb'; Desc: 'True if last source of damage crippled a limb'),
     (Index: 5000; Name: 'IsInAirOrFloating'; Desc: 'Is the Havok state InAir or IsFloating?'),
     (Index: 5001; Name: 'GetIsForm'),
     (Index: 5002; Name: 'GetIsInDailyOps'),
@@ -3484,7 +3487,17 @@ const
     (Index: 10012; Name: 'JoinExpedition'),    //Does nothing on the client
     (Index: 10013; Name: 'GetPublicEventHasMutation'; ParamType1: ptSpell),
     (Index: 10014; Name: 'IsUsingAltCurveTable'),
-    (Index: 12000; Name: 'IsFOWPersonalEWSEnabled'; Desc: 'Is the personal EWS enabled?')
+    (Index: 10015; Name: 'GetIsInVATS'),
+    (Index: 10016; Name: 'GetIsDisguisedWithKeyword'; Desc: 'Is the player disguised in an outfit with the specified disguise keyword?'; ParamType1: ptKeyword),
+    (Index: 10017; Name: 'GetIsPlayerGhoul'),
+    (Index: 10018; Name: 'GetDistanceToClosestHostileActor'; Desc: 'Gets the distance to the nearest hostile actor in a player''s combat group or the current combat target for AI'),
+    (Index: 10019; Name: 'GetRadshieldPercentage'; Desc: 'Gets the percentage of max the radshield is currently at'),
+    (Index: 10020; Name: 'IsChallengeTypeMonthly'; Desc: 'Is the target challenge a Monthly challenge?'),
+    (Index: 12000; Name: 'IsFOWPersonalEWSEnabled'; Desc: 'Is the personal EWS enabled?'),
+    (Index: 12001; Name: 'GetWeakPointDamageMultiplier'; Desc: 'Gets the highest body part damage multiplier for the actor (ie weak point)'),
+    (Index: 12002; Name: 'GetEquippedItemHealthPercent'; ParamType1: ptEquipType),
+    (Index: 12003; Name: 'GetEquippedArmorHealthPercent'; ParamType1: ptInteger),
+    (Index: 12004; Name: 'GetEquippedWeaponHealthPercent')
   );
 
 var
@@ -5737,6 +5750,72 @@ end;
       wbEmpty(XLKT, 'Linked Ref Transient'),
       wbXRGD,
       wbFormIDCk(XLYR, 'Layer', [LAYR]),
+      wbStruct(XRLL, 'Lighting', [
+        wbByteColors('Ambient Color'),
+        wbByteColors('Directional Color'),
+        wbByteColors('Fog Color Near'),
+        wbFloat('Fog Near'),
+        wbFloat('Fog Far'),
+        wbInteger('Directional Rotation XY', itS32),
+        wbInteger('Directional Rotation Z', itS32),
+        wbFloat('Directional Fade'),
+        wbFloat('Fog Clip Distance'),
+        wbFloat('Fog Power'),
+        wbAmbientColors('Ambient Colors'),
+        wbByteColors('Fog Color Far'),
+        wbFloat('Fog Max'),
+        wbFloat('Light Fade Begin'),
+        wbFloat('Light Fade End'),
+        wbInteger('Inherits', itU32, wbFlags([
+          {0x00000001} 'Ambient Color',
+          {0x00000002} 'Directional Color',
+          {0x00000004} 'Fog Color',
+          {0x00000008} 'Fog Near',
+          {0x00000010} 'Fog Far',
+          {0x00000020} 'Directional Rotation',
+          {0x00000040} 'Directional Fade',
+          {0x00000080} 'Clip Distance',
+          {0x00000100} 'Fog Power',
+          {0x00000200} 'Fog Max',
+          {0x00000400} 'Light Fade Distances',
+          {0x00000800} 'Unknown 11',
+          {0x00001000} 'Unknown 12',
+          {0x00002000} 'Unknown 13',
+          {0x00004000} 'Unknown 14',
+          {0x00008000} 'Unknown 15',
+          {0x00010000} 'Unknown 16',
+          {0x00020000} 'Unknown 17',
+          {0x00040000} 'Unknown 18',
+          {0x00080000} 'Unknown 19',
+          {0x00100000} 'Unknown 20',
+          {0x00200000} 'Unknown 21',
+          {0x00400000} 'Unknown 22',
+          {0x00800000} 'Unknown 23',
+          {0x01000000} 'Unknown 24',
+          {0x02000000} 'Unknown 25',
+          {0x04000000} 'Unknown 26',
+          {0x08000000} 'Unknown 27',
+          {0x10000000} 'Unknown 28',
+          {0x20000000} 'Unknown 29',
+          {0x40000000} 'Unknown 30'
+        ])),
+        wbFloat('Near Height Mid'),
+        wbFloat('Near Height Range'),
+        wbByteColors('Fog Color High Near'),
+        wbByteColors('Fog Color High Far'),
+        wbFloat('High Density Scale'),
+        wbFloat('Fog Near Scale'),
+        wbFloat('Fog Far Scale'),
+        wbFloat('Fog High Near Scale'),
+        wbFloat('Fog High Far Scale'),
+        wbFloat('Far Height Mid'),
+        wbFloat('Far Height Range'),
+        wbStruct('Skybox Bounds', [
+            wbVec3('Center'),
+            wbVec3('Radius')
+          ])
+      ], cpNormal, False, nil, 11),
+      wbFormIDCk(XRL2, 'Lighting Template', [LGTM]),
       wbFormIDCk(XMSP, 'Material Swap', [MSWP]),
       wbXLWT,
       wbFormIDCk(XRFG, 'Reference Group', [RFGP]),
@@ -6191,7 +6270,13 @@ begin
    {195} 'Mod Max Barter Currency',
    {196} 'Mod Body Part Damage Mult',
    {197} 'Apply On Kill Participation Spell',
-   {198} 'Is Next Clip Last Shot'
+   {198} 'Is Next Clip Last Shot',
+   {199} 'Instant Reload Clip On Bash',
+   {200} 'Mod Attack Damage On Striking Appendage',
+   {201} 'Apply Spell On Actor When Limb Crippled',
+   {202} 'Mod Rads to Health Mult',
+   {203} 'Mod Rads to Radshield Mult',
+   {204} 'Mod Weak Body Part Damage Mult'
   ]);
 
   wbEquipType := wbFlags([
@@ -7214,6 +7299,72 @@ begin
     wbEmpty(XLKT, 'Linked Ref Transient'),
     wbFormIDCk(XRFG, 'Reference Group', [RFGP]),
     wbFormIDCk(XLYR, 'Layer', [LAYR]),
+    wbStruct(XRLL, 'Lighting', [
+      wbByteColors('Ambient Color'),
+      wbByteColors('Directional Color'),
+      wbByteColors('Fog Color Near'),
+      wbFloat('Fog Near'),
+      wbFloat('Fog Far'),
+      wbInteger('Directional Rotation XY', itS32),
+      wbInteger('Directional Rotation Z', itS32),
+      wbFloat('Directional Fade'),
+      wbFloat('Fog Clip Distance'),
+      wbFloat('Fog Power'),
+      wbAmbientColors('Ambient Colors'),
+      wbByteColors('Fog Color Far'),
+      wbFloat('Fog Max'),
+      wbFloat('Light Fade Begin'),
+      wbFloat('Light Fade End'),
+      wbInteger('Inherits', itU32, wbFlags([
+        {0x00000001} 'Ambient Color',
+        {0x00000002} 'Directional Color',
+        {0x00000004} 'Fog Color',
+        {0x00000008} 'Fog Near',
+        {0x00000010} 'Fog Far',
+        {0x00000020} 'Directional Rotation',
+        {0x00000040} 'Directional Fade',
+        {0x00000080} 'Clip Distance',
+        {0x00000100} 'Fog Power',
+        {0x00000200} 'Fog Max',
+        {0x00000400} 'Light Fade Distances',
+        {0x00000800} 'Unknown 11',
+        {0x00001000} 'Unknown 12',
+        {0x00002000} 'Unknown 13',
+        {0x00004000} 'Unknown 14',
+        {0x00008000} 'Unknown 15',
+        {0x00010000} 'Unknown 16',
+        {0x00020000} 'Unknown 17',
+        {0x00040000} 'Unknown 18',
+        {0x00080000} 'Unknown 19',
+        {0x00100000} 'Unknown 20',
+        {0x00200000} 'Unknown 21',
+        {0x00400000} 'Unknown 22',
+        {0x00800000} 'Unknown 23',
+        {0x01000000} 'Unknown 24',
+        {0x02000000} 'Unknown 25',
+        {0x04000000} 'Unknown 26',
+        {0x08000000} 'Unknown 27',
+        {0x10000000} 'Unknown 28',
+        {0x20000000} 'Unknown 29',
+        {0x40000000} 'Unknown 30'
+      ])),
+      wbFloat('Near Height Mid'),
+      wbFloat('Near Height Range'),
+      wbByteColors('Fog Color High Near'),
+      wbByteColors('Fog Color High Far'),
+      wbFloat('High Density Scale'),
+      wbFloat('Fog Near Scale'),
+      wbFloat('Fog Far Scale'),
+      wbFloat('Fog High Near Scale'),
+      wbFloat('Fog High Far Scale'),
+      wbFloat('Far Height Mid'),
+      wbFloat('Far Height Range'),
+      wbStruct('Skybox Bounds', [
+          wbVec3('Center'),
+          wbVec3('Radius')
+        ])
+    ], cpNormal, False, nil, 11),
+    wbFormIDCk(XRL2, 'Lighting Template', [LGTM]),
     wbFormIDCk(XMSP, 'Material Swap', [MSWP]),
 
     wbXLWT,
@@ -9083,7 +9234,9 @@ begin
    {109} 'AmmoConsumption',
    {110} 'Overheating',
    {111} 'OverheatRateUp',
-   {112} 'OverheatRateDown'
+   {112} 'OverheatRateDown',
+   {113} 'SoundTagSet',
+   {114} 'SneakAttackMult'
   ]);
 
   wbStorefrontData :=
@@ -9643,7 +9796,11 @@ begin
     wbInteger(VONL, 'Unknown Bool', itU8, wbBoolEnum)
   ], False, nil, cpNormal, False, wbARMAAfterLoad);
 
-  wbRecord(BOOK, 'Book', [
+  wbRecord(BOOK, 'Book',
+    wbFlags(wbFlagsList([
+      {0x00000004}  2, 'Unknown 2',
+      {0x00000200}  9, 'Unknown 9'
+    ])), [
     wbEDID,
     wbVMAD,
     wbOBND(True),
@@ -9834,12 +9991,10 @@ begin
       wbFloat('Fog High Far Scale'),
       wbFloat('Far Height Mid'),
       wbFloat('Far Height Range'),
-      wbFloat('Unknown'),
-      wbFloat('Unknown'),
-      wbFloat('Unknown'),
-      wbFloat('Unknown'),
-      wbFloat('Unknown'),
-      wbFloat('Unknown')
+      wbStruct('Skybox Bounds', [
+          wbVec3('Center'),
+          wbVec3('Radius')
+        ])
     ], cpNormal, False, nil, 11),
 
     wbInteger(CNAM, 'Precombined Object Level XY', itU8),
@@ -9852,7 +10007,7 @@ begin
     {>>> XCLW sometimes has $FF7FFFFF and causes invalid floation point <<<}
     wbFloat(XCLW, 'Water Height', cpNormal, False, 1, -1, nil, nil, 0, wbCELLXCLWGetConflictPriority),
     wbFloat(XILS),
-    wbFormIDCk(RDES, 'Unknown Reference', [REFR]),
+    wbFormIDCk(RDES, 'Unknown Reference', [NULL, REFR]),
     wbUnknown(NAVH),
     wbFormIDCk(XCWT, 'Water Type', [WATR]),
     wbArrayS(XCLR, 'Regions', wbFormIDCk('Region', [REGN])),
@@ -10577,6 +10732,22 @@ begin
       wbUnknown
     ]),
     wbPLVD,
+    wbRArray('Entry Checks',
+      wbRStruct('Entry Check', [
+        wbEmpty(FCNR, 'Start Marker'),
+        wbFormIDCk(FCRF, 'Referenced Faction', [FACT]),
+        wbUnknown(FCOR),
+        wbFormID(FCBM, 'Blocked Message'),
+        wbCITC,
+        wbCTDAsCount,
+        wbUnknown(FCAF)
+        //Integer(FCAF, 'Access Flags', itU32, wbFlags([
+           {0x1} //'Allowed',
+           {0x2} //'Unknown 2',
+           {0x4} //'Blocked'
+        //]))
+      ], [])
+    ),
     wbCITC,
     wbCTDAsCount
   ], False, nil, cpNormal, False, nil {wbFACTAfterLoad}, wbConditionsAfterSet);
@@ -10703,6 +10874,7 @@ begin
     ])), [
     wbEDID,
     wbXALG,
+    wbFTAGs,
     wbInteger(FNAM, 'Type', itU8, wbEnum([], [
       Ord('s'), 'Short',
       Ord('l'), 'Long',
@@ -10775,6 +10947,7 @@ begin
   wbRecord(TXST, 'Texture Set', [
     wbEDID,
     wbOBND(True),
+    wbFULL,
     wbOPDSs,
     wbFLTR,
     wbRStruct('Textures (RGB/A)', [
@@ -10990,7 +11163,11 @@ begin
       wbString(NAM1, 'Model FileName'),
       wbModelInfo(NAM2)
     ], [], cpNormal, True),
-    wbInteger(VNAM, 'Sound Level', itU32, wbSoundLevelEnum, cpNormal, True)
+    wbInteger(VNAM, 'Sound Level', itU32, wbSoundLevelEnum, cpNormal, True),
+    wbFormID(PSCT, 'Speed Curve Table'),
+    wbFormID(PSSC, 'Seek Strength Curve Table'),
+    wbFloat(PFDX, 'X-Axis Drag'),
+    wbFloat(PFDZ, 'Z-Axis Drag')
   ]);
 
   wbRecord(HAZD, 'Hazard', [
@@ -11162,6 +11339,7 @@ begin
     wbPHST,
     wbOPDSs,
     wbFULL,
+    wbDESC,
     wbGenericModel,
     wbEITM,
     wbFormIDCk(MNAM, 'Image Space Modifier', [IMAD]),
@@ -11741,6 +11919,7 @@ begin
         wbModelInfo(NAM5),
         wbString(ENAM, 'Hit Reaction - Start'),
         wbString(FNAM, 'Hit Reaction - End'),
+        wbUnknown(BPAB),
         wbFormIDCk(BNAM, 'Gore Effects - Dismember Blood Art', [ARTO]),
         wbFormIDCk(INAM, 'Gore Effects - Blood Impact Material Type', [MATT]),
         wbFormIDCk(JNAM, 'On Cripple - Blood Impact Material Type', [MATT]),
@@ -11751,7 +11930,11 @@ begin
     )
   ]);
 
-  wbRecord(ADDN, 'Addon Node', [
+  wbRecord(ADDN, 'Addon Node',
+    wbFlags(wbFlagsList([
+      {0x00000004}  2, 'Unknown 2',
+      {0x00000200}  9, 'Unknown 9'
+    ])), [
     wbEDID,
     wbOBND(True),
     wbXALG,
@@ -12241,6 +12424,7 @@ begin
     Sig2Int('AFIA'), 'Action Fire Auto',
     Sig2Int('AFIS'), 'Action Fire Single',
     Sig2Int('AFLT'), 'Action Flip-Throw',
+    Sig2Int('AFOH'), 'Action Weapon Overheat',
     Sig2Int('AFNP'), 'Keyword - Activator Furniture No Player',
     Sig2Int('AGAL'), 'Action Gun Alert',
     Sig2Int('AGCS'), 'Action Gun Charge Start',
@@ -13274,9 +13458,14 @@ begin
     ], cpNormal, True)
   ]);
 
-  wbRecord(OTFT, 'Outfit', [
+  wbRecord(OTFT, 'Outfit',
+    wbFlags(wbFlagsList([
+      {0x00000004}  2, 'Unknown 2',
+      {0x00000200}  9, 'Unknown 9'
+    ])), [
     wbEDID,
-    wbArrayS(INAM, 'Items', wbFormIDCk('Item', [ARMO, LVLI]))
+    wbArrayS(INAM, 'Items', wbFormIDCk('Item', [ARMO, LVLI])),
+    wbFormIDCk(KNAM, 'Keyword', [KYWD])
   ]);
 
   wbRecord(ARTO, 'Art Object',
@@ -13989,6 +14178,7 @@ begin
       wbLVOT,
       wbLVIV,
       wbLVIG,
+      wbLVIT,
       wbLVLV,
       wbLVOG,
       wbLVLT
@@ -14508,6 +14698,7 @@ begin
     wbDEFL,
     wbPHST,
     wbXALG,
+    wbFTAGs,
     wbStruct(ACBS, 'Configuration', [
       wbInteger('Flags', itU32, wbFlags([
         {0x00000001} 'Female',
@@ -14955,6 +15146,7 @@ begin
   wbRecord(PACK, 'Package', [
     wbEDID,
     wbVMADFragmentedPACK,
+    wbFTAGs,
 
     wbStruct(PKDT, 'Pack Data', [
       wbInteger('General Flags', itU32, wbPKDTFlags),
@@ -15253,7 +15445,8 @@ begin
           'Module',
           'Caravan'
         ])),  //0xE9
-        wbByteArray('Unused',3)
+        wbByteArray('Unused',3),
+        wbUnknown
       ]),
       wbStruct(DNAM, 'General', [
         wbInteger('Flags', itU16, wbFlags([
@@ -15289,7 +15482,8 @@ begin
           'Module',
           'Caravan'
         ])),  //0xE9
-        wbByteArray('Unused',3)
+        wbByteArray('Unused',3),
+        wbUnknown
       ])
     ], []),
     wbInteger(ENAM, 'Event', itU32, wbQuestEventEnum),
@@ -15301,6 +15495,7 @@ begin
     wbFormIDCk(QSSK, 'Start Keyword', [KYWD]),
     wbFormIDCk(QSLC, 'Quest Start Location', [LCTN]),
     wbFormIDCk(QECV, 'Enable Keyword', [KYWD]),
+    wbFormIDCk(QUCF, 'Faction', [FACT]),
     wbUnknown(QSDD),
     wbInteger(QETE, 'Quest Event Type', itU8, wbEnum([
       'Co-op',
@@ -15462,7 +15657,7 @@ begin
             wbFormIDCk('Keyword', [KYWD, NULL]),
             wbInteger('Alias', itS32, wbQuestAliasToStr, wbStrToAlias)
           ])),
-          wbFormIDCk(ALDN, 'Display Name', [MESG]),
+          wbFormIDCk(ALDN, 'Display Name', [NULL, MESG]),
           wbFormIDCk(ALFV, 'Forced Voice', [VTYP]),
           wbFormIDCk(ALDI, 'Death Item', [LVLI]),
           wbRArrayS('Alias Spells', wbFormIDCk(ALSP, 'Spell', [SPEL])),
@@ -15666,6 +15861,7 @@ begin
     wbEDID,
     wbString(DURL, 'Group Name'),
     wbSTCP,
+    wbFTAGs,
     wbFULL,
     wbDESCReq,
     wbSPCT,
@@ -16203,6 +16399,72 @@ begin
     wbInteger(XAMC, 'Ammo Count', itU32),
     wbEmpty(XLKT, 'Linked Ref Transient'),
     wbFormIDCk(XLYR, 'Layer', [LAYR]),
+    wbStruct(XRLL, 'Lighting', [
+      wbByteColors('Ambient Color'),
+      wbByteColors('Directional Color'),
+      wbByteColors('Fog Color Near'),
+      wbFloat('Fog Near'),
+      wbFloat('Fog Far'),
+      wbInteger('Directional Rotation XY', itS32),
+      wbInteger('Directional Rotation Z', itS32),
+      wbFloat('Directional Fade'),
+      wbFloat('Fog Clip Distance'),
+      wbFloat('Fog Power'),
+      wbAmbientColors('Ambient Colors'),
+      wbByteColors('Fog Color Far'),
+      wbFloat('Fog Max'),
+      wbFloat('Light Fade Begin'),
+      wbFloat('Light Fade End'),
+      wbInteger('Inherits', itU32, wbFlags([
+        {0x00000001} 'Ambient Color',
+        {0x00000002} 'Directional Color',
+        {0x00000004} 'Fog Color',
+        {0x00000008} 'Fog Near',
+        {0x00000010} 'Fog Far',
+        {0x00000020} 'Directional Rotation',
+        {0x00000040} 'Directional Fade',
+        {0x00000080} 'Clip Distance',
+        {0x00000100} 'Fog Power',
+        {0x00000200} 'Fog Max',
+        {0x00000400} 'Light Fade Distances',
+        {0x00000800} 'Unknown 11',
+        {0x00001000} 'Unknown 12',
+        {0x00002000} 'Unknown 13',
+        {0x00004000} 'Unknown 14',
+        {0x00008000} 'Unknown 15',
+        {0x00010000} 'Unknown 16',
+        {0x00020000} 'Unknown 17',
+        {0x00040000} 'Unknown 18',
+        {0x00080000} 'Unknown 19',
+        {0x00100000} 'Unknown 20',
+        {0x00200000} 'Unknown 21',
+        {0x00400000} 'Unknown 22',
+        {0x00800000} 'Unknown 23',
+        {0x01000000} 'Unknown 24',
+        {0x02000000} 'Unknown 25',
+        {0x04000000} 'Unknown 26',
+        {0x08000000} 'Unknown 27',
+        {0x10000000} 'Unknown 28',
+        {0x20000000} 'Unknown 29',
+        {0x40000000} 'Unknown 30'
+      ])),
+      wbFloat('Near Height Mid'),
+      wbFloat('Near Height Range'),
+      wbByteColors('Fog Color High Near'),
+      wbByteColors('Fog Color High Far'),
+      wbFloat('High Density Scale'),
+      wbFloat('Fog Near Scale'),
+      wbFloat('Fog Far Scale'),
+      wbFloat('Fog High Near Scale'),
+      wbFloat('Fog High Far Scale'),
+      wbFloat('Far Height Mid'),
+      wbFloat('Far Height Range'),
+      wbStruct('Skybox Bounds', [
+          wbVec3('Center'),
+          wbVec3('Radius')
+        ])
+    ], cpNormal, False, nil, 11),
+    wbFormIDCk(XRL2, 'Lighting Template', [LGTM]),
     wbFormIDCk(XMSP, 'Material Swap', [MSWP]),
     wbXLWT,
     wbFormIDCk(XRFG, 'Reference Group', [RFGP]),
@@ -18101,6 +18363,7 @@ begin
     wbXFLG,
     wbFormID(CNAM, 'Category'),
     wbFormID(DNAM, 'Animation'),
+    wbLString(ACTV, 'Unused'), //Currently does nothing and seems to be something that would show up in the text chat or the cut TTS/STT feature but 76 doesn't have text chat.
     wbKeywords
   ]);
 
@@ -18382,6 +18645,7 @@ begin
     wbFormID(LIPC, 'Bonus Cards'),
     wbFormID(LEPC, 'Perk Card List'),
     wbFormID(LINV, 'Inventory'),
+    wbFormID(LMML, 'Map Marker'),
     wbStruct(LSPC, 'SPECIAL Values', [
       wbInteger('Strength', itU8),
       wbInteger('Perception', itU8),
@@ -18428,6 +18692,21 @@ begin
     ]),
     wbUnknown(DICO)
   ]);
+
+  wbRecord(PLYT, 'Player Title',
+    wbFlags(wbFlagsList([
+      {0x00000004}  2, 'Unknown 2',
+      {0x00000200}  9, 'Unknown 9'
+    ])), [
+    wbEDID,
+    wbXALG,
+    wbLString(ANAM, 'Title'), //Possibly male version
+    wbLString(BNAM), //Possibly female version
+    wbInteger(PTPR, 'Is Prefix', itU8, wbBoolEnum),
+    wbInteger(PTSU, 'Is Suffix', itU8, wbBoolEnum),
+    wbUnknown(PTDS), //Only shows up on ones labeled with DEL so most likely a deleted flag
+    wbCTDAs
+  ]).SetSummaryKey([2]).IncludeFlag(dfSummaryNoName);
 
   wbRecord(WATR, 'Water', [
     wbEDID,
@@ -18757,7 +19036,17 @@ begin
       'Fast',
       'Very Fast'
     ])),
-    wbDAMS
+    wbDAMS,
+    wbRStruct('Telegraph Data', [
+      wbFloat(WTDT, 'Time'),
+      wbFormID(WTDA, 'Visual'),
+      wbFormID(WTDS, 'Sound')
+    ], []),
+    wbInteger(WSAM, 'Sneak Attack Multiplier', itU32, wbFlags(wbFlagsList([
+      4, '2.25',
+      5, '2.5',
+      6, '2.75'
+    ])))
   ], False, nil, cpNormal, False, nil{wbWEAPAfterLoad});
 
   wbRecord(WTHR, 'Weather',
@@ -19167,10 +19456,11 @@ begin
   wbAddGroupOrder(QMDL); //new in Fallout 76
   wbAddGroupOrder(LOUT); //new in Fallout 76
   wbAddGroupOrder(DIST); //new in Fallout 76
+  wbAddGroupOrder(PLYT);
   wbNexusModsUrl := 'https://www.nexusmods.com/fallout76/mods/30';
   {if wbToolMode = tmLODgen then
     wbNexusModsUrl := '';}
-  wbHEDRVersion := 216.0;
+  wbHEDRVersion := 224.0;
 end;
 
 initialization
