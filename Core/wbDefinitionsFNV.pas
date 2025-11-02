@@ -6834,14 +6834,14 @@ begin
         {0x00080000} 'Use skill',
         {0x00100000} 'Use attribute',
         {0x00200000} '',
-        {0x00400000} '',
+        {0x00400000} 'Disabled',
         {0x00800000} '',
         {0x01000000} 'Painless',
         {0x02000000} 'Spray projectile type (or Fog if Bolt is specified as well)',
         {0x04000000} 'Bolt projectile type (or Fog if Spray is specified as well)',
         {0x08000000} 'No Hit Effect',
         {0x10000000} 'No Death Dispel',
-        {0x20000000} '????'
+        {0x20000000} 'Havok Explosion'
       ])).IncludeFlag(dfCollapsed, wbCollapseFlags),
       {04} wbFloat('Base cost (Unused)'),
       {08} wbUnion('Assoc. Item', wbMGEFFAssocItemDecider, [
