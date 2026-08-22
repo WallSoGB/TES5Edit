@@ -2454,6 +2454,10 @@ begin
               wbProgressCallback('<Error: ' + aRecord.Name + ' has invalid ObjectID ' + IntToHex64((FormID.ToCardinal and $00FFFFFF),6) + ' for a light module. You will not be able to save this file with the Light flag active.>');
         end;
 
+        if wbIsFalloutNV and (aRecord.Signature = 'SCPT') then begin
+          Exclude(flStates, fsLightCompatible);
+        end;
+
         if (FormID.ToCardinal and $00FF0000) <> 0 then begin
           Exclude(flStates, fsMediumCompatible);
           if wbHasProgressCallback then
@@ -5528,10 +5532,13 @@ begin
       if FileHeader.IsLight then begin
         for i := High(flRecords) downto Low(flRecords) do begin
           Current := flRecords[i];
+
           FormID := Current.FixedFormID;
           if FormID.FileID = lFileFileID then begin
             if (FormID.ToCardinal and $00FFF000) <> 0 then
-              raise Exception.Create('Record ' + Current.Name + ' has invalid ObjectID ' + IntToHex64((FormID.ToCardinal and $00FFFFFF),6) + ' for a Light module. You will not be able to save this file with Light flag active');
+              raise Exception.Create('Record ' + Current.Name + ' has invalid ObjectID ' + IntToHex64((FormID.ToCardinal and $00FFFFFF),6) + ' for a Light module. You will not be able to save this file with Light flag active')
+            else if wbIsFalloutNV and (Current.Signature = 'SCPT') then
+              raise Exception.Create('Record ' + Current.Name + ' is a script. You will not be able to save this file with Light flag active');
           end else
             Break;
         end;

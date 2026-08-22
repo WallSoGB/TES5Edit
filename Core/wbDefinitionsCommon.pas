@@ -313,6 +313,7 @@ function wbIsNotFlag(const aFlag: Integer; const aValue: IwbValueDef; const aIsU
 function IsCS   (const aDef1, aDef2: string): string;
 function IsVR   (const aDef1, aDef2: string): string;
 function IsVRESL(const aDef1, aDef2: string): string;
+function IsFNVESL(const aDef1, aDef2: string): string;
 
 {>>> Game Mode IfThen Defs <<<} //36
 function IsTES3   (const aDef1, aDef2: string): string; overload;
@@ -6067,6 +6068,13 @@ function IsVRESL(const aDef1, aDef2: string): string;
 begin
   Result := aDef2;
   if wbVRESL then
+    Result := aDef1;
+end;
+
+function IsFNVESL(const aDef1, aDef2: string): string;
+begin
+  Result := aDef2;
+  if wbFNVESL then
     Result := aDef1;
 end;
 

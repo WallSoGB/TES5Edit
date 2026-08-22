@@ -8024,7 +8024,9 @@ begin
   wbRecord(TES4, 'Main File Header',
     wbFlags(wbFlagsList([
       0, 'ESM',
-      4, 'Optimized'
+      4, 'Optimized',
+      8, IsFNVESL('ESL', '')
+      9, IsFNVESL('Update', '')
     ])), [
     wbHEDR,
     wbByteArray(OFST, 'Unknown', 0, cpIgnore),

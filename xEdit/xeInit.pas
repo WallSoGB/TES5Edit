@@ -1040,6 +1040,9 @@ begin
       wbCanSortINFO         := True;
       wbAllowESPMasters     := True;
       wbAllowESPMastersOnSave := True;
+      wbFNVESL              := (wbGameMode = gmFNV) and FileExists(wbDataPath + 'NVSE\Plugins\johnnyguitar.dll');
+      wbHasAddedLightSupport := wbFNVESL;
+      wbHasAddedUpdateSupport := wbFNVESL;
     end;
     gmFO3: begin
       wbVWDInTemporary      := True;

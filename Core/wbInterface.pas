@@ -291,6 +291,7 @@ var
 
   wbCS                               : Boolean    = False;
   wbVRESL                            : Boolean    = False;
+  wbFNVESL                           : Boolean    = False;
 
   wbAllowMakePartial                 : Boolean    = False;
 
@@ -20414,7 +20415,7 @@ end;
 
 function TwbMainRecordStructFlags.IsLight: Boolean;
 begin
-  if wbIsStarfield then
+  if (wbIsStarfield or wbFNVESL) then
     Result := wbIsLightSupported and
       ((_Flags and $00000100) <> 0)
   else
@@ -20427,7 +20428,7 @@ begin
   Result := 
         wbIsUpdateSupported 
     and (
-             (wbIsStarfield and ((_Flags and $00000200) <> 0)) 
+             ((wbIsStarfield or wbFNVESL) and ((_Flags and $00000200) <> 0)) 
           or (wbVRESL       and ((_Flags and $00100000) <> 0))
         );
 end;
@@ -20501,7 +20502,7 @@ end;
 procedure TwbMainRecordStructFlags.SetLight(aValue: Boolean);
 begin
   if wbIsLightSupported then
-    if wbIsStarfield then begin
+    if (wbIsStarfield or wbFNVESL) then begin
       if aValue then begin
         _Flags := _Flags or $00000100;
         SetMedium(False);
@@ -20519,14 +20520,14 @@ procedure TwbMainRecordStructFlags.SetUpdate(aValue: Boolean);
 begin
   if wbIsUpdateSupported then
     if aValue then begin
-      if wbIsStarfield then
+      if (wbIsStarfield or wbFNVESL) then
         _Flags := _Flags or $00000200
       else if wbVRESL then
         _Flags := _Flags or $00100000;
       SetLight(False);
       SetMedium(False);
     end else
-      if wbIsStarfield then
+      if (wbIsStarfield or wbFNVESL) then
         _Flags := _Flags and not $00000200
       else if wbVRESL then
         _Flags := _Flags and not $00100000;
